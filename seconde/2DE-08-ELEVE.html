@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP 2DE-08 · La fréquence du diapason</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="seconde/2DE-08-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="2DE-07-ELEVE.html" rel="prev" title="TP 2DE-07 · La lumière dans la fibre" aria-label="TP 2DE-07 · La lumière dans la fibre">&lsaquo;</a></span><button type="button" class="lu" data-lu="seconde/2DE-08-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">2de Bac Pro · toutes spécialités · TP commun 2DE-08</p>
+    <h1>La fréquence du diapason<span>période et fréquence d'un son</span></h1>
+  </div>
+  <p class="accroche">Le diapason vibre-t-il vraiment 440 fois par seconde ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>La période et la fréquence, f = 1 ÷ T</b><span class="car">la fréquence se déduit de la période lue</span></li><li><b>Convertir des millisecondes en secondes</b><span class="car">la période entre en secondes dans la formule</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-micro-et-oscilloscope">Protocole A · micro et oscilloscope</a><a href="#protocole-b-le-telephone">Protocole B · le téléphone</a></div></nav>
+<p><strong>Sujet.</strong> Avant de jouer, on accorde sa guitare sur le la d’un diapason. Sur le diapason est gravé « la 440 » : il doit vibrer 440 fois par seconde.</p>
+
+<p><strong>Problématique : le diapason vibre-t-il vraiment 440 fois par seconde ?</strong></p>
+
+<p>Au laboratoire, on mesure la fréquence du son d’un diapason, puis celle d’un son de 1 000 Hz.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<figure><img src="img/2DE-08-ELEVE/fig1-deux-sons.png" alt="" /></figure>
+
+<p><strong>a)</strong> L’un de ces sons vient d’un diapason, l’autre d’une voix. Un son pur se voit comme une courbe régulière, une sinusoïde. Entourer.</p>
+
+<p>Le son pur est le <strong>son 1 · son 2</strong>. Il vient <strong>du diapason · de la voix</strong>.</p>
+
+<p>La <strong>fréquence f</strong> d’un son est le nombre de vibrations par seconde, en hertz (Hz). La <strong>période T</strong> est la durée d’une vibration : f = 1 ÷ T, avec T en secondes.</p>
+
+<p><strong>b)</strong> Convertir en secondes. Le premier est fait en exemple.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>2 ms</th>
+
+<th>1 ms</th>
+
+<th>2,5 ms</th>
+
+<th>0,4 ms</th>
+
+<th>10 ms</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>0,002 s</td>
+
+<td>……………… s</td>
+
+<td>……………… s</td>
+
+<td>……………… s</td>
+
+<td>……………… s</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Plus la fréquence d’un son est grande, plus il est aigu.</p>
+
+<p><strong>c)</strong> Classer ces sons du plus grave au plus aigu : diapason, 440 Hz ; voix d’homme, 120 Hz ; sifflet, 2 500 Hz ; grosse caisse de batterie, 60 Hz.</p>
+
+<p>Du plus grave au plus aigu : ……………………… · ……………………… · ……………………… · ………………………</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Pour mesurer la fréquence, un micro transforme le son en tension. <strong>Une partie de la classe prend A, l’autre B</strong>, et on compare à la fin.</p>
+
+<figure><img src="img/2DE-08-ELEVE/fig2-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · micro et oscilloscope.</strong> On <strong>fige l’écran</strong>, on <strong>compte les divisions</strong> de plusieurs périodes, puis on <strong>calcule</strong> T et f = 1 ÷ T.</p>
+
+<p><strong>Protocole B · le téléphone.</strong> L’application phyphox affiche un <strong>oscilloscope audio</strong>, où on lit la période, et un <strong>spectre audio</strong>, dont le pic donne <strong>directement</strong> la fréquence.</p>
+
+<p><strong>d)</strong> Compléter le tableau pour comparer les deux protocoles : écrire dans les deux premières lignes, entourer dans la dernière.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on lit</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’on calcule</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Appareils disponibles</td>
+
+<td>un ou deux · un par poste</td>
+
+<td>un ou deux · un par poste</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant de toucher au matériel.</p>
+
+<p><strong>e)</strong> Quel protocole prenez-vous ? Justifier en une phrase. Le professeur peut vous imposer celui qui reste disponible.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>f)</strong> Avant de mesurer, un ordre de grandeur. Pour 440 Hz, une période dure, entourer :</p>
+
+<p><strong>0,2 ms · 2 ms · 20 ms · 200 ms</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<blockquote>
+
+<p><strong>Avant de commencer</strong></p>
+
+<p>Le diapason se frappe au maillet ou sur une semelle, <strong>jamais contre la table</strong>.</p>
+
+<p>Le haut-parleur reste modéré : au-delà de <strong>85 dB</strong>, l’oreille est en danger.</p>
+
+</blockquote>
+
+<h2 id="protocole-a-micro-et-oscilloscope">Protocole A · micro et oscilloscope</h2>
+
+<ol type="1">
+
+<li>Relier le micro à la voie 1. Régler le balayage sur <strong>0,5 ms/div</strong>.</li>
+
+<li>Frapper le diapason et placer le micro à 2 cm de ses branches.</li>
+
+<li>Figer l’écran, puis reporter la courbe sur le quadrillage.</li>
+
+<li>Compter les divisions de plusieurs périodes : T = durée ÷ nombre de périodes.</li>
+
+<li>Recommencer avec le son de 1 000 Hz du haut-parleur, balayage <strong>0,2 ms/div</strong>.</li>
+
+</ol>
+
+<h2 id="protocole-b-le-telephone">Protocole B · le téléphone</h2>
+
+<ol type="1">
+
+<li>Ouvrir phyphox, expérience « Oscilloscope audio ».</li>
+
+<li>Frapper le diapason et approcher le micro du téléphone à 2 cm des branches.</li>
+
+<li>Mettre en pause ; lire la durée de plusieurs périodes et reporter la courbe.</li>
+
+<li>Lire la fréquence du pic dans « Spectre audio », puis refaire avec le son de 1 000 Hz.</li>
+
+</ol>
+
+<p><strong>g)</strong> Reporter la courbe du diapason. En B, prendre 0,5 ms par carreau.</p>
+
+<figure><img src="img/2DE-08-ELEVE/fig4-cadre-oscillogramme.png" alt="" /></figure>
+
+<p><strong>h)</strong> Relever et calculer, T en secondes. En A, la dernière ligne reste vide.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Diapason</th>
+
+<th>1 000 Hz</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Périodes mesurées : leur nombre, leur durée (ms)</td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Période T (ms)</td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Fréquence calculée, f = 1 ÷ T (Hz)</td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Fréquence lue sur le spectre, en B (Hz)</td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le son a voyagé du diapason jusqu’à l’écran : reste à dessiner le trajet.</p>
+
+<p><strong>i)</strong> Schématiser la chaîne de mesure : l’émetteur du son, le milieu où il se propage, le récepteur et l’appareil qui affiche. Nommer chacun.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>j)</strong> Vos fréquences sont-elles proches de 440 Hz et de 1 000 Hz ? Écarts :</p>
+
+<p><strong>k)</strong> Un groupe qui a pris l’autre protocole trouve-t-il la même fréquence ? Votre ordre de grandeur de la question <strong>f</strong> était-il le bon ?</p>
+
+<p><strong>l)</strong> Répondre à la problématique en deux phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour tout son pur :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Un son pur se voit comme une <strong>sinusoïde</strong>. Sa <strong>fréquence f</strong>, en hertz, est le nombre de vibrations par seconde ; sa <strong>période T</strong> en est la durée : <strong>f = 1 ÷ T</strong>, avec T en secondes.</p>
+
+<p>Plus la fréquence est grande, plus le son est <strong>aigu</strong>. Le la du diapason : <strong>440 Hz</strong>, soit une période de 2,27 ms.</p>
+
+<p>Un son se caractérise aussi par son <strong>niveau d’intensité acoustique</strong>, en décibels : au-delà de <strong>85 dB</strong>, il met l’oreille en danger.</p>
+
+</blockquote>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="2DE-07-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP 2DE-07 · La lumière dans la fibre</span></a></div></nav>
+<p class="pied">TP commun de physique-chimie, toutes spécialités. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

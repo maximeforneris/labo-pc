@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-09 · La puissance en alternatif</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-09-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-08-ELEVE.html" rel="prev" title="TP SIM-08 · Le réseau triphasé" aria-label="TP SIM-08 · Le réseau triphasé">&lsaquo;</a><a class="fleche" href="SIM-10-ELEVE.html" rel="next" title="TP SIM-10 · Le champ d'une bobine" aria-label="TP SIM-10 · Le champ d'une bobine">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-09-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">1re ou Tle Bac Pro · MELEC, CIEL, OBM, MMCM, MVTR · TP sur simulation SIM-09</p>
+    <h1>La puissance en alternatif<span>puissance active et facteur de puissance</span></h1>
+  </div>
+  <p class="accroche">En alternatif, la puissance consommée par un appareil vaut-elle toujours U × I ?</p>
+  <p class="contenu">2 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>La tension du secteur, 230 V et 50 Hz, et Umax = U × √2</b><span class="car">l'oscilloscope donne des valeurs maximales, il faut revenir aux valeurs efficaces</span></li><li><b>La puissance en continu, P = U × I</b><span class="car">le TP cherche jusqu'où elle reste vraie en alternatif</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-l-oscilloscope">Protocole A · l’oscilloscope</a><a href="#protocole-b-les-appareils-de-mesure">Protocole B · les appareils de mesure</a></div></nav>
+<p><strong>Sujet.</strong> Au garage, un vieux tube fluorescent de 36 W éclaire l’établi. Au salon, une lampe à incandescence de 60 W éclaire la table. Mesuré au multimètre, le courant du tube est pourtant <strong>plus grand</strong> que celui de la lampe.</p>
+
+<p><strong>Problématique : en alternatif, la puissance consommée par un appareil vaut-elle toujours U × I ?</strong></p>
+
+<p><strong>La simulation.</strong> <a href="../html/puissance-alternatif.html">Ouvrir « La puissance en alternatif »</a> : le fichier puissance-alternatif.html, sur l’ENT ou la clé du professeur.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p><strong>a)</strong> Compléter les grandeurs du secteur. On rappelle que Umax = U × √2 et T = 1 ÷ f.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Valeur efficace U</th>
+
+<th>Valeur maximale Umax</th>
+
+<th>Fréquence f</th>
+
+<th>Période T</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>230 V</td>
+
+<td>……………… V</td>
+
+<td>50 Hz</td>
+
+<td>……………… ms</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Voici l’écran de l’oscilloscope de la simulation, <strong>lampe de 60 W</strong> en marche. La voie M affiche le produit p = u × i, calculé à chaque instant.</p>
+
+<figure><img src="img/SIM-09-ELEVE/fig1-ecran-lampe.png" alt="" /></figure>
+
+<p><strong>b)</strong> Relever les valeurs extrêmes des trois courbes : divisions, puis valeur.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>La courbe</th>
+
+<th>u, en haut</th>
+
+<th>i, en haut</th>
+
+<th>p, en haut</th>
+
+<th>p, en bas</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Divisions</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>Calibre</td>
+
+<td>100 V/div</td>
+
+<td>0,2 A/div</td>
+
+<td>50 W/div</td>
+
+<td>50 W/div</td>
+
+</tr>
+
+<tr>
+
+<td>Valeur</td>
+
+<td>Umax = ……… V</td>
+
+<td>Imax = ……… A</td>
+
+<td>pmax = ……… W</td>
+
+<td>pmin = ……… W</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>La puissance que l’appareil consomme, la <strong>puissance active</strong>, est la <strong>moyenne</strong> de p.</p>
+
+<p><strong>c)</strong> Calculer la moyenne (pmax + pmin) ÷ 2 et la comparer aux 60 W de la lampe.</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. Une partie de la classe prend A, l’autre prend B, et on compare à la fin.</p>
+
+<figure><img src="img/SIM-09-ELEVE/fig2-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · l’oscilloscope.</strong> Une sonde prend la tension u, une pince prend l’intensité i, et l’oscilloscope calcule leur produit p = u × i. On lit les maxima et le décalage Δt entre u et i.</p>
+
+<p><strong>Protocole B · les appareils de mesure.</strong> Un voltmètre, un ampèremètre et un wattmètre donnent directement U, I et la puissance P consommée. On calcule ensuite U × I.</p>
+
+<p><strong>d)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on lit</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Il faut calculer U et I</td>
+
+<td>oui · non</td>
+
+<td>oui · non</td>
+
+</tr>
+
+<tr>
+
+<td>On voit le décalage entre u et i</td>
+
+<td>oui · non</td>
+
+<td>oui · non</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant d’ouvrir la simulation.</p>
+
+<p><strong>e)</strong> Quel protocole prenez-vous ? Justifier en une phrase.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>f)</strong> Avant de mesurer : pour le tube fluorescent, que prévoyez-vous ? Entourer.</p>
+
+<p><strong>P = U × I · P plus petit que U × I · P plus grand que U × I</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<p><strong>Avant de commencer.</strong> Ouvrir la simulation, cliquer sur « Mettre en marche », puis sur l’onglet de votre protocole. L’appareil se choisit dans « L’appareil branché ».</p>
+
+<h2 id="protocole-a-l-oscilloscope">Protocole A · l’oscilloscope</h2>
+
+<ol type="1">
+
+<li>Choisir « Lampe à incandescence » et garder les réglages de l’écran.</li>
+
+<li>Placer le « Curseur 1 » sur le sommet de u, de i, de p, puis sur le creux de p : relever chaque valeur dans le tableau des curseurs, sous l’écran.</li>
+
+<li>Laisser le « Curseur 1 » à 0 ms. Placer le « Curseur 2 » là où i passe par zéro en montant : Δt se lit à la ligne « Écart 2 − 1 ».</li>
+
+<li>Recommencer avec « Ventilateur », puis « Tube fluorescent ». Adapter les calibres.</li>
+
+</ol>
+
+<h2 id="protocole-b-les-appareils-de-mesure">Protocole B · les appareils de mesure</h2>
+
+<ol type="1">
+
+<li>Choisir « Radiateur », lire U, I et P, puis cliquer sur « Garder cette mesure dans le tableau ».</li>
+
+<li>Recommencer avec la lampe, le ventilateur et le tube fluorescent.</li>
+
+</ol>
+
+<p>Le décalage Δt se convertit en angle, le déphasage φ = 360° × Δt ÷ T, avec T = 20 ms.</p>
+
+<p><strong>g)</strong> Protocole A seulement : relever les curseurs, puis calculer φ et cos φ.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 12%" />
+
+<col style="width: 12%" />
+
+<col style="width: 12%" />
+
+<col style="width: 12%" />
+
+<col style="width: 12%" />
+
+<col style="width: 12%" />
+
+<col style="width: 12%" />
+
+<col style="width: 12%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>L’appareil</th>
+
+<th>Umax (V)</th>
+
+<th>Imax (A)</th>
+
+<th>pmax (W)</th>
+
+<th>pmin (W)</th>
+
+<th>Δt (ms)</th>
+
+<th>φ (°)</th>
+
+<th>cos φ</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Lampe</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Ventilateur</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Tube</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>En A, U = Umax ÷ √2, I = Imax ÷ √2 et P = (pmax + pmin) ÷ 2. En B, U, I et P se lisent.</p>
+
+<p><strong>h)</strong> Compléter le tableau commun aux deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>L’appareil</th>
+
+<th>U (V)</th>
+
+<th>I (A)</th>
+
+<th>P (W)</th>
+
+<th>U × I (VA)</th>
+
+<th>P ÷ (U × I)</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Radiateur, en B</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Lampe</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Ventilateur</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Tube fluorescent</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Une consigne de schéma, pour finir la partie 3.</p>
+
+<p><strong>i)</strong> Schématiser le circuit : le secteur, l’appareil, l’ampèremètre et le voltmètre.</p>
+
+<p>En protocole B, ajouter le wattmètre. L’appareil se dessine comme un rectangle.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>j)</strong> Pour quels appareils P = U × I ? Votre prévision f est-elle confirmée ?</p>
+
+<p><strong>k)</strong> Avec un groupe de l’autre protocole, comparer cos φ (A) et P ÷ (U × I) (B).</p>
+
+<p><strong>l)</strong> Au laboratoire, qu’imposerait un vrai montage que la simulation ne montre pas ?</p>
+
+<p><strong>m)</strong> Répondre à la problématique en deux phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour tout appareil branché sur le secteur :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>La <strong>puissance active</strong>, celle que l’appareil consomme, est la <strong>moyenne</strong> de p = u × i.</p>
+
+<p>En général, u et i sont <strong>déphasées</strong> d’un angle φ : <strong>P = U × I × cos φ</strong>, avec U et I efficaces. Le <strong>facteur de puissance</strong> est cos φ ; le <strong>wattmètre</strong> mesure P.</p>
+
+<p>Pour un appareil <strong>résistif</strong>, radiateur ou lampe à incandescence, φ = 0 et <strong>P = U × I</strong>.</p>
+
+</blockquote>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-08-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-08 · Le réseau triphasé</span></a><a class="ap" href="SIM-10-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-10 · Le champ d'une bobine</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

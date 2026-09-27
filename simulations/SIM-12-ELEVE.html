@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-12 · Transmettre l'information</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-12-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-11-ELEVE.html" rel="prev" title="TP SIM-11 · L'induction" aria-label="TP SIM-11 · L'induction">&lsaquo;</a><a class="fleche" href="SIM-13-ELEVE.html" rel="next" title="TP SIM-13 · L'image nette" aria-label="TP SIM-13 · L'image nette">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-12-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">Tle Bac Pro · MELEC, CIEL, OBM, CTRM · TP sur simulation SIM-12</p>
+    <h1>Transmettre l'information<span>signaux</span></h1>
+  </div>
+  <p class="accroche">Pourquoi Internet arrive-t-il par une fibre de verre, et pas par de la lumière à travers l'air ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>La réfraction et la réflexion totale, vues en seconde : la fibre repose sur la réflexion totale</b></li><li><b>Lire une grandeur en fonction du temps sur un graphique : les bits se lisent sur la lumière émise</b></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-la-lumiere-dans-le-verre">Protocole A · la lumière dans le verre</a><a href="#protocole-b-envoyer-un-message">Protocole B · envoyer un message</a></div></nav>
+<p><strong>Sujet.</strong> La box reçoit Internet par une fibre optique, un fil de verre plus fin qu’un cheveu, long de plusieurs kilomètres. La télécommande, elle, envoie ses ordres par une lumière infrarouge, à travers l’air du salon.</p>
+
+<p><strong>Problématique : pourquoi Internet arrive-t-il par une fibre de verre, et pas par de la lumière à travers l’air ?</strong></p>
+
+<p><strong>Les simulations.</strong> A : <a href="https://phet.colorado.edu/sims/html/bending-light/latest/bending-light_all.html?locale=fr&amp;screens=1&amp;yotta=false">« Déviation de la lumière », écran Intro</a>, sur phet.colorado.edu. Sans réseau : <a href="../html/phet/bending-light_fr.html?screens=1&amp;yotta=false">sa copie</a>, le fichier phet/bending-light_fr.html. B : <a href="../html/transmission.html">Ouvrir « Transmettre un message »</a> : transmission.html, sur l’ENT ou la clé du professeur.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p><strong>a)</strong> Compléter le tableau : deux systèmes de transmission de la maison.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>La télécommande</th>
+
+<th>La box et sa fibre</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>L’émetteur</td>
+
+<td>une DEL infrarouge</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Le milieu de propagation</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Le récepteur</td>
+
+<td>……………………………</td>
+
+<td>une photodiode</td>
+
+</tr>
+
+<tr>
+
+<td>La propagation, entourer</td>
+
+<td>libre · guidée</td>
+
+<td>libre · guidée</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Avant d’être envoyé, un message est <strong>codé</strong> : chaque caractère devient <strong>8 bits</strong>, des 0 et des 1, selon la table ASCII. La DEL s’allume pour un 1 et s’éteint pour un 0. Extrait de la table : <strong>A</strong> 01000001 · <strong>B</strong> 01000010 · <strong>C</strong> 01000011 · <strong>K</strong> 01001011 · <strong>O</strong> 01001111 · <strong>S</strong> 01010011.</p>
+
+<figure><img src="img/SIM-12-ELEVE/fig3-chronogramme.png" alt="" /></figure>
+
+<p><em>Capture de la simulation « Transmettre un message » : le message SOS, envoyé à 2 m.</em></p>
+
+<p><strong>b)</strong> Sur la lumière émise, lire les 8 bits du premier caractère. Vérifier dans la table.</p>
+
+<p>Les 8 bits lus : ……………………………… · ils codent la lettre ………</p>
+
+<p><strong>c)</strong> Lire la durée d’un bit. En déduire le débit, puis la durée d’envoi de SOS, 24 bits.</p>
+
+<p>Durée d’un bit : ……… s · débit = 1 ÷ durée d’un bit = ……… bit/s · SOS : ……… s</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question, chacun sur sa simulation. Une partie de la classe prend A, l’autre prend B, et on compare à la fin.</p>
+
+<figure><img src="img/SIM-12-ELEVE/fig1-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · la lumière dans le verre.</strong> Un laser envoie un rayon du verre vers l’air. On change l’angle d’incidence et on cherche quand la lumière ne sort plus : c’est ce qui la garde dans une fibre.</p>
+
+<p><strong>Protocole B · envoyer un message.</strong> Une DEL envoie SOS à un récepteur, à travers l’air ou au bout d’une fibre. On éloigne le récepteur, ou on allonge la fibre, jusqu’aux premiers bits faux.</p>
+
+<p><strong>d)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on règle</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’on mesure</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Il répond à, entourer</td>
+
+<td>pourquoi · jusqu’où</td>
+
+<td>pourquoi · jusqu’où</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant d’ouvrir la simulation.</p>
+
+<p><strong>e)</strong> Quel protocole prenez-vous ? Justifier en une phrase.<br />
+
+Le professeur peut imposer celui qui reste disponible.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>f)</strong> Hypothèse : jusqu’où le message arrive-t-il sans erreur ? Entourer.</p>
+
+<p>À l’air libre, salle éclairée : <strong>50 cm · 5 m · 500 m · 5 km</strong></p>
+
+<p>Dans une fibre de verre : <strong>50 cm · 5 m · 500 m · 5 km</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<p><strong>Avant de commencer.</strong> Groupe A : ouvrir « Déviation de la lumière », écran <strong>Intro</strong>, et laisser <strong>Rayon</strong> coché. Groupe B : ouvrir transmission.html et garder le message <strong>SOS</strong>.</p>
+
+<h2 id="protocole-a-la-lumiere-dans-le-verre">Protocole A · la lumière dans le verre</h2>
+
+<ol type="1">
+
+<li>En haut, « Matériau : » <strong>Verre</strong> ; en bas, <strong>Air</strong>. Cocher <strong>Normale</strong>. Allumer le laser par son bouton rouge.</li>
+
+<li>Sortir le rapporteur de la boîte en bas à gauche ; poser son centre là où le rayon touche la surface.</li>
+
+<li>Tourner le laser pour i = 20°, 30° puis 40°. Relever chaque fois l’angle de réfraction r.</li>
+
+<li>Augmenter i degré par degré jusqu’à ce que plus rien ne sorte dans l’air : c’est l’angle limite.</li>
+
+<li>Une vraie fibre a un cœur de verre entouré d’une gaine. En haut, <strong>Verre</strong> puis deux clics sur la flèche de gauche d’« Indice de réfraction (n) » : 1.48, le cœur. En bas, <strong>Verre</strong> puis quatre clics : 1.46, la gaine. Chercher l’angle limite.</li>
+
+</ol>
+
+<figure><img src="img/SIM-12-ELEVE/fig2-phet-intro.png" alt="" /></figure>
+
+<p><em>Capture de la simulation « Déviation de la lumière », PhET Interactive Simulations, University of Colorado Boulder, CC BY-NC 4.0.</em></p>
+
+<p><strong>g)</strong> Relever les angles de réfraction, puis les deux angles limites.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Angle d’incidence i (°)</th>
+
+<th>20</th>
+
+<th>30</th>
+
+<th>40</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Angle de réfraction r (°)</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Angle limite, verre et air : ……… ° · cœur et gaine : ……… °</p>
+
+<h2 id="protocole-b-envoyer-un-message">Protocole B · envoyer un message</h2>
+
+<ol type="1">
+
+<li>Liaison <strong>À l’air libre</strong>, Lumière dans la pièce <strong>Salle éclairée</strong>, Débit de la DEL <strong>10 bit/s</strong>.</li>
+
+<li>Distance d = 1 m : <strong>Envoyer le message</strong>. Relever la durée d’envoi.</li>
+
+<li>Augmenter d de 1 m en 1 m et envoyer deux fois à chaque distance. La <strong>portée</strong> est la plus grande distance sans aucun bit faux : relever aussi le signal à cette distance.</li>
+
+<li>Recommencer en <strong>Obscurité</strong>.</li>
+
+<li><strong>Fibre plastique</strong> : augmenter L de 20 m en 20 m. <strong>Fibre de verre</strong> : de 1 km en 1 km. Chercher chaque portée.</li>
+
+</ol>
+
+<p><strong>h)</strong> Relever la durée d’envoi, puis les portées et le signal à la portée.</p>
+
+<p>Durée d’envoi de SOS à 10 bit/s : ……… s</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>Liaison</th>
+
+<th>air, salle éclairée</th>
+
+<th>air, obscurité</th>
+
+<th>fibre plastique</th>
+
+<th>fibre de verre</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Portée</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Signal à la portée (mV)</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Une consigne de schéma, pour les deux groupes.</p>
+
+<p><strong>i)</strong> Une fibre fait un coude. Dessiner le trajet d’un rayon qui y entre.<br />
+
+Marquer d’une croix chaque réflexion totale.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>j)</strong> Groupe A : calculer l’angle limite ℓ, sin ℓ = n<sub>air</sub> ÷ n<sub>verre</sub> = 1,00 ÷ 1,50.<br />
+
+Groupe B : calculer la durée d’envoi de SOS à 10 bit/s. Comparer à la mesure.</p>
+
+<p><strong>k)</strong> Échanger avec un groupe de l’autre protocole : pourquoi la lumière reste-t-elle dans<br />
+
+la fibre, combien de fois plus loin porte-t-elle ? L’hypothèse f tient-elle ?</p>
+
+<p><strong>l)</strong> Citer ce qu’un vrai montage montrerait, et que la simulation cache.</p>
+
+<p><strong>m)</strong> Répondre à la problématique en deux phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour toute transmission par la lumière :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Transmettre une information, c’est <strong>émettre</strong> une onde, la laisser <strong>se propager</strong>, puis la <strong>recevoir</strong>. Le message est d’abord codé en bits ; le <strong>débit</strong> est le nombre de bits envoyés par seconde.</p>
+
+<p>À l’air libre, la propagation est <strong>libre</strong> : la lumière s’étale, celle de la pièce la brouille, et le message ne porte qu’à quelques mètres. Dans une fibre, elle est <strong>guidée</strong> : la lumière frappe la paroi au-delà de l’<strong>angle limite</strong>, elle est totalement réfléchie et reste piégée. Le message porte à des kilomètres.</p>
+
+</blockquote>
+
+<h1 id="pour-aller-plus-loin-une-photo-par-la-fibre">Pour aller plus loin · une photo par la fibre</h1>
+
+<p>Une photo de téléphone pèse environ 2 Mo, soit 16 000 000 bits. Combien de temps faut-il pour l’envoyer à 10 bit/s ? Et par la fibre de la box, à 1 000 000 000 bit/s ?</p>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-11-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-11 · L'induction</span></a><a class="ap" href="SIM-13-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-13 · L'image nette</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

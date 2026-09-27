@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-14 · Un son à travers une paroi</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-14-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-13-ELEVE.html" rel="prev" title="TP SIM-13 · L'image nette" aria-label="TP SIM-13 · L'image nette">&lsaquo;</a><a class="fleche" href="SIM-15-ELEVE.html" rel="next" title="TP SIM-15 · Diluer un acide" aria-label="TP SIM-15 · Diluer un acide">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-14-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">Tle Bac Pro · OBM · TP sur simulation SIM-14</p>
+    <h1>Un son à travers une paroi<span>atténuer un son</span></h1>
+  </div>
+  <p class="accroche">Qu'est-ce qui fait qu'une plaque arrête bien le son : son épaisseur, ou sa matière ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>Le niveau d'intensité acoustique, en décibels : le sonomètre le mesure avec et sans plaque</b></li><li><b>La touche log de la calculatrice : l'indice d'affaiblissement se calcule avec 20 × log</b></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-une-matiere-cinq-epaisseurs">Protocole A · une matière, cinq épaisseurs</a><a href="#protocole-b-cinq-matieres-une-epaisseur">Protocole B · cinq matières, une épaisseur</a></div></nav>
+<p><strong>Sujet.</strong> Dans la chambre, on entend la musique du voisin à travers la cloison, une plaque de plâtre de 12,5 mm. Pour dormir au calme, vaut-il mieux une plaque plus épaisse, ou une autre matière ?</p>
+
+<p><strong>Problématique : qu’est-ce qui fait qu’une plaque arrête bien le son : son épaisseur, ou sa matière ?</strong></p>
+
+<p><strong>La simulation.</strong> <a href="../html/attenuation-son.html">Ouvrir « Un son à travers une paroi »</a> : le fichier attenuation-son.html, sur l’ENT ou la clé du professeur.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p>Un haut-parleur, dans un caisson, envoie un son par une ouverture. On la ferme avec une plaque. Le son qui arrive sur la plaque est le son <strong>incident</strong> ; celui qui passe est le son <strong>transmis</strong>. Deux grandeurs disent ce que la plaque arrête :</p>
+
+<ul>
+
+<li>l’<strong>indice d’affaiblissement</strong> R, en décibels : <strong>R = L<sub>sans</sub> − L<sub>avec</sub></strong>, les niveaux sans et avec la plaque ;</li>
+
+<li>le <strong>coefficient d’atténuation</strong>, sans unité : <strong>p<sub>incidente</sub> ÷ p<sub>transmise</sub></strong>, le rapport des pressions acoustiques. Relation fournie : <strong>R = 20 × log(coefficient)</strong>.</li>
+
+</ul>
+
+<p><strong>a)</strong> Calculer R. Le premier de chaque ligne est fait en exemple.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>85,0 − 60,0 = <strong>25,0 dB</strong></th>
+
+<th>88,5 − 70,0 = ……… dB</th>
+
+<th>90,2 − 52,7 = ……… dB</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td><strong>coefficient 10 : R = 20 dB</strong></td>
+
+<td>coefficient 100 : R = ……… dB</td>
+
+<td>coefficient 30 : R = ……… dB</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Voici la simulation, capturée sans plaque, pour un son de 500 Hz.</p>
+
+<figure><img src="img/SIM-14-ELEVE/fig2-simulation.png" alt="" /></figure>
+
+<p><strong>b)</strong> Relever le niveau au sonomètre, puis l’amplitude de la pression au micro.</p>
+
+<p>Niveau : ……… dB · amplitude : ……… divisions × ……… Pa = ……… Pa</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. Une partie de la classe prend A, l’autre prend B, et on compare à la fin.</p>
+
+<figure><img src="img/SIM-14-ELEVE/fig1-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · une matière, cinq épaisseurs.</strong> Des plaques de verre de 3 à 12 mm, l’une après l’autre. Seule l’épaisseur change.</p>
+
+<p><strong>Protocole B · cinq matières, une épaisseur.</strong> Acier, verre, plâtre, bois et polystyrène, tous de 10 mm. Seule la matière change.</p>
+
+<p><strong>c)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on change</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’on garde fixe</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Il permet de classer des matières</td>
+
+<td>oui · non</td>
+
+<td>oui · non</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant d’ouvrir la simulation.</p>
+
+<p><strong>d)</strong> Quel protocole prenez-vous ? Justifier en une phrase.<br />
+
+Le professeur peut imposer celui qui reste disponible.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>e)</strong> Deux hypothèses, avant toute mesure. Entourer.</p>
+
+<p>Épaisseur doublée : <strong>R double · R gagne quelques dB · R ne change pas</strong></p>
+
+<p>Arrête le mieux : <strong>polystyrène · bois · plâtre · verre · acier</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<p><strong>Avant de commencer.</strong> Ouvrir attenuation-son.html. Fréquence du son <strong>500 Hz</strong>, distance <strong>1,0 m</strong>. Garder chaque mesure avec <strong>Garder cette mesure dans le tableau</strong>.</p>
+
+<h2 id="protocole-a-une-matiere-cinq-epaisseurs">Protocole A · une matière, cinq épaisseurs</h2>
+
+<ol type="1">
+
+<li>Plaque <strong>Aucune</strong> : relever le niveau au sonomètre.</li>
+
+<li>Plaque <strong>Verre</strong>, épaisseur 3 mm : relever le niveau. Recommencer à 4, 6, 8 et 12 mm.</li>
+
+<li>Pour 4 mm : choisir la sensibilité qui fait tenir la courbe dans l’écran, puis relever l’amplitude. La relever aussi sans plaque.</li>
+
+</ol>
+
+<h2 id="protocole-b-cinq-matieres-une-epaisseur">Protocole B · cinq matières, une épaisseur</h2>
+
+<ol type="1">
+
+<li>Plaque <strong>Aucune</strong> : relever le niveau au sonomètre.</li>
+
+<li><strong>Acier</strong>, <strong>Verre</strong>, <strong>Plâtre</strong>, <strong>Bois</strong>, <strong>Polystyrène</strong>, chacun réglé à 10 mm : relever le niveau.</li>
+
+<li>Pour le plâtre : choisir la sensibilité qui fait tenir la courbe dans l’écran, puis relever l’amplitude. La relever aussi sans plaque.</li>
+
+</ol>
+
+<p>La masse d’un mètre carré de plaque est sa <strong>masse surfacique</strong> : m<sub>s</sub> = ρ × e, avec e en mètres. Masses volumiques en kg/m³ : acier 7 800 · verre 2 500 · plâtre 720 · bois 600 · polystyrène 20.</p>
+
+<p><strong>f)</strong> Compléter le tableau pour votre protocole.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>La plaque et son épaisseur</th>
+
+<th>m<sub>s</sub> (kg/m²)</th>
+
+<th>L (dB)</th>
+
+<th>R = L<sub>sans</sub> − L (dB)</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>aucune</td>
+
+<td>0</td>
+
+<td></td>
+
+<td>0</td>
+
+</tr>
+
+<tr>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le tableau se lit mieux en graphique.</p>
+
+<p><strong>g)</strong> Placer vos points : R en fonction de la masse surfacique m<sub>s</sub>.</p>
+
+<p>Un point par plaque, puis une courbe à main levée qui passe au plus près des points.</p>
+
+<figure><img src="img/SIM-14-ELEVE/fig3-quadrillage.png" alt="" /></figure>
+
+<p><strong>h)</strong> Pour une seule plaque, à l’oscilloscope : calculer le coefficient d’atténuation,<br />
+
+puis R = 20 × log(coefficient).</p>
+
+<p>p<sub>sans</sub> = ……… Pa · p<sub>avec</sub> = ……… Pa · coefficient = ……… · R = ……… dB</p>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>i)</strong> Comparer le R de la question h à celui du sonomètre pour la même plaque.</p>
+
+<p><strong>j)</strong> Placer sur votre graphe les points d’un groupe de l’autre protocole.<br />
+
+Tombent-ils sur la même courbe ? L’hypothèse e tient-elle ?</p>
+
+<p><strong>k)</strong> Citer ce qu’une vraie cloison ferait apparaître, et que la simulation cache.</p>
+
+<p><strong>l)</strong> Répondre à la problématique en deux phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour toute paroi pleine :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Le <strong>coefficient d’atténuation</strong> d’une plaque est le rapport p<sub>incidente</sub> ÷ p<sub>transmise</sub>. L’<strong>indice d’affaiblissement</strong> R est la différence des niveaux sans et avec la plaque, en décibels : <strong>R = 20 × log(coefficient)</strong>.</p>
+
+<p>Une plaque pleine arrête d’autant mieux le son qu’elle est <strong>lourde</strong> : R augmente avec la <strong>masse surfacique</strong> m<sub>s</sub> = ρ × e. Doubler l’épaisseur ou prendre une matière deux fois plus dense fait gagner environ <strong>6 dB</strong>, pas deux fois plus.</p>
+
+</blockquote>
+
+<h1 id="pour-aller-plus-loin-les-basses-du-voisin">Pour aller plus loin · les basses du voisin</h1>
+
+<p>Refaire la mesure du verre de 4 mm à 250 Hz, puis à 1 000 Hz. Pourquoi entend-on surtout les sons graves de la musique du voisin ?</p>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-13-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-13 · L'image nette</span></a><a class="ap" href="SIM-15-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-15 · Diluer un acide</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le vérin hydraulique</title>
+<meta name="description" content="Deux pistons de tailles différentes sont reliés par un tuyau plein d&#x27;huile. Appuie sur le petit, lis le manomètre, et cherche la force qui soulève la charge posée sur le grand.">
+<style>
+/* Simulations des TP · feuille commune, inlinee dans chaque page par assembler-simulations.py.
+   Palette du kit web (kit.css) : papier, graphite, un seul accent. Polices du systeme : la page
+   s'ouvre sans reseau, depuis une cle ou le poste de la salle. */
+:root{
+  --fond:#e9e7e3; --carte:#fbfaf9; --carte2:#f2f0ec; --encre:#191a1c; --encre2:#5d5b57;
+  --trait:#c9c5bf; --trait2:#dedbd6; --accent:#2c6da6; --accent-doux:#dfe8f1;
+  --juste:#2f7a55; --juste-doux:#e2efe7; --faux:#ab432a; --faux-doux:#f5e3dd; --tiede:#b8801f;
+  --scene:#f6f5f2; --ombre:0 1px 2px rgba(25,26,28,.05),0 10px 26px rgba(25,26,28,.07); --r:6px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fond:#131315; --carte:#1c1d20; --carte2:#232427; --encre:#eceae6; --encre2:#a6a49f;
+    --trait:#4a4a4d; --trait2:#333437; --accent:#63a6dd; --accent-doux:#1d2a36;
+    --juste:#5cc08d; --juste-doux:#17281f; --faux:#ef7a58; --faux-doux:#34201a; --tiede:#dfae4e;
+    --scene:#18191b; --ombre:0 1px 2px rgba(0,0,0,.5),0 12px 32px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --fond:#131315; --carte:#1c1d20; --carte2:#232427; --encre:#eceae6; --encre2:#a6a49f;
+  --trait:#4a4a4d; --trait2:#333437; --accent:#63a6dd; --accent-doux:#1d2a36;
+  --juste:#5cc08d; --juste-doux:#17281f; --faux:#ef7a58; --faux-doux:#34201a; --tiede:#dfae4e;
+  --scene:#18191b; --ombre:0 1px 2px rgba(0,0,0,.5),0 12px 32px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fond);color:var(--encre);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial,sans-serif;font-size:16px;line-height:1.5}
+.page{max-width:1120px;margin:0 auto;padding:18px 16px 48px}
+.mono,.afficheur .val,.curseur .val,table.releve td{font-family:ui-monospace,"Cascadia Mono",Consolas,"Roboto Mono",monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3{line-height:1.2;margin:0;text-wrap:balance}
+sub,sup{font-size:.72em;line-height:0}
+
+/* En-tete */
+.tete{padding:6px 0 16px;border-bottom:1px solid var(--trait);margin-bottom:16px}
+.surtitre{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--encre2);font-weight:600}
+.tete h1{font-size:clamp(1.45rem,4vw,2rem);margin:4px 0 6px;font-weight:750}
+.chapeau{margin:0;color:var(--encre2);max-width:70ch}
+
+/* Onglets : un par protocole ou par ecran */
+.onglets{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+.onglets button{font:inherit;font-weight:650;font-size:.95rem;padding:9px 14px;border-radius:var(--r);
+  border:1px solid var(--trait);background:var(--carte);color:var(--encre2);cursor:pointer}
+.onglets button[aria-selected="true"]{background:var(--encre);border-color:var(--encre);color:var(--carte)}
+.onglets button:not([aria-selected="true"]):hover{border-color:var(--encre2);color:var(--encre)}
+.vue[hidden]{display:none}
+
+/* Mise en page : la scene a gauche, les commandes a droite ; une colonne sous 820 px */
+.plan{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.plan{grid-template-columns:1fr}}
+.carte{background:var(--carte);border:1px solid var(--trait2);border-radius:var(--r);box-shadow:var(--ombre);padding:16px;margin-bottom:16px}
+.carte > h2{font-size:1.08rem;margin-bottom:10px;font-weight:700}
+.carte > h2 .num{color:var(--accent);margin-right:.35em}
+.consigne{color:var(--encre2);margin:0 0 12px;font-size:.95rem}
+.scene{background:var(--scene);border:1px solid var(--trait2);border-radius:var(--r);overflow:hidden;position:relative}
+.scene svg,.scene canvas{display:block;width:100%;height:auto}
+.legende{font-size:.82rem;color:var(--encre2);margin-top:6px}
+
+/* Commandes */
+.commandes{display:flex;flex-direction:column;gap:14px}
+.curseur label{display:flex;justify-content:space-between;gap:8px;font-size:.9rem;font-weight:600;margin-bottom:2px}
+.curseur .val{font-weight:600;color:var(--encre)}
+.curseur input[type=range]{width:100%;accent-color:var(--accent);height:28px;margin:0}
+.curseur .bornes{display:flex;justify-content:space-between;font-size:.75rem;color:var(--encre2)}
+.choix .titre{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.choix .boutons{display:flex;flex-wrap:wrap;gap:6px}
+.choix button,.bouton{font:inherit;font-size:.9rem;font-weight:600;padding:8px 12px;border-radius:var(--r);
+  border:1px solid var(--trait);background:var(--carte);color:var(--encre);cursor:pointer;min-height:40px}
+.choix button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.bouton:hover,.choix button:hover{border-color:var(--encre2)}
+.bouton.principal{background:var(--encre);border-color:var(--encre);color:var(--carte)}
+.bouton:disabled{opacity:.45;cursor:not-allowed}
+.rangee{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* Afficheurs : ce que lit un instrument */
+.afficheurs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.afficheur{border:1px solid var(--trait);border-radius:var(--r);background:var(--carte2);padding:8px 10px}
+.afficheur .nom{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--encre2);font-weight:650}
+.afficheur .val{font-size:1.45rem;font-weight:650;white-space:nowrap}
+.afficheur .unite{font-size:.95rem;color:var(--encre2);margin-left:.25em}
+.afficheur .note{font-size:.75rem;color:var(--encre2)}
+
+/* Releve de mesures et graphe */
+.releve-zone{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}
+@media (max-width:820px){.releve-zone{grid-template-columns:1fr}}
+table.releve{border-collapse:collapse;width:100%;font-size:.92rem}
+table.releve th,table.releve td{border:1px solid var(--trait);padding:5px 8px;text-align:center}
+table.releve th{background:var(--carte2);font-weight:650;font-size:.82rem}
+table.releve tr.vide td{color:var(--encre2);font-style:italic}
+.graphe{background:var(--carte);border:1px solid var(--trait2);border-radius:var(--r)}
+.graphe canvas{display:block;width:100%;height:auto}
+
+/* Defi : l'eleve propose une valeur, la page dit juste ou pas encore, jamais la reponse */
+.defi{border:1px dashed var(--trait);border-radius:var(--r);padding:12px 14px;background:var(--carte2)}
+.defi p{margin:0 0 8px}
+.defi .saisie{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.defi input{font:inherit;width:9em;padding:7px 9px;border-radius:var(--r);border:1px solid var(--trait);background:var(--carte);color:var(--encre)}
+.defi .retour{margin-top:8px;font-weight:600;min-height:1.4em}
+.defi .retour.juste{color:var(--juste)}
+.defi .retour.faux{color:var(--faux)}
+.defi .methode{font-weight:400;color:var(--encre2)}
+
+/* Encadres */
+.note-modele{margin-top:6px}
+details.modele{border-top:1px solid var(--trait);padding-top:10px;margin-top:8px}
+details.modele summary{cursor:pointer;font-weight:650}
+details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-size:.92rem}
+.alerte{border-left:4px solid var(--tiede);background:var(--carte2);padding:8px 12px;border-radius:0 var(--r) var(--r) 0;font-size:.92rem}
+.pied{margin-top:24px;padding-top:10px;border-top:1px solid var(--trait);font-size:.8rem;color:var(--encre2)}
+
+@media print{
+  body{background:#fff}
+  .onglets,.commandes .bouton,.defi{display:none}
+  .carte{box-shadow:none;break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+</style>
+<script>
+/* Simulations des TP · briques communes, inlinees dans l'en-tete de chaque page.
+   Rien ici ne touche au DOM au chargement : une simulation appelle ce dont elle a besoin.
+   Aucune requete, aucun stockage : la page fonctionne hors ligne et n'enregistre rien. */
+"use strict";
+var Sim = (function () {
+
+  /* Nombres a la francaise : virgule, espace fine insecable entre les milliers. */
+  function fr(x, dec) {
+    if (x === null || x === undefined || !isFinite(x)) return "—";
+    if (dec === undefined) dec = 2;
+    var s = Math.abs(x).toFixed(dec).split(".");
+    s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return (x < 0 && Number(x.toFixed(dec)) !== 0 ? "−" : "") + s.join(",");
+  }
+  /* Lecture d'une saisie d'eleve : virgule ou point, espaces ignores. */
+  function lire(txt) {
+    if (txt === null || txt === undefined) return NaN;
+    var t = String(txt).replace(/\s| | /g, "").replace(",", ".").replace("−", "-");
+    return t === "" ? NaN : Number(t);
+  }
+  function el(tag, attrs, enfants) {
+    var n = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "texte") n.textContent = attrs[k];
+      else if (k === "html") n.innerHTML = attrs[k];
+      else if (k === "classe") n.className = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    }
+    (enfants || []).forEach(function (e) { if (e) n.appendChild(e); });
+    return n;
+  }
+  function $(sel) { return typeof sel === "string" ? document.querySelector(sel) : sel; }
+  function borne(x, a, b) { return Math.max(a, Math.min(b, x)); }
+
+  /* Un instrument ne donne jamais la valeur exacte : bruit gaussien relatif, puis resolution. */
+  function gauss() { var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function mesure(vraie, opts) {
+    opts = opts || {};
+    var x = vraie * (1 + (opts.relatif || 0) * gauss()) + (opts.absolu || 0) * gauss();
+    if (opts.resolution) x = Math.round(x / opts.resolution) * opts.resolution;
+    return x;
+  }
+
+  /* Onglets : boutons [data-vue="id"] qui montrent la section #id. */
+  function onglets(nav, surChange) {
+    nav = $(nav);
+    var boutons = Array.prototype.slice.call(nav.querySelectorAll("button[data-vue]"));
+    nav.setAttribute("role", "tablist");
+    function montrer(id) {
+      boutons.forEach(function (b) {
+        var actif = b.getAttribute("data-vue") === id;
+        b.setAttribute("aria-selected", actif ? "true" : "false");
+        b.setAttribute("role", "tab");
+        var v = document.getElementById(b.getAttribute("data-vue"));
+        if (v) v.hidden = !actif;
+      });
+      if (surChange) surChange(id);
+    }
+    boutons.forEach(function (b) { b.addEventListener("click", function () { montrer(b.getAttribute("data-vue")); }); });
+    montrer(boutons[0].getAttribute("data-vue"));
+    return { montrer: montrer };
+  }
+
+  /* Curseur avec son etiquette, sa valeur affichee et ses bornes. */
+  function curseur(parent, o) {
+    var dec = o.dec === undefined ? 0 : o.dec;
+    var id = o.id || ("c" + Math.random().toString(36).slice(2, 8));
+    var val = el("span", { classe: "val" });
+    var inp = el("input", { type: "range", id: id, min: o.min, max: o.max, step: o.pas || 1, value: o.valeur });
+    var bloc = el("div", { classe: "curseur" }, [
+      el("label", { "for": id }, [el("span", { texte: o.label }), val]), inp,
+      el("div", { classe: "bornes" }, [el("span", { texte: fr(o.min, dec) + " " + (o.unite || "") }), el("span", { texte: fr(o.max, dec) + " " + (o.unite || "") })])
+    ]);
+    function maj() { val.textContent = fr(Number(inp.value), dec) + (o.unite ? " " + o.unite : ""); }
+    inp.addEventListener("input", function () { maj(); if (o.surChange) o.surChange(Number(inp.value)); });
+    maj();
+    $(parent).appendChild(bloc);
+    return {
+      get: function () { return Number(inp.value); },
+      set: function (v, silencieux) { inp.value = v; maj(); if (!silencieux && o.surChange) o.surChange(Number(inp.value)); },
+      activer: function (oui) { inp.disabled = !oui; },
+      noeud: bloc
+    };
+  }
+
+  /* Groupe de boutons dont un seul est enfonce. options : [{val, texte}] */
+  function choix(parent, o) {
+    var courant = o.valeur;
+    var zone = el("div", { classe: "boutons", role: "group", "aria-label": o.label || "" });
+    var boutons = o.options.map(function (op) {
+      var b = el("button", { type: "button", texte: op.texte });
+      b.addEventListener("click", function () { poser(op.val); });
+      zone.appendChild(b);
+      return { b: b, val: op.val };
+    });
+    function poser(v, silencieux) {
+      courant = v;
+      boutons.forEach(function (x) { x.b.setAttribute("aria-pressed", x.val === v ? "true" : "false"); });
+      if (!silencieux && o.surChange) o.surChange(v);
+    }
+    var bloc = el("div", { classe: "choix" }, [o.label ? el("div", { classe: "titre", texte: o.label }) : null, zone]);
+    $(parent).appendChild(bloc);
+    poser(courant, true);
+    return { get: function () { return courant; }, set: poser, noeud: bloc };
+  }
+
+  /* Afficheur d'instrument : nom, valeur, unite, et une note facultative. */
+  function afficheur(parent, o) {
+    var v = el("span", { classe: "val", texte: "—" });
+    var n = el("div", { classe: "note", texte: o.note || "" });
+    var bloc = el("div", { classe: "afficheur" }, [el("div", { classe: "nom", texte: o.nom }), el("div", null, [v, el("span", { classe: "unite", texte: o.unite || "" })]), o.note !== undefined ? n : null]);
+    $(parent).appendChild(bloc);
+    return {
+      set: function (x, dec) { v.textContent = typeof x === "string" ? x : fr(x, dec === undefined ? (o.dec === undefined ? 2 : o.dec) : dec); },
+      note: function (t) { n.textContent = t; },
+      noeud: bloc
+    };
+  }
+
+  /* Graphe sur canvas, net sur les ecrans haute densite. Axes, grille, courbes, points. */
+  function graphe(parent, o) {
+    var larg = o.largeur || 640, haut = o.hauteur || 380;
+    var cv = el("canvas", { width: larg, height: haut, role: "img", "aria-label": o.titre || "graphe" });
+    var cadre = el("div", { classe: "graphe" }, [cv]);
+    $(parent).appendChild(cadre);
+    var ctx = cv.getContext("2d");
+    var dpr = Math.max(1, window.devicePixelRatio || 1);
+    cv.width = larg * dpr; cv.height = haut * dpr; ctx.scale(dpr, dpr);
+    var m = { g: 62, d: 16, h: 16, b: 48 };
+    var ax = { xmin: o.xmin, xmax: o.xmax, ymin: o.ymin, ymax: o.ymax };
+    function css(nom) { return getComputedStyle(document.documentElement).getPropertyValue(nom).trim() || "#333"; }
+    function X(x) { return m.g + (x - ax.xmin) / (ax.xmax - ax.xmin) * (larg - m.g - m.d); }
+    function Y(y) { return haut - m.b - (y - ax.ymin) / (ax.ymax - ax.ymin) * (haut - m.h - m.b); }
+    function pasJoli(etendue, n) {
+      var brut = etendue / n, p = Math.pow(10, Math.floor(Math.log10(brut))), r = brut / p;
+      return (r < 1.5 ? 1 : r < 3 ? 2 : r < 7 ? 5 : 10) * p;
+    }
+    function decimales(pas) { return Math.max(0, -Math.floor(Math.log10(pas) + 1e-9)); }
+    function fond() {
+      ctx.clearRect(0, 0, larg, haut);
+      ctx.fillStyle = css("--carte"); ctx.fillRect(0, 0, larg, haut);
+      ctx.font = "12px system-ui, Segoe UI, Arial, sans-serif";
+      var px = o.pasX || pasJoli(ax.xmax - ax.xmin, 8), py = o.pasY || pasJoli(ax.ymax - ax.ymin, 6);
+      ctx.strokeStyle = css("--trait2"); ctx.lineWidth = 1; ctx.fillStyle = css("--encre2");
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (var x = Math.ceil(ax.xmin / px) * px; x <= ax.xmax + 1e-9; x += px) {
+        ctx.beginPath(); ctx.moveTo(X(x), Y(ax.ymin)); ctx.lineTo(X(x), Y(ax.ymax)); ctx.stroke();
+        ctx.fillText(fr(x, o.decX !== undefined ? o.decX : decimales(px)), X(x), Y(ax.ymin) + 5);
+      }
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (var y = Math.ceil(ax.ymin / py) * py; y <= ax.ymax + 1e-9; y += py) {
+        ctx.beginPath(); ctx.moveTo(X(ax.xmin), Y(y)); ctx.lineTo(X(ax.xmax), Y(y)); ctx.stroke();
+        ctx.fillText(fr(y, o.decY !== undefined ? o.decY : decimales(py)), X(ax.xmin) - 6, Y(y));
+      }
+      ctx.strokeStyle = css("--encre"); ctx.lineWidth = 1.4;
+      var y0 = borne(0, ax.ymin, ax.ymax), x0 = borne(0, ax.xmin, ax.xmax);
+      ctx.beginPath(); ctx.moveTo(X(ax.xmin), Y(y0)); ctx.lineTo(X(ax.xmax), Y(y0)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X(x0), Y(ax.ymin)); ctx.lineTo(X(x0), Y(ax.ymax)); ctx.stroke();
+      ctx.fillStyle = css("--encre"); ctx.font = "600 13px system-ui, Segoe UI, Arial, sans-serif";
+      ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+      ctx.fillText(o.titreX || "", larg - m.d, haut - 4);
+      ctx.save(); ctx.translate(14, m.h); ctx.rotate(-Math.PI / 2); ctx.textAlign = "right"; ctx.textBaseline = "top";
+      ctx.fillText(o.titreY || "", 0, 0); ctx.restore();
+    }
+    function couleur(c) { return c && c.indexOf("--") === 0 ? css(c) : (c || css("--accent")); }
+    var api = {
+      axes: function (n) { for (var k in n) ax[k] = n[k]; return api; },
+      effacer: function () { fond(); return api; },
+      /* f : fonction x -> y, ou tableau de [x, y] */
+      courbe: function (f, opts) {
+        opts = opts || {};
+        ctx.save(); ctx.beginPath();
+        ctx.rect(m.g, m.h, larg - m.g - m.d, haut - m.h - m.b); ctx.clip();
+        ctx.strokeStyle = couleur(opts.couleur); ctx.lineWidth = opts.epaisseur || 2.2;
+        if (opts.pointille) ctx.setLineDash([6, 5]);
+        ctx.beginPath();
+        if (typeof f === "function") {
+          var n = opts.pas || 400, prem = true;
+          for (var i = 0; i <= n; i++) {
+            var x = ax.xmin + (ax.xmax - ax.xmin) * i / n, y = f(x);
+            if (!isFinite(y)) { prem = true; continue; }
+            if (prem) { ctx.moveTo(X(x), Y(y)); prem = false; } else ctx.lineTo(X(x), Y(y));
+          }
+        } else {
+          f.forEach(function (p, i) { if (i === 0) ctx.moveTo(X(p[0]), Y(p[1])); else ctx.lineTo(X(p[0]), Y(p[1])); });
+        }
+        ctx.stroke(); ctx.restore();
+        return api;
+      },
+      points: function (pts, opts) {
+        opts = opts || {};
+        ctx.fillStyle = couleur(opts.couleur); ctx.strokeStyle = css("--carte");
+        pts.forEach(function (p) {
+          var r = opts.rayon || 4.5;
+          ctx.beginPath();
+          if (opts.forme === "croix") {
+            ctx.strokeStyle = couleur(opts.couleur); ctx.lineWidth = 2;
+            ctx.moveTo(X(p[0]) - r, Y(p[1]) - r); ctx.lineTo(X(p[0]) + r, Y(p[1]) + r);
+            ctx.moveTo(X(p[0]) + r, Y(p[1]) - r); ctx.lineTo(X(p[0]) - r, Y(p[1]) + r); ctx.stroke();
+          } else { ctx.arc(X(p[0]), Y(p[1]), r, 0, 2 * Math.PI); ctx.fill(); ctx.lineWidth = 1; ctx.stroke(); }
+        });
+        return api;
+      },
+      texte: function (x, y, t, opts) {
+        opts = opts || {};
+        ctx.fillStyle = couleur(opts.couleur); ctx.font = (opts.gras ? "600 " : "") + "13px system-ui, Segoe UI, Arial, sans-serif";
+        ctx.textAlign = opts.align || "left"; ctx.textBaseline = "middle";
+        ctx.fillText(t, X(x) + (opts.dx || 0), Y(y) + (opts.dy || 0));
+        return api;
+      },
+      X: X, Y: Y, ctx: ctx, canvas: cv
+    };
+    fond();
+    return api;
+  }
+
+  /* Releve : l'eleve garde une mesure dans un tableau, qui peut alimenter un graphe.
+     colonnes : [{cle, titre, unite, dec}] ; graphe : {x, y, ...options de Sim.graphe} */
+  function releve(parent, o) {
+    var lignes = [];
+    var zone = el("div", { classe: "releve-zone" });
+    var gauche = el("div");
+    var table = el("table", { classe: "releve" });
+    var tete = el("tr"); o.colonnes.forEach(function (c) { tete.appendChild(el("th", { texte: c.titre + (c.unite ? " (" + c.unite + ")" : "") })); });
+    table.appendChild(el("thead", null, [tete]));
+    var corps = el("tbody"); table.appendChild(corps);
+    var boutons = el("div", { classe: "rangee", style: "margin-top:8px" });
+    var bAnnuler = el("button", { type: "button", classe: "bouton", texte: "Retirer la dernière" });
+    var bVider = el("button", { type: "button", classe: "bouton", texte: "Tout effacer" });
+    boutons.appendChild(bAnnuler); boutons.appendChild(bVider);
+    gauche.appendChild(table); gauche.appendChild(boutons);
+    zone.appendChild(gauche);
+    var gr = null;
+    if (o.graphe) { var droite = el("div"); zone.appendChild(droite); gr = graphe(droite, o.graphe); }
+    $(parent).appendChild(zone);
+    function dessiner() {
+      corps.innerHTML = "";
+      if (!lignes.length) {
+        var tr = el("tr", { classe: "vide" }); tr.appendChild(el("td", { colspan: o.colonnes.length, texte: o.vide || "Aucune mesure gardée pour l'instant." })); corps.appendChild(tr);
+      }
+      lignes.forEach(function (l) {
+        var tr = el("tr");
+        o.colonnes.forEach(function (c) { tr.appendChild(el("td", { texte: typeof l[c.cle] === "number" ? fr(l[c.cle], c.dec === undefined ? 2 : c.dec) : (l[c.cle] || "") })); });
+        corps.appendChild(tr);
+      });
+      if (gr) {
+        gr.effacer();
+        if (o.avantPoints) o.avantPoints(gr, lignes);
+        gr.points(lignes.map(function (l) { return [l[o.graphe.x], l[o.graphe.y]]; }), { couleur: o.graphe.couleur });
+      }
+      if (o.surChange) o.surChange(lignes);
+    }
+    bAnnuler.addEventListener("click", function () { lignes.pop(); dessiner(); });
+    bVider.addEventListener("click", function () { lignes = []; dessiner(); });
+    dessiner();
+    return {
+      ajouter: function (l) { if (o.max && lignes.length >= o.max) lignes.shift(); lignes.push(l); dessiner(); },
+      lignes: function () { return lignes.slice(); },
+      vider: function () { lignes = []; dessiner(); },
+      redessiner: dessiner,
+      graphe: gr
+    };
+  }
+
+  /* Defi : une valeur a trouver. La page dit juste ou pas encore, et rappelle la methode,
+     jamais la valeur attendue. attendu : nombre ou fonction qui le calcule au moment du clic. */
+  function defi(parent, o) {
+    var inp = el("input", { type: "text", inputmode: "decimal", "aria-label": o.question });
+    var b = el("button", { type: "button", classe: "bouton", texte: "Vérifier" });
+    var retour = el("div", { classe: "retour", "aria-live": "polite" });
+    var bloc = el("div", { classe: "defi" }, [el("p", { html: o.question }), el("div", { classe: "saisie" }, [inp, o.unite ? el("span", { texte: o.unite }) : null, b]), retour]);
+    function verifier() {
+      var v = lire(inp.value), a = typeof o.attendu === "function" ? o.attendu() : o.attendu;
+      retour.className = "retour";
+      if (!isFinite(v)) { retour.textContent = "Écris un nombre."; return; }
+      var tol = o.tolerance === undefined ? 0.05 : o.tolerance;
+      var ok = Math.abs(v - a) <= Math.abs(a) * tol + (o.toleranceAbsolue || 0);
+      retour.className = "retour " + (ok ? "juste" : "faux");
+      retour.innerHTML = ok ? "Juste." : "Pas encore. <span class=\"methode\">" + (o.methode || "") + "</span>";
+      if (o.surReponse) o.surReponse(ok, v);
+    }
+    b.addEventListener("click", verifier);
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") verifier(); });
+    $(parent).appendChild(bloc);
+    return { noeud: bloc, effacer: function () { inp.value = ""; retour.textContent = ""; retour.className = "retour"; } };
+  }
+
+  /* Boucle d'animation : f(dt en secondes). S'arrete seule quand l'onglet est cache.
+     Sim.avancer(s) fait tourner les boucles a la main : c'est la porte des essais, dans un
+     navigateur qui ne dessine pas (onglet cache, capture sans affichage). */
+  var boucles = [];
+  function avancer(secondes, pasDt) {
+    pasDt = pasDt || 0.05;
+    for (var t = 0; t < secondes - 1e-9; t += pasDt) boucles.forEach(function (f) { f(pasDt); });
+  }
+  function animer(f) {
+    boucles.push(f);
+    var avant = null, actif = true, id = null;
+    function pas(t) {
+      if (avant === null) avant = t;
+      var dt = Math.min(0.1, (t - avant) / 1000); avant = t;
+      if (actif) f(dt);
+      id = requestAnimationFrame(pas);
+    }
+    id = requestAnimationFrame(pas);
+    return { pause: function () { actif = false; }, reprise: function () { actif = true; avant = null; }, actif: function () { return actif; } };
+  }
+
+  /* Petit utilitaire SVG. */
+  var NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) { if (k === "texte") n.textContent = attrs[k]; else n.setAttribute(k, attrs[k]); }
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+
+  return { fr: fr, lire: lire, el: el, $: $, borne: borne, mesure: mesure, gauss: gauss, onglets: onglets, curseur: curseur, choix: choix,
+    afficheur: afficheur, graphe: graphe, releve: releve, defi: defi, animer: animer, avancer: avancer, svg: svg };
+})();
+
+</script>
+</head>
+<body>
+<div class="page">
+<header class="tete">
+<div class="surtitre">Physique-chimie · simulation du TP SIM-03</div>
+<h1>Le vérin hydraulique</h1>
+<p class="chapeau">Deux pistons de tailles différentes sont reliés par un tuyau plein d'huile. Appuie sur le petit, lis le manomètre, et cherche la force qui soulève la charge posée sur le grand.</p>
+</header>
+<style>
+.huile{fill:#e2b24a}
+.corps{fill:none;stroke:var(--encre);stroke-width:2.5}
+.piston{fill:var(--encre2)}
+.tige{stroke:var(--encre2);stroke-width:5;stroke-linecap:round}
+.regle-trait{stroke:var(--encre2);stroke-width:1}
+.regle-txt{font-size:10px;fill:var(--encre2)}
+.etiq{font-size:12px;fill:var(--encre2)}
+.etiq-f{font-size:15px;font-weight:700;fill:var(--accent)}
+.fleche{stroke:var(--accent);stroke-width:4;fill:none;stroke-linecap:round}
+.fleche-tete{fill:var(--accent)}
+.masse{fill:#8d949c;stroke:var(--encre);stroke-width:1.2}
+.cadran{fill:var(--carte);stroke:var(--encre);stroke-width:2}
+.aiguille{stroke:#c0392b;stroke-width:2.5;stroke-linecap:round}
+.pm{display:flex;gap:6px;align-items:center}
+.pm .bouton{min-width:48px}
+.pm .curseur{flex:1}
+.commandes[hidden],.pm[hidden]{display:none}
+.etiq-voiture{font-size:13px;font-weight:600;fill:var(--encre)}
+#releve .releve-zone > div{overflow-x:auto}
+</style>
+
+<div class="carte">
+  <h2><span class="num">1</span>Choisis le dispositif et la charge</h2>
+  <p class="consigne">Changer un réglage remet les pistons au départ. Soulever un côté d'une voiture de 1 200 kg revient à soulever environ 600 kg.</p>
+  <div class="commandes" id="reglages">
+    <div id="choixDispositif"></div>
+    <div id="regSeringues" class="commandes"></div>
+    <div id="regCric" class="commandes"></div>
+  </div>
+</div>
+
+<div class="plan">
+  <div class="carte">
+    <h2><span class="num">2</span>Le dispositif</h2>
+    <div class="scene">
+      <svg id="scene" viewBox="0 0 600 400" role="img" aria-label="Deux cylindres reliés par un tuyau plein d'huile, un manomètre, une charge sur le grand piston"></svg>
+    </div>
+    <p class="legende">L'huile remplit le petit cylindre et le tuyau. Au départ, le grand piston repose au fond de son cylindre. Le manomètre est branché sur le tuyau. Les règles se lisent en millimètres, depuis le fond de chaque cylindre.</p>
+  </div>
+  <div class="carte">
+    <h2><span class="num">3</span>Pousse et mesure</h2>
+    <div class="commandes">
+      <div id="force"></div>
+      <div class="afficheurs" id="instruments"></div>
+      <div class="rangee">
+        <button type="button" class="bouton" id="depart">Remettre les pistons au départ</button>
+        <button type="button" class="bouton" id="pomper" hidden>Remonter le petit piston : nouveau coup de pompe</button>
+        <button type="button" class="bouton principal" id="garder">Garder cette mesure</button>
+      </div>
+      <p class="alerte" id="etat">Les pistons sont au départ.</p>
+    </div>
+  </div>
+</div>
+
+<div class="carte">
+  <h2><span class="num">4</span>Le relevé</h2>
+  <p class="consigne">Pour chaque charge, augmente la force pas à pas avec le bouton +. Garde la mesure dès que la charge commence à monter.</p>
+  <div id="releve"></div>
+</div>
+
+<div class="carte">
+  <h2><span class="num">5</span>Calculer avec tes mesures</h2>
+  <p class="consigne">Surface d'un disque : S = π × D² ÷ 4. Force pressante : F = p × S, avec p en Pa et S en m².</p>
+  <div class="commandes" id="defis"></div>
+  <details class="modele">
+    <summary>Ce que la simulation simplifie</summary>
+    <ul>
+      <li>L'huile ne se comprime pas et ne fuit pas : le volume qui quitte le petit cylindre entre tout entier dans le grand.</li>
+      <li>Les pistons glissent sans frottement et n'ont pas de masse. Une vraie seringue demande quelques newtons rien que pour démarrer.</li>
+      <li>La pression due à la hauteur d'huile entre les deux pistons est négligée : moins de 0,01 bar pour 10 cm d'huile.</li>
+      <li>Le manomètre lit la pression relative, l'écart avec l'air extérieur.</li>
+      <li>Un vrai cric pompe par petits coups, avec deux clapets et un levier qui multiplie encore la force de la main : ici, on pousse d'un seul mouvement.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(function () {
+  var G = 9.81;
+  /* Seringues : diametres interieurs courants (mm), le volume donne la course du piston. */
+  var SERINGUES = { 5: 12.06, 10: 14.5, 20: 19.13, 30: 21.7, 60: 26.7 };
+
+  /* ---------- Physique : fonction pure, sans dessin ---------- */
+  function modele(e) {
+    var S1 = Math.PI * Math.pow(e.D1 / 1000, 2) / 4, S2 = Math.PI * Math.pow(e.D2 / 1000, 2) / 4;
+    var P = e.M * G;                       // poids de la charge (N)
+    var seuil = P * S1 / S2;               // force sur le petit piston qui equilibre la charge (N)
+    return { S1: S1, S2: S2, P: P, seuil: seuil, p: e.F1 / S1, rapport: S2 / S1 };
+  }
+
+  var etat = { disp: "seringues", v1: 10, v2: 60, D1: 14.5, D2: 26.7, M: 2, F1: 0,
+    z1: 0, z2: 0, course1: 0, course2: 0, z1dep: 0, z2dep: 0 };
+
+  function geometrie() {
+    if (etat.disp === "seringues") {
+      etat.D1 = SERINGUES[etat.v1]; etat.D2 = SERINGUES[etat.v2];
+      etat.course1 = etat.v1 * 1000 / (Math.PI * etat.D1 * etat.D1 / 4);   // mm
+      etat.course2 = etat.v2 * 1000 / (Math.PI * etat.D2 * etat.D2 / 4);
+      etat.z1dep = Math.round(etat.course1); etat.z2dep = 0;   // la charge repose au fond de la grande seringue
+    } else {
+      etat.course1 = 80; etat.course2 = 150; etat.z1dep = 75; etat.z2dep = 0;
+    }
+  }
+
+  /* ---------- Reglages ---------- */
+  Sim.choix("#choixDispositif", { label: "Dispositif", valeur: "seringues",
+    options: [{ val: "seringues", texte: "Deux seringues" }, { val: "cric", texte: "Cric hydraulique" }],
+    surChange: function (v) { etat.disp = v; montrerReglages(); depart(); } });
+  var RS = document.getElementById("regSeringues"), RC = document.getElementById("regCric");
+  function etiqSer(v) { return v + " mL · Ø " + Sim.fr(SERINGUES[v], 1) + " mm"; }
+  Sim.choix(RS, { label: "Petite seringue", valeur: 10, options: [5, 10, 20].map(function (v) { return { val: v, texte: etiqSer(v) }; }),
+    surChange: function (v) { etat.v1 = v; depart(); } });
+  Sim.choix(RS, { label: "Grande seringue", valeur: 60, options: [30, 60].map(function (v) { return { val: v, texte: etiqSer(v) }; }),
+    surChange: function (v) { etat.v2 = v; depart(); } });
+  var cMs = Sim.curseur(RS, { label: "Masse posée sur le grand piston", min: 0.5, max: 5, pas: 0.5, valeur: 2, unite: "kg", dec: 1, surChange: function (v) { etat.M = v; depart(); } });
+  var cD1 = Sim.curseur(RC, { label: "Diamètre du petit piston", min: 10, max: 20, pas: 1, valeur: 12, unite: "mm", dec: 0, surChange: function (v) { etat.D1 = v; depart(); } });
+  var cD2 = Sim.curseur(RC, { label: "Diamètre du grand piston", min: 30, max: 60, pas: 2, valeur: 32, unite: "mm", dec: 0, surChange: function (v) { etat.D2 = v; depart(); } });
+  var cMc = Sim.curseur(RC, { label: "Masse soulevée par le cric", min: 200, max: 1000, pas: 50, valeur: 600, unite: "kg", dec: 0, surChange: function (v) { etat.M = v; depart(); } });
+
+  /* Force : un curseur par dispositif, avec des boutons - et + pour le doigt */
+  var FZ = document.getElementById("force");
+  function blocForce(o) {
+    var ligne = Sim.el("div", { classe: "pm" });
+    FZ.appendChild(ligne);
+    var moins = Sim.el("button", { type: "button", classe: "bouton", texte: "−", "aria-label": "Diminuer la force" });
+    ligne.appendChild(moins);
+    var c = Sim.curseur(ligne, { label: "Force sur le petit piston, F₁", min: 0, max: o.max, pas: o.pas, valeur: 0, unite: "N", dec: o.dec, surChange: function (v) { etat.F1 = v; afficher(); } });
+    var plus = Sim.el("button", { type: "button", classe: "bouton", texte: "+", "aria-label": "Augmenter la force" });
+    ligne.appendChild(plus);
+    moins.addEventListener("click", function () { c.set(Math.max(0, Math.round((c.get() - o.pas) / o.pas) * o.pas)); });
+    plus.addEventListener("click", function () { c.set(Math.min(o.max, Math.round((c.get() + o.pas) / o.pas) * o.pas)); });
+    return { c: c, ligne: ligne };
+  }
+  var fSer = blocForce({ max: 40, pas: 0.1, dec: 1 });
+  var fCric = blocForce({ max: 5000, pas: 10, dec: 0 });
+  function forceActive() { return etat.disp === "seringues" ? fSer.c : fCric.c; }
+  function montrerReglages() {
+    RS.hidden = etat.disp !== "seringues"; RC.hidden = etat.disp === "seringues";
+    fSer.ligne.hidden = etat.disp !== "seringues"; fCric.ligne.hidden = etat.disp === "seringues";
+    document.getElementById("pomper").hidden = etat.disp !== "cric";
+    etat.M = etat.disp === "seringues" ? cMs.get() : cMc.get();
+    if (etat.disp === "cric") { etat.D1 = cD1.get(); etat.D2 = cD2.get(); }
+  }
+
+  /* ---------- Instruments ---------- */
+  var I = document.getElementById("instruments");
+  var aBar = Sim.afficheur(I, { nom: "Manomètre", unite: "bar", dec: 3 });
+  var aZ1 = Sim.afficheur(I, { nom: "Règle · petit piston", unite: "mm", dec: 1 });
+  var aZ2 = Sim.afficheur(I, { nom: "Règle · grand piston", unite: "mm", dec: 1 });
+  /* Manometre numerique : 0,001 bar pres pour les seringues, 0,1 bar pour le cric.
+     Regle : on lit au demi-millimetre, sans tremblement. */
+  function lectures() {
+    var m = modele(etat), cric = etat.disp === "cric", res = cric ? 0.1 : 0.001;
+    var pBar = Sim.mesure(m.p / 1e5, { relatif: 0.003 });
+    return {
+      bar: Math.max(0, Math.round(pBar / res) * res),
+      z1: Math.round(etat.z1 * 2) / 2,
+      z2: Math.round(etat.z2 * 2) / 2
+    };
+  }
+  var derniere = null;
+  function afficher() {
+    var l = lectures(), cric = etat.disp === "cric";
+    aBar.set(l.bar, cric ? 1 : 3); aZ1.set(l.z1, 1); aZ2.set(l.z2, 1);
+    derniere = l;
+    dessinerMobile();
+  }
+
+  /* ---------- Releve ---------- */
+  var rel = Sim.releve("#releve", {
+    colonnes: [{ cle: "disp", titre: "Dispositif" }, { cle: "M", titre: "Charge", unite: "kg", dec: 1 },
+      { cle: "F1", titre: "F₁", unite: "N", dec: 1 }, { cle: "bar", titre: "p", unite: "bar", dec: 3 },
+      { cle: "z1", titre: "Petit piston", unite: "mm", dec: 1 }, { cle: "z2", titre: "Grand piston", unite: "mm", dec: 1 },
+      { cle: "monte", titre: "La charge monte" }]
+  });
+  document.getElementById("garder").addEventListener("click", function () {
+    var l = derniere || lectures(), m = modele(etat), cric = etat.disp === "cric";
+    rel.ajouter({ disp: cric ? "cric " + etat.D1 + "/" + etat.D2 + " mm" : "seringues " + etat.v1 + "/" + etat.v2 + " mL",
+      M: etat.M, F1: etat.F1, bar: l.bar, z1: l.z1, z2: l.z2, monte: etat.F1 > 0 && etat.F1 >= m.seuil ? "oui" : "non" });
+  });
+
+  /* ---------- Defis ---------- */
+  var D = document.getElementById("defis");
+  Sim.defi(D, { question: "Pression de l'huile, p = F₁ ÷ S₁, pour la force F₁ appliquée maintenant :", unite: "Pa",
+    attendu: function () { return modele(etat).p; }, tolerance: 0.03,
+    methode: "F₁ en N, S₁ en m² (1 mm² = 0,000 001 m²). Compare ensuite avec le manomètre : 1 bar = 100 000 Pa." });
+  Sim.defi(D, { question: "Rapport des surfaces S₂ ÷ S₁ pour le réglage choisi :", unite: "",
+    attendu: function () { return modele(etat).rapport; }, tolerance: 0.02,
+    methode: "Calcule chaque surface avec S = π × D² ÷ 4, dans la même unité, puis divise la grande par la petite. On peut aussi faire (D₂ ÷ D₁)²." });
+  Sim.defi(D, { question: "Force pressante de l'huile sur le grand piston, F₂ = p × S₂, pour la force F₁ appliquée maintenant :", unite: "N",
+    attendu: function () { var m = modele(etat); return m.p * m.S2; }, tolerance: 0.03,
+    methode: "Lis p en Pa au manomètre, calcule S₂ en m² (1 mm² = 0,000 001 m²), puis multiplie." });
+  Sim.defi(D, { question: "Le petit piston descend de 30 mm. De combien le grand piston monte-t-il ?", unite: "mm",
+    attendu: function () { var m = modele(etat); return 30 * m.S1 / m.S2; }, tolerance: 0.04,
+    methode: "Le volume d'huile qui sort du petit cylindre, S₁ × 30 mm, entre dans le grand : S₂ × d₂ = S₁ × d₁." });
+
+  /* ---------- Scene ---------- */
+  var S = document.getElementById("scene"), svg = Sim.svg, g = {};
+  var YB = 330;                               // fond des cylindres, dessus du tuyau
+  function ech() { return etat.disp === "seringues" ? { x: 3.0, y: 1.8, xs: 150, xg: 405 } : { x: 1.7, y: 0.8, xs: 150, xg: 415 }; }
+  function dessinerScene() {
+    S.innerHTML = "";
+    var e = ech(), cric = etat.disp === "cric";
+    var r1 = etat.D1 * e.x / 2, r2 = etat.D2 * e.x / 2;
+    var L1 = (etat.course1 + 8) * e.y, L2 = (etat.course2 + 8) * e.y;
+    g.e = e; g.r1 = r1; g.r2 = r2; g.top1 = YB - L1; g.top2 = YB - L2;
+    // table
+    svg("rect", { x: 0, y: 360, width: 600, height: 40, fill: "var(--carte2)" }, S);
+    svg("line", { x1: 0, y1: 360, x2: 600, y2: 360, stroke: "var(--trait)", "stroke-width": 2 }, S);
+    // tuyau plein d'huile
+    svg("rect", { x: e.xs - r1, y: YB, width: e.xg + r2 - e.xs + r1, height: 14, "class": "huile" }, S);
+    svg("path", { d: "M" + (e.xs - r1) + " " + YB + " L" + (e.xs - r1) + " " + (YB + 14) + " L" + (e.xg + r2) + " " + (YB + 14) + " L" + (e.xg + r2) + " " + YB, "class": "corps" }, S);
+    svg("line", { x1: e.xs + r1, y1: YB, x2: e.xg - r2, y2: YB, "class": "corps" }, S);
+    // manometre : un piquage sur le tuyau, un cadran
+    var xm = (e.xs + r1 + e.xg - r2) / 2, ym = 250;
+    svg("rect", { x: xm - 3, y: ym + 30, width: 6, height: YB - ym - 30, "class": "huile" }, S);
+    svg("line", { x1: xm - 4, y1: ym + 30, x2: xm - 4, y2: YB, stroke: "var(--encre)", "stroke-width": 1.5 }, S);
+    svg("line", { x1: xm + 4, y1: ym + 30, x2: xm + 4, y2: YB, stroke: "var(--encre)", "stroke-width": 1.5 }, S);
+    svg("circle", { cx: xm, cy: ym, r: 31, "class": "cadran" }, S);
+    for (var k = 0; k <= 10; k++) {
+      var a = Math.PI * (1.25 - 1.5 * k / 10);
+      svg("line", { x1: xm + 25 * Math.cos(a), y1: ym - 25 * Math.sin(a), x2: xm + (k % 5 ? 21 : 18) * Math.cos(a), y2: ym - (k % 5 ? 21 : 18) * Math.sin(a), stroke: "var(--encre)", "stroke-width": 1.2 }, S);
+    }
+    var pleineTxt = cric ? "200" : "1";
+    svg("text", { x: xm - 30, y: ym + 36, "text-anchor": "end", "class": "regle-txt", texte: "0" }, S);
+    svg("text", { x: xm + 30, y: ym + 36, "text-anchor": "start", "class": "regle-txt", texte: pleineTxt }, S);
+    g.aiguille = svg("line", { x1: xm, y1: ym, x2: xm, y2: ym - 22, "class": "aiguille" }, S);
+    svg("circle", { cx: xm, cy: ym, r: 3, fill: "var(--encre)" }, S);
+    svg("text", { x: xm, y: ym - 40, "text-anchor": "middle", "class": "etiq", texte: "manomètre, en bar" }, S);
+    g.xm = xm; g.ym = ym;
+    // cylindres : huile et parois (les parties mobiles sont dans g.mobile)
+    g.huile1 = svg("rect", { x: e.xs - r1, width: 2 * r1, "class": "huile" }, S);
+    g.huile2 = svg("rect", { x: e.xg - r2, width: 2 * r2, "class": "huile" }, S);
+    [[e.xs, r1, g.top1], [e.xg, r2, g.top2]].forEach(function (c) {
+      svg("path", { d: "M" + (c[0] - c[1]) + " " + c[2] + " L" + (c[0] - c[1]) + " " + YB + " M" + (c[0] + c[1]) + " " + c[2] + " L" + (c[0] + c[1]) + " " + YB, "class": "corps" }, S);
+    });
+    // regles graduees : a gauche du petit, a droite du grand
+    regle(e.xs - r1 - 26, etat.course1 + 8, e.y, true);
+    regle(e.xg + r2 + 12, etat.course2 + 8, e.y, false);
+    // etiquettes
+    var t1 = cric ? "petit piston · Ø " + etat.D1 + " mm" : "seringue de " + etat.v1 + " mL · Ø " + Sim.fr(etat.D1, 1) + " mm";
+    var t2 = cric ? "grand piston · Ø " + etat.D2 + " mm" : "seringue de " + etat.v2 + " mL · Ø " + Sim.fr(etat.D2, 1) + " mm";
+    svg("text", { x: e.xs, y: 382, "text-anchor": "middle", "class": "etiq", texte: t1 }, S);
+    svg("text", { x: e.xg, y: 382, "text-anchor": "middle", "class": "etiq", texte: t2 }, S);
+    g.mobile = svg("g", {}, S);
+    dessinerMobile();
+  }
+  function regle(x, longueur, ey, gauche) {
+    svg("line", { x1: x + (gauche ? 14 : 0), y1: YB, x2: x + (gauche ? 14 : 0), y2: YB - longueur * ey, "class": "regle-trait" }, S);
+    var pasTxt = etat.disp === "seringues" ? 20 : 50;
+    for (var mm = 0; mm <= longueur + 1e-9; mm += 10) {
+      var y = YB - mm * ey, xl = gauche ? x + 14 : x;
+      svg("line", { x1: xl, y1: y, x2: xl + (gauche ? -6 : 6), y2: y, "class": "regle-trait" }, S);
+      if (mm % pasTxt === 0) svg("text", { x: gauche ? xl - 8 : xl + 8, y: y + 3.5, "text-anchor": gauche ? "end" : "start", "class": "regle-txt", texte: String(mm) }, S);
+    }
+  }
+  function fleche(parent, x, y1, y2) {
+    svg("line", { x1: x, y1: y1, x2: x, y2: y2 - 10, "class": "fleche" }, parent);
+    svg("path", { d: "M" + (x - 7) + " " + (y2 - 12) + " L" + (x + 7) + " " + (y2 - 12) + " L" + x + " " + y2 + " Z", "class": "fleche-tete" }, parent);
+  }
+  function dessinerMobile() {
+    if (!g.mobile) return;
+    var e = g.e, m = modele(etat), cric = etat.disp === "cric";
+    var y1 = YB - etat.z1 * e.y, y2 = YB - etat.z2 * e.y;
+    g.huile1.setAttribute("y", y1); g.huile1.setAttribute("height", Math.max(0, YB - y1 + 1));
+    g.huile2.setAttribute("y", y2); g.huile2.setAttribute("height", Math.max(0, YB - y2 + 1));
+    var M = g.mobile; M.innerHTML = "";
+    // petit piston, sa tige, le plateau ou l'on pousse
+    svg("rect", { x: e.xs - g.r1 + 2, y: y1 - 8, width: 2 * g.r1 - 4, height: 8, "class": "piston" }, M);
+    var plat1 = g.top1 - 14 - etat.z1 * e.y;        // tige de longueur fixe : le plateau touche le haut du cylindre en fin de course
+    svg("line", { x1: e.xs, y1: y1 - 8, x2: e.xs, y2: plat1, "class": "tige" }, M);
+    svg("rect", { x: e.xs - g.r1 - 6, y: plat1 - 5, width: 2 * g.r1 + 12, height: 5, rx: 2, fill: "var(--encre2)" }, M);
+    // la force F1, fleche sur le plateau
+    var lg = Math.min(26 + 44 * Sim.borne(etat.F1 / (cric ? 3000 : 25), 0, 1), plat1 - 26);
+    if (etat.F1 > 0) {
+      fleche(M, e.xs, plat1 - 8 - lg, plat1 - 7);
+      var tf = svg("text", { x: e.xs + 12, y: plat1 - 12 - lg / 2, "class": "etiq-f" }, M);
+      tf.appendChild(document.createTextNode("F"));
+      svg("tspan", { "baseline-shift": "sub", "font-size": "11px", texte: "1" }, tf);
+    }
+    // grand piston, sa tige, la charge
+    svg("rect", { x: e.xg - g.r2 + 2, y: y2 - 8, width: 2 * g.r2 - 4, height: 8, "class": "piston" }, M);
+    var plat2 = g.top2 - 10 - etat.z2 * e.y;
+    svg("line", { x1: e.xg, y1: y2 - 8, x2: e.xg, y2: plat2, "class": "tige" }, M);
+    svg("rect", { x: e.xg - g.r2 - 6, y: plat2 - 5, width: 2 * g.r2 + 12, height: 5, rx: 2, fill: "var(--encre2)" }, M);
+    if (!cric) {
+      var n = Math.floor(etat.M + 1e-9), demi = etat.M - n > 0.25, y = plat2 - 5, lb = Math.max(46, 2 * g.r2);
+      for (var i = 0; i < n; i++) { y -= 10; svg("rect", { x: e.xg - lb / 2, y: y, width: lb, height: 9, rx: 2, "class": "masse" }, M); }
+      if (demi) { y -= 8; svg("rect", { x: e.xg - lb / 2 + 6, y: y, width: lb - 12, height: 7, rx: 2, "class": "masse" }, M); }
+      svg("text", { x: e.xg - lb / 2 - 8, y: y + 10, "text-anchor": "end", "class": "etiq", texte: Sim.fr(etat.M, 1) + " kg" }, M);
+    } else {
+      // une voiture, dessinee petite et hors d'echelle, posee sur la tete du verin
+      var yc = plat2 - 5, xc = e.xg;
+      svg("path", { d: "M" + (xc - 95) + " " + (yc - 8) + " L" + (xc - 95) + " " + (yc - 34) + " L" + (xc - 55) + " " + (yc - 38) +
+        " L" + (xc - 30) + " " + (yc - 62) + " L" + (xc + 40) + " " + (yc - 62) + " L" + (xc + 70) + " " + (yc - 38) +
+        " L" + (xc + 95) + " " + (yc - 34) + " L" + (xc + 95) + " " + (yc - 8) + " Z", fill: "var(--carte2)", stroke: "var(--encre)", "stroke-width": 2 }, M);
+      [xc - 60, xc + 60].forEach(function (xr) {
+        svg("circle", { cx: xr, cy: yc - 6, r: 14, fill: "#2b2c2f" }, M);
+        svg("circle", { cx: xr, cy: yc - 6, r: 5, fill: "#9aa0a6" }, M);
+      });
+      svg("rect", { x: xc - 12, y: yc - 8, width: 24, height: 8, fill: "var(--encre2)" }, M);
+      svg("text", { x: xc + 5, y: yc - 43, "text-anchor": "middle", "class": "etiq-voiture", texte: Sim.fr(etat.M, 0) + " kg" }, M);
+    }
+    // aiguille du manometre : pleine echelle 1 bar (seringues) ou 200 bar (cric)
+    var pleine = cric ? 200e5 : 1e5, frac = Sim.borne(m.p / pleine, 0, 1.05), a = Math.PI * (1.25 - 1.5 * frac);
+    g.aiguille.setAttribute("x2", g.xm + 22 * Math.cos(a)); g.aiguille.setAttribute("y2", g.ym - 22 * Math.sin(a));
+  }
+
+  /* ---------- Mouvement ---------- */
+  function message(t) { document.getElementById("etat").textContent = t; }
+  function depart() {
+    montrerReglages(); geometrie();
+    etat.z1 = etat.z1dep; etat.z2 = etat.z2dep;
+    forceActive().set(0, true); etat.F1 = 0;
+    dessinerScene(); afficher();
+    message("Les pistons sont au départ. Augmente la force sur le petit piston.");
+  }
+  document.getElementById("depart").addEventListener("click", function () {
+    etat.z1 = etat.z1dep; etat.z2 = etat.z2dep; afficher(); message("Les pistons sont au départ.");
+  });
+  /* Le cric pompe : le petit piston remonte et reprend de l'huile au reservoir, le clapet garde la charge. */
+  document.getElementById("pomper").addEventListener("click", function () {
+    forceActive().set(0); etat.z1 = etat.z1dep; afficher();
+  });
+  var dernierMsg = "";
+  function pas(dt) {
+    var m = modele(etat), cric = etat.disp === "cric", r = m.S1 / m.S2, msg;
+    if (etat.F1 > 0 && etat.F1 >= m.seuil) {
+      var exces = (etat.F1 - m.seuil) / m.seuil, v1 = 3 + 25 * Sim.borne(exces / 0.2, 0, 1);   // mm/s
+      if (etat.z1 > 0.5) {
+        var d1 = Math.min(v1 * dt, etat.z1 - 0.5, (etat.course2 - etat.z2) / r);
+        etat.z1 -= d1; etat.z2 += d1 * r;
+        msg = d1 > 1e-6 ? "La charge monte." : "Le grand piston est en haut de sa course.";
+      } else msg = cric ? "Le petit piston est au bout de sa course : remonte-le pour un nouveau coup de pompe." : "Le petit piston est au bout de sa course : remets les pistons au départ.";
+    } else if (!cric && etat.z2 > etat.z2dep + 0.01) {
+      // la seringue n'a pas de clapet : la charge redescend et repousse le petit piston
+      var d = Math.min(20 * dt, etat.z2 - etat.z2dep);
+      etat.z2 -= d; etat.z1 += d / r;
+      msg = "La force ne suffit plus : la charge redescend et repousse le petit piston.";
+    } else if (cric && etat.z2 > 0.01) msg = "Le clapet garde la charge en place. Pousse assez fort pour la faire monter encore.";
+    else msg = etat.F1 > 0 ? "La force ne suffit pas : la charge ne monte pas." : "Aucune force sur le petit piston.";
+    if (msg !== dernierMsg) { message(msg); dernierMsg = msg; }
+  }
+  var cumul = 0;
+  Sim.animer(function (dt) {
+    pas(dt);
+    cumul += dt;
+    if (cumul > 0.2) { cumul = 0; afficher(); } else dessinerMobile();
+  });
+  depart();
+})();
+</script>
+<footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation, et détaillé dans la fiche professeur du TP SIM-03.</footer>
+</div>
+</body>
+</html>

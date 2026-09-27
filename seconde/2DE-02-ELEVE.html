@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP 2DE-02 · Le 12 V alternatif</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="seconde/2DE-02-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="2DE-01-ELEVE.html" rel="prev" title="TP 2DE-01 · Le capteur du thermostat" aria-label="TP 2DE-01 · Le capteur du thermostat">&lsaquo;</a><a class="fleche" href="2DE-03-ELEVE.html" rel="next" title="TP 2DE-03 · La vitesse d'une pale" aria-label="TP 2DE-03 · La vitesse d'une pale">&rsaquo;</a></span><button type="button" class="lu" data-lu="seconde/2DE-02-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">2de Bac Pro · toutes spécialités · TP commun 2DE-02</p>
+    <h1>Le 12 V alternatif<span>tension alternative</span></h1>
+  </div>
+  <p class="accroche">Quand la plaque annonce 12 V ~, que vaut la tension au plus haut ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>Tension continue et tension alternative</b><span class="car">le TP part de leur différence</span></li><li><b>Lire une échelle en divisions</b><span class="car">l'oscilloscope donne tout en V/div et en ms/div</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-l-oscilloscope">Protocole A · l’oscilloscope</a><a href="#protocole-b-le-multimetre">Protocole B · le multimètre</a></div></nav>
+<p><strong>Sujet.</strong> Dans le salon, une lampe halogène basse tension est branchée sur un petit transformateur. Sa plaque annonce une sortie de 12 V ~. Mais une tension alternative change de valeur sans arrêt.</p>
+
+<figure><img src="img/2DE-02-ELEVE/fig1-plaque.png" alt="" /></figure>
+
+<p><strong>Problématique : quand la plaque annonce 12 V ~, que vaut la tension au plus haut ?</strong></p>
+
+<p>Au laboratoire, une alimentation alternative de 12 V ~ remplace le transformateur.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p>Au bureau, le professeur branche un voltmètre, <strong>en position continu</strong>, sur un générateur qui tourne très lentement. Observer l’affichage pendant trente secondes.</p>
+
+<p><strong>a)</strong> Compléter ce que l’on observe.</p>
+
+<p>Entourer, ou écrire la valeur.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Ce qu’on observe</th>
+
+<th>Réponse</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>La valeur affichée</td>
+
+<td>reste la même · change</td>
+
+</tr>
+
+<tr>
+
+<td>Elle passe par zéro, puis devient négative</td>
+
+<td>oui · non</td>
+
+</tr>
+
+<tr>
+
+<td>Durée d’un aller-retour complet, au chronomètre</td>
+
+<td>T = ……………… s</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>La <strong>fréquence f</strong> est le nombre d’allers-retours par seconde : f = 1 ÷ T, en hertz (Hz), avec T en secondes.</p>
+
+<p><strong>b)</strong> Calculer la fréquence du générateur du bureau.</p>
+
+<p>f = 1 ÷ ……………… = ……………… Hz</p>
+
+<p><strong>c)</strong> Lire la plaque du transformateur, au début du sujet.</p>
+
+<p>Le signe ~ veut dire, entourer : <strong>continu · alternatif</strong></p>
+
+<p>La fréquence de la prise de courant, en entrée : ……………… Hz</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Une tension alternative se décrit par sa <strong>valeur maximale Umax</strong>, sa <strong>période T</strong> et sa <strong>valeur efficace Ueff</strong>, celle qu’écrit la plaque. Pour une tension sinusoïdale, <strong>Umax = Ueff × √2</strong>, soit environ Ueff × 1,41.</p>
+
+<p>Deux protocoles. Le labo n’a qu’un ou deux oscilloscopes : <strong>la plupart des postes prennent B, puis passent à l’oscilloscope à tour de rôle</strong>.</p>
+
+<figure><img src="img/2DE-02-ELEVE/fig2-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · l’oscilloscope.</strong> L’écran dessine la tension au cours du temps. On <strong>lit Umax et T</strong> en comptant les divisions, puis on <strong>calcule</strong> f et Ueff.</p>
+
+<p><strong>Protocole B · le multimètre.</strong> En position <strong>V~</strong>, il affiche <strong>Ueff</strong> ; avec la fonction <strong>Hz</strong>, s’il l’a, la fréquence. On <strong>calcule</strong> Umax.</p>
+
+<p><strong>d)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<p>Écrire les grandeurs : Umax, Ueff, T, f.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on lit sur l’appareil</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’on calcule</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>On voit la forme de la tension</td>
+
+<td>oui · non</td>
+
+<td>oui · non</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant de toucher au matériel.</p>
+
+<p><strong>e)</strong> Par quel protocole commencez-vous ? Justifier en une phrase. Le professeur peut vous imposer celui qui reste disponible.</p>
+
+<p>Je commence par le protocole ……… parce que ………………………………………………………………</p>
+
+<p><strong>f)</strong> Avant de mesurer, faire une hypothèse. Au plus haut, la tension d’une plaque de 12 V ~ vaut, entourer :</p>
+
+<p><strong>moins de 12 V · 12 V exactement · plus de 12 V</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<blockquote>
+
+<p><strong>Avant de commencer</strong></p>
+
+<p><strong>Jamais le secteur</strong> sur l’oscilloscope ni sur le multimètre : on ne branche que la sortie <strong>12 V ~</strong> de l’alimentation du poste.</p>
+
+<p>On câble <strong>alimentation éteinte</strong>, et on allume une fois le branchement vérifié.</p>
+
+<p>Le multimètre se règle <strong>avant</strong> d’être branché : position <strong>V~</strong>, calibre <strong>20 V</strong> ou plus.</p>
+
+</blockquote>
+
+<h2 id="protocole-a-l-oscilloscope">Protocole A · l’oscilloscope</h2>
+
+<ol type="1">
+
+<li>Alimentation <strong>éteinte</strong>, réglée sur <strong>12 V ~</strong>. Relier sa sortie à la <strong>voie 1</strong> par l’adaptateur.</li>
+
+<li>Régler la sensibilité sur <strong>5 V/div</strong> et le balayage sur <strong>5 ms/div</strong>. Placer la ligne du zéro au milieu de l’écran.</li>
+
+<li>Allumer. Reporter la courbe sur le quadrillage, carreau par carreau.</li>
+
+<li>Compter les divisions : <strong>du zéro au sommet</strong> pour Umax, <strong>sur un motif complet</strong> pour T.</li>
+
+</ol>
+
+<h2 id="protocole-b-le-multimetre">Protocole B · le multimètre</h2>
+
+<ol type="1">
+
+<li>Multimètre en position <strong>V~</strong>, calibre <strong>20 V</strong> ou plus. Le relier à la sortie <strong>12 V ~</strong>, alimentation <strong>éteinte</strong>.</li>
+
+<li>Allumer et lire <strong>Ueff</strong>.</li>
+
+<li>Passer en position <strong>Hz</strong>, si le multimètre l’a, et lire <strong>f</strong>.</li>
+
+<li>Quand un oscilloscope se libère, faire le protocole A pour contrôler votre Umax.</li>
+
+</ol>
+
+<p><strong>g)</strong> Reporter la courbe vue à l’oscilloscope, carreau par carreau, et noter les réglages.</p>
+
+<figure><img src="img/2DE-02-ELEVE/fig4-cadre-oscillogramme.png" alt="" /></figure>
+
+<p><strong>h)</strong> Relever vos valeurs, puis calculer les autres avec f = 1 ÷ T, T en secondes, et Umax = Ueff × 1,41. Écrire <strong>M</strong> sous une valeur mesurée, <strong>C</strong> sous une valeur calculée.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Umax (V)</th>
+
+<th>T (ms)</th>
+
+<th>f (Hz)</th>
+
+<th>Ueff (V)</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Valeur</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Mesurée ou calculée</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Détail des calculs :</p>
+
+<p><strong>i)</strong> Schématiser votre branchement avec les symboles normalisés : le générateur de tension alternative et le voltmètre. En A, le voltmètre devient la voie 1 de l’oscilloscope.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>j)</strong> Comparer votre Ueff aux 12 V de la plaque, puis votre fréquence aux 50 Hz de la prise. Les écarts sont-ils petits ?</p>
+
+<p><strong>k)</strong> Un groupe qui a commencé par l’autre protocole trouve-t-il le même Umax ? Votre hypothèse de la question <strong>f</strong> est-elle confirmée ?</p>
+
+<p><strong>l)</strong> Répondre à la problématique en deux phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour toute tension sinusoïdale :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Une tension alternative sinusoïdale change sans arrêt de valeur et de signe. On la décrit par sa <strong>période T</strong>, en secondes, sa <strong>fréquence f = 1 ÷ T</strong>, en hertz, et sa <strong>valeur maximale Umax</strong>.</p>
+
+<p>Le multimètre en position V~ affiche la <strong>valeur efficace Ueff</strong> : c’est elle qu’écrit une plaque. <strong>Umax = Ueff × √2</strong>, donc la tension monte plus haut que ce qu’annonce la plaque.</p>
+
+<p>La prise de courant délivre <strong>230 V</strong> efficaces à <strong>50 Hz</strong>.</p>
+
+</blockquote>
+
+<h1 id="pour-aller-plus-loin-la-prise-du-salon">Pour aller plus loin · la prise du salon</h1>
+
+<p>La prise délivre 230 V efficaces. Entourer sa tension au plus haut : <strong>230 V · 325 V · 460 V</strong></p>
+
+<p>Pourquoi ne la branche-t-on jamais sur l’oscilloscope du labo ?</p>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="2DE-01-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP 2DE-01 · Le capteur du thermostat</span></a><a class="ap" href="2DE-03-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP 2DE-03 · La vitesse d'une pale</span></a></div></nav>
+<p class="pied">TP commun de physique-chimie, toutes spécialités. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

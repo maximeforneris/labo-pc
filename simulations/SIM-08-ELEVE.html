@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-08 · Le réseau triphasé</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-08-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-07-ELEVE.html" rel="prev" title="TP SIM-07 · Redresser un courant" aria-label="TP SIM-07 · Redresser un courant">&lsaquo;</a><a class="fleche" href="SIM-09-ELEVE.html" rel="next" title="TP SIM-09 · La puissance en alternatif" aria-label="TP SIM-09 · La puissance en alternatif">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-08-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">Tle Bac Pro · MELEC, CIEL · TP sur simulation SIM-08</p>
+    <h1>Le réseau triphasé<span>tensions simples et composées</span></h1>
+  </div>
+  <p class="accroche">Comment trois tensions de 230 V donnent-elles 400 V entre deux phases ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>Tension sinusoïdale, période, fréquence, valeur maximale et efficace</b><span class="car">chaque mesure du TP en part</span></li><li><b>Lire un oscilloscope, sensibilité et balayage</b><span class="car">le protocole A se fait à l'écran</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-l-oscilloscope">Protocole A · l’oscilloscope</a><a href="#protocole-b-del-et-voltmetre">Protocole B · DEL et voltmètre</a></div></nav>
+<p><strong>Sujet.</strong> Dans le garage d’une maison, la borne de recharge de la voiture électrique est raccordée en triphasé : sa plaque indique 400 V. Pourtant, entre chaque phase et le neutre, il n’y a que 230 V, comme sur une prise ordinaire.</p>
+
+<p><strong>Problématique : comment trois tensions de 230 V donnent-elles 400 V entre deux phases ?</strong></p>
+
+<p><strong>La simulation.</strong> <a href="../html/triphase.html">Ouvrir « Le réseau triphasé »</a> : le fichier triphase.html, sur l’ENT ou la clé du professeur.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p>Voici la plaque de la borne de recharge.</p>
+
+<figure><img src="img/SIM-08-ELEVE/fig2-plaque-borne.png" alt="" /></figure>
+
+<p><strong>a)</strong> Relever la tension et la fréquence. Que veut dire « 3N~ » ?</p>
+
+<p>Tension : ……………………… · fréquence : ………………………</p>
+
+<p>« 3N~ » : ……………………………………………………………………………………</p>
+
+<p><strong>b)</strong> Dans la simulation, protocole B, relever la couleur des conducteurs.</p>
+
+<p>Le bornier de la plaque porte les mêmes noms.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Le conducteur</th>
+
+<th>L1</th>
+
+<th>L2</th>
+
+<th>L3</th>
+
+<th>N</th>
+
+<th>PE</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Sa couleur</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Dans la simulation, aucun récepteur n’est branché sur le conducteur PE.</p>
+
+<p><strong>c)</strong> Entourer le rôle du conducteur vert-jaune.</p>
+
+<p><strong>transporter l’énergie · protéger les personnes, avec le disjoncteur différentiel</strong></p>
+
+<p><strong>d)</strong> Compléter le tableau. Le premier calcul est fait.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>La fréquence</th>
+
+<th>50 Hz</th>
+
+<th>0,1 Hz</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>La période T = 1 ÷ f</td>
+
+<td>0,02 s = 20 ms</td>
+
+<td>………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Un tiers de période</td>
+
+<td>………………………</td>
+
+<td>………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Un tour complet vaut 360°, donc un tiers de tour vaut ……………… degrés.</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. Une partie de la classe prend A, l’autre prend B, et on compare à la fin.</p>
+
+<figure><img src="img/SIM-08-ELEVE/fig1-deux-protocoles.png" alt="" /></figure>
+
+<p><em>Capture de la simulation « Le réseau triphasé », générateur de labo.</em></p>
+
+<p><strong>Protocole A · l’oscilloscope.</strong> À 50 Hz, les trois tensions simples v1, v2 et v3, entre chaque phase et le neutre, s’affichent ensemble. On mesure leur période et leur décalage. La voie 4 montre une tension composée, entre deux phases.</p>
+
+<p><strong>Protocole B · DEL et voltmètre.</strong> Ralenti à 0,1 Hz, le générateur de labo fait une période en 10 s : trois DEL, une par phase, s’allument l’une après l’autre, et on chronomètre. À 50 Hz, le voltmètre mesure V, entre une phase et le neutre, puis U, entre deux phases.</p>
+
+<p><strong>e)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Le décalage se mesure avec</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Les tensions se lisent en valeur</td>
+
+<td>maximale · efficace</td>
+
+<td>maximale · efficace</td>
+
+</tr>
+
+<tr>
+
+<td>Une limite</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant de toucher aux réglages.</p>
+
+<p><strong>f)</strong> Quel protocole prenez-vous ? Justifier en une phrase.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>g)</strong> Prévoir : que vaut la tension entre deux phases ?</p>
+
+<p>Entourer une réponse.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<tbody>
+
+<tr>
+
+<td>0 V</td>
+
+<td>230 V</td>
+
+<td>entre 230 V et 460 V</td>
+
+<td>230 + 230 = 460 V</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<p><strong>Avant de commencer.</strong> Ouvrir triphase.html. Source <strong>Générateur de labo · très basse tension</strong>, fréquence <strong>50 Hz</strong>.</p>
+
+<h2 id="protocole-a-l-oscilloscope">Protocole A · l’oscilloscope</h2>
+
+<ol type="1">
+
+<li>Voies <strong>v1</strong>, <strong>v2</strong>, <strong>v3</strong>, <strong>5 V/div</strong>, <strong>5 ms/div</strong>. Curseurs <strong>Temps</strong> : la période de v1, d’une montée par zéro à la suivante.</li>
+
+<li><strong>2 ms/div</strong> : le décalage Δt entre la montée de v1 et celle de v2, puis de v2 à v3.</li>
+
+<li>Curseurs <strong>Tension</strong> : V<sub>max</sub> sur v1. Afficher <strong>tension composée</strong>, u12 : U<sub>max</sub>.</li>
+
+<li>Source <strong>Réseau du bâtiment · 230 V</strong>, <strong>200 V/div</strong> : V<sub>max</sub> et U<sub>max</sub> à nouveau.</li>
+
+<li>À chaque mesure : <strong>Garder cette lecture dans le tableau</strong>.</li>
+
+</ol>
+
+<h2 id="protocole-b-del-et-voltmetre">Protocole B · DEL et voltmètre</h2>
+
+<ol type="1">
+
+<li>Fréquence <strong>0,1 Hz</strong>, récepteurs <strong>Trois DEL</strong>. <strong>Remettre le chronomètre à zéro</strong>, puis <strong>Top : 1</strong> quand la DEL 1 s’allume, <strong>Top : 2</strong>, <strong>Top : 3</strong>, et <strong>Top : 1</strong> à nouveau.</li>
+
+<li>Fréquence <strong>50 Hz</strong>. Pointe rouge sur <strong>L1</strong>, pointe noire sur <strong>N</strong> : lire V. Puis <strong>L1</strong> et <strong>L2</strong> : lire U. <strong>Garder la lecture du voltmètre</strong>.</li>
+
+<li>Recommencer avec L2 et L3, puis avec la source <strong>Réseau du bâtiment · 230 V</strong>.</li>
+
+</ol>
+
+<p>Le schéma d’abord, les mesures ensuite.</p>
+
+<p><strong>h)</strong> Schématiser les trois lampes, chacune entre phase et neutre.</p>
+
+<p>Ajouter le voltmètre qui mesure la tension entre L1 et L2.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<p><strong>i)</strong> Compléter avec vos mesures et l’unité. Déphasage = Δt ÷ T × 360.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Période T</th>
+
+<th>Δt de v1 à v2</th>
+
+<th>Δt de v2 à v3</th>
+
+<th>Déphasage (°)</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>………………………</td>
+
+<td>………………………</td>
+
+<td>………………………</td>
+
+<td>………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Puis les tensions : le protocole A lit des valeurs maximales, le protocole B des valeurs efficaces.</p>
+
+<p><strong>j)</strong> Compléter, puis calculer le rapport U ÷ V.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>La source</th>
+
+<th>V (V)</th>
+
+<th>U (V)</th>
+
+<th>U ÷ V</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Générateur de labo</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+</tr>
+
+<tr>
+
+<td>Réseau du bâtiment</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p>Comparer d’abord avec un groupe qui a pris l’autre protocole.</p>
+
+<p><strong>k)</strong> Le déphasage vaut-il 120° ? L’autre groupe est-il d’accord ?</p>
+
+<p>Le programme donne la relation U = √3 × V.</p>
+
+<p><strong>l)</strong> Calculer √3 × 230 V. Qu’annonce alors la plaque de la borne ?</p>
+
+<p>√3 × 230 V = ……………………… · la plaque annonce ………………………………………</p>
+
+<p>Dans la simulation, protocole B, à 0,1 Hz : comparer <strong>Trois lampes</strong> et <strong>Trois DEL</strong>.</p>
+
+<p><strong>m)</strong> Par période, la lampe s’allume deux fois, la DEL une fois. Pourquoi ?</p>
+
+<p>La simulation affiche le réseau à l’oscilloscope et au voltmètre. Au labo, jamais.</p>
+
+<p><strong>n)</strong> Pourquoi ne mesure-t-on pas le réseau au labo ? Que prend-on alors ?</p>
+
+<p><strong>o)</strong> Répondre à la problématique en deux ou trois phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour tout réseau triphasé :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Une ligne triphasée porte trois phases, <strong>L1 marron, L2 noir, L3 gris</strong>, le neutre <strong>N bleu</strong> et le conducteur de protection <strong>PE vert-jaune</strong>. Le PE ne transporte pas l’énergie. Il permet au disjoncteur différentiel de protéger les personnes.</p>
+
+<p>Les trois <strong>tensions simples</strong> v1, v2 et v3, entre chaque phase et le neutre, ont la même valeur efficace V, 230 V sur le réseau. Elles sont décalées d’un tiers de période, soit <strong>120°</strong>.</p>
+
+<p>La <strong>tension composée</strong> U, entre deux phases, vaut <strong>U = √3 × V</strong>, soit 400 V pour 230 V.</p>
+
+</blockquote>
+
+<h1 id="pour-aller-plus-loin-le-diagramme-de-fresnel">Pour aller plus loin · le diagramme de Fresnel</h1>
+
+<p>Dans l’encadré 6 de la simulation, chaque tension est un vecteur qui tourne. V1 est tracé ci-dessous, à l’échelle 1 cm pour 50 V. Tracer V2, de même longueur, tournée de 120° dans le sens des aiguilles d’une montre. Tracer U12, du bout de V2 au bout de V1, et le mesurer.</p>
+
+<figure><img src="img/SIM-08-ELEVE/fig3-cadre-fresnel.png" alt="" /></figure>
+
+<p>U12 mesure ……………… cm, soit ……………… V.</p>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-07-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-07 · Redresser un courant</span></a><a class="ap" href="SIM-09-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-09 · La puissance en alternatif</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

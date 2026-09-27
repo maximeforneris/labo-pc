@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-11 · L'induction</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-11-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-10-ELEVE.html" rel="prev" title="TP SIM-10 · Le champ d'une bobine" aria-label="TP SIM-10 · Le champ d'une bobine">&lsaquo;</a><a class="fleche" href="SIM-12-ELEVE.html" rel="next" title="TP SIM-12 · Transmettre l'information" aria-label="TP SIM-12 · Transmettre l'information">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-11-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">Tle Bac Pro · MELEC · CIEL · TP sur simulation SIM-11</p>
+    <h1>Produire une tension avec un aimant<span>induction électromagnétique</span></h1>
+  </div>
+  <p class="accroche">À quelle condition un aimant et une bobine produisent-ils une tension, et comment la rendre plus grande ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>Le champ magnétique d'un aimant et d'une bobine, vu en première</b><span class="car">c'est lui qui varie dans ce TP</span></li><li><b>La tension alternative, qui change de signe à intervalles réguliers</b><span class="car">c'est ce que produit la roue</span></li><li><b>Reconnaître la proportionnalité sur un graphique</b><span class="car">le protocole B y conduit</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-a-la-main">Protocole A · à la main</a><a href="#protocole-b-la-roue">Protocole B · la roue</a><a href="#protocole-a-ce-qui-change-la-deviation">Protocole A · ce qui change la déviation</a><a href="#protocole-b-la-vitesse-de-la-roue">Protocole B · la vitesse de la roue</a></div></nav>
+<p><strong>Sujet.</strong> Une lampe de vélo s’allume sans pile : la dynamo frotte sur la roue. Une lampe torche « à secouer » se recharge quand on l’agite. Dans les deux, un aimant bouge près d’une bobine.</p>
+
+<p><strong>Problématique : à quelle condition un aimant et une bobine produisent-ils une tension, et comment la rendre plus grande ?</strong></p>
+
+<p><strong>La simulation.</strong> « Labo électromagnétique de Faraday », écrans « Bobine de détection » et « Générateur », sur phet.colorado.edu : <a href="https://phet.colorado.edu/sims/html/faradays-electromagnetic-lab/latest/faradays-electromagnetic-lab_all.html?locale=fr&amp;screens=2&amp;currentFlow=conventional&amp;colorProfile=projector&amp;yotta=false">ouvrir l’écran Bobine de détection</a> · <a href="https://phet.colorado.edu/sims/html/faradays-electromagnetic-lab/latest/faradays-electromagnetic-lab_all.html?locale=fr&amp;screens=5&amp;currentFlow=conventional&amp;colorProfile=projector&amp;yotta=false">ouvrir l’écran Générateur</a>. Sans réseau : <a href="../html/phet/faradays-electromagnetic-lab_fr.html?screens=2,5&amp;currentFlow=conventional&amp;colorProfile=projector&amp;yotta=false">la copie hors ligne</a>, fichier phet/faradays-electromagnetic-lab_fr.html.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p>Dans la simulation, la bobine est reliée à un voltmètre à aiguille. Son cadran n’a pas de chiffres : on compte les grandes graduations, cinq de chaque côté du zéro, chacune partagée en quatre.</p>
+
+<figure><img src="img/SIM-11-ELEVE/fig2-trois-cadrans.png" alt="" /></figure>
+
+<p><em>Captures de la simulation « Labo électromagnétique de Faraday », PhET Interactive Simulations, University of Colorado Boulder, CC BY-NC 4.0.</em></p>
+
+<p><strong>a)</strong> Pour chaque cadran, relever le côté de l’aiguille et sa déviation.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>cadran 1</th>
+
+<th>cadran 2</th>
+
+<th>cadran 3</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Côté de l’aiguille, + ou −</td>
+
+<td><strong>+</strong></td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>Déviation, en grandes graduations</td>
+
+<td><strong>2</strong></td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>La roue du générateur affiche sa vitesse en « RPM » : ce sont des tours par minute, notés tr/min en français.</p>
+
+<p><strong>b)</strong> Convertir en tours par seconde. Le premier est fait.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>En tr/min</th>
+
+<th>60</th>
+
+<th>30</th>
+
+<th>45</th>
+
+<th>3 000</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>En tr/s</td>
+
+<td><strong>1</strong></td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. Une partie de la classe prend A, l’autre prend B, et on compare à la fin.</p>
+
+<figure><img src="img/SIM-11-ELEVE/fig1-deux-protocoles.png" alt="" /></figure>
+
+<p><em>Captures de la simulation « Labo électromagnétique de Faraday », PhET Interactive Simulations, University of Colorado Boulder, CC BY-NC 4.0.</em></p>
+
+<p><strong>Protocole A · à la main.</strong> Écran « Bobine de détection ». On déplace l’aimant devant la bobine, puis la bobine devant l’aimant, et on regarde l’aiguille.</p>
+
+<p><strong>Protocole B · la roue.</strong> Écran « Générateur ». L’eau fait tourner un aimant devant la bobine. On règle le robinet, on lit la vitesse de la roue et la déviation de l’aiguille.</p>
+
+<p><strong>c)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qui fait bouger l’aimant</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>La vitesse se mesure</td>
+
+<td>oui · non</td>
+
+<td>oui · non</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’on lit sur le voltmètre</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant d’ouvrir la simulation.</p>
+
+<p><strong>d)</strong> Quel protocole prenez-vous ? Justifier en une phrase.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>e)</strong> Prévoir : un aimant immobile dans la bobine dévie-t-il l’aiguille ?</p>
+
+<p><strong>oui · non · impossible à prévoir</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<p><strong>Avant de commencer.</strong> Ouvrir l’écran de votre protocole ; la case doit s’appeler « Courant conventionnel ». « Indicateur » sur le voltmètre, « Boucles: » sur 4, « Force: » à 75 %.</p>
+
+<h2 id="protocole-a-a-la-main">Protocole A · à la main</h2>
+
+<ol type="1">
+
+<li>Cocher « Verrouillage sur l’axe ». Aimant à gauche, immobile : lire l’aiguille.</li>
+
+<li>Approcher l’aimant de la bobine, lentement, pôle N devant. Recommencer, vite.</li>
+
+<li>Éloigner l’aimant. Puis le laisser immobile au centre de la bobine.</li>
+
+<li>Aimant immobile à gauche : approcher la bobine, puis l’éloigner.</li>
+
+<li>Refaire l’étape 2, vite, avec « Boucles: » sur 1, puis avec « Force: » à 25 %.</li>
+
+</ol>
+
+<h2 id="protocole-b-la-roue">Protocole B · la roue</h2>
+
+<ol type="1">
+
+<li>Robinet fermé : lire la vitesse de la roue et l’aiguille.</li>
+
+<li>Ouvrir un peu le robinet, poignée bleue vers la droite. Attendre une vitesse stable.</li>
+
+<li>Relever la vitesse et la déviation maximale. Le bouton pause aide à la lire.</li>
+
+<li>Recommencer pour quatre ouvertures plus grandes, jusqu’au robinet grand ouvert.</li>
+
+<li>Compter les allers-retours de l’aiguille pendant un tour de roue.</li>
+
+</ol>
+
+<p>Le schéma représente le circuit de la bobine tel que la simulation le dessine, en symboles normalisés, et l’aimant avec ses pôles.</p>
+
+<p><strong>f)</strong> Schématiser la bobine, la résistance, le voltmètre, et l’aimant.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<p><strong>g)</strong> Relever le côté de l’aiguille et sa déviation, en grandes graduations.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>La situation</th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+<th>L’aiguille</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Rien ne bouge</td>
+
+<td>aimant immobile</td>
+
+<td>robinet fermé</td>
+
+<td>………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Mouvement lent</td>
+
+<td>aimant approché</td>
+
+<td>roue lente</td>
+
+<td>………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Mouvement rapide</td>
+
+<td>approché vite</td>
+
+<td>roue rapide</td>
+
+<td>………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Mouvement inverse</td>
+
+<td>aimant éloigné</td>
+
+<td>demi-tour après</td>
+
+<td>………………………</td>
+
+</tr>
+
+<tr>
+
+<td>La bobine bouge</td>
+
+<td>bobine approchée</td>
+
+<td>sans objet</td>
+
+<td>………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<h2 id="protocole-a-ce-qui-change-la-deviation">Protocole A · ce qui change la déviation</h2>
+
+<p><strong>h)</strong> Étapes 2 et 5 : qu’est-ce qui augmente la déviation ? Entourer.</p>
+
+<p><strong>un mouvement rapide · un mouvement lent</strong></p>
+
+<p><strong>4 boucles · 1 boucle · « Force: » 75 % · « Force: » 25 %</strong></p>
+
+<h2 id="protocole-b-la-vitesse-de-la-roue">Protocole B · la vitesse de la roue</h2>
+
+<p><strong>i)</strong> Relever cinq vitesses de la roue et la déviation maximale de l’aiguille.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Vitesse de la roue (tr/min)</th>
+
+<th>………</th>
+
+<th>………</th>
+
+<th>………</th>
+
+<th>………</th>
+
+<th>………</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Déviation maximale (graduations)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Nombre d’allers-retours de l’aiguille pendant un tour de roue : ………</p>
+
+<p><strong>j)</strong> Tracer la déviation maximale en fonction de la vitesse de la roue.</p>
+
+<figure><img src="img/SIM-11-ELEVE/fig3-quadrillage.png" alt="" /></figure>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>k)</strong> La prévision e est-elle vérifiée ? Que faut-il pour avoir une tension ?</p>
+
+<p><strong>l)</strong> Comparer avec un groupe qui a pris l’autre protocole, puis compléter.</p>
+
+<p>Une tension n’apparaît que si ……………………………………………</p>
+
+<p>Elle est d’autant plus grande que ………………………………………</p>
+
+<p>Elle change de signe quand ……………………………………………</p>
+
+<p>Tout le monde, une minute : écran « Générateur », robinet grand ouvert. Vitesse de la roue avec « Boucles: » sur 1 : ……… tr/min ; sur 4 : ……… tr/min.</p>
+
+<p>La loi de Lenz dit que le courant induit s’oppose à la cause qui le produit.</p>
+
+<p><strong>m)</strong> La roue ralentit avec 4 boucles. Qu’est-ce qui la freine ? Expliquer.</p>
+
+<p><strong>n)</strong> Qu’ajouterait un vrai montage : aimant, bobine, voltmètre ?</p>
+
+<p><strong>o)</strong> Répondre à la problématique en deux phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour tout alternateur :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Une bobine devient le siège d’une <strong>tension induite</strong> quand le <strong>champ magnétique qui la traverse varie</strong> : l’aimant bouge, ou la bobine bouge devant l’aimant. Si rien ne bouge, il n’y a pas de tension.</p>
+
+<p>La tension est d’autant plus grande que la variation est <strong>rapide</strong>, l’aimant <strong>fort</strong> et la bobine riche en <strong>spires</strong>. Elle change de signe avec le sens du mouvement : un aimant qui tourne donne une <strong>tension alternative</strong>. C’est le principe de l’<strong>alternateur</strong>.</p>
+
+<p>Le courant induit <strong>s’oppose à la cause qui le produit</strong> (loi de Lenz) : il freine le mouvement. Un alternateur transforme de l’énergie mécanique en énergie électrique, avec un <strong>rendement inférieur à 1</strong>.</p>
+
+</blockquote>
+
+<h1 id="pour-aller-plus-loin-le-50-hz-du-réseau">Pour aller plus loin · le 50 Hz du réseau</h1>
+
+<p>Un alternateur de centrale à deux pôles, comme la roue de la simulation, donne un aller-retour de tension par tour. Combien de tours par minute doit-il faire pour produire les 50 allers-retours par seconde du réseau ?</p>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-10-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-10 · Le champ d'une bobine</span></a><a class="ap" href="SIM-12-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-12 · Transmettre l'information</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie, Tle Bac Pro MELEC et CIEL. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

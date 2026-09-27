@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-07 · Redresser un courant</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-07-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-06-ELEVE.html" rel="prev" title="TP SIM-06 · Le moteur et son rendement" aria-label="TP SIM-06 · Le moteur et son rendement">&lsaquo;</a><a class="fleche" href="SIM-08-ELEVE.html" rel="next" title="TP SIM-08 · Le réseau triphasé" aria-label="TP SIM-08 · Le réseau triphasé">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-07-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">Tle Bac Pro · MMCM, MVTR, MELEC, CIEL · TP sur simulation SIM-07</p>
+    <h1>Redresser un courant<span>alternatif et continu</span></h1>
+  </div>
+  <p class="accroche">Comment des diodes et un condensateur rendent-ils continue une tension alternative ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>Tension alternative, valeur maximale, période et fréquence</b><span class="car">l'oscilloscope les montre dès la première mesure</span></li><li><b>Umax = Ueff × √2</b><span class="car">le transformateur est annoncé par sa valeur efficace, l'écran montre sa valeur maximale</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-l-oscilloscope">Protocole A · l’oscilloscope</a><a href="#protocole-b-deux-del-a-0-1-hz">Protocole B · deux DEL à 0,1 Hz</a><a href="#filtrer-pour-tous-les-groupes">Filtrer, pour tous les groupes</a></div></nav>
+<p><strong>Sujet.</strong> Une guirlande à DEL, une box, un chargeur de téléphone fonctionnent en courant continu, alors que la prise délivre du 230 V alternatif. Dans leur bloc d’alimentation, un transformateur abaisse la tension, puis des diodes et un condensateur la rendent continue.</p>
+
+<p><strong>Problématique : comment des diodes et un condensateur rendent-ils continue une tension alternative ?</strong></p>
+
+<p><strong>La simulation.</strong> <a href="../html/redressement.html">Ouvrir « Redresser un courant »</a> : le fichier redressement.html, sur l’ENT ou la clé du professeur.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p>Voici la plaque du bloc d’alimentation d’une guirlande à DEL.</p>
+
+<figure><img src="img/SIM-07-ELEVE/fig2-plaque-bloc.png" alt="" /></figure>
+
+<p><strong>a)</strong> Relever les deux tensions de la plaque et dire leur nature.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>La tension</th>
+
+<th>Alternative ou continue ?</th>
+
+<th>Le symbole qui le dit</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Entrée</td>
+
+<td>………………</td>
+
+<td>………………………</td>
+
+<td>………………</td>
+
+</tr>
+
+<tr>
+
+<td>Sortie</td>
+
+<td>………………</td>
+
+<td>………………………</td>
+
+<td>………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le transformateur de la simulation délivre <strong>12 V efficaces</strong> à <strong>50 Hz</strong>. On rappelle que U<sub>max</sub> = U<sub>eff</sub> × √2 et que T = 1 ÷ f.</p>
+
+<p><strong>b)</strong> Calculer la tension maximale du transformateur et sa période.</p>
+
+<p>U<sub>max</sub> = ……………………………… · T = ……………………………… s = ……………………… ms</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. Une partie de la classe prend A, l’autre prend B, et on compare à la fin.</p>
+
+<figure><img src="img/SIM-07-ELEVE/fig1-deux-protocoles.png" alt="" /></figure>
+
+<p><em>Capture de la simulation « Redresser un courant », montage sans diode.</em></p>
+
+<p><strong>Protocole A · l’oscilloscope.</strong> À 50 Hz, tout va trop vite pour l’œil. L’oscilloscope dessine la tension du transformateur, voie 1, et celle de la charge, voie 2 : on y lit une forme, une valeur maximale, une période. Un voltmètre en position continu donne la valeur moyenne.</p>
+
+<p><strong>Protocole B · deux DEL à 0,1 Hz.</strong> Le générateur ralenti fait une période en 10 s. Deux DEL montées tête-bêche montrent le sens du courant dans la charge : la rouge dans un sens, la verte dans l’autre. Le voltmètre suit la tension seconde après seconde.</p>
+
+<p><strong>c)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on lit</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Le sens du courant se voit</td>
+
+<td>par une DEL · par le signe de la tension</td>
+
+<td>par une DEL · par le signe de la tension</td>
+
+</tr>
+
+<tr>
+
+<td>Une limite</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant de toucher aux réglages.</p>
+
+<p><strong>d)</strong> Quel protocole prenez-vous ? Justifier en une phrase.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>e)</strong> Prévoir : pendant quelle part de la période le courant passe-t-il ?</p>
+
+<p>Entourer une réponse par montage.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+</colgroup>
+
+<tbody>
+
+<tr>
+
+<td>Une diode</td>
+
+<td>jamais</td>
+
+<td>la moitié du temps</td>
+
+<td>tout le temps</td>
+
+</tr>
+
+<tr>
+
+<td>Le pont de quatre diodes</td>
+
+<td>jamais</td>
+
+<td>la moitié du temps</td>
+
+<td>tout le temps</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<p><strong>Avant de commencer.</strong> Ouvrir redressement.html. <strong>Charge R</strong> : 220 Ω, <strong>Condensateur</strong> : Sans. Protocole A : <strong>5 V/div</strong> et <strong>5 ms/div</strong>. Protocole B : fréquence du générateur <strong>0,1 Hz</strong>.</p>
+
+<h2 id="protocole-a-l-oscilloscope">Protocole A · l’oscilloscope</h2>
+
+<ol type="1">
+
+<li>Montage <strong>Sans diode</strong>. Curseurs <strong>Temps</strong> : mesurer la période de la voie 1. Curseurs <strong>Tension</strong> : sa valeur maximale.</li>
+
+<li>Montage <strong>Une diode</strong>, zéro <strong>Une division au-dessus du bas</strong> : relever le sommet de la voie 2 et le voltmètre. La voie 2 descend-elle sous le zéro ?</li>
+
+<li>Montage <strong>Pont de quatre diodes</strong> : même relevé, puis la période de la voie 2 seule (<strong>Voie 2</strong>).</li>
+
+<li>À chaque mesure : <strong>Garder cette lecture dans le tableau</strong>.</li>
+
+</ol>
+
+<h2 id="protocole-b-deux-del-a-0-1-hz">Protocole B · deux DEL à 0,1 Hz</h2>
+
+<ol type="1">
+
+<li>Montage <strong>Sans diode</strong>. <strong>Avancer de 1 s</strong>, noter la DEL allumée, <strong>Garder cette mesure dans le tableau</strong> ; recommencer pendant 10 s.</li>
+
+<li>Même chose avec <strong>Une diode</strong>, puis avec <strong>Pont de quatre diodes</strong>.</li>
+
+<li>Fréquence <strong>50 Hz</strong>, <strong>Lancer</strong> : relever le voltmètre pour les trois montages.</li>
+
+</ol>
+
+<p>Le schéma d’abord, les mesures ensuite.</p>
+
+<p><strong>f)</strong> Schématiser le montage en pont, puis flécher le courant dans R.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<p>Le tableau suivant est commun aux deux protocoles.</p>
+
+<p><strong>g)</strong> Compléter le tableau pour les trois montages.</p>
+
+<p>Une ligne par montage ; la dernière colonne est pour le protocole A.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>Le montage</th>
+
+<th>Change de sens dans R</th>
+
+<th>Il passe pendant</th>
+
+<th>Voltmètre continu (V)</th>
+
+<th>Sommet de u<sub>R</sub> (V)</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Sans diode</td>
+
+<td>oui · non</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+</tr>
+
+<tr>
+
+<td>Une diode</td>
+
+<td>oui · non</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+</tr>
+
+<tr>
+
+<td>Pont de quatre diodes</td>
+
+<td>oui · non</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+<td>………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Avec le pont, comparer le rythme de u<sub>R</sub> à celui de la source.</p>
+
+<p><strong>h)</strong> Relever les deux périodes, avec leur unité.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Période de la source</th>
+
+<th>Période de u<sub>R</sub> avec le pont</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>………………………</td>
+
+<td>………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Puis la forme de la tension, sur le quadrillage.</p>
+
+<p><strong>i)</strong> Tracer l’allure de u<sub>R</sub> avec le pont, sur deux périodes. Graduer les axes.</p>
+
+<figure><img src="img/SIM-07-ELEVE/fig3-quadrillage.png" alt="" /></figure>
+
+<h2 id="filtrer-pour-tous-les-groupes">Filtrer, pour tous les groupes</h2>
+
+<p>Le condensateur se règle dans le protocole A : tout le monde y passe pour la dernière mesure.</p>
+
+<ol type="1">
+
+<li>Montage <strong>Pont de quatre diodes</strong>, voies affichées <strong>Voie 2</strong>, couplage <strong>AC : sans sa moyenne</strong>, zéro <strong>Au centre</strong>.</li>
+
+<li>Condensateur <strong>100 µF</strong> : choisir la sensibilité où les dents de scie tiennent dans l’écran. Curseurs <strong>Tension</strong> : mesurer l’ondulation ΔU, du bas au haut des dents. Relever le voltmètre.</li>
+
+<li>Recommencer avec <strong>470 µF</strong> puis <strong>2 200 µF</strong>.</li>
+
+</ol>
+
+<p><strong>j)</strong> Compléter le tableau du filtrage.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Le condensateur</th>
+
+<th>100 µF</th>
+
+<th>470 µF</th>
+
+<th>2 200 µF</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ondulation ΔU (V)</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>Voltmètre, position continu (V)</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p>Comparer d’abord avec un groupe qui a pris l’autre protocole.</p>
+
+<p><strong>k)</strong> La prévision e est-elle confirmée ? L’autre groupe est-il d’accord ?</p>
+
+<p>Avec le pont, le sommet de u<sub>R</sub> est plus bas que sans diode : le courant traverse deux diodes à la fois. Les groupes B prennent les valeurs d’un groupe A.</p>
+
+<p><strong>l)</strong> Calculer la chute de tension dans le pont, puis dans une diode.</p>
+
+<p>Chute dans le pont : ……………………… V · chute dans une diode : ……………………… V</p>
+
+<p><strong>m)</strong> Quel est l’effet du condensateur ? La tension est-elle continue ?</p>
+
+<p>La simulation simplifie le montage : son repli « Ce que la simulation simplifie » le dit.</p>
+
+<p><strong>n)</strong> Au labo, avec un vrai transformateur, qu’est-ce qui changerait ?</p>
+
+<p><strong>o)</strong> Répondre à la problématique en deux ou trois phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour tout bloc d’alimentation :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Une <strong>diode</strong> ne laisse passer le courant que dans un sens. Seule, elle supprime une alternance sur deux. C’est le <strong>redressement simple alternance</strong>.</p>
+
+<p>Un <strong>pont de quatre diodes</strong> fait passer le courant dans la charge toujours dans le même sens. C’est le <strong>redressement double alternance</strong>, et sa tension a une fréquence double.</p>
+
+<p>Chaque diode qui conduit fait perdre environ <strong>0,6 à 0,7 V</strong>.</p>
+
+<p>Un <strong>condensateur</strong> en parallèle sur la charge <strong>filtre</strong> la tension redressée. Plus sa capacité est grande, plus l’ondulation est petite, et la tension devient presque continue.</p>
+
+</blockquote>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-06-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-06 · Le moteur et son rendement</span></a><a class="ap" href="SIM-08-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-08 · Le réseau triphasé</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

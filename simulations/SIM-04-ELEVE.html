@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-04 · Remplir l'arrosoir à la cuve</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-04-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-03-ELEVE.html" rel="prev" title="TP SIM-03 · Soulever une voiture à la main" aria-label="TP SIM-03 · Soulever une voiture à la main">&lsaquo;</a><a class="fleche" href="SIM-05-ELEVE.html" rel="next" title="TP SIM-05 · Pile et accumulateur" aria-label="TP SIM-05 · Pile et accumulateur">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-04-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">Tle Bac Pro · MMCM · MVTR · TP sur simulation SIM-04</p>
+    <h1>Remplir l'arrosoir à la cuve<span>débit en volume, débit en masse</span></h1>
+  </div>
+  <p class="accroche">Combien de temps faut-il pour remplir l'arrosoir, et à quelle vitesse l'eau avance-t-elle dans le tuyau ?</p>
+  <p class="contenu">2 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>La masse volumique, ρ = m ÷ V</b><span class="car">elle relie le volume du protocole A à la masse du protocole B</span></li><li><b>La surface d'un disque, S = π × D² ÷ 4</b><span class="car">la vitesse de l'eau se calcule avec la section du tuyau</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-le-volume">Protocole A · le volume</a><a href="#protocole-b-la-masse">Protocole B · la masse</a></div></nav>
+<p><strong>Sujet.</strong> Au fond du jardin, une cuve récupère l’eau de pluie. Un robinet à sa base alimente un tuyau, et il faut remplir un arrosoir de 10 L.</p>
+
+<p><strong>Problématique : combien de temps faut-il pour remplir l’arrosoir, et à quelle vitesse l’eau avance-t-elle dans le tuyau ?</strong></p>
+
+<p><strong>La simulation.</strong> <a href="../html/debit.html">Ouvrir « Le débit d’un fluide »</a> : le fichier debit.html, sur l’ENT ou la clé du professeur.</p>
+
+<figure><img src="img/SIM-04-ELEVE/capture-debit.png" alt="" /></figure>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p><strong>a)</strong> Compléter le tableau des grandeurs du TP.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>La grandeur</th>
+
+<th>Son symbole</th>
+
+<th>Son unité SI</th>
+
+<th>Une unité courante</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>le débit en volume</td>
+
+<td>Q<sub>v</sub></td>
+
+<td>m³/s</td>
+
+<td>L/min</td>
+
+</tr>
+
+<tr>
+
+<td>le débit en masse</td>
+
+<td>Q<sub>m</sub></td>
+
+<td>………………</td>
+
+<td>kg/min</td>
+
+</tr>
+
+<tr>
+
+<td>la vitesse moyenne</td>
+
+<td>v</td>
+
+<td>………………</td>
+
+<td>km/h</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Pour passer d’une unité de débit à l’autre, on convertit le volume et la durée séparément.</p>
+
+<p><strong>b)</strong> Convertir. Les deux premiers sont faits.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>1 min = 60 s</th>
+
+<th>1 h = ……… min</th>
+
+<th>1 m³ = ……… L</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td><strong>6 L/min = 6 ÷ 60 = 0,1 L/s</strong></td>
+
+<td>6 L/min = ……… m³/h</td>
+
+<td>0,1 L/s = ……… m³/s</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Un litre d’huile de table a une masse de 0,92 kg : ρ<sub>huile</sub> = 0,92 kg/L.</p>
+
+<p><strong>c)</strong> Calculer la masse de 5 L d’huile, puis le volume de 1,38 kg d’huile.</p>
+
+<p>m = ………………………………… · V = …………………………………</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. Une partie de la classe prend A, l’autre prend B, et on compare à la fin.</p>
+
+<figure><img src="img/SIM-04-ELEVE/fig1-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · le volume.</strong> On glisse un récipient gradué sous le jet pendant une durée mesurée au chronomètre, puis on lit le volume recueilli : Q<sub>v</sub> = V ÷ t.</p>
+
+<p><strong>Protocole B · la masse.</strong> On glisse une bassine posée sur une balance tarée, pendant une durée mesurée, puis on lit la masse recueillie : Q<sub>m</sub> = m ÷ t.</p>
+
+<p><strong>d)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A · le volume</th>
+
+<th>Protocole B · la masse</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on lit</td>
+
+<td>………………………………</td>
+
+<td>………………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Le débit obtenu directement</td>
+
+<td>Q<sub>v</sub> · Q<sub>m</sub></td>
+
+<td>Q<sub>v</sub> · Q<sub>m</sub></td>
+
+</tr>
+
+<tr>
+
+<td>Une limite</td>
+
+<td>………………………………</td>
+
+<td>………………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant ; le professeur peut imposer celui qui reste disponible.</p>
+
+<p><strong>e)</strong> Quel protocole prenez-vous ? Justifier en une phrase.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>f)</strong> Avant de mesurer, on passe du tuyau de 12 mm à un tuyau de 8 mm. Entourer.</p>
+
+<p>Le débit sera : <strong>plus grand · à peu près le même · plus petit</strong>.</p>
+
+<p>La vitesse de l’eau dans le tuyau sera : <strong>plus grande · la même · plus petite</strong>.</p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<p><strong>Avant de commencer.</strong> Dans la carte <strong>1</strong>, régler <strong>Eau</strong>, <strong>12 mm</strong> et <strong>Ouverture du robinet</strong> sur 20 %. Laisser <strong>Vitesse du temps</strong> sur <strong>× 1</strong> : le chronomètre doit être juste.</p>
+
+<h2 id="protocole-a-le-volume">Protocole A · le volume</h2>
+
+<ol type="1">
+
+<li>Onglet <strong>Protocole A · le volume</strong>, récipient <strong>Éprouvette de 1 L</strong>.</li>
+
+<li><strong>Mettre le récipient sous le jet</strong> : le chronomètre part.</li>
+
+<li>Après 10 s au moins, et avant qu’elle déborde, <strong>Retirer le récipient</strong>.</li>
+
+<li>Lire le volume sur <strong>La graduation, vue de près</strong>, l’écrire dans <strong>Volume lu</strong>, puis <strong>Garder cette mesure</strong>. <strong>Vider le récipient</strong>.</li>
+
+<li>Recommencer avec <strong>8 mm</strong>, puis avec l’<strong>Huile</strong> et <strong>12 mm</strong>.</li>
+
+</ol>
+
+<h2 id="protocole-b-la-masse">Protocole B · la masse</h2>
+
+<ol type="1">
+
+<li>Onglet <strong>Protocole B · la masse</strong>, puis <strong>Tare</strong> : la balance affiche 0 g.</li>
+
+<li><strong>Mettre le récipient sous le jet</strong>, attendre environ 30 s, <strong>Retirer le récipient</strong>.</li>
+
+<li>Relever la <strong>Balance</strong> et le <strong>Chronomètre</strong>, puis <strong>Garder cette mesure</strong>.</li>
+
+<li><strong>Vider le récipient</strong>, <strong>Tare</strong>, recommencer avec <strong>8 mm</strong>, puis avec l’<strong>Huile</strong> et <strong>12 mm</strong>.</li>
+
+</ol>
+
+<p><strong>g)</strong> Schématiser l’installation ; flécher l’écoulement, marquer S et 1 m.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<p><strong>h)</strong> Relever et calculer, avec ρ<sub>eau</sub> = 1,00 kg/L et ρ<sub>huile</sub> = 0,92 kg/L.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Le réglage</th>
+
+<th>Eau, 12 mm</th>
+
+<th>Eau, 8 mm</th>
+
+<th>Huile, 12 mm</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Durée t (s)</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+</tr>
+
+<tr>
+
+<td>V (L) ou m (kg) lu</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+</tr>
+
+<tr>
+
+<td>Q<sub>v</sub> (L/min)</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+</tr>
+
+<tr>
+
+<td>Q<sub>m</sub> (kg/min)</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+</tr>
+
+<tr>
+
+<td>Q<sub>v</sub> (m³/h)</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>La vitesse moyenne dans le tuyau se calcule avec le débit en m³/s et la section en m².</p>
+
+<p><strong>i)</strong> Calculer la vitesse moyenne de l’eau dans les deux tuyaux.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Le tuyau</th>
+
+<th>12 mm</th>
+
+<th>8 mm</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Section S = π × D² ÷ 4 (m²)</td>
+
+<td>………………………</td>
+
+<td>………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Q<sub>v</sub> (m³/s)</td>
+
+<td>………………………</td>
+
+<td>………………………</td>
+
+</tr>
+
+<tr>
+
+<td>v = Q<sub>v</sub> ÷ S (m/s)</td>
+
+<td>………………………</td>
+
+<td>………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>j)</strong> Votre prévision f est-elle vérifiée ? Pourquoi la vitesse change-t-elle autant ?</p>
+
+<p><strong>k)</strong> Comparer avec l’autre protocole : même débit en masse, eau, 12 mm ?</p>
+
+<p>Le débit en masse est le même en tout point du tuyau. Au bout, on visse un embout de 4 mm.</p>
+
+<p><strong>l)</strong> On suppose que le débit ne change pas. Calculer la vitesse de l’eau dans l’embout.</p>
+
+<p><strong>m)</strong> Avec l’huile, le débit en volume a-t-il changé ? Proposer une explication.</p>
+
+<p><strong>n)</strong> Citer deux différences entre la simulation et une vraie cuve de jardin.</p>
+
+<p><strong>o)</strong> Répondre à la problématique : durée pour 10 L, vitesse dans le tuyau.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour tout liquide qui s’écoule :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Le débit en volume est le volume écoulé par seconde : <strong>Q<sub>v</sub> = V ÷ t</strong>, en m³/s. Le débit en masse est la masse écoulée par seconde : <strong>Q<sub>m</sub> = m ÷ t</strong>, en kg/s. Ils sont liés par la masse volumique : <strong>Q<sub>m</sub> = ρ × Q<sub>v</sub></strong>.</p>
+
+<p>La vitesse moyenne dans un tuyau de section S vaut <strong>v = Q<sub>v</sub> ÷ S</strong>. Le débit en masse est le même en tout point du tuyau : <strong>là où la section rétrécit, le liquide va plus vite</strong>.</p>
+
+</blockquote>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-03-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-03 · Soulever une voiture à la main</span></a><a class="ap" href="SIM-05-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-05 · Pile et accumulateur</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie, terminale. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-06 · Le moteur et son rendement</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-06-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-05-ELEVE.html" rel="prev" title="TP SIM-05 · Pile et accumulateur" aria-label="TP SIM-05 · Pile et accumulateur">&lsaquo;</a><a class="fleche" href="SIM-07-ELEVE.html" rel="next" title="TP SIM-07 · Redresser un courant" aria-label="TP SIM-07 · Redresser un courant">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-06-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">Tle Bac Pro · MMCM, MVTR, MELEC, CIEL · TP sur simulation SIM-06</p>
+    <h1>Le moteur et son rendement<span>convertir l'énergie électrique</span></h1>
+  </div>
+  <p class="accroche">Quand la tension baisse, le moteur du volet tourne-t-il moins vite, et quelle part de l'énergie reçue sert vraiment à lever le volet ?</p>
+  <p class="contenu">4 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>La puissance électrique, P = U × I</b><span class="car">c'est la puissance que le moteur reçoit de la batterie</span></li><li><b>Le poids, P = m × g, et la vitesse, v = d ÷ t</b><span class="car">la puissance utile est celle qui lève la charge</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-le-tachymetre">Protocole A · le tachymètre</a><a href="#protocole-b-le-chronometre">Protocole B · le chronomètre</a></div></nav>
+<p><strong>Sujet.</strong> Un volet roulant solaire fonctionne sur une petite batterie de 12 V, rechargée par un panneau. Par temps gris, la batterie faiblit : le volet monte plus lentement.</p>
+
+<p><strong>Problématique : quand la tension baisse, le moteur du volet tourne-t-il moins vite, et quelle part de l’énergie reçue sert vraiment à lever le volet ?</strong></p>
+
+<p><strong>La simulation.</strong> <a href="../html/moteur.html">Ouvrir « Le moteur : vitesse et rendement »</a> : le fichier moteur.html, sur l’ENT ou la clé du professeur.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p>Au laboratoire, un petit moteur à réducteur remplace celui du volet : il enroule un fil sur un tambour de 3,0 cm de diamètre et lève une masse de 1 kg. Voici sa plaque.</p>
+
+<figure><img src="img/SIM-06-ELEVE/fig3-plaque-moteur.png" alt="" /></figure>
+
+<p><strong>a)</strong> Relever la tension, la vitesse à vide et le type de courant.</p>
+
+<p>Tension : ……………… · vitesse à vide : ……………… · courant : <strong>continu · alternatif</strong></p>
+
+<p><strong>b)</strong> Moteur à courant continu ou moteur asynchrone ? Justifier par la plaque.</p>
+
+<p><strong>c)</strong> Calculer avec P = U × I, v = h ÷ t et P = m × g × v ; g = 9,81 N/kg.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>Une puissance électrique</th>
+
+<th>Une vitesse</th>
+
+<th>Une puissance mécanique</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td><strong>12 V et 0,30 A : 3,6 W</strong></td>
+
+<td>1,00 m en 5,0 s : …… m/s</td>
+
+<td>1 kg à 0,10 m/s : …… W</td>
+
+</tr>
+
+<tr>
+
+<td>6 V et 0,28 A : …… W</td>
+
+<td>0,50 m en 10 s : …… m/s</td>
+
+<td>0,5 kg à 0,20 m/s : …… W</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. Tous deux lèvent 1 kg sous 6 V, 9 V et 12 V ; ils diffèrent par la façon de mesurer la vitesse de montée.</p>
+
+<figure><img src="img/SIM-06-ELEVE/fig1-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · le tachymètre.</strong> Il vise une pastille collée sur le tambour et affiche sa fréquence de rotation n, en tours par minute. À chaque tour, le tambour enroule son périmètre π × D : v = π × D × n ÷ 60.</p>
+
+<p><strong>Protocole B · le chronomètre.</strong> Il mesure la durée t de la montée entre deux repères distants de h = 1,00 m : v = h ÷ t.</p>
+
+<p><strong>d)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A · tachymètre</th>
+
+<th>Protocole B · chronomètre</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>L’onglet de la simulation</td>
+
+<td>A · Vitesse et tension</td>
+
+<td>B · Lever une charge</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’on lit pour la vitesse</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>La vitesse se calcule par</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’on lit dans les deux</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant d’ouvrir la simulation.</p>
+
+<p><strong>e)</strong> Quel protocole prenez-vous ? Justifier en une phrase.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>f)</strong> Avant de mesurer : de 12 V à 6 V, la vitesse de montée est… Entourer.</p>
+
+<p><strong>divisée par moins de 2 · divisée par 2 · divisée par plus de 2</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<figure><img src="img/SIM-06-ELEVE/fig2-capture-banc.png" alt="" /></figure>
+
+<p><em>L’écran de la simulation, onglet B : le voltmètre aux bornes du moteur, l’ampèremètre en série.</em></p>
+
+<p>Sur le schéma : l’alimentation, l’interrupteur K, l’ampèremètre, le moteur et le voltmètre.</p>
+
+<p><strong>g)</strong> Schématiser le circuit du moteur ; flécher le sens du courant.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<h2 id="protocole-a-le-tachymetre">Protocole A · le tachymètre</h2>
+
+<p><strong>Avant de commencer.</strong> Ouvrir l’onglet <strong>A · Vitesse et tension</strong>, régler <strong>Charge</strong> sur <strong>1 kg</strong>.</p>
+
+<ol type="1">
+
+<li>Régler <strong>Tension de l’alimentation</strong> sur <strong>6 V</strong>, cliquer <strong>Mettre en marche</strong>.</li>
+
+<li>Pendant la montée, relever la tension, l’intensité et la fréquence de rotation du <strong>Tachymètre</strong>, puis cliquer <strong>Garder cette mesure dans le tableau</strong>.</li>
+
+<li>Cliquer <strong>Redescendre la masse</strong>, puis recommencer à <strong>9 V</strong> et à <strong>12 V</strong>.</li>
+
+</ol>
+
+<h2 id="protocole-b-le-chronometre">Protocole B · le chronomètre</h2>
+
+<p><strong>Avant de commencer.</strong> Ouvrir l’onglet <strong>B · Lever une charge</strong>, régler <strong>Masse accrochée</strong> sur <strong>1,0 kg</strong>.</p>
+
+<ol type="1">
+
+<li>Régler <strong>Tension de l’alimentation</strong> sur <strong>6 V</strong>, cliquer <strong>Lever la masse</strong>.</li>
+
+<li>Pendant la montée, relever la tension et l’intensité.</li>
+
+<li>En haut, relever la durée du <strong>Chronomètre</strong> et cliquer <strong>Garder cette montée dans le tableau</strong>.</li>
+
+<li>Cliquer <strong>Redescendre la masse</strong>, puis recommencer à <strong>9 V</strong> et à <strong>12 V</strong>.</li>
+
+</ol>
+
+<p>Pé = U × I, puissance reçue · Pm = m × g × v, puissance rendue · rendement η = Pm ÷ Pé.</p>
+
+<p><strong>h)</strong> Relever vos mesures, puis calculer pour m = 1 kg et g = 9,81 N/kg.</p>
+
+<table style="width:100%;">
+
+<colgroup>
+
+<col style="width: 14%" />
+
+<col style="width: 14%" />
+
+<col style="width: 14%" />
+
+<col style="width: 14%" />
+
+<col style="width: 14%" />
+
+<col style="width: 14%" />
+
+<col style="width: 14%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>U (V)</th>
+
+<th>I (A)</th>
+
+<th>n (tr/min) ou t (s)</th>
+
+<th>v (m/s)</th>
+
+<th>Pé (W)</th>
+
+<th>Pm (W)</th>
+
+<th>η (%)</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>6</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>9</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>12</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+<p>On trace la vitesse de montée en fonction de la tension.</p>
+
+<p><strong>i)</strong> Placer les trois points v en fonction de U, puis tracer la droite qui les relie.</p>
+
+<figure><img src="img/SIM-06-ELEVE/fig4-quadrillage.png" alt="" /></figure>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>j)</strong> Votre prévision f est-elle confirmée ? La droite passe-t-elle par l’origine ?</p>
+
+<p>Comparer avec un groupe de l’autre protocole, à 12 V : la vitesse et le rendement.</p>
+
+<p><strong>k)</strong> Les deux protocoles trouvent-ils le même rendement ? Pourquoi ?</p>
+
+<p><strong>l)</strong> Où passe l’énergie que le moteur ne rend pas ? Citer deux pertes.</p>
+
+<p><strong>m)</strong> Citer une chose qu’un vrai moteur montrerait, et pas la simulation.</p>
+
+<p><strong>n)</strong> Répondre à la problématique en deux phrases.</p>
+
+<p>Ce que ce TP a établi, pour tout moteur électrique :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Un moteur électrique convertit de l’énergie <strong>électrique</strong> en énergie <strong>mécanique</strong>. Il reçoit <strong>Pé = U × I</strong> ; quand il lève une charge, il rend <strong>Pm = m × g × v</strong>. Son rendement <strong>η = Pm ÷ Pé</strong> est inférieur à 1 : le reste part en <strong>chaleur</strong>, par effet Joule dans le bobinage et par les frottements.</p>
+
+<p>Pour un moteur à courant continu, la <strong>fréquence de rotation augmente avec la tension</strong>. Sous une tension trop faible, il ne démarre pas.</p>
+
+</blockquote>
+
+<h1 id="pour-aller-plus-loin-la-charge-qui-convient">Pour aller plus loin · la charge qui convient</h1>
+
+<p>Dans l’onglet B, à 12 V, lever 0,2 kg puis 2,0 kg. Le rendement est-il le même qu’avec 1 kg ? Pourquoi choisit-on un moteur adapté à la charge qu’il doit lever ?</p>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-05-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-05 · Pile et accumulateur</span></a><a class="ap" href="SIM-07-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-07 · Redresser un courant</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

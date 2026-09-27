@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chauffer de l'eau : quel rendement ?</title>
+<meta name="description" content="Chauffe un litre d&#x27;eau avec une bouilloire, puis avec une casserole sur deux plaques différentes. Compare l&#x27;énergie consommée au compteur à l&#x27;énergie reçue par l&#x27;eau.">
+<style>
+/* Simulations des TP · feuille commune, inlinee dans chaque page par assembler-simulations.py.
+   Palette du kit web (kit.css) : papier, graphite, un seul accent. Polices du systeme : la page
+   s'ouvre sans reseau, depuis une cle ou le poste de la salle. */
+:root{
+  --fond:#e9e7e3; --carte:#fbfaf9; --carte2:#f2f0ec; --encre:#191a1c; --encre2:#5d5b57;
+  --trait:#c9c5bf; --trait2:#dedbd6; --accent:#2c6da6; --accent-doux:#dfe8f1;
+  --juste:#2f7a55; --juste-doux:#e2efe7; --faux:#ab432a; --faux-doux:#f5e3dd; --tiede:#b8801f;
+  --scene:#f6f5f2; --ombre:0 1px 2px rgba(25,26,28,.05),0 10px 26px rgba(25,26,28,.07); --r:6px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fond:#131315; --carte:#1c1d20; --carte2:#232427; --encre:#eceae6; --encre2:#a6a49f;
+    --trait:#4a4a4d; --trait2:#333437; --accent:#63a6dd; --accent-doux:#1d2a36;
+    --juste:#5cc08d; --juste-doux:#17281f; --faux:#ef7a58; --faux-doux:#34201a; --tiede:#dfae4e;
+    --scene:#18191b; --ombre:0 1px 2px rgba(0,0,0,.5),0 12px 32px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --fond:#131315; --carte:#1c1d20; --carte2:#232427; --encre:#eceae6; --encre2:#a6a49f;
+  --trait:#4a4a4d; --trait2:#333437; --accent:#63a6dd; --accent-doux:#1d2a36;
+  --juste:#5cc08d; --juste-doux:#17281f; --faux:#ef7a58; --faux-doux:#34201a; --tiede:#dfae4e;
+  --scene:#18191b; --ombre:0 1px 2px rgba(0,0,0,.5),0 12px 32px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fond);color:var(--encre);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial,sans-serif;font-size:16px;line-height:1.5}
+.page{max-width:1120px;margin:0 auto;padding:18px 16px 48px}
+.mono,.afficheur .val,.curseur .val,table.releve td{font-family:ui-monospace,"Cascadia Mono",Consolas,"Roboto Mono",monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3{line-height:1.2;margin:0;text-wrap:balance}
+sub,sup{font-size:.72em;line-height:0}
+
+/* En-tete */
+.tete{padding:6px 0 16px;border-bottom:1px solid var(--trait);margin-bottom:16px}
+.surtitre{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--encre2);font-weight:600}
+.tete h1{font-size:clamp(1.45rem,4vw,2rem);margin:4px 0 6px;font-weight:750}
+.chapeau{margin:0;color:var(--encre2);max-width:70ch}
+
+/* Onglets : un par protocole ou par ecran */
+.onglets{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+.onglets button{font:inherit;font-weight:650;font-size:.95rem;padding:9px 14px;border-radius:var(--r);
+  border:1px solid var(--trait);background:var(--carte);color:var(--encre2);cursor:pointer}
+.onglets button[aria-selected="true"]{background:var(--encre);border-color:var(--encre);color:var(--carte)}
+.onglets button:not([aria-selected="true"]):hover{border-color:var(--encre2);color:var(--encre)}
+.vue[hidden]{display:none}
+
+/* Mise en page : la scene a gauche, les commandes a droite ; une colonne sous 820 px */
+.plan{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.plan{grid-template-columns:1fr}}
+.carte{background:var(--carte);border:1px solid var(--trait2);border-radius:var(--r);box-shadow:var(--ombre);padding:16px;margin-bottom:16px}
+.carte > h2{font-size:1.08rem;margin-bottom:10px;font-weight:700}
+.carte > h2 .num{color:var(--accent);margin-right:.35em}
+.consigne{color:var(--encre2);margin:0 0 12px;font-size:.95rem}
+.scene{background:var(--scene);border:1px solid var(--trait2);border-radius:var(--r);overflow:hidden;position:relative}
+.scene svg,.scene canvas{display:block;width:100%;height:auto}
+.legende{font-size:.82rem;color:var(--encre2);margin-top:6px}
+
+/* Commandes */
+.commandes{display:flex;flex-direction:column;gap:14px}
+.curseur label{display:flex;justify-content:space-between;gap:8px;font-size:.9rem;font-weight:600;margin-bottom:2px}
+.curseur .val{font-weight:600;color:var(--encre)}
+.curseur input[type=range]{width:100%;accent-color:var(--accent);height:28px;margin:0}
+.curseur .bornes{display:flex;justify-content:space-between;font-size:.75rem;color:var(--encre2)}
+.choix .titre{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.choix .boutons{display:flex;flex-wrap:wrap;gap:6px}
+.choix button,.bouton{font:inherit;font-size:.9rem;font-weight:600;padding:8px 12px;border-radius:var(--r);
+  border:1px solid var(--trait);background:var(--carte);color:var(--encre);cursor:pointer;min-height:40px}
+.choix button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.bouton:hover,.choix button:hover{border-color:var(--encre2)}
+.bouton.principal{background:var(--encre);border-color:var(--encre);color:var(--carte)}
+.bouton:disabled{opacity:.45;cursor:not-allowed}
+.rangee{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* Afficheurs : ce que lit un instrument */
+.afficheurs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.afficheur{border:1px solid var(--trait);border-radius:var(--r);background:var(--carte2);padding:8px 10px}
+.afficheur .nom{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--encre2);font-weight:650}
+.afficheur .val{font-size:1.45rem;font-weight:650;white-space:nowrap}
+.afficheur .unite{font-size:.95rem;color:var(--encre2);margin-left:.25em}
+.afficheur .note{font-size:.75rem;color:var(--encre2)}
+
+/* Releve de mesures et graphe */
+.releve-zone{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}
+@media (max-width:820px){.releve-zone{grid-template-columns:1fr}}
+table.releve{border-collapse:collapse;width:100%;font-size:.92rem}
+table.releve th,table.releve td{border:1px solid var(--trait);padding:5px 8px;text-align:center}
+table.releve th{background:var(--carte2);font-weight:650;font-size:.82rem}
+table.releve tr.vide td{color:var(--encre2);font-style:italic}
+.graphe{background:var(--carte);border:1px solid var(--trait2);border-radius:var(--r)}
+.graphe canvas{display:block;width:100%;height:auto}
+
+/* Defi : l'eleve propose une valeur, la page dit juste ou pas encore, jamais la reponse */
+.defi{border:1px dashed var(--trait);border-radius:var(--r);padding:12px 14px;background:var(--carte2)}
+.defi p{margin:0 0 8px}
+.defi .saisie{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.defi input{font:inherit;width:9em;padding:7px 9px;border-radius:var(--r);border:1px solid var(--trait);background:var(--carte);color:var(--encre)}
+.defi .retour{margin-top:8px;font-weight:600;min-height:1.4em}
+.defi .retour.juste{color:var(--juste)}
+.defi .retour.faux{color:var(--faux)}
+.defi .methode{font-weight:400;color:var(--encre2)}
+
+/* Encadres */
+.note-modele{margin-top:6px}
+details.modele{border-top:1px solid var(--trait);padding-top:10px;margin-top:8px}
+details.modele summary{cursor:pointer;font-weight:650}
+details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-size:.92rem}
+.alerte{border-left:4px solid var(--tiede);background:var(--carte2);padding:8px 12px;border-radius:0 var(--r) var(--r) 0;font-size:.92rem}
+.pied{margin-top:24px;padding-top:10px;border-top:1px solid var(--trait);font-size:.8rem;color:var(--encre2)}
+
+@media print{
+  body{background:#fff}
+  .onglets,.commandes .bouton,.defi{display:none}
+  .carte{box-shadow:none;break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+</style>
+<script>
+/* Simulations des TP · briques communes, inlinees dans l'en-tete de chaque page.
+   Rien ici ne touche au DOM au chargement : une simulation appelle ce dont elle a besoin.
+   Aucune requete, aucun stockage : la page fonctionne hors ligne et n'enregistre rien. */
+"use strict";
+var Sim = (function () {
+
+  /* Nombres a la francaise : virgule, espace fine insecable entre les milliers. */
+  function fr(x, dec) {
+    if (x === null || x === undefined || !isFinite(x)) return "—";
+    if (dec === undefined) dec = 2;
+    var s = Math.abs(x).toFixed(dec).split(".");
+    s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return (x < 0 && Number(x.toFixed(dec)) !== 0 ? "−" : "") + s.join(",");
+  }
+  /* Lecture d'une saisie d'eleve : virgule ou point, espaces ignores. */
+  function lire(txt) {
+    if (txt === null || txt === undefined) return NaN;
+    var t = String(txt).replace(/\s| | /g, "").replace(",", ".").replace("−", "-");
+    return t === "" ? NaN : Number(t);
+  }
+  function el(tag, attrs, enfants) {
+    var n = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "texte") n.textContent = attrs[k];
+      else if (k === "html") n.innerHTML = attrs[k];
+      else if (k === "classe") n.className = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    }
+    (enfants || []).forEach(function (e) { if (e) n.appendChild(e); });
+    return n;
+  }
+  function $(sel) { return typeof sel === "string" ? document.querySelector(sel) : sel; }
+  function borne(x, a, b) { return Math.max(a, Math.min(b, x)); }
+
+  /* Un instrument ne donne jamais la valeur exacte : bruit gaussien relatif, puis resolution. */
+  function gauss() { var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function mesure(vraie, opts) {
+    opts = opts || {};
+    var x = vraie * (1 + (opts.relatif || 0) * gauss()) + (opts.absolu || 0) * gauss();
+    if (opts.resolution) x = Math.round(x / opts.resolution) * opts.resolution;
+    return x;
+  }
+
+  /* Onglets : boutons [data-vue="id"] qui montrent la section #id. */
+  function onglets(nav, surChange) {
+    nav = $(nav);
+    var boutons = Array.prototype.slice.call(nav.querySelectorAll("button[data-vue]"));
+    nav.setAttribute("role", "tablist");
+    function montrer(id) {
+      boutons.forEach(function (b) {
+        var actif = b.getAttribute("data-vue") === id;
+        b.setAttribute("aria-selected", actif ? "true" : "false");
+        b.setAttribute("role", "tab");
+        var v = document.getElementById(b.getAttribute("data-vue"));
+        if (v) v.hidden = !actif;
+      });
+      if (surChange) surChange(id);
+    }
+    boutons.forEach(function (b) { b.addEventListener("click", function () { montrer(b.getAttribute("data-vue")); }); });
+    montrer(boutons[0].getAttribute("data-vue"));
+    return { montrer: montrer };
+  }
+
+  /* Curseur avec son etiquette, sa valeur affichee et ses bornes. */
+  function curseur(parent, o) {
+    var dec = o.dec === undefined ? 0 : o.dec;
+    var id = o.id || ("c" + Math.random().toString(36).slice(2, 8));
+    var val = el("span", { classe: "val" });
+    var inp = el("input", { type: "range", id: id, min: o.min, max: o.max, step: o.pas || 1, value: o.valeur });
+    var bloc = el("div", { classe: "curseur" }, [
+      el("label", { "for": id }, [el("span", { texte: o.label }), val]), inp,
+      el("div", { classe: "bornes" }, [el("span", { texte: fr(o.min, dec) + " " + (o.unite || "") }), el("span", { texte: fr(o.max, dec) + " " + (o.unite || "") })])
+    ]);
+    function maj() { val.textContent = fr(Number(inp.value), dec) + (o.unite ? " " + o.unite : ""); }
+    inp.addEventListener("input", function () { maj(); if (o.surChange) o.surChange(Number(inp.value)); });
+    maj();
+    $(parent).appendChild(bloc);
+    return {
+      get: function () { return Number(inp.value); },
+      set: function (v, silencieux) { inp.value = v; maj(); if (!silencieux && o.surChange) o.surChange(Number(inp.value)); },
+      activer: function (oui) { inp.disabled = !oui; },
+      noeud: bloc
+    };
+  }
+
+  /* Groupe de boutons dont un seul est enfonce. options : [{val, texte}] */
+  function choix(parent, o) {
+    var courant = o.valeur;
+    var zone = el("div", { classe: "boutons", role: "group", "aria-label": o.label || "" });
+    var boutons = o.options.map(function (op) {
+      var b = el("button", { type: "button", texte: op.texte });
+      b.addEventListener("click", function () { poser(op.val); });
+      zone.appendChild(b);
+      return { b: b, val: op.val };
+    });
+    function poser(v, silencieux) {
+      courant = v;
+      boutons.forEach(function (x) { x.b.setAttribute("aria-pressed", x.val === v ? "true" : "false"); });
+      if (!silencieux && o.surChange) o.surChange(v);
+    }
+    var bloc = el("div", { classe: "choix" }, [o.label ? el("div", { classe: "titre", texte: o.label }) : null, zone]);
+    $(parent).appendChild(bloc);
+    poser(courant, true);
+    return { get: function () { return courant; }, set: poser, noeud: bloc };
+  }
+
+  /* Afficheur d'instrument : nom, valeur, unite, et une note facultative. */
+  function afficheur(parent, o) {
+    var v = el("span", { classe: "val", texte: "—" });
+    var n = el("div", { classe: "note", texte: o.note || "" });
+    var bloc = el("div", { classe: "afficheur" }, [el("div", { classe: "nom", texte: o.nom }), el("div", null, [v, el("span", { classe: "unite", texte: o.unite || "" })]), o.note !== undefined ? n : null]);
+    $(parent).appendChild(bloc);
+    return {
+      set: function (x, dec) { v.textContent = typeof x === "string" ? x : fr(x, dec === undefined ? (o.dec === undefined ? 2 : o.dec) : dec); },
+      note: function (t) { n.textContent = t; },
+      noeud: bloc
+    };
+  }
+
+  /* Graphe sur canvas, net sur les ecrans haute densite. Axes, grille, courbes, points. */
+  function graphe(parent, o) {
+    var larg = o.largeur || 640, haut = o.hauteur || 380;
+    var cv = el("canvas", { width: larg, height: haut, role: "img", "aria-label": o.titre || "graphe" });
+    var cadre = el("div", { classe: "graphe" }, [cv]);
+    $(parent).appendChild(cadre);
+    var ctx = cv.getContext("2d");
+    var dpr = Math.max(1, window.devicePixelRatio || 1);
+    cv.width = larg * dpr; cv.height = haut * dpr; ctx.scale(dpr, dpr);
+    var m = { g: 62, d: 16, h: 16, b: 48 };
+    var ax = { xmin: o.xmin, xmax: o.xmax, ymin: o.ymin, ymax: o.ymax };
+    function css(nom) { return getComputedStyle(document.documentElement).getPropertyValue(nom).trim() || "#333"; }
+    function X(x) { return m.g + (x - ax.xmin) / (ax.xmax - ax.xmin) * (larg - m.g - m.d); }
+    function Y(y) { return haut - m.b - (y - ax.ymin) / (ax.ymax - ax.ymin) * (haut - m.h - m.b); }
+    function pasJoli(etendue, n) {
+      var brut = etendue / n, p = Math.pow(10, Math.floor(Math.log10(brut))), r = brut / p;
+      return (r < 1.5 ? 1 : r < 3 ? 2 : r < 7 ? 5 : 10) * p;
+    }
+    function decimales(pas) { return Math.max(0, -Math.floor(Math.log10(pas) + 1e-9)); }
+    function fond() {
+      ctx.clearRect(0, 0, larg, haut);
+      ctx.fillStyle = css("--carte"); ctx.fillRect(0, 0, larg, haut);
+      ctx.font = "12px system-ui, Segoe UI, Arial, sans-serif";
+      var px = o.pasX || pasJoli(ax.xmax - ax.xmin, 8), py = o.pasY || pasJoli(ax.ymax - ax.ymin, 6);
+      ctx.strokeStyle = css("--trait2"); ctx.lineWidth = 1; ctx.fillStyle = css("--encre2");
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (var x = Math.ceil(ax.xmin / px) * px; x <= ax.xmax + 1e-9; x += px) {
+        ctx.beginPath(); ctx.moveTo(X(x), Y(ax.ymin)); ctx.lineTo(X(x), Y(ax.ymax)); ctx.stroke();
+        ctx.fillText(fr(x, o.decX !== undefined ? o.decX : decimales(px)), X(x), Y(ax.ymin) + 5);
+      }
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (var y = Math.ceil(ax.ymin / py) * py; y <= ax.ymax + 1e-9; y += py) {
+        ctx.beginPath(); ctx.moveTo(X(ax.xmin), Y(y)); ctx.lineTo(X(ax.xmax), Y(y)); ctx.stroke();
+        ctx.fillText(fr(y, o.decY !== undefined ? o.decY : decimales(py)), X(ax.xmin) - 6, Y(y));
+      }
+      ctx.strokeStyle = css("--encre"); ctx.lineWidth = 1.4;
+      var y0 = borne(0, ax.ymin, ax.ymax), x0 = borne(0, ax.xmin, ax.xmax);
+      ctx.beginPath(); ctx.moveTo(X(ax.xmin), Y(y0)); ctx.lineTo(X(ax.xmax), Y(y0)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X(x0), Y(ax.ymin)); ctx.lineTo(X(x0), Y(ax.ymax)); ctx.stroke();
+      ctx.fillStyle = css("--encre"); ctx.font = "600 13px system-ui, Segoe UI, Arial, sans-serif";
+      ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+      ctx.fillText(o.titreX || "", larg - m.d, haut - 4);
+      ctx.save(); ctx.translate(14, m.h); ctx.rotate(-Math.PI / 2); ctx.textAlign = "right"; ctx.textBaseline = "top";
+      ctx.fillText(o.titreY || "", 0, 0); ctx.restore();
+    }
+    function couleur(c) { return c && c.indexOf("--") === 0 ? css(c) : (c || css("--accent")); }
+    var api = {
+      axes: function (n) { for (var k in n) ax[k] = n[k]; return api; },
+      effacer: function () { fond(); return api; },
+      /* f : fonction x -> y, ou tableau de [x, y] */
+      courbe: function (f, opts) {
+        opts = opts || {};
+        ctx.save(); ctx.beginPath();
+        ctx.rect(m.g, m.h, larg - m.g - m.d, haut - m.h - m.b); ctx.clip();
+        ctx.strokeStyle = couleur(opts.couleur); ctx.lineWidth = opts.epaisseur || 2.2;
+        if (opts.pointille) ctx.setLineDash([6, 5]);
+        ctx.beginPath();
+        if (typeof f === "function") {
+          var n = opts.pas || 400, prem = true;
+          for (var i = 0; i <= n; i++) {
+            var x = ax.xmin + (ax.xmax - ax.xmin) * i / n, y = f(x);
+            if (!isFinite(y)) { prem = true; continue; }
+            if (prem) { ctx.moveTo(X(x), Y(y)); prem = false; } else ctx.lineTo(X(x), Y(y));
+          }
+        } else {
+          f.forEach(function (p, i) { if (i === 0) ctx.moveTo(X(p[0]), Y(p[1])); else ctx.lineTo(X(p[0]), Y(p[1])); });
+        }
+        ctx.stroke(); ctx.restore();
+        return api;
+      },
+      points: function (pts, opts) {
+        opts = opts || {};
+        ctx.fillStyle = couleur(opts.couleur); ctx.strokeStyle = css("--carte");
+        pts.forEach(function (p) {
+          var r = opts.rayon || 4.5;
+          ctx.beginPath();
+          if (opts.forme === "croix") {
+            ctx.strokeStyle = couleur(opts.couleur); ctx.lineWidth = 2;
+            ctx.moveTo(X(p[0]) - r, Y(p[1]) - r); ctx.lineTo(X(p[0]) + r, Y(p[1]) + r);
+            ctx.moveTo(X(p[0]) + r, Y(p[1]) - r); ctx.lineTo(X(p[0]) - r, Y(p[1]) + r); ctx.stroke();
+          } else { ctx.arc(X(p[0]), Y(p[1]), r, 0, 2 * Math.PI); ctx.fill(); ctx.lineWidth = 1; ctx.stroke(); }
+        });
+        return api;
+      },
+      texte: function (x, y, t, opts) {
+        opts = opts || {};
+        ctx.fillStyle = couleur(opts.couleur); ctx.font = (opts.gras ? "600 " : "") + "13px system-ui, Segoe UI, Arial, sans-serif";
+        ctx.textAlign = opts.align || "left"; ctx.textBaseline = "middle";
+        ctx.fillText(t, X(x) + (opts.dx || 0), Y(y) + (opts.dy || 0));
+        return api;
+      },
+      X: X, Y: Y, ctx: ctx, canvas: cv
+    };
+    fond();
+    return api;
+  }
+
+  /* Releve : l'eleve garde une mesure dans un tableau, qui peut alimenter un graphe.
+     colonnes : [{cle, titre, unite, dec}] ; graphe : {x, y, ...options de Sim.graphe} */
+  function releve(parent, o) {
+    var lignes = [];
+    var zone = el("div", { classe: "releve-zone" });
+    var gauche = el("div");
+    var table = el("table", { classe: "releve" });
+    var tete = el("tr"); o.colonnes.forEach(function (c) { tete.appendChild(el("th", { texte: c.titre + (c.unite ? " (" + c.unite + ")" : "") })); });
+    table.appendChild(el("thead", null, [tete]));
+    var corps = el("tbody"); table.appendChild(corps);
+    var boutons = el("div", { classe: "rangee", style: "margin-top:8px" });
+    var bAnnuler = el("button", { type: "button", classe: "bouton", texte: "Retirer la dernière" });
+    var bVider = el("button", { type: "button", classe: "bouton", texte: "Tout effacer" });
+    boutons.appendChild(bAnnuler); boutons.appendChild(bVider);
+    gauche.appendChild(table); gauche.appendChild(boutons);
+    zone.appendChild(gauche);
+    var gr = null;
+    if (o.graphe) { var droite = el("div"); zone.appendChild(droite); gr = graphe(droite, o.graphe); }
+    $(parent).appendChild(zone);
+    function dessiner() {
+      corps.innerHTML = "";
+      if (!lignes.length) {
+        var tr = el("tr", { classe: "vide" }); tr.appendChild(el("td", { colspan: o.colonnes.length, texte: o.vide || "Aucune mesure gardée pour l'instant." })); corps.appendChild(tr);
+      }
+      lignes.forEach(function (l) {
+        var tr = el("tr");
+        o.colonnes.forEach(function (c) { tr.appendChild(el("td", { texte: typeof l[c.cle] === "number" ? fr(l[c.cle], c.dec === undefined ? 2 : c.dec) : (l[c.cle] || "") })); });
+        corps.appendChild(tr);
+      });
+      if (gr) {
+        gr.effacer();
+        if (o.avantPoints) o.avantPoints(gr, lignes);
+        gr.points(lignes.map(function (l) { return [l[o.graphe.x], l[o.graphe.y]]; }), { couleur: o.graphe.couleur });
+      }
+      if (o.surChange) o.surChange(lignes);
+    }
+    bAnnuler.addEventListener("click", function () { lignes.pop(); dessiner(); });
+    bVider.addEventListener("click", function () { lignes = []; dessiner(); });
+    dessiner();
+    return {
+      ajouter: function (l) { if (o.max && lignes.length >= o.max) lignes.shift(); lignes.push(l); dessiner(); },
+      lignes: function () { return lignes.slice(); },
+      vider: function () { lignes = []; dessiner(); },
+      redessiner: dessiner,
+      graphe: gr
+    };
+  }
+
+  /* Defi : une valeur a trouver. La page dit juste ou pas encore, et rappelle la methode,
+     jamais la valeur attendue. attendu : nombre ou fonction qui le calcule au moment du clic. */
+  function defi(parent, o) {
+    var inp = el("input", { type: "text", inputmode: "decimal", "aria-label": o.question });
+    var b = el("button", { type: "button", classe: "bouton", texte: "Vérifier" });
+    var retour = el("div", { classe: "retour", "aria-live": "polite" });
+    var bloc = el("div", { classe: "defi" }, [el("p", { html: o.question }), el("div", { classe: "saisie" }, [inp, o.unite ? el("span", { texte: o.unite }) : null, b]), retour]);
+    function verifier() {
+      var v = lire(inp.value), a = typeof o.attendu === "function" ? o.attendu() : o.attendu;
+      retour.className = "retour";
+      if (!isFinite(v)) { retour.textContent = "Écris un nombre."; return; }
+      var tol = o.tolerance === undefined ? 0.05 : o.tolerance;
+      var ok = Math.abs(v - a) <= Math.abs(a) * tol + (o.toleranceAbsolue || 0);
+      retour.className = "retour " + (ok ? "juste" : "faux");
+      retour.innerHTML = ok ? "Juste." : "Pas encore. <span class=\"methode\">" + (o.methode || "") + "</span>";
+      if (o.surReponse) o.surReponse(ok, v);
+    }
+    b.addEventListener("click", verifier);
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") verifier(); });
+    $(parent).appendChild(bloc);
+    return { noeud: bloc, effacer: function () { inp.value = ""; retour.textContent = ""; retour.className = "retour"; } };
+  }
+
+  /* Boucle d'animation : f(dt en secondes). S'arrete seule quand l'onglet est cache.
+     Sim.avancer(s) fait tourner les boucles a la main : c'est la porte des essais, dans un
+     navigateur qui ne dessine pas (onglet cache, capture sans affichage). */
+  var boucles = [];
+  function avancer(secondes, pasDt) {
+    pasDt = pasDt || 0.05;
+    for (var t = 0; t < secondes - 1e-9; t += pasDt) boucles.forEach(function (f) { f(pasDt); });
+  }
+  function animer(f) {
+    boucles.push(f);
+    var avant = null, actif = true, id = null;
+    function pas(t) {
+      if (avant === null) avant = t;
+      var dt = Math.min(0.1, (t - avant) / 1000); avant = t;
+      if (actif) f(dt);
+      id = requestAnimationFrame(pas);
+    }
+    id = requestAnimationFrame(pas);
+    return { pause: function () { actif = false; }, reprise: function () { actif = true; avant = null; }, actif: function () { return actif; } };
+  }
+
+  /* Petit utilitaire SVG. */
+  var NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) { if (k === "texte") n.textContent = attrs[k]; else n.setAttribute(k, attrs[k]); }
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+
+  return { fr: fr, lire: lire, el: el, $: $, borne: borne, mesure: mesure, gauss: gauss, onglets: onglets, curseur: curseur, choix: choix,
+    afficheur: afficheur, graphe: graphe, releve: releve, defi: defi, animer: animer, avancer: avancer, svg: svg };
+})();
+
+</script>
+</head>
+<body>
+<div class="page">
+<header class="tete">
+<div class="surtitre">Physique-chimie · simulation du TP SIM-17</div>
+<h1>Chauffer de l'eau : quel rendement ?</h1>
+<p class="chapeau">Chauffe un litre d'eau avec une bouilloire, puis avec une casserole sur deux plaques différentes. Compare l'énergie consommée au compteur à l'énergie reçue par l'eau.</p>
+</header>
+<style>
+.voyant-on{fill:#d9534f}
+.bulle{fill:none;stroke:#ffffff;stroke-opacity:.85;stroke-width:1.4}
+.vapeur{fill:none;stroke:var(--encre2);stroke-opacity:.35;stroke-width:3;stroke-linecap:round}
+</style>
+
+<div class="carte">
+  <h2><span class="num">1</span>Choisis l'appareil et l'eau</h2>
+  <p class="consigne">Changer un réglage remet l'expérience à zéro : l'eau repart de sa température initiale et le compteur de zéro.</p>
+  <div class="commandes" id="reglages"></div>
+</div>
+
+<div class="plan">
+  <div class="carte">
+    <h2><span class="num">2</span>Chauffe et lis les instruments</h2>
+    <div class="scene">
+      <svg id="scene" viewBox="0 0 600 360" role="img" aria-label="L'appareil de chauffage branché sur un wattmètre-prise"></svg>
+    </div>
+    <p class="legende">Le wattmètre-prise se branche entre la prise et l'appareil : il affiche la puissance et compte l'énergie consommée depuis sa remise à zéro.</p>
+  </div>
+  <div class="carte">
+    <h2><span class="num">3</span>Les instruments</h2>
+    <div class="commandes">
+      <div class="rangee">
+        <button type="button" class="bouton principal" id="marche">Mettre en marche</button>
+        <button type="button" class="bouton" id="zero">Remettre à zéro</button>
+      </div>
+      <div id="vitesse"></div>
+      <div class="afficheurs" id="instruments"></div>
+      <button type="button" class="bouton" id="garder">Garder cette mesure dans le tableau</button>
+      <p class="alerte" id="etat">L'appareil est à l'arrêt.</p>
+    </div>
+  </div>
+</div>
+
+<div class="carte">
+  <h2><span class="num">4</span>Le relevé : la température en fonction du temps</h2>
+  <p class="consigne">Garde une mesure toutes les 30 secondes environ, jusqu'à ce que l'eau bouille.</p>
+  <div id="releve"></div>
+</div>
+
+<div class="carte">
+  <h2><span class="num">5</span>Le rendement</h2>
+  <p class="consigne">Quand l'eau bout, l'appareil s'arrête. Calcule avec <b>tes</b> lectures relevées à cet instant : l'eau refroidit ensuite, mais la vérification garde la température de l'arrêt. Donnée : c<sub>eau</sub> = 4 180 J/(kg·°C), 1 L d'eau a une masse de 1 kg.</p>
+  <div class="commandes" id="defis"></div>
+  <details class="modele">
+    <summary>Ce que la simulation simplifie</summary>
+    <ul>
+      <li>La puissance de chaque appareil est constante ; la tension du réseau ne varie presque pas.</li>
+      <li>Une part fixe de la puissance ne va pas dans la casserole : elle chauffe la plaque et l'air autour. Elle est plus grande pour la plaque en fonte que pour l'induction.</li>
+      <li>La paroi de l'appareil s'échauffe avec l'eau, et l'appareil perd de la chaleur vers la pièce d'autant plus que l'eau est chaude.</li>
+      <li>Le chauffage se coupe à 100 °C : la vaporisation de l'eau n'est pas simulée.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(function () {
+  var C_EAU = 4180, T_AIR = 20;
+  var APPAREILS = {
+    bouilloire: { texte: "Bouilloire", P: 2200, transfert: 0.97, C: 400, G: 1.5, plaque: "2 200 W" },
+    fonte: { texte: "Plaque en fonte", P: 1500, transfert: 0.66, C: 450, G: 4, plaque: "1 500 W" },
+    induction: { texte: "Plaque à induction", P: 2000, transfert: 0.92, C: 450, G: 4, plaque: "2 000 W" }
+  };
+  var etat = { app: "bouilloire", V: 1.0, t0: 18, theta: 18, thetaArret: 18, t: 0, E: 0, marche: false, bout: false, vitesse: 10, Pmes: 0 };
+  /* La temperature qui compte pour le bilan est celle de l'arret du chauffage : apres, l'eau refroidit. */
+  function thetaFin() { return etat.marche ? etat.theta : etat.thetaArret; }
+
+  /* ---------- Reglages ---------- */
+  var R = document.getElementById("reglages");
+  var cApp = Sim.choix(R, { label: "Appareil", valeur: "bouilloire",
+    options: Object.keys(APPAREILS).map(function (k) { return { val: k, texte: APPAREILS[k].texte + " · " + APPAREILS[k].plaque }; }),
+    surChange: function (v) { etat.app = v; raz(); } });
+  var cV = Sim.curseur(R, { label: "Volume d'eau", min: 0.5, max: 1.7, pas: 0.1, valeur: 1.0, unite: "L", dec: 1, surChange: function (v) { etat.V = v; raz(); } });
+  var cT0 = Sim.curseur(R, { label: "Température de l'eau du robinet", min: 10, max: 25, pas: 1, valeur: 18, unite: "°C", dec: 0, surChange: function (v) { etat.t0 = v; raz(); } });
+  Sim.choix("#vitesse", { label: "Vitesse du temps", valeur: 10, options: [{ val: 1, texte: "× 1" }, { val: 10, texte: "× 10" }, { val: 30, texte: "× 30" }],
+    surChange: function (v) { etat.vitesse = v; } });
+
+  /* ---------- Instruments ---------- */
+  var I = document.getElementById("instruments");
+  var aP = Sim.afficheur(I, { nom: "Wattmètre · puissance", unite: "W", dec: 0 });
+  var aE = Sim.afficheur(I, { nom: "Wattmètre · énergie", unite: "kWh", dec: 3 });
+  var aT = Sim.afficheur(I, { nom: "Chronomètre", unite: "", dec: 0 });
+  var aTh = Sim.afficheur(I, { nom: "Thermomètre", unite: "°C", dec: 1 });
+
+  function lectureTheta() { return Sim.mesure(etat.theta, { absolu: 0.04, resolution: 0.1 }); }
+  function lectureE() { return Math.floor(etat.E / 3.6e6 * 1000) / 1000; }
+  function chrono(t) { var s = Math.floor(t); return Math.floor(s / 60) + " min " + (s % 60 < 10 ? "0" : "") + (s % 60) + " s"; }
+
+  /* ---------- Releve ---------- */
+  var rel = Sim.releve("#releve", {
+    colonnes: [{ cle: "t", titre: "Temps", unite: "s", dec: 0 }, { cle: "theta", titre: "Température", unite: "°C", dec: 1 }, { cle: "E", titre: "Énergie au compteur", unite: "kWh", dec: 3 }],
+    graphe: { x: "t", y: "theta", xmin: 0, xmax: 600, ymin: 0, ymax: 110, titreX: "t (s)", titreY: "θ (°C)", largeur: 620, hauteur: 360 },
+    avantPoints: function (gr, lignes) {
+      var tmax = 120; lignes.forEach(function (l) { tmax = Math.max(tmax, l.t); });
+      gr.axes({ xmax: Math.ceil(tmax * 1.1 / 60) * 60 }).effacer();
+    }
+  });
+  document.getElementById("garder").addEventListener("click", function () {
+    rel.ajouter({ t: Math.floor(etat.t), theta: lectureTheta(), E: lectureE() });
+  });
+
+  /* ---------- Defis ---------- */
+  var D = document.getElementById("defis");
+  function mEau() { return etat.V * 1; }
+  Sim.defi(D, { question: "Énergie électrique consommée, lue au wattmètre et convertie en joules (1 kWh = 3 600 000 J) :", unite: "J",
+    attendu: function () { return lectureE() * 3.6e6; }, tolerance: 0.02, toleranceAbsolue: 3600,
+    methode: "Lis l'énergie au compteur en kWh, puis multiplie par 3 600 000." });
+  Sim.defi(D, { question: "Énergie reçue par l'eau, Q = m × c × (θ<sub>finale</sub> − θ<sub>initiale</sub>) :", unite: "J",
+    attendu: function () { return mEau() * C_EAU * (thetaFin() - etat.t0); }, tolerance: 0.03,
+    methode: "m en kg (1 L d'eau = 1 kg), c = 4 180 J/(kg·°C), l'écart de température en °C." });
+  Sim.defi(D, { question: "Rendement de l'appareil, η = Q ÷ E<sub>électrique</sub>, en pourcentage :", unite: "%",
+    attendu: function () { return etat.E > 0 ? 100 * mEau() * C_EAU * (thetaFin() - etat.t0) / etat.E : NaN; }, tolerance: 0, toleranceAbsolue: 3,
+    methode: "Divise l'énergie reçue par l'eau par l'énergie consommée, les deux en joules, puis multiplie par 100." });
+
+  /* ---------- Scene ---------- */
+  var S = document.getElementById("scene"), svg = Sim.svg;
+  function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  var g = {};
+  function dessinerScene() {
+    S.innerHTML = "";
+    var app = APPAREILS[etat.app];
+    // plan de travail et mur
+    svg("rect", { x: 0, y: 300, width: 600, height: 60, fill: css("--carte2") }, S);
+    svg("line", { x1: 0, y1: 300, x2: 600, y2: 300, stroke: css("--trait"), "stroke-width": 2 }, S);
+    // prise murale et wattmetre-prise
+    svg("rect", { x: 26, y: 150, width: 64, height: 64, rx: 8, fill: css("--carte"), stroke: css("--trait"), "stroke-width": 2 }, S);
+    svg("rect", { x: 34, y: 162, width: 48, height: 92, rx: 7, fill: css("--carte"), stroke: css("--encre2"), "stroke-width": 2 }, S);
+    svg("rect", { x: 40, y: 172, width: 36, height: 22, rx: 2, fill: "#cfd8cf", stroke: css("--encre2"), "stroke-width": 1 }, S);
+    g.lcd = svg("text", { x: 58, y: 188, "text-anchor": "middle", "font-size": 11, "font-family": "Consolas, monospace", fill: "#1d2a1d", texte: "0 W" }, S);
+    svg("text", { x: 58, y: 142, "text-anchor": "middle", "font-size": 11, fill: css("--encre2"), texte: "wattmètre-prise" }, S);
+    // cable
+    var xApp = etat.app === "bouilloire" ? 330 : 340;
+    svg("path", { d: "M58 254 C 58 300, 120 318, 200 312 S " + (xApp - 60) + " 300, " + (xApp - 40) + " 292", fill: "none", stroke: css("--encre"), "stroke-width": 3 }, S);
+    // hauteur d'eau : proportionnelle au volume
+    if (etat.app === "bouilloire") {
+      var bas = 290, haut = 110, fond = bas - 8;
+      svg("rect", { x: 250, y: bas - 4, width: 170, height: 12, rx: 4, fill: css("--encre2") }, S); // socle
+      g.voyant = svg("circle", { cx: 402, cy: bas + 2, r: 4, fill: css("--trait") }, S);
+      var corps = "M268 " + fond + " L276 " + haut + " Q335 " + (haut - 14) + " 394 " + haut + " L402 " + fond + " Z";
+      svg("path", { d: corps, fill: css("--carte"), stroke: css("--encre"), "stroke-width": 2.5 }, S);
+      // fenetre de niveau
+      var niv = fond - (fond - haut - 20) * (etat.V / 1.8);
+      svg("clipPath", { id: "fen" }, S).appendChild(svg("rect", { x: 300, y: haut + 18, width: 30, height: fond - haut - 26, rx: 6 }));
+      svg("rect", { x: 300, y: haut + 18, width: 30, height: fond - haut - 26, rx: 6, fill: css("--scene"), stroke: css("--encre2"), "stroke-width": 1.5 }, S);
+      g.eau = svg("rect", { x: 300, y: niv, width: 30, height: fond - niv, fill: "#8fbde3", "clip-path": "url(#fen)" }, S);
+      [0.5, 1.0, 1.5].forEach(function (v) { var y = fond - (fond - haut - 20) * (v / 1.8); svg("line", { x1: 330, y1: y, x2: 338, y2: y, stroke: css("--encre2") }, S); svg("text", { x: 342, y: y + 4, "font-size": 11, fill: css("--encre2"), texte: Sim.fr(v, 1) + " L" }, S); });
+      svg("path", { d: "M394 140 C 440 140, 446 230, 400 238", fill: "none", stroke: css("--encre"), "stroke-width": 9, "stroke-linecap": "round" }, S); // poignee
+      svg("path", { d: "M276 124 L246 108 L250 102 L280 114", fill: css("--carte"), stroke: css("--encre"), "stroke-width": 2.5 }, S); // bec
+      g.bulles = svg("g", { "clip-path": "url(#fen)" }, S); g.zoneB = { x: 300, w: 30, bas: fond, haut: niv };
+      g.vapeur = svg("g", {}, S); g.vx = 250; g.vy = 96;
+      // sonde du thermometre
+      svg("line", { x1: 315, y1: 40, x2: 315, y2: fond - 12, stroke: css("--encre"), "stroke-width": 3 }, S);
+      svg("text", { x: 322, y: 50, "font-size": 11, fill: css("--encre2"), texte: "sonde du thermomètre" }, S);
+    } else {
+      var yPl = 276;
+      if (etat.app === "fonte") {
+        svg("rect", { x: 220, y: yPl, width: 240, height: 18, rx: 3, fill: css("--carte"), stroke: css("--encre"), "stroke-width": 2 }, S);
+        g.plaque = svg("ellipse", { cx: 340, cy: yPl + 2, rx: 92, ry: 8, fill: "#3b3b3d" }, S);
+      } else {
+        svg("rect", { x: 220, y: yPl, width: 240, height: 18, rx: 3, fill: "#2a2b2e", stroke: css("--encre"), "stroke-width": 2 }, S);
+        g.plaque = svg("g", {}, S);
+        [30, 55, 80].forEach(function (r) { svg("ellipse", { cx: 340, cy: yPl + 9, rx: r, ry: 4, fill: "none", stroke: "#8b8f96", "stroke-width": 1.2 }, g.plaque); });
+      }
+      g.voyant = svg("circle", { cx: 444, cy: yPl + 9, r: 4, fill: css("--trait") }, S);
+      var hB = 150, yB = yPl - hB;
+      svg("clipPath", { id: "cas" }, S).appendChild(svg("rect", { x: 262, y: yB, width: 156, height: hB }));
+      var nivC = yPl - hB * (etat.V / 2.0);
+      g.eau = svg("rect", { x: 262, y: nivC, width: 156, height: yPl - nivC, fill: "#8fbde3" }, S);
+      svg("path", { d: "M258 " + yB + " L262 " + yPl + " L418 " + yPl + " L422 " + yB, fill: "none", stroke: css("--encre"), "stroke-width": 3 }, S);
+      svg("line", { x1: 422, y1: yB + 20, x2: 520, y2: yB + 10, stroke: css("--encre"), "stroke-width": 8, "stroke-linecap": "round" }, S);
+      g.bulles = svg("g", { "clip-path": "url(#cas)" }, S); g.zoneB = { x: 262, w: 156, bas: yPl, haut: nivC };
+      g.vapeur = svg("g", {}, S); g.vx = 330; g.vy = yB - 6;
+      svg("line", { x1: 300, y1: 40, x2: 300, y2: yPl - 10, stroke: css("--encre"), "stroke-width": 3 }, S);
+      svg("text", { x: 306, y: 50, "font-size": 11, fill: css("--encre2"), texte: "sonde du thermomètre" }, S);
+    }
+    svg("text", { x: 580, y: 30, "text-anchor": "end", "font-size": 13, "font-weight": 600, fill: css("--encre"), texte: app.texte + " · " + app.plaque }, S);
+  }
+  var bulles = [];
+  function animerDecor(dt) {
+    var chaud = Sim.borne((etat.theta - 70) / 30, 0, 1);
+    if (etat.marche && Math.random() < chaud * 0.9) bulles.push({ x: g.zoneB.x + 4 + Math.random() * (g.zoneB.w - 8), y: g.zoneB.bas - 4, r: 1.5 + Math.random() * 2.5 });
+    bulles = bulles.filter(function (b) { b.y -= (30 + 60 * chaud) * dt; return b.y > g.zoneB.haut + 2; });
+    g.bulles.innerHTML = "";
+    bulles.forEach(function (b) { Sim.svg("circle", { cx: b.x, cy: b.y, r: b.r, "class": "bulle" }, g.bulles); });
+    g.vapeur.innerHTML = "";
+    if (etat.theta > 85) {
+      var k = Sim.borne((etat.theta - 85) / 15, 0, 1), t = performance.now() / 700;
+      for (var i = 0; i < 3; i++) {
+        var x = g.vx + (etat.app === "bouilloire" ? 0 : (i - 1) * 40), d = Math.sin(t + i) * 8;
+        Sim.svg("path", { d: "M" + x + " " + g.vy + " q " + (10 + d) + " -20 0 -40 q " + (-10 - d) + " -20 0 -40", "class": "vapeur", "stroke-opacity": 0.12 + 0.3 * k }, g.vapeur);
+      }
+    }
+    g.voyant.setAttribute("fill", etat.marche ? "#d9534f" : css("--trait"));
+    if (etat.app === "fonte") g.plaque.setAttribute("fill", etat.marche ? "#7a2e22" : "#3b3b3d");
+  }
+
+  /* ---------- Physique ---------- */
+  function raz() {
+    etat.theta = etat.t0; etat.thetaArret = etat.t0; etat.t = 0; etat.E = 0; etat.marche = false; etat.bout = false; bulles = [];
+    document.getElementById("marche").textContent = "Mettre en marche";
+    dessinerScene(); afficher();
+    message("L'appareil est à l'arrêt. Le compteur du wattmètre est à zéro.");
+  }
+  function message(t) { document.getElementById("etat").textContent = t; }
+  function pas(dt) {
+    var app = APPAREILS[etat.app], mc = etat.V * C_EAU + app.C;
+    var Putile = etat.marche ? app.transfert * app.P : 0;
+    etat.theta += (Putile - app.G * (etat.theta - T_AIR)) / mc * dt;
+    if (etat.marche) etat.E += app.P * dt;
+    if (etat.marche && etat.theta >= 100) {
+      etat.theta = 100; etat.thetaArret = 100; etat.marche = false; etat.bout = true;
+      document.getElementById("marche").textContent = "Mettre en marche";
+      message("L'eau bout : le chauffage s'est coupé. Relève tout de suite le temps, la température et l'énergie.");
+    }
+  }
+  function afficher() {
+    var app = APPAREILS[etat.app];
+    etat.Pmes = etat.marche ? Sim.mesure(app.P, { relatif: 0.004, resolution: 1 }) : 0;
+    aP.set(etat.Pmes); aE.set(lectureE()); aT.set(chrono(etat.t)); aTh.set(lectureTheta());
+    if (g.lcd) g.lcd.textContent = Sim.fr(etat.Pmes, 0) + " W";
+  }
+  document.getElementById("marche").addEventListener("click", function () {
+    if (etat.theta >= 99.9) { message("L'eau est déjà à 100 °C. Remets à zéro pour recommencer."); return; }
+    etat.marche = !etat.marche;
+    if (!etat.marche) etat.thetaArret = etat.theta;
+    this.textContent = etat.marche ? "Arrêter" : "Mettre en marche";
+    message(etat.marche ? "Chauffage en cours. Le compteur du wattmètre avance." : "Chauffage arrêté : l'eau commence à refroidir.");
+  });
+  document.getElementById("zero").addEventListener("click", raz);
+
+  var cumul = 0;
+  Sim.animer(function (dt) {
+    var dts = dt * etat.vitesse, n = Math.ceil(dts / 0.5);
+    for (var i = 0; i < n; i++) { if (etat.marche) etat.t += dts / n; pas(dts / n); }
+    cumul += dt;
+    if (cumul > 0.25) { cumul = 0; afficher(); }
+    animerDecor(dt);
+  });
+  raz();
+})();
+</script>
+<footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation, et détaillé dans la fiche professeur du TP SIM-17.</footer>
+</div>
+</body>
+</html>

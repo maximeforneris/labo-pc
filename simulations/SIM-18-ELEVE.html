@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP SIM-18 · Panneau solaire et éolienne</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/site.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/doc.css?v=f3306c12">
+<link rel="stylesheet" href="../assets/impression.css?v=f3306c12">
+<script src="../assets/kit.js?v=f3306c12-83ecf6" defer></script>
+<script src="../assets/site.js?v=f3306c12" defer></script>
+<script src="../assets/plan.js?v=f3306c12" defer></script>
+<script src="../assets/doc.js?v=f3306c12" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="simulations/SIM-18-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="SIM-17-ELEVE.html" rel="prev" title="TP SIM-17 · Rendement d'un chauffage" aria-label="TP SIM-17 · Rendement d'un chauffage">&lsaquo;</a><a class="fleche" href="SIM-19-ELEVE.html" rel="next" title="TP SIM-19 · Choisir un isolant" aria-label="TP SIM-19 · Choisir un isolant">&rsaquo;</a></span><button type="button" class="lu" data-lu="simulations/SIM-18-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">1re Bac Pro · MELEC, CIEL, MMCM, MVTR · TP sur simulation SIM-18</p>
+    <h1>Panneau solaire et éolienne<span>de l'électricité sans CO₂</span></h1>
+  </div>
+  <p class="accroche">Quelle part de la puissance reçue du soleil ou du vent un panneau ou une éolienne transforme-t-il en électricité ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>La puissance électrique en continu, P = U × I</b><span class="car">on la calcule pour chaque mesure</span></li><li><b>La caractéristique d'une photopile selon l'éclairement, vue en seconde</b><span class="car">un panneau est une suite de cellules</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-le-panneau">Protocole A · le panneau</a><a href="#protocole-b-l-eolienne">Protocole B · l’éolienne</a></div></nav>
+<p><strong>Sujet.</strong> Sur le toit d’un abri de jardin, un petit panneau solaire recharge la batterie de l’éclairage. Chez le voisin, une petite éolienne tourne au bout d’un mât. Le vendeur promettait « de l’électricité gratuite » : mais combien, pour combien de soleil ou de vent ?</p>
+
+<p><strong>Problématique : quelle part de la puissance reçue du soleil ou du vent un panneau et une éolienne transforment-ils en électricité ?</strong></p>
+
+<p><strong>La simulation.</strong> <a href="../html/photovoltaique-eolienne.html">Ouvrir « Panneau solaire et éolienne »</a> : le fichier photovoltaique-eolienne.html, sur l’ENT ou la clé du professeur.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p>Le panneau de la simulation, de profil et de face. Il est incliné de 30° par rapport aux rayons.</p>
+
+<figure><img src="img/SIM-18-ELEVE/fig2-panneau.png" alt="" /></figure>
+
+<p><strong>a)</strong> Calculer la surface des cellules. On rappelle que 1 m² = 10 000 cm².</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+<col style="width: 33%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>Une cellule, 3,5 cm × 3,0 cm</th>
+
+<th>Les douze cellules</th>
+
+<th>Les douze cellules</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>S = ……………… cm²</td>
+
+<td>S = ……………… cm²</td>
+
+<td>S = ……………… m²</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Face au soleil, le panneau recevrait un éclairement de 1 000 W/m².</p>
+
+<p><strong>b)</strong> Relever l’éclairement mesuré par le solarimètre, puis calculer E ÷ 1 000.</p>
+
+<p>E = ……………… W/m² · E ÷ 1 000 = ……………… · soit ……… % de l’éclairement.</p>
+
+<p><strong>c)</strong> L’éolienne a un rotor de 50 cm de diamètre. Calculer la surface balayée S = π × r².</p>
+
+<p>r = ……………… m · S = ……………………………………… m²</p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. Une partie de la classe prend A, l’autre prend B, et on compare à la fin.</p>
+
+<figure><img src="img/SIM-18-ELEVE/fig1-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · le panneau.</strong> Au soleil, on fait varier la résistance d’un rhéostat branché sur le panneau. On lit U et I, on calcule P = U × I : la plus grande valeur est Pmax. Le panneau reçoit la puissance E × S.</p>
+
+<p><strong>Protocole B · l’éolienne.</strong> Dans le vent d’une soufflerie, on monte la vitesse v pas à pas. On lit v, U et I, on calcule P = U × I. Le vent qui traverse le rotor porte la puissance ½ × ρ × S × v³, avec ρ = 1,20 kg/m³ pour l’air.</p>
+
+<p>Le <strong>rendement</strong> est le rapport de la puissance électrique à la puissance reçue.</p>
+
+<p><strong>d)</strong> Compléter le tableau pour comparer les deux protocoles.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on fait varier</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’on mesure</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>La puissance reçue se calcule par</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant d’ouvrir la simulation.</p>
+
+<p><strong>e)</strong> Quel protocole prenez-vous ? Justifier en une phrase.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p><strong>f)</strong> Avant de mesurer : quelle part de la puissance reçue devient électrique ? Entourer.</p>
+
+<p><strong>moins de 20 % · entre 20 % et 60 % · plus de 60 %</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<p><strong>Avant de commencer.</strong> Ouvrir la simulation et l’onglet de votre protocole. En A, garder « Voile de nuages » à 0 %, l’angle à 0° et « Ombre sur le panneau » sur « aucune ».</p>
+
+<h2 id="protocole-a-le-panneau">Protocole A · le panneau</h2>
+
+<ol type="1">
+
+<li>« Interrupteur » sur « ouvert » : relever E et U. Puis le remettre sur « fermé ».</li>
+
+<li>Régler « Résistance du rhéostat » à chaque valeur du tableau g : relever U et I, puis cliquer sur « Garder cette mesure dans le tableau ».</li>
+
+<li>Revenir à 17 Ω et choisir « demi-cellule » dans « Ombre sur le panneau » : relever U et I.</li>
+
+</ol>
+
+<h2 id="protocole-b-l-eolienne">Protocole B · l’éolienne</h2>
+
+<ol type="1">
+
+<li>Monter « Réglage de la soufflerie » de 1 % en 1 % depuis 0 % : relever la vitesse v quand la tension apparaît. C’est la vitesse de démarrage.</li>
+
+<li>Régler chaque valeur du tableau h : relever v, U et I, puis cliquer sur « Garder cette mesure dans le tableau ».</li>
+
+<li>Monter jusqu’à ce que le frein arrête le rotor : relever la vitesse de coupure.</li>
+
+</ol>
+
+<p><strong>g)</strong> Protocole A seulement : relever U et I, puis calculer P = U × I.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>R (Ω)</th>
+
+<th>0</th>
+
+<th>5</th>
+
+<th>10</th>
+
+<th>15</th>
+
+<th>17</th>
+
+<th>20</th>
+
+<th>30</th>
+
+<th>50</th>
+
+<th>100</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>U (V)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>I (A)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>P (W)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Interrupteur ouvert : E = ……………… W/m² et U = ……… V. Avec l’ombre d’une demi-cellule, à 17 Ω : U = ……… V, I = ……… A, P = ……… W.</p>
+
+<p><strong>h)</strong> Protocole B seulement : relever v, U et I, puis calculer les puissances.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>Réglage (%)</th>
+
+<th>30</th>
+
+<th>40</th>
+
+<th>50</th>
+
+<th>60</th>
+
+<th>70</th>
+
+<th>80</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>v (m/s)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>U (V)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>I (A)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>P = U × I (W)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>P du vent (W)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>P ÷ P du vent</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Vitesse de démarrage : v = ……… m/s. Vitesse de coupure : v = ……… m/s.</p>
+
+<p><strong>i)</strong> Tracer P en fonction de U (A) ou de v (B), et relier les points.</p>
+
+<p>Échelles : en A, 2 cm pour 1 V et pour 1 W ; en B, 1 cm pour 1 m/s et pour 5 W.</p>
+
+<figure><img src="img/SIM-18-ELEVE/fig3-quadrillage.png" alt="" /></figure>
+
+<p><strong>j)</strong> Calculer le rendement : en A avec Pmax, en B au plus grand P ÷ P du vent.</p>
+
+<p>P électrique : ……………… W · P reçue : ……………… W · rendement : ……………… %</p>
+
+<p><strong>k)</strong> Schématiser le circuit de votre protocole, avec les symboles normalisés.</p>
+
+<p>Le panneau ou la génératrice, les deux appareils de mesure, la charge.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>l)</strong> Votre prévision f est-elle confirmée ?</p>
+
+<p><strong>m)</strong> Avec un groupe de l’autre protocole, comparer les deux rendements.</p>
+
+<p>Situer aussi l’éolienne par rapport à 59 %, la limite de Betz.</p>
+
+<p><strong>n)</strong> Sous une lampe, devant un ventilateur de salle : que cache la simulation ?</p>
+
+<p><strong>o)</strong> Répondre à la problématique en deux phrases.</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour toute installation solaire ou éolienne :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Un panneau photovoltaïque transforme l’énergie de la lumière, une éolienne celle du vent, en énergie électrique, <strong>sans émettre de CO₂</strong> pendant la transformation.</p>
+
+<p>Le <strong>rendement</strong>, P électrique ÷ P reçue, est toujours plus petit que 1 : <strong>15 à 20 %</strong> pour un panneau, jamais plus de <strong>59 %</strong> pour une éolienne, la limite de Betz.</p>
+
+<p>La puissance d’un panneau baisse avec l’éclairement, l’inclinaison et l’<strong>ombre</strong>. Celle du vent varie comme <strong>v³</strong> : deux fois plus de vent, huit fois plus de puissance.</p>
+
+</blockquote>
+
+<h1 id="pour-aller-plus-loin-lorientation-du-panneau">Pour aller plus loin · l’orientation du panneau</h1>
+
+<p>Protocole A, rhéostat à 17 Ω. Régler « Angle des rayons avec la perpendiculaire » sur chaque valeur du tableau, relever E, puis calculer E ÷ 1 000 et le cosinus de l’angle à la calculatrice.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>L’angle</th>
+
+<th>0°</th>
+
+<th>30°</th>
+
+<th>45°</th>
+
+<th>60°</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>E (W/m²)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>E ÷ 1 000</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>cos (angle)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Que remarquez-vous ? Comment orienter un panneau au cours de la journée ?</p>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="SIM-17-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP SIM-17 · Rendement d'un chauffage</span></a><a class="ap" href="SIM-19-ELEVE.html" rel="next"><span class="k">Suivant &rsaquo;</span><span class="t">TP SIM-19 · Choisir un isolant</span></a></div></nav>
+<p class="pied">TP sur simulation de physique-chimie. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+

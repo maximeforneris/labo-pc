@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Titrer le vinaigre à petite échelle</title>
+<meta name="description" content="Titre le vinaigre dilué par la soude, à la burette de 25 mL, puis dix fois plus petit, à la seringue de 5 mL. Relève le volume à l&#x27;équivalence et compare ce que chaque protocole jette au bidon.">
+<style>
+/* Simulations des TP · feuille commune, inlinee dans chaque page par assembler-simulations.py.
+   Palette du kit web (kit.css) : papier, graphite, un seul accent. Polices du systeme : la page
+   s'ouvre sans reseau, depuis une cle ou le poste de la salle. */
+:root{
+  --fond:#e9e7e3; --carte:#fbfaf9; --carte2:#f2f0ec; --encre:#191a1c; --encre2:#5d5b57;
+  --trait:#c9c5bf; --trait2:#dedbd6; --accent:#2c6da6; --accent-doux:#dfe8f1;
+  --juste:#2f7a55; --juste-doux:#e2efe7; --faux:#ab432a; --faux-doux:#f5e3dd; --tiede:#b8801f;
+  --scene:#f6f5f2; --ombre:0 1px 2px rgba(25,26,28,.05),0 10px 26px rgba(25,26,28,.07); --r:6px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fond:#131315; --carte:#1c1d20; --carte2:#232427; --encre:#eceae6; --encre2:#a6a49f;
+    --trait:#4a4a4d; --trait2:#333437; --accent:#63a6dd; --accent-doux:#1d2a36;
+    --juste:#5cc08d; --juste-doux:#17281f; --faux:#ef7a58; --faux-doux:#34201a; --tiede:#dfae4e;
+    --scene:#18191b; --ombre:0 1px 2px rgba(0,0,0,.5),0 12px 32px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --fond:#131315; --carte:#1c1d20; --carte2:#232427; --encre:#eceae6; --encre2:#a6a49f;
+  --trait:#4a4a4d; --trait2:#333437; --accent:#63a6dd; --accent-doux:#1d2a36;
+  --juste:#5cc08d; --juste-doux:#17281f; --faux:#ef7a58; --faux-doux:#34201a; --tiede:#dfae4e;
+  --scene:#18191b; --ombre:0 1px 2px rgba(0,0,0,.5),0 12px 32px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fond);color:var(--encre);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial,sans-serif;font-size:16px;line-height:1.5}
+.page{max-width:1120px;margin:0 auto;padding:18px 16px 48px}
+.mono,.afficheur .val,.curseur .val,table.releve td{font-family:ui-monospace,"Cascadia Mono",Consolas,"Roboto Mono",monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3{line-height:1.2;margin:0;text-wrap:balance}
+sub,sup{font-size:.72em;line-height:0}
+
+/* En-tete */
+.tete{padding:6px 0 16px;border-bottom:1px solid var(--trait);margin-bottom:16px}
+.surtitre{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--encre2);font-weight:600}
+.tete h1{font-size:clamp(1.45rem,4vw,2rem);margin:4px 0 6px;font-weight:750}
+.chapeau{margin:0;color:var(--encre2);max-width:70ch}
+
+/* Onglets : un par protocole ou par ecran */
+.onglets{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+.onglets button{font:inherit;font-weight:650;font-size:.95rem;padding:9px 14px;border-radius:var(--r);
+  border:1px solid var(--trait);background:var(--carte);color:var(--encre2);cursor:pointer}
+.onglets button[aria-selected="true"]{background:var(--encre);border-color:var(--encre);color:var(--carte)}
+.onglets button:not([aria-selected="true"]):hover{border-color:var(--encre2);color:var(--encre)}
+.vue[hidden]{display:none}
+
+/* Mise en page : la scene a gauche, les commandes a droite ; une colonne sous 820 px */
+.plan{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.plan{grid-template-columns:1fr}}
+.carte{background:var(--carte);border:1px solid var(--trait2);border-radius:var(--r);box-shadow:var(--ombre);padding:16px;margin-bottom:16px}
+.carte > h2{font-size:1.08rem;margin-bottom:10px;font-weight:700}
+.carte > h2 .num{color:var(--accent);margin-right:.35em}
+.consigne{color:var(--encre2);margin:0 0 12px;font-size:.95rem}
+.scene{background:var(--scene);border:1px solid var(--trait2);border-radius:var(--r);overflow:hidden;position:relative}
+.scene svg,.scene canvas{display:block;width:100%;height:auto}
+.legende{font-size:.82rem;color:var(--encre2);margin-top:6px}
+
+/* Commandes */
+.commandes{display:flex;flex-direction:column;gap:14px}
+.curseur label{display:flex;justify-content:space-between;gap:8px;font-size:.9rem;font-weight:600;margin-bottom:2px}
+.curseur .val{font-weight:600;color:var(--encre)}
+.curseur input[type=range]{width:100%;accent-color:var(--accent);height:28px;margin:0}
+.curseur .bornes{display:flex;justify-content:space-between;font-size:.75rem;color:var(--encre2)}
+.choix .titre{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.choix .boutons{display:flex;flex-wrap:wrap;gap:6px}
+.choix button,.bouton{font:inherit;font-size:.9rem;font-weight:600;padding:8px 12px;border-radius:var(--r);
+  border:1px solid var(--trait);background:var(--carte);color:var(--encre);cursor:pointer;min-height:40px}
+.choix button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.bouton:hover,.choix button:hover{border-color:var(--encre2)}
+.bouton.principal{background:var(--encre);border-color:var(--encre);color:var(--carte)}
+.bouton:disabled{opacity:.45;cursor:not-allowed}
+.rangee{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* Afficheurs : ce que lit un instrument */
+.afficheurs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.afficheur{border:1px solid var(--trait);border-radius:var(--r);background:var(--carte2);padding:8px 10px}
+.afficheur .nom{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--encre2);font-weight:650}
+.afficheur .val{font-size:1.45rem;font-weight:650;white-space:nowrap}
+.afficheur .unite{font-size:.95rem;color:var(--encre2);margin-left:.25em}
+.afficheur .note{font-size:.75rem;color:var(--encre2)}
+
+/* Releve de mesures et graphe */
+.releve-zone{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}
+@media (max-width:820px){.releve-zone{grid-template-columns:1fr}}
+table.releve{border-collapse:collapse;width:100%;font-size:.92rem}
+table.releve th,table.releve td{border:1px solid var(--trait);padding:5px 8px;text-align:center}
+table.releve th{background:var(--carte2);font-weight:650;font-size:.82rem}
+table.releve tr.vide td{color:var(--encre2);font-style:italic}
+.graphe{background:var(--carte);border:1px solid var(--trait2);border-radius:var(--r)}
+.graphe canvas{display:block;width:100%;height:auto}
+
+/* Defi : l'eleve propose une valeur, la page dit juste ou pas encore, jamais la reponse */
+.defi{border:1px dashed var(--trait);border-radius:var(--r);padding:12px 14px;background:var(--carte2)}
+.defi p{margin:0 0 8px}
+.defi .saisie{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.defi input{font:inherit;width:9em;padding:7px 9px;border-radius:var(--r);border:1px solid var(--trait);background:var(--carte);color:var(--encre)}
+.defi .retour{margin-top:8px;font-weight:600;min-height:1.4em}
+.defi .retour.juste{color:var(--juste)}
+.defi .retour.faux{color:var(--faux)}
+.defi .methode{font-weight:400;color:var(--encre2)}
+
+/* Encadres */
+.note-modele{margin-top:6px}
+details.modele{border-top:1px solid var(--trait);padding-top:10px;margin-top:8px}
+details.modele summary{cursor:pointer;font-weight:650}
+details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-size:.92rem}
+.alerte{border-left:4px solid var(--tiede);background:var(--carte2);padding:8px 12px;border-radius:0 var(--r) var(--r) 0;font-size:.92rem}
+.pied{margin-top:24px;padding-top:10px;border-top:1px solid var(--trait);font-size:.8rem;color:var(--encre2)}
+
+@media print{
+  body{background:#fff}
+  .onglets,.commandes .bouton,.defi{display:none}
+  .carte{box-shadow:none;break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+</style>
+<script>
+/* Simulations des TP · briques communes, inlinees dans l'en-tete de chaque page.
+   Rien ici ne touche au DOM au chargement : une simulation appelle ce dont elle a besoin.
+   Aucune requete, aucun stockage : la page fonctionne hors ligne et n'enregistre rien. */
+"use strict";
+var Sim = (function () {
+
+  /* Nombres a la francaise : virgule, espace fine insecable entre les milliers. */
+  function fr(x, dec) {
+    if (x === null || x === undefined || !isFinite(x)) return "—";
+    if (dec === undefined) dec = 2;
+    var s = Math.abs(x).toFixed(dec).split(".");
+    s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return (x < 0 && Number(x.toFixed(dec)) !== 0 ? "−" : "") + s.join(",");
+  }
+  /* Lecture d'une saisie d'eleve : virgule ou point, espaces ignores. */
+  function lire(txt) {
+    if (txt === null || txt === undefined) return NaN;
+    var t = String(txt).replace(/\s| | /g, "").replace(",", ".").replace("−", "-");
+    return t === "" ? NaN : Number(t);
+  }
+  function el(tag, attrs, enfants) {
+    var n = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "texte") n.textContent = attrs[k];
+      else if (k === "html") n.innerHTML = attrs[k];
+      else if (k === "classe") n.className = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    }
+    (enfants || []).forEach(function (e) { if (e) n.appendChild(e); });
+    return n;
+  }
+  function $(sel) { return typeof sel === "string" ? document.querySelector(sel) : sel; }
+  function borne(x, a, b) { return Math.max(a, Math.min(b, x)); }
+
+  /* Un instrument ne donne jamais la valeur exacte : bruit gaussien relatif, puis resolution. */
+  function gauss() { var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function mesure(vraie, opts) {
+    opts = opts || {};
+    var x = vraie * (1 + (opts.relatif || 0) * gauss()) + (opts.absolu || 0) * gauss();
+    if (opts.resolution) x = Math.round(x / opts.resolution) * opts.resolution;
+    return x;
+  }
+
+  /* Onglets : boutons [data-vue="id"] qui montrent la section #id. */
+  function onglets(nav, surChange) {
+    nav = $(nav);
+    var boutons = Array.prototype.slice.call(nav.querySelectorAll("button[data-vue]"));
+    nav.setAttribute("role", "tablist");
+    function montrer(id) {
+      boutons.forEach(function (b) {
+        var actif = b.getAttribute("data-vue") === id;
+        b.setAttribute("aria-selected", actif ? "true" : "false");
+        b.setAttribute("role", "tab");
+        var v = document.getElementById(b.getAttribute("data-vue"));
+        if (v) v.hidden = !actif;
+      });
+      if (surChange) surChange(id);
+    }
+    boutons.forEach(function (b) { b.addEventListener("click", function () { montrer(b.getAttribute("data-vue")); }); });
+    montrer(boutons[0].getAttribute("data-vue"));
+    return { montrer: montrer };
+  }
+
+  /* Curseur avec son etiquette, sa valeur affichee et ses bornes. */
+  function curseur(parent, o) {
+    var dec = o.dec === undefined ? 0 : o.dec;
+    var id = o.id || ("c" + Math.random().toString(36).slice(2, 8));
+    var val = el("span", { classe: "val" });
+    var inp = el("input", { type: "range", id: id, min: o.min, max: o.max, step: o.pas || 1, value: o.valeur });
+    var bloc = el("div", { classe: "curseur" }, [
+      el("label", { "for": id }, [el("span", { texte: o.label }), val]), inp,
+      el("div", { classe: "bornes" }, [el("span", { texte: fr(o.min, dec) + " " + (o.unite || "") }), el("span", { texte: fr(o.max, dec) + " " + (o.unite || "") })])
+    ]);
+    function maj() { val.textContent = fr(Number(inp.value), dec) + (o.unite ? " " + o.unite : ""); }
+    inp.addEventListener("input", function () { maj(); if (o.surChange) o.surChange(Number(inp.value)); });
+    maj();
+    $(parent).appendChild(bloc);
+    return {
+      get: function () { return Number(inp.value); },
+      set: function (v, silencieux) { inp.value = v; maj(); if (!silencieux && o.surChange) o.surChange(Number(inp.value)); },
+      activer: function (oui) { inp.disabled = !oui; },
+      noeud: bloc
+    };
+  }
+
+  /* Groupe de boutons dont un seul est enfonce. options : [{val, texte}] */
+  function choix(parent, o) {
+    var courant = o.valeur;
+    var zone = el("div", { classe: "boutons", role: "group", "aria-label": o.label || "" });
+    var boutons = o.options.map(function (op) {
+      var b = el("button", { type: "button", texte: op.texte });
+      b.addEventListener("click", function () { poser(op.val); });
+      zone.appendChild(b);
+      return { b: b, val: op.val };
+    });
+    function poser(v, silencieux) {
+      courant = v;
+      boutons.forEach(function (x) { x.b.setAttribute("aria-pressed", x.val === v ? "true" : "false"); });
+      if (!silencieux && o.surChange) o.surChange(v);
+    }
+    var bloc = el("div", { classe: "choix" }, [o.label ? el("div", { classe: "titre", texte: o.label }) : null, zone]);
+    $(parent).appendChild(bloc);
+    poser(courant, true);
+    return { get: function () { return courant; }, set: poser, noeud: bloc };
+  }
+
+  /* Afficheur d'instrument : nom, valeur, unite, et une note facultative. */
+  function afficheur(parent, o) {
+    var v = el("span", { classe: "val", texte: "—" });
+    var n = el("div", { classe: "note", texte: o.note || "" });
+    var bloc = el("div", { classe: "afficheur" }, [el("div", { classe: "nom", texte: o.nom }), el("div", null, [v, el("span", { classe: "unite", texte: o.unite || "" })]), o.note !== undefined ? n : null]);
+    $(parent).appendChild(bloc);
+    return {
+      set: function (x, dec) { v.textContent = typeof x === "string" ? x : fr(x, dec === undefined ? (o.dec === undefined ? 2 : o.dec) : dec); },
+      note: function (t) { n.textContent = t; },
+      noeud: bloc
+    };
+  }
+
+  /* Graphe sur canvas, net sur les ecrans haute densite. Axes, grille, courbes, points. */
+  function graphe(parent, o) {
+    var larg = o.largeur || 640, haut = o.hauteur || 380;
+    var cv = el("canvas", { width: larg, height: haut, role: "img", "aria-label": o.titre || "graphe" });
+    var cadre = el("div", { classe: "graphe" }, [cv]);
+    $(parent).appendChild(cadre);
+    var ctx = cv.getContext("2d");
+    var dpr = Math.max(1, window.devicePixelRatio || 1);
+    cv.width = larg * dpr; cv.height = haut * dpr; ctx.scale(dpr, dpr);
+    var m = { g: 62, d: 16, h: 16, b: 48 };
+    var ax = { xmin: o.xmin, xmax: o.xmax, ymin: o.ymin, ymax: o.ymax };
+    function css(nom) { return getComputedStyle(document.documentElement).getPropertyValue(nom).trim() || "#333"; }
+    function X(x) { return m.g + (x - ax.xmin) / (ax.xmax - ax.xmin) * (larg - m.g - m.d); }
+    function Y(y) { return haut - m.b - (y - ax.ymin) / (ax.ymax - ax.ymin) * (haut - m.h - m.b); }
+    function pasJoli(etendue, n) {
+      var brut = etendue / n, p = Math.pow(10, Math.floor(Math.log10(brut))), r = brut / p;
+      return (r < 1.5 ? 1 : r < 3 ? 2 : r < 7 ? 5 : 10) * p;
+    }
+    function decimales(pas) { return Math.max(0, -Math.floor(Math.log10(pas) + 1e-9)); }
+    function fond() {
+      ctx.clearRect(0, 0, larg, haut);
+      ctx.fillStyle = css("--carte"); ctx.fillRect(0, 0, larg, haut);
+      ctx.font = "12px system-ui, Segoe UI, Arial, sans-serif";
+      var px = o.pasX || pasJoli(ax.xmax - ax.xmin, 8), py = o.pasY || pasJoli(ax.ymax - ax.ymin, 6);
+      ctx.strokeStyle = css("--trait2"); ctx.lineWidth = 1; ctx.fillStyle = css("--encre2");
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (var x = Math.ceil(ax.xmin / px) * px; x <= ax.xmax + 1e-9; x += px) {
+        ctx.beginPath(); ctx.moveTo(X(x), Y(ax.ymin)); ctx.lineTo(X(x), Y(ax.ymax)); ctx.stroke();
+        ctx.fillText(fr(x, o.decX !== undefined ? o.decX : decimales(px)), X(x), Y(ax.ymin) + 5);
+      }
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (var y = Math.ceil(ax.ymin / py) * py; y <= ax.ymax + 1e-9; y += py) {
+        ctx.beginPath(); ctx.moveTo(X(ax.xmin), Y(y)); ctx.lineTo(X(ax.xmax), Y(y)); ctx.stroke();
+        ctx.fillText(fr(y, o.decY !== undefined ? o.decY : decimales(py)), X(ax.xmin) - 6, Y(y));
+      }
+      ctx.strokeStyle = css("--encre"); ctx.lineWidth = 1.4;
+      var y0 = borne(0, ax.ymin, ax.ymax), x0 = borne(0, ax.xmin, ax.xmax);
+      ctx.beginPath(); ctx.moveTo(X(ax.xmin), Y(y0)); ctx.lineTo(X(ax.xmax), Y(y0)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X(x0), Y(ax.ymin)); ctx.lineTo(X(x0), Y(ax.ymax)); ctx.stroke();
+      ctx.fillStyle = css("--encre"); ctx.font = "600 13px system-ui, Segoe UI, Arial, sans-serif";
+      ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+      ctx.fillText(o.titreX || "", larg - m.d, haut - 4);
+      ctx.save(); ctx.translate(14, m.h); ctx.rotate(-Math.PI / 2); ctx.textAlign = "right"; ctx.textBaseline = "top";
+      ctx.fillText(o.titreY || "", 0, 0); ctx.restore();
+    }
+    function couleur(c) { return c && c.indexOf("--") === 0 ? css(c) : (c || css("--accent")); }
+    var api = {
+      axes: function (n) { for (var k in n) ax[k] = n[k]; return api; },
+      effacer: function () { fond(); return api; },
+      /* f : fonction x -> y, ou tableau de [x, y] */
+      courbe: function (f, opts) {
+        opts = opts || {};
+        ctx.save(); ctx.beginPath();
+        ctx.rect(m.g, m.h, larg - m.g - m.d, haut - m.h - m.b); ctx.clip();
+        ctx.strokeStyle = couleur(opts.couleur); ctx.lineWidth = opts.epaisseur || 2.2;
+        if (opts.pointille) ctx.setLineDash([6, 5]);
+        ctx.beginPath();
+        if (typeof f === "function") {
+          var n = opts.pas || 400, prem = true;
+          for (var i = 0; i <= n; i++) {
+            var x = ax.xmin + (ax.xmax - ax.xmin) * i / n, y = f(x);
+            if (!isFinite(y)) { prem = true; continue; }
+            if (prem) { ctx.moveTo(X(x), Y(y)); prem = false; } else ctx.lineTo(X(x), Y(y));
+          }
+        } else {
+          f.forEach(function (p, i) { if (i === 0) ctx.moveTo(X(p[0]), Y(p[1])); else ctx.lineTo(X(p[0]), Y(p[1])); });
+        }
+        ctx.stroke(); ctx.restore();
+        return api;
+      },
+      points: function (pts, opts) {
+        opts = opts || {};
+        ctx.fillStyle = couleur(opts.couleur); ctx.strokeStyle = css("--carte");
+        pts.forEach(function (p) {
+          var r = opts.rayon || 4.5;
+          ctx.beginPath();
+          if (opts.forme === "croix") {
+            ctx.strokeStyle = couleur(opts.couleur); ctx.lineWidth = 2;
+            ctx.moveTo(X(p[0]) - r, Y(p[1]) - r); ctx.lineTo(X(p[0]) + r, Y(p[1]) + r);
+            ctx.moveTo(X(p[0]) + r, Y(p[1]) - r); ctx.lineTo(X(p[0]) - r, Y(p[1]) + r); ctx.stroke();
+          } else { ctx.arc(X(p[0]), Y(p[1]), r, 0, 2 * Math.PI); ctx.fill(); ctx.lineWidth = 1; ctx.stroke(); }
+        });
+        return api;
+      },
+      texte: function (x, y, t, opts) {
+        opts = opts || {};
+        ctx.fillStyle = couleur(opts.couleur); ctx.font = (opts.gras ? "600 " : "") + "13px system-ui, Segoe UI, Arial, sans-serif";
+        ctx.textAlign = opts.align || "left"; ctx.textBaseline = "middle";
+        ctx.fillText(t, X(x) + (opts.dx || 0), Y(y) + (opts.dy || 0));
+        return api;
+      },
+      X: X, Y: Y, ctx: ctx, canvas: cv
+    };
+    fond();
+    return api;
+  }
+
+  /* Releve : l'eleve garde une mesure dans un tableau, qui peut alimenter un graphe.
+     colonnes : [{cle, titre, unite, dec}] ; graphe : {x, y, ...options de Sim.graphe} */
+  function releve(parent, o) {
+    var lignes = [];
+    var zone = el("div", { classe: "releve-zone" });
+    var gauche = el("div");
+    var table = el("table", { classe: "releve" });
+    var tete = el("tr"); o.colonnes.forEach(function (c) { tete.appendChild(el("th", { texte: c.titre + (c.unite ? " (" + c.unite + ")" : "") })); });
+    table.appendChild(el("thead", null, [tete]));
+    var corps = el("tbody"); table.appendChild(corps);
+    var boutons = el("div", { classe: "rangee", style: "margin-top:8px" });
+    var bAnnuler = el("button", { type: "button", classe: "bouton", texte: "Retirer la dernière" });
+    var bVider = el("button", { type: "button", classe: "bouton", texte: "Tout effacer" });
+    boutons.appendChild(bAnnuler); boutons.appendChild(bVider);
+    gauche.appendChild(table); gauche.appendChild(boutons);
+    zone.appendChild(gauche);
+    var gr = null;
+    if (o.graphe) { var droite = el("div"); zone.appendChild(droite); gr = graphe(droite, o.graphe); }
+    $(parent).appendChild(zone);
+    function dessiner() {
+      corps.innerHTML = "";
+      if (!lignes.length) {
+        var tr = el("tr", { classe: "vide" }); tr.appendChild(el("td", { colspan: o.colonnes.length, texte: o.vide || "Aucune mesure gardée pour l'instant." })); corps.appendChild(tr);
+      }
+      lignes.forEach(function (l) {
+        var tr = el("tr");
+        o.colonnes.forEach(function (c) { tr.appendChild(el("td", { texte: typeof l[c.cle] === "number" ? fr(l[c.cle], c.dec === undefined ? 2 : c.dec) : (l[c.cle] || "") })); });
+        corps.appendChild(tr);
+      });
+      if (gr) {
+        gr.effacer();
+        if (o.avantPoints) o.avantPoints(gr, lignes);
+        gr.points(lignes.map(function (l) { return [l[o.graphe.x], l[o.graphe.y]]; }), { couleur: o.graphe.couleur });
+      }
+      if (o.surChange) o.surChange(lignes);
+    }
+    bAnnuler.addEventListener("click", function () { lignes.pop(); dessiner(); });
+    bVider.addEventListener("click", function () { lignes = []; dessiner(); });
+    dessiner();
+    return {
+      ajouter: function (l) { if (o.max && lignes.length >= o.max) lignes.shift(); lignes.push(l); dessiner(); },
+      lignes: function () { return lignes.slice(); },
+      vider: function () { lignes = []; dessiner(); },
+      redessiner: dessiner,
+      graphe: gr
+    };
+  }
+
+  /* Defi : une valeur a trouver. La page dit juste ou pas encore, et rappelle la methode,
+     jamais la valeur attendue. attendu : nombre ou fonction qui le calcule au moment du clic. */
+  function defi(parent, o) {
+    var inp = el("input", { type: "text", inputmode: "decimal", "aria-label": o.question });
+    var b = el("button", { type: "button", classe: "bouton", texte: "Vérifier" });
+    var retour = el("div", { classe: "retour", "aria-live": "polite" });
+    var bloc = el("div", { classe: "defi" }, [el("p", { html: o.question }), el("div", { classe: "saisie" }, [inp, o.unite ? el("span", { texte: o.unite }) : null, b]), retour]);
+    function verifier() {
+      var v = lire(inp.value), a = typeof o.attendu === "function" ? o.attendu() : o.attendu;
+      retour.className = "retour";
+      if (!isFinite(v)) { retour.textContent = "Écris un nombre."; return; }
+      var tol = o.tolerance === undefined ? 0.05 : o.tolerance;
+      var ok = Math.abs(v - a) <= Math.abs(a) * tol + (o.toleranceAbsolue || 0);
+      retour.className = "retour " + (ok ? "juste" : "faux");
+      retour.innerHTML = ok ? "Juste." : "Pas encore. <span class=\"methode\">" + (o.methode || "") + "</span>";
+      if (o.surReponse) o.surReponse(ok, v);
+    }
+    b.addEventListener("click", verifier);
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") verifier(); });
+    $(parent).appendChild(bloc);
+    return { noeud: bloc, effacer: function () { inp.value = ""; retour.textContent = ""; retour.className = "retour"; } };
+  }
+
+  /* Boucle d'animation : f(dt en secondes). S'arrete seule quand l'onglet est cache.
+     Sim.avancer(s) fait tourner les boucles a la main : c'est la porte des essais, dans un
+     navigateur qui ne dessine pas (onglet cache, capture sans affichage). */
+  var boucles = [];
+  function avancer(secondes, pasDt) {
+    pasDt = pasDt || 0.05;
+    for (var t = 0; t < secondes - 1e-9; t += pasDt) boucles.forEach(function (f) { f(pasDt); });
+  }
+  function animer(f) {
+    boucles.push(f);
+    var avant = null, actif = true, id = null;
+    function pas(t) {
+      if (avant === null) avant = t;
+      var dt = Math.min(0.1, (t - avant) / 1000); avant = t;
+      if (actif) f(dt);
+      id = requestAnimationFrame(pas);
+    }
+    id = requestAnimationFrame(pas);
+    return { pause: function () { actif = false; }, reprise: function () { actif = true; avant = null; }, actif: function () { return actif; } };
+  }
+
+  /* Petit utilitaire SVG. */
+  var NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) { if (k === "texte") n.textContent = attrs[k]; else n.setAttribute(k, attrs[k]); }
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+
+  return { fr: fr, lire: lire, el: el, $: $, borne: borne, mesure: mesure, gauss: gauss, onglets: onglets, curseur: curseur, choix: choix,
+    afficheur: afficheur, graphe: graphe, releve: releve, defi: defi, animer: animer, avancer: avancer, svg: svg };
+})();
+
+</script>
+</head>
+<body>
+<div class="page">
+<header class="tete">
+<div class="surtitre">Physique-chimie · simulation du TP SIM-16</div>
+<h1>Titrer le vinaigre à petite échelle</h1>
+<p class="chapeau">Titre le vinaigre dilué par la soude, à la burette de 25 mL, puis dix fois plus petit, à la seringue de 5 mL. Relève le volume à l'équivalence et compare ce que chaque protocole jette au bidon.</p>
+</header>
+<style>
+.scene text.halo{paint-order:stroke;stroke-linejoin:round}
+.carte [hidden]{display:none}
+</style>
+
+<nav class="onglets" id="protocoles" aria-label="Protocoles">
+  <button type="button" data-vue="releveA">Protocole A · burette de 25 mL</button>
+  <button type="button" data-vue="releveB">Protocole B · seringue de 5 mL</button>
+</nav>
+
+<div class="carte">
+  <h2><span class="num">1</span>Le vinaigre et la soude</h2>
+  <p class="consigne">Le vinaigre a été dilué dix fois, la soude est à 0,10 mol/L. Changer un réglage recommence le titrage.</p>
+  <div class="commandes" id="reglages"></div>
+</div>
+
+<div class="plan">
+  <div class="carte">
+    <h2><span class="num">2</span>Verse la soude et observe</h2>
+    <div class="scene">
+      <svg id="scene" viewBox="0 0 600 440" role="img" aria-label="Le titrage : la soude tombe goutte à goutte dans le vinaigre dilué"></svg>
+    </div>
+    <p class="legende" id="legende"></p>
+  </div>
+  <div class="carte">
+    <h2><span class="num">3</span>Les commandes</h2>
+    <div class="commandes">
+      <div class="rangee" id="verserA"></div>
+      <div class="rangee" id="verserB"></div>
+      <div class="afficheurs" id="instruments"></div>
+      <button type="button" class="bouton" id="garder">Garder cette mesure dans le tableau</button>
+      <div class="rangee">
+        <button type="button" class="bouton" id="nouveau">Nouveau titrage</button>
+        <button type="button" class="bouton" id="vider">Tout vider au bidon</button>
+      </div>
+      <p class="alerte" id="etat"></p>
+    </div>
+  </div>
+</div>
+
+<div class="carte">
+  <h2><span class="num">4</span>Le relevé</h2>
+  <p class="consigne" id="consigneReleve"></p>
+  <div id="releveA" class="vue"></div>
+  <div id="releveB" class="vue"></div>
+</div>
+
+<div class="carte">
+  <h2><span class="num">5</span>Le résultat</h2>
+  <p class="consigne">Calcule avec <b>tes</b> lectures. Données : C<sub>b</sub> = 0,10 mol/L ; M = 60 g/mol ; 1 L de vinaigre a une masse de 1 000 g.</p>
+  <div class="commandes" id="defisA"></div>
+  <div class="commandes" id="defisB"></div>
+  <details class="modele">
+    <summary>Ce que la simulation simplifie</summary>
+    <ul>
+      <li>Le vinaigre ne contient que de l'acide éthanoïque, et un litre de vinaigre a une masse de 1 000 g.</li>
+      <li>Toutes les gouttes ont le même volume, 0,05 mL. En vrai, il dépend de la pointe, de l'inclinaison et de la vitesse.</li>
+      <li>Le mélange est parfait dès qu'on agite ; la seringue n'a ni bulle ni volume mort, et aucune goutte ne reste accrochée à la pointe.</li>
+      <li>La soude est exactement à 0,10 mol/L, et le pH-mètre répond sans délai.</li>
+      <li>Le bidon compte la soude du rinçage, les béchers titrés et la soude restée dans la burette, pas l'eau qui rince la verrerie.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(function () {
+  /* ---------- Chimie : acide ethanoique (pKa 4,76) titre par la soude, phenolphtaleine (pKi 9,3) ---------- */
+  var CB = 0.10, PKA = 4.76, PKI = 9.3, GOUTTE = 0.05;
+  var PROTO = {
+    A: { va: 10.0, plein: 25.0, rincage: 5.0, indicateur: 3, pas: [{ n: 20, texte: "Verser 1 mL" }, { n: 2, texte: "Verser 0,1 mL" }, { n: 1, texte: "Une goutte" }] },
+    B: { va: 1.00, plein: 5.0, rincage: 0.5, indicateur: 1, pas: [{ n: 2, texte: "Pousser de 0,1 mL" }, { n: 1, texte: "Une goutte" }] }
+  };
+  var FLACONS = { blanc: { texte: "Vinaigre blanc · étiquette 8°", degre: 8 }, menager: { texte: "Vinaigre ménager · étiquette 14°", degre: 14 } };
+  var reglage = { flacon: "blanc", phmetre: false };
+  var proto = "A", etats = {};
+
+  function caDilue() { return FLACONS[reglage.flacon].degre / 60; }          // mol/L, apres dilution par dix
+  function vEquivalence(p) { return caDilue() * PROTO[p].va / CB; }             // mL
+  function pH(ca, va, cb, vb, eau) {
+    var ka = Math.pow(10, -PKA), kw = 1e-14, vt = va + vb + eau;
+    var na = ca * va / vt, nb = cb * vb / vt, lo = -14, hi = 0;
+    for (var i = 0; i < 60; i++) {
+      var m = (lo + hi) / 2, h = Math.pow(10, m);
+      if (h + nb - kw / h - na * ka / (ka + h) > 0) hi = m; else lo = m;
+    }
+    return -(lo + hi) / 2;
+  }
+  function fractionRose(p) { return 1 / (1 + Math.pow(10, PKI - p)); }
+  function etatNeuf(p) { return { n: 0, pret: true, rempli: true, bidon: PROTO[p].rincage, eau: 0, nuage: 0, tau: 0.6, chute: null }; }
+  function vVerse(e) { return e.n * GOUTTE; }
+  function volBecher(p, e) { return PROTO[p].va + vVerse(e) + PROTO[p].indicateur * GOUTTE + e.eau; }
+  function phBecher(p, e) { return pH(caDilue(), PROTO[p].va, CB, vVerse(e), e.eau); }
+  function rose(p, e) { return e.pret ? fractionRose(phBecher(p, e)) : 0; }
+  function couleur(f) { return f < 0.05 ? "incolore" : f < 0.9 ? "rose pâle" : "rose"; }
+
+  /* ---------- Reglages ---------- */
+  var R = document.getElementById("reglages");
+  Sim.choix(R, { label: "Le flacon", valeur: "blanc",
+    options: Object.keys(FLACONS).map(function (k) { return { val: k, texte: FLACONS[k].texte }; }),
+    surChange: function (v) { reglage.flacon = v; etats.A = etatNeuf("A"); etats.B = etatNeuf("B"); etats.A.eau = reglage.phmetre ? 40 : 0; toutMontrer("Nouveau flacon : les deux protocoles recommencent, burette et seringue rincées puis remplies."); } });
+  var cPh = Sim.choix(R, { label: "Le pH-mètre (protocole A seulement)", valeur: "non",
+    options: [{ val: "non", texte: "Rangé" }, { val: "oui", texte: "Sonde dans le bécher, avec 40 mL d'eau" }],
+    surChange: function (v) { reglage.phmetre = v === "oui"; etats.A = etatNeuf("A"); etats.A.eau = reglage.phmetre ? 40 : 0; toutMontrer(reglage.phmetre ? "Sonde dans le bécher : 40 mL d'eau ajoutés pour l'immerger." : "pH-mètre rangé."); } });
+
+  /* ---------- Commandes ---------- */
+  ["A", "B"].forEach(function (p) {
+    var zone = document.getElementById("verser" + p);
+    PROTO[p].pas.forEach(function (s, i) {
+      var b = Sim.el("button", { type: "button", classe: "bouton" + (i === 0 ? " principal" : ""), texte: s.texte });
+      b.addEventListener("click", function () { verser(s.n); });
+      zone.appendChild(b);
+    });
+  });
+  var I = document.getElementById("instruments");
+  var aBidon = Sim.afficheur(I, { nom: "Bidon de récupération", unite: "mL", dec: 1 });
+  var aGouttes = Sim.afficheur(I, { nom: "Gouttes comptées", unite: "", dec: 0 });
+  var aPh = Sim.afficheur(I, { nom: "pH-mètre", unite: "", dec: 2 });
+
+  function message(t) { document.getElementById("etat").textContent = t; }
+  function verser(n) {
+    var P = PROTO[proto], e = etats[proto];
+    if (!e.pret) { message("Le bécher est vide : clique sur « Nouveau titrage »."); return; }
+    var reste = Math.round((P.plein - vVerse(e)) / GOUTTE);
+    if (reste <= 0) { message(proto === "A" ? "La burette est vide." : "La seringue est vide."); return; }
+    var avant = rose(proto, e);
+    e.n += Math.min(n, reste);
+    var ve = vEquivalence(proto), f = rose(proto, e);
+    e.chute = 0;
+    e.tau = 0.5 + 2.5 * Sim.borne(1 - (ve - vVerse(e)) / (0.04 * ve), 0, 1);
+    if (f >= 0.05) message(avant >= 0.05 ? "La solution reste " + couleur(f) + "." : "Le rose apparaît et tient après agitation.");
+    else message("La goutte colore la solution en rose là où elle tombe, puis le rose disparaît quand on agite.");
+    dessiner(); afficher(true);
+  }
+  document.getElementById("nouveau").addEventListener("click", function () {
+    var e = etats[proto], ajout = e.pret ? volBecher(proto, e) : 0;
+    e.bidon += ajout; e.n = 0; e.pret = true; e.rempli = true;
+    message((ajout ? "Bécher titré jeté au bidon : + " + Sim.fr(ajout, 2) + " mL. " : "") +
+      (proto === "A" ? "Burette remplie au zéro, nouveau bécher prêt." : "Seringue remplie à 5,0 mL, nouveau tube prêt."));
+    dessiner(); afficher(true);
+  });
+  document.getElementById("vider").addEventListener("click", function () {
+    var P = PROTO[proto], e = etats[proto], ajout = 0;
+    if (e.pret) ajout += volBecher(proto, e);
+    if (e.rempli) ajout += P.plein - vVerse(e);
+    if (!ajout) { message("Tout est déjà vidé."); return; }
+    e.bidon += ajout; e.pret = false; e.rempli = false; e.n = 0;
+    message("Au bidon : + " + Sim.fr(ajout, 2) + " mL, dont la soude restée dans " + (proto === "A" ? "la burette." : "la seringue."));
+    dessiner(); afficher(true);
+  });
+
+  /* ---------- Releves ---------- */
+  var relA = Sim.releve("#releveA", {
+    colonnes: [{ cle: "V", titre: "Burette", unite: "mL", dec: 2 }, { cle: "ph", titre: "pH", dec: 2 }, { cle: "coul", titre: "Couleur" }],
+    graphe: { x: "V", y: "ph", xmin: 0, xmax: 16, ymin: 0, ymax: 14, pasY: 2, titreX: "V (mL)", titreY: "pH", largeur: 620, hauteur: 340 },
+    avantPoints: function (gr, lignes) {
+      var vmax = 14; lignes.forEach(function (l) { vmax = Math.max(vmax, l.V); });
+      gr.axes({ xmax: Math.min(26, Math.ceil((vmax + 2) / 2) * 2) }).effacer();
+    }
+  });
+  var relB = Sim.releve("#releveB", {
+    colonnes: [{ cle: "n", titre: "Gouttes", dec: 0 }, { cle: "Vr", titre: "Seringue, volume restant", unite: "mL", dec: 2 }, { cle: "coul", titre: "Couleur" }]
+  });
+  document.getElementById("garder").addEventListener("click", function () {
+    var e = etats[proto];
+    if (!e.pret) { message("Le bécher est vide : clique sur « Nouveau titrage »."); return; }
+    var c = couleur(rose(proto, e));
+    if (proto === "A") relA.ajouter({ V: Sim.mesure(vVerse(e), { absolu: 0.012, resolution: 0.05 }), ph: reglage.phmetre ? lecturePh() : NaN, coul: c });
+    else relB.ajouter({ n: e.n, Vr: Sim.mesure(PROTO.B.plein - vVerse(e), { absolu: 0.015, resolution: 0.05 }), coul: c });
+  });
+  function lecturePh() { return Sim.mesure(phBecher("A", etats.A), { absolu: 0.02, resolution: 0.01 }); }
+
+  /* ---------- Defis ---------- */
+  ["A", "B"].forEach(function (p) {
+    var D = document.getElementById("defis" + p), tol = p === "A" ? 0.02 : 0.08;
+    Sim.defi(D, { question: "Volume de soude versé à l'équivalence, V<sub>E</sub>, au premier rose qui tient :", unite: "mL",
+      attendu: function () { return vEquivalence(p); }, tolerance: 0, toleranceAbsolue: 0.1,
+      methode: p === "A" ? "Lis la burette dans la loupe, au bas du ménisque, dès que le rose tient après agitation." : "V<sub>E</sub> = 5,0 mL moins le volume restant, ou le nombre de gouttes × 0,05 mL." });
+    Sim.defi(D, { question: "Concentration du vinaigre dilué, C<sub>a</sub> = C<sub>b</sub> × V<sub>E</sub> ÷ V<sub>a</sub>, avec V<sub>a</sub> = " + (p === "A" ? "10,0" : "1,00") + " mL :", unite: "mol/L",
+      attendu: function () { return caDilue(); }, tolerance: tol,
+      methode: "C<sub>b</sub> = 0,10 mol/L ; V<sub>E</sub> et V<sub>a</sub> dans la même unité." });
+    Sim.defi(D, { question: "Degré du vinaigre, en grammes d'acide pour 100 g de vinaigre :", unite: "°",
+      attendu: function () { return FLACONS[reglage.flacon].degre; }, tolerance: tol,
+      methode: "Avant dilution, C = 10 × C<sub>a</sub>. Masse d'acide dans 1 L = C × 60 g ; un litre pèse 1 000 g : ramène à 100 g." });
+  });
+
+  /* ---------- Scene ---------- */
+  var S = document.getElementById("scene"), svg = Sim.svg, g = {};
+  var ROSE = "#d6408a", EAU = "#d9e7f2";
+  function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function texte(x, y, t, o) {
+    o = o || {};
+    return svg("text", { x: x, y: y, "font-size": o.taille || 12, "text-anchor": o.ancre || "start", "font-weight": o.gras ? 600 : 400,
+      fill: o.couleur || css("--encre2"), texte: t }, o.parent || S);
+  }
+  function alphaRose(f) { return f < 0.05 ? 0 : 0.15 + 0.7 * Math.pow((f - 0.05) / 0.95, 2); }
+
+  function dessiner() {
+    S.innerHTML = "";
+    var e = etats[proto];
+    svg("rect", { x: 0, y: 410, width: 600, height: 30, fill: css("--carte2") }, S);
+    svg("line", { x1: 0, y1: 410, x2: 600, y2: 410, stroke: css("--trait"), "stroke-width": 2 }, S);
+    svg("rect", { x: 40, y: 400, width: 216, height: 10, rx: 2, fill: css("--encre2") }, S);
+    svg("line", { x1: 76, y1: 16, x2: 76, y2: 400, stroke: css("--encre2"), "stroke-width": 6 }, S);
+    if (proto === "A") dessinerBurette(e); else dessinerSeringue(e);
+    // la goutte qui tombe et le nuage rose ou elle arrive
+    g.nuage = svg("ellipse", { cx: 190, cy: g.surface + 5, rx: proto === "A" ? 16 : 10, ry: 4, fill: ROSE, opacity: 0 }, S);
+    g.goutte = svg("ellipse", { cx: 190, cy: 350, rx: 2.6, ry: 3.6, fill: css("--accent-doux"), stroke: css("--encre2"), "stroke-width": 1, opacity: 0 }, S);
+    dessinerLoupe(e);
+  }
+
+  function liquide(x, largeur, fond, vol, pxParMl, e, rayon) {
+    var h = Math.min(vol * pxParMl, 1000), y = fond - h;
+    g.surface = e.pret ? y : fond;
+    if (!e.pret) return;
+    svg("rect", { x: x, y: y, width: largeur, height: h, rx: rayon || 0, fill: EAU }, S);
+    svg("rect", { x: x, y: y, width: largeur, height: h, rx: rayon || 0, fill: ROSE, opacity: alphaRose(rose(proto, e)) }, S);
+  }
+
+  function dessinerBurette(e) {
+    var encre = css("--encre"), yB = function (v) { return 40 + v * 9.6; };
+    svg("line", { x1: 76, y1: 112, x2: 180, y2: 112, stroke: encre, "stroke-width": 4 }, S);
+    if (e.rempli) svg("rect", { x: 182, y: yB(vVerse(e)), width: 16, height: 300 - yB(vVerse(e)), fill: css("--accent-doux") }, S);
+    svg("rect", { x: 180, y: 24, width: 20, height: 276, rx: 2, fill: "none", stroke: encre, "stroke-width": 2 }, S);
+    for (var v = 0; v <= 25; v++) {
+      svg("line", { x1: 180, y1: yB(v), x2: 180 + (v % 5 === 0 ? 9 : 5), y2: yB(v), stroke: encre, "stroke-width": 1 }, S);
+      if (v % 5 === 0) texte(174, yB(v) + 4, String(v), { taille: 11, ancre: "end" });
+    }
+    svg("rect", { x: 176, y: 300, width: 28, height: 14, rx: 2, fill: css("--carte2"), stroke: encre, "stroke-width": 2 }, S);
+    svg("line", { x1: 204, y1: 307, x2: 220, y2: 307, stroke: encre, "stroke-width": 4, "stroke-linecap": "round" }, S);
+    svg("path", { d: "M186 314 L194 314 L191.5 346 L188.5 346 Z", fill: css("--accent-doux"), stroke: encre, "stroke-width": 1.5 }, S);
+    texte(214, 40, "burette de 25 mL", { couleur: encre, gras: true });
+    texte(214, 56, "soude à 0,10 mol/L");
+    // becher de 100 mL
+    liquide(141, 98, 399, volBecher("A", e), 0.9, e);
+    svg("path", { d: "M134 314 Q140 314 140 320 L140 400 L240 400 L240 320 Q240 314 246 314", fill: "none", stroke: encre, "stroke-width": 2.5 }, S);
+    texte(262, 376, "bécher : 10,0 mL de vinaigre dilué", { couleur: encre });
+    texte(262, 392, "+ 3 gouttes de phénolphtaléine");
+    if (reglage.phmetre) {
+      svg("path", { d: "M229 250 L229 226 L317 226 L317 206", fill: "none", stroke: encre, "stroke-width": 2 }, S);
+      svg("rect", { x: 224, y: 250, width: 10, height: 136, rx: 3, fill: css("--encre2") }, S);
+      svg("circle", { cx: 229, cy: 390, r: 6, fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, S);
+      svg("rect", { x: 262, y: 150, width: 110, height: 56, rx: 6, fill: css("--carte"), stroke: encre, "stroke-width": 2 }, S);
+      svg("rect", { x: 272, y: 158, width: 90, height: 24, rx: 2, fill: "#cfd8cf", stroke: css("--encre2"), "stroke-width": 1 }, S);
+      g.lcd = svg("text", { x: 317, y: 175, "text-anchor": "middle", "font-size": 13, "font-family": "Consolas, monospace", fill: "#1d2a1d", texte: "" }, S);
+      texte(317, 198, "pH-mètre", { taille: 11, ancre: "middle" });
+    } else g.lcd = null;
+  }
+
+  function dessinerSeringue(e) {
+    var encre = css("--encre"), yS = function (v) { return 292 - v * 28; };
+    var vr = e.rempli ? PROTO.B.plein - vVerse(e) : 0, yp = yS(vr);
+    svg("line", { x1: 76, y1: 222, x2: 176, y2: 222, stroke: encre, "stroke-width": 4 }, S);
+    if (e.rempli) svg("rect", { x: 180, y: yp, width: 20, height: 300 - yp, fill: css("--accent-doux") }, S);
+    // piston : tige, appui, joint
+    svg("rect", { x: 186, y: yp - 118, width: 8, height: 108, fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, S);
+    svg("rect", { x: 172, y: yp - 124, width: 36, height: 6, rx: 2, fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, S);
+    svg("rect", { x: 180, y: yp - 10, width: 20, height: 10, fill: "#2b2b2e" }, S);
+    svg("rect", { x: 178, y: 144, width: 24, height: 156, rx: 2, fill: "none", stroke: encre, "stroke-width": 2 }, S);
+    svg("rect", { x: 166, y: 140, width: 48, height: 6, rx: 2, fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, S);
+    for (var k = 0; k <= 10; k++) {
+      var v = k / 2;
+      svg("line", { x1: 178, y1: yS(v), x2: 178 + (k % 2 === 0 ? 9 : 5), y2: yS(v), stroke: encre, "stroke-width": 1 }, S);
+      if (k % 2 === 0) texte(172, yS(v) + 4, String(v), { taille: 11, ancre: "end" });
+    }
+    svg("path", { d: "M184 300 L196 300 L196 312 L192 312 L191 346 L189 346 L188 312 L184 312 Z", fill: css("--accent-doux"), stroke: encre, "stroke-width": 1.5 }, S);
+    texte(214, 160, "seringue de 5 mL", { couleur: encre, gras: true });
+    texte(214, 176, "soude à 0,10 mol/L");
+    // petit tube de 5 mL
+    liquide(167, 46, 399, volBecher("B", e), 10, e, 4);
+    svg("path", { d: "M164 342 L166 344 L166 392 Q166 400 174 400 L206 400 Q214 400 214 392 L214 344 L216 342", fill: "none", stroke: encre, "stroke-width": 2.5 }, S);
+    texte(226, 376, "petit tube : 1,00 mL de vinaigre dilué", { couleur: encre });
+    texte(226, 392, "+ 1 goutte de phénolphtaléine");
+    g.lcd = null;
+  }
+
+  function dessinerLoupe(e) {
+    var encre = css("--encre"), x0 = 404, y0 = 40, w = 184, h = 236, yc = 158;
+    texte(x0 + w / 2, 28, "loupe sur la graduation", { ancre: "middle", taille: 12 });
+    var clip = svg("clipPath", { id: "loupe" }, S);
+    svg("rect", { x: x0, y: y0, width: w, height: h, rx: 10 }, clip);
+    svg("rect", { x: x0, y: y0, width: w, height: h, rx: 10, fill: css("--carte") }, S);
+    var L = svg("g", { "clip-path": "url(#loupe)" }, S);
+    var k, v, y;
+    if (proto === "A") {
+      var V = vVerse(e), vc = Sim.borne(V, 1.3, 23.7), yA = function (v) { return yc + (v - vc) * 80; };
+      if (e.rempli) {
+        var yM = yA(V);
+        svg("path", { d: "M426 " + (yM - 7) + " Q496 " + (yM + 7) + " 566 " + (yM - 7) + " L566 300 L426 300 Z", fill: css("--accent-doux"), stroke: css("--encre2"), "stroke-width": 1.5 }, L);
+      }
+      svg("line", { x1: 426, y1: y0, x2: 426, y2: y0 + h, stroke: encre, "stroke-width": 2 }, L);
+      svg("line", { x1: 566, y1: y0, x2: 566, y2: y0 + h, stroke: encre, "stroke-width": 2 }, L);
+      for (k = Math.max(0, Math.floor((vc - 1.6) * 10)); k <= Math.min(250, Math.ceil((vc + 1.6) * 10)); k++) {
+        v = k / 10; y = yA(v);
+        svg("line", { x1: 426, y1: y, x2: 426 + (k % 10 === 0 ? 40 : k % 5 === 0 ? 26 : 14), y2: y, stroke: encre, "stroke-width": k % 10 === 0 ? 2 : 1.2 }, L);
+        if (k % 10 === 0) svg("text", { x: 472, y: y + 5, "font-size": 15, "font-weight": 600, fill: encre, stroke: css("--carte"), "stroke-width": 3, "class": "halo", texte: String(v) }, L);
+      }
+    } else {
+      var vr = e.rempli ? PROTO.B.plein - vVerse(e) : 0, vcb = Sim.borne(vr, 0.5, 4.5), yBb = function (v) { return yc - (v - vcb) * 200; };
+      var yP = yBb(vr);
+      svg("rect", { x: 476, y: y0 - 10, width: 40, height: Math.max(0, yP - 34 - y0 + 10), fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, L);
+      svg("rect", { x: 437, y: yP - 34, width: 118, height: 34, fill: "#2b2b2e" }, L);
+      svg("line", { x1: 437, y1: yP - 22, x2: 555, y2: yP - 22, stroke: "#55555a", "stroke-width": 2 }, L);
+      if (e.rempli) svg("rect", { x: 437, y: yP, width: 118, height: 300 - yP, fill: css("--accent-doux") }, L);
+      svg("line", { x1: 436, y1: y0, x2: 436, y2: y0 + h, stroke: encre, "stroke-width": 2 }, L);
+      svg("line", { x1: 556, y1: y0, x2: 556, y2: y0 + h, stroke: encre, "stroke-width": 2 }, L);
+      for (k = Math.max(0, Math.floor((vcb - 0.7) * 10)); k <= Math.min(50, Math.ceil((vcb + 0.7) * 10)); k++) {
+        v = k / 10; y = yBb(v);
+        svg("line", { x1: 436, y1: y, x2: 436 + (k % 10 === 0 ? 36 : k % 5 === 0 ? 26 : 14), y2: y, stroke: k === 0 ? encre : "#8a8f96", "stroke-width": k % 5 === 0 ? 2 : 1.2 }, L);
+        if (k % 5 === 0) svg("text", { x: 478, y: y + 5, "font-size": 15, "font-weight": 600, fill: encre, stroke: css("--carte"), "stroke-width": 3, "class": "halo", texte: Sim.fr(v, k % 10 === 0 ? 0 : 1) }, L);
+      }
+    }
+    svg("rect", { x: x0, y: y0, width: w, height: h, rx: 10, fill: "none", stroke: css("--encre2"), "stroke-width": 2 }, S);
+  }
+
+  /* ---------- Affichage ---------- */
+  function afficher(tout) {
+    var e = etats[proto];
+    aBidon.set(e.bidon, proto === "A" ? 1 : 2);
+    aGouttes.set(e.n);
+    if (proto === "A" && reglage.phmetre && e.pret) { var p = lecturePh(); aPh.set(p); if (g.lcd) g.lcd.textContent = Sim.fr(p, 2); }
+    else aPh.set("—");
+    if (tout) {
+      aGouttes.noeud.hidden = proto !== "B";
+      aPh.noeud.hidden = !(proto === "A" && reglage.phmetre);
+    }
+  }
+  function toutMontrer(t) {
+    ["A", "B"].forEach(function (p) {
+      document.getElementById("verser" + p).hidden = p !== proto;
+      document.getElementById("defis" + p).hidden = p !== proto;
+    });
+    cPh.noeud.hidden = proto !== "A";
+    document.getElementById("legende").textContent = proto === "A" ?
+      "La burette est graduée tous les 0,1 mL, zéro en haut : la loupe grossit la graduation autour du niveau. Lis au bas du ménisque." :
+      "La seringue, pointe en bas, sert de burette. Elle est graduée tous les 0,1 mL et indique le volume qui reste dedans : lis au bord du joint noir. 20 gouttes font 1,0 mL.";
+    document.getElementById("consigneReleve").textContent = proto === "A" ?
+      "Garde une mesure à chaque changement de couleur. Avec le pH-mètre, garde une mesure tous les millilitres, puis plus souvent près du saut." :
+      "Garde une mesure au départ, puis au premier rose qui tient : les gouttes comptées et le volume restant.";
+    if (t) message(t);
+    dessiner(); afficher(true);
+  }
+
+  var cumul = 0;
+  Sim.animer(function (dt) {
+    var e = etats[proto];
+    if (e.chute !== null) {
+      e.chute += dt / 0.25;
+      if (e.chute >= 1) { e.chute = null; e.nuage = rose(proto, e) >= 0.05 ? 0 : 1; }
+    }
+    e.nuage = Math.max(0, e.nuage - dt / e.tau);
+    if (g.goutte) {
+      g.goutte.setAttribute("opacity", e.chute === null ? 0 : 1);
+      g.goutte.setAttribute("cy", 350 + (e.chute || 0) * (g.surface - 352));
+      g.nuage.setAttribute("opacity", 0.8 * e.nuage);
+    }
+    cumul += dt;
+    if (cumul > 0.5) { cumul = 0; afficher(false); }
+  });
+
+  etats.A = etatNeuf("A"); etats.B = etatNeuf("B");
+  var vus = {};
+  var og = Sim.onglets("#protocoles", function (id) {
+    proto = id === "releveA" ? "A" : "B";
+    toutMontrer(vus[proto] ? "" : proto === "A" ? "Burette rincée avec 5 mL de soude, jetés au bidon, puis remplie au zéro. Le bécher est prêt." :
+      "Seringue rincée avec 0,5 mL de soude, jetés au bidon, puis remplie à 5,0 mL. Le tube est prêt.");
+    if (vus[proto]) message(proto === "A" ? "Protocole A : la burette et le bécher sont comme tu les as laissés." : "Protocole B : la seringue et le tube sont comme tu les as laissés.");
+    vus[proto] = true;
+  });
+  if (location.hash === "#B") og.montrer("releveB");   // lien direct vers le protocole B
+})();
+</script>
+<footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation, et détaillé dans la fiche professeur du TP SIM-16.</footer>
+</div>
+</body>
+</html>
