@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Titrer le vinaigre à petite échelle</title>
-<meta name="description" content="Titre le vinaigre dilué par la soude, à la burette de 25 mL, puis dix fois plus petit, à la seringue de 5 mL. Relève le volume à l&#x27;équivalence et compare ce que chaque protocole jette au bidon.">
+<title>Le titrage acide-base</title>
+<meta name="description" content="Une vraie paillasse : burette à rincer, remplir et ajuster au zéro, robinet à tourner du doigt, agitateur, pH-mètre et conductimètre à étalonner. Quatre expériences dans la même page, sur le vinaigre, le détartrant ou un flacon sans étiquette.">
 <meta name="etiquette" content="Simulation · SIM-16">
 <style>
 /* Simulations des TP · feuille commune, inlinee dans chaque page par assembler-simulations.py.
@@ -451,42 +451,94 @@ var Sim = (function () {
 <body>
 <div class="page">
 <header class="tete">
-<div class="surtitre">Physique-chimie · simulation du TP SIM-16</div>
-<h1>Titrer le vinaigre à petite échelle</h1>
-<p class="chapeau">Titre le vinaigre dilué par la soude, à la burette de 25 mL, puis dix fois plus petit, à la seringue de 5 mL. Relève le volume à l'équivalence et compare ce que chaque protocole jette au bidon.</p>
+<div class="surtitre">Physique-chimie · simulation des TP SIM-16 et CT-06</div>
+<h1>Le titrage acide-base</h1>
+<p class="chapeau">Une vraie paillasse : burette à rincer, remplir et ajuster au zéro, robinet à tourner du doigt, agitateur, pH-mètre et conductimètre à étalonner. Quatre expériences dans la même page, sur le vinaigre, le détartrant ou un flacon sans étiquette.</p>
 </header>
 <style>
-.scene text.halo{paint-order:stroke;stroke-linejoin:round}
-.carte [hidden]{display:none}
+:root{--liquide:#d9e7f2;--bulle:#ffffff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--liquide:#2b3d4e;--bulle:#e8eef3}}
+:root[data-theme="dark"]{--liquide:#2b3d4e;--bulle:#e8eef3}
+.verre{fill:none;stroke:var(--encre);stroke-width:2.2;stroke-linejoin:round}
+.liquide{fill:var(--liquide)}
+.grad{stroke:var(--encre);stroke-width:1}
+.grad-txt{font-size:10px;fill:var(--encre2)}
+.etiq{font-size:11px;fill:var(--encre2)}
+.etiq-titre{font-size:12px;font-weight:700;fill:var(--encre)}
+.boite{fill:var(--carte);stroke:var(--encre);stroke-width:2}
+.metal{fill:var(--encre2)}
+.lcd{fill:#cfd8cf;stroke:var(--encre2);stroke-width:1}
+.lcd-txt{font-family:ui-monospace,Consolas,monospace;font-size:17px;font-weight:600;fill:#1d2a1d}
+.lcd-petit{font-family:ui-monospace,Consolas,monospace;font-size:8px;fill:#1d2a1d}
+.prise{cursor:grab;touch-action:none;outline:none}
+.prise:active{cursor:grabbing}
+.prise:focus-visible .prise-zone{stroke-width:3}
+.prise-zone{fill:var(--accent);fill-opacity:.08;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3}
+.indice{font-size:12px;font-weight:650;fill:var(--accent)}
+.halo{paint-order:stroke;stroke-linejoin:round}
+.carte [hidden]{display:none!important}
+.case{display:flex;gap:8px;align-items:center;font-size:.92rem;font-weight:600}
+.case input{width:20px;height:20px;accent-color:var(--accent)}
+.lecture{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.92rem;font-weight:600}
+.lecture input{font:inherit;width:6.5em;padding:7px 9px;border-radius:var(--r);border:1px solid var(--trait);background:var(--carte);color:var(--encre)}
+.bouton[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sous-titre{font-size:.75rem;font-weight:700;color:var(--encre2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:-6px}
+#zoom{background:var(--scene);border:1px solid var(--trait2);border-radius:var(--r)}
+#zoom svg{display:block;width:100%;height:auto}
+.releve-zone > div{overflow-x:auto}
 </style>
 
-<nav class="onglets" id="protocoles" aria-label="Protocoles">
-  <button type="button" data-vue="releveA">Protocole A · burette de 25 mL</button>
-  <button type="button" data-vue="releveB">Protocole B · seringue de 5 mL</button>
+<nav class="onglets" id="experiences" aria-label="Expériences">
+  <button type="button" data-vue="vueInd">Indicateur coloré</button>
+  <button type="button" data-vue="vuePh">Suivi au pH-mètre</button>
+  <button type="button" data-vue="vueCond">Suivi au conductimètre</button>
+  <button type="button" data-vue="vueSer">Petite échelle · seringue</button>
 </nav>
 
 <div class="carte">
-  <h2><span class="num">1</span>Le vinaigre et la soude</h2>
-  <p class="consigne">Le vinaigre a été dilué dix fois, la soude est à 0,10 mol/L. Changer un réglage recommence le titrage.</p>
+  <h2><span class="num">1</span>Le flacon à doser et le matériel</h2>
+  <p class="consigne">La soude est à 0,100 mol/L. Changer un réglage prépare un nouveau bécher.</p>
   <div class="commandes" id="reglages"></div>
 </div>
 
 <div class="plan">
   <div class="carte">
-    <h2><span class="num">2</span>Verse la soude et observe</h2>
+    <h2><span class="num">2</span>La paillasse</h2>
     <div class="scene">
-      <svg id="scene" viewBox="0 0 600 440" role="img" aria-label="Le titrage : la soude tombe goutte à goutte dans le vinaigre dilué"></svg>
+      <svg id="scene" viewBox="0 0 640 600" role="img" aria-label="La paillasse de titrage : la burette ou la seringue, le bécher, les instruments"></svg>
     </div>
     <p class="legende" id="legende"></p>
   </div>
   <div class="carte">
-    <h2><span class="num">3</span>Les commandes</h2>
+    <h2><span class="num">3</span>Prépare, verse, mesure</h2>
     <div class="commandes">
-      <div class="rangee" id="verserA"></div>
-      <div class="rangee" id="verserB"></div>
-      <div class="afficheurs" id="instruments"></div>
-      <button type="button" class="bouton" id="garder">Garder cette mesure dans le tableau</button>
+      <div class="sous-titre">Préparer</div>
       <div class="rangee">
+        <button type="button" class="bouton" id="bRincer">Rincer la burette à la soude</button>
+        <button type="button" class="bouton" id="bRemplir">Remplir la burette</button>
+        <button type="button" class="bouton" id="bEchanger">Mettre le bécher à titrer sous la burette</button>
+        <button type="button" class="bouton" id="bSeringue">Rincer et remplir la seringue</button>
+      </div>
+      <div class="rangee" id="rgSonde">
+        <div id="choixSonde"></div>
+        <button type="button" class="bouton" id="bEtalonner">Étalonner</button>
+      </div>
+      <div class="sous-titre">Verser</div>
+      <div class="rangee">
+        <button type="button" class="bouton" id="bGoutte">Une goutte</button>
+        <button type="button" class="bouton" id="bFermer">Fermer le robinet</button>
+        <button type="button" class="bouton" id="bAgiter" aria-pressed="false">Agitateur</button>
+      </div>
+      <div class="afficheurs" id="instruments"></div>
+      <label class="case"><input type="checkbox" id="especes"> Montrer ce que contient le bécher</label>
+      <div id="zoom" hidden><svg id="zoomSvg" viewBox="0 0 320 172" role="img" aria-label="Les espèces du bécher, vues de très près"></svg></div>
+      <div class="sous-titre">Mesurer</div>
+      <div class="lecture" id="rgLecture">
+        <label for="lecture">Ta lecture dans la loupe</label>
+        <input id="lecture" type="text" inputmode="decimal" autocomplete="off"><span>mL</span>
+      </div>
+      <div class="rangee">
+        <button type="button" class="bouton principal" id="garder">Garder cette mesure</button>
         <button type="button" class="bouton" id="nouveau">Nouveau titrage</button>
         <button type="button" class="bouton" id="vider">Tout vider au bidon</button>
       </div>
@@ -498,332 +550,815 @@ var Sim = (function () {
 <div class="carte">
   <h2><span class="num">4</span>Le relevé</h2>
   <p class="consigne" id="consigneReleve"></p>
-  <div id="releveA" class="vue"></div>
-  <div id="releveB" class="vue"></div>
+  <div id="vueInd" class="vue"></div>
+  <div id="vuePh" class="vue"></div>
+  <div id="vueCond" class="vue"></div>
+  <div id="vueSer" class="vue"></div>
 </div>
 
 <div class="carte">
   <h2><span class="num">5</span>Le résultat</h2>
-  <p class="consigne">Calcule avec <b>tes</b> lectures. Données : C<sub>b</sub> = 0,10 mol/L ; M = 60 g/mol ; 1 L de vinaigre a une masse de 1 000 g.</p>
-  <div class="commandes" id="defisA"></div>
-  <div class="commandes" id="defisB"></div>
+  <p class="consigne" id="consigneResultat"></p>
+  <div class="commandes" id="defis"></div>
   <details class="modele">
     <summary>Ce que la simulation simplifie</summary>
     <ul>
-      <li>Le vinaigre ne contient que de l'acide éthanoïque, et un litre de vinaigre a une masse de 1 000 g.</li>
-      <li>Toutes les gouttes ont le même volume, 0,05 mL. En vrai, il dépend de la pointe, de l'inclinaison et de la vitesse.</li>
-      <li>Le mélange est parfait dès qu'on agite ; la seringue n'a ni bulle ni volume mort, et aucune goutte ne reste accrochée à la pointe.</li>
-      <li>La soude est exactement à 0,10 mol/L, et le pH-mètre répond sans délai.</li>
-      <li>Le bidon compte la soude du rinçage, les béchers titrés et la soude restée dans la burette, pas l'eau qui rince la verrerie.</li>
+      <li>Le vinaigre ne contient que de l'acide éthanoïque, et un litre de vinaigre a une masse de 1 000 g. Le détartrant ne contient que de l'acide chlorhydrique.</li>
+      <li>Une goutte fait 0,05 mL, à 8 % près d'une goutte à l'autre. En vrai, elle dépend aussi de la pointe et de la vitesse.</li>
+      <li>L'agitateur mélange tout en une fraction de seconde. Sans lui, la couleur reste là où tombe la goutte, et les instruments ne voient presque rien.</li>
+      <li>Le pH-mètre et le conductimètre répondent en quelques secondes, sans dérive, à 25 °C. Un vrai pH-mètre se rince entre deux solutions.</li>
+      <li>La soude ne se carbonate pas à l'air : en vrai, le rose d'un virage exact pâlit en une minute, et l'on retient celui qui tient trente secondes.</li>
+      <li>La loupe exagère la parallaxe pour qu'elle se voie : l'œil trop haut fait lire trop peu, trop bas fait lire trop.</li>
+      <li>Le bidon compte la soude du rinçage, ce qui passe dans le bécher de récupération, les béchers titrés et la soude restée dans la burette ou la seringue. Pas l'eau qui rince la verrerie.</li>
     </ul>
   </details>
 </div>
 
 <script>
 (function () {
-  /* ---------- Chimie : acide ethanoique (pKa 4,76) titre par la soude, phenolphtaleine (pKi 9,3) ---------- */
-  var CB = 0.10, PKA = 4.76, PKI = 9.3, GOUTTE = 0.05;
-  var PROTO = {
-    A: { va: 10.0, plein: 25.0, rincage: 5.0, indicateur: 3, pas: [{ n: 20, texte: "Verser 1 mL" }, { n: 2, texte: "Verser 0,1 mL" }, { n: 1, texte: "Une goutte" }] },
-    B: { va: 1.00, plein: 5.0, rincage: 0.5, indicateur: 1, pas: [{ n: 2, texte: "Pousser de 0,1 mL" }, { n: 1, texte: "Une goutte" }] }
+  /* ---------- La chimie : acide ethanoique (pKa 4,76) ou chlorhydrique, titres par la soude ---------- */
+  var CB = 0.100, KW = 1e-14, KA = Math.pow(10, -4.76), GOUTTE = 0.05;
+  var LAMBDA = { h: 34.98, oh: 19.86, na: 5.01, cl: 7.63, ac: 4.09 };   // conductivites molaires ioniques, mS.m2/mol a 25 degres
+  var degreInconnu = Math.round(50 + Math.random() * 45) / 10;           // 5,0 a 9,5 degres, tire a l'ouverture de la page
+  var FLACONS = {
+    blanc: { texte: "Vinaigre blanc · 8°", l1: "vinaigre", l2: "blanc 8°", fort: false, degre: 8, dilution: 10 },
+    menager: { texte: "Vinaigre ménager · 14°", l1: "vinaigre", l2: "ménager 14°", fort: false, degre: 14, dilution: 10 },
+    inconnu: { texte: "Vinaigre sans étiquette", l1: "vinaigre", l2: "?", fort: false, degre: degreInconnu, dilution: 10 },
+    detartrant: { texte: "Détartrant · acide chlorhydrique", l1: "détartrant", l2: "HCl", fort: true, c: 2.40, dilution: 20 }
   };
-  var FLACONS = { blanc: { texte: "Vinaigre blanc · étiquette 8°", degre: 8 }, menager: { texte: "Vinaigre ménager · étiquette 14°", degre: 14 } };
-  var reglage = { flacon: "blanc", phmetre: false };
-  var proto = "A", etats = {};
+  function cFlacon(f) { return f.fort ? f.c : f.degre * 10 / 60; }      // degre x 10 g par litre, M = 60 g/mol
+  var INDIC = {
+    phenol: { texte: "Phénolphtaléine", court: "phénolphtaléine", pki: 9.3, acide: null, base: [214, 64, 138], noms: ["incolore", "rose pâle", "rose"], seuils: [0.05, 0.9] },
+    bbt: { texte: "Bleu de bromothymol", court: "BBT", pki: 7.1, acide: [238, 208, 44], base: [40, 92, 206], noms: ["jaune", "vert", "bleu"], seuils: [0.15, 0.85] },
+    helian: { texte: "Hélianthine", court: "hélianthine", pki: 3.7, acide: [214, 48, 40], base: [242, 178, 36], noms: ["rouge", "orange", "jaune"], seuils: [0.2, 0.8] },
+    aucun: { texte: "Aucun", court: "aucun", pki: null }
+  };
+  var EXP = {
+    ind: { burette: true, becher: { cap: 50, l: 60, h: 90, nom: "bécher de 50 mL" }, eau: 0, va: 10.0, ind: 3, sonde: null, tolVe: 0.1, tolC: 0.03 },
+    ph: { burette: true, becher: { cap: 100, l: 76, h: 112, nom: "bécher de 100 mL" }, eau: 40, va: 10.0, ind: 3, sonde: "ph", tolVe: 0.25, tolC: 0.03 },
+    cond: { burette: true, becher: { cap: 250, l: 120, h: 120, nom: "bécher de 250 mL" }, eau: 100, va: 10.0, ind: 0, sonde: "cond", tolVe: 0.3, tolC: 0.04 },
+    ser: { burette: false, eau: 0, va: 1.00, ind: 1, sonde: null, tolVe: 0.1, tolC: 0.08 }
+  };
 
-  function caDilue() { return FLACONS[reglage.flacon].degre / 60; }          // mol/L, apres dilution par dix
-  function vEquivalence(p) { return caDilue() * PROTO[p].va / CB; }             // mL
-  function pH(ca, va, cb, vb, eau) {
-    var ka = Math.pow(10, -PKA), kw = 1e-14, vt = va + vb + eau;
-    var na = ca * va / vt, nb = cb * vb / vt, lo = -14, hi = 0;
+  function vbMele(e) { return Math.max(0, e.vb - e.nm); }
+  function contenu(e) { return e.va + e.vb + e.eau + e.vind; }
+  function veVrai(e) { return e.ca * e.va / e.cb; }
+  /* Composition du becher : bilan des charges resolu par dichotomie sur log[H3O+]. */
+  function compo(e) {
+    var vt = e.va + vbMele(e) + e.eau + e.vind, ca = e.ca * e.va / vt, cna = e.cb * vbMele(e) / vt;
+    var lo = -14, hi = 0, h, an;
     for (var i = 0; i < 60; i++) {
-      var m = (lo + hi) / 2, h = Math.pow(10, m);
-      if (h + nb - kw / h - na * ka / (ka + h) > 0) hi = m; else lo = m;
+      var m = (lo + hi) / 2; h = Math.pow(10, m); an = e.fort ? ca : ca * KA / (KA + h);
+      if (h + cna - KW / h - an > 0) hi = m; else lo = m;
     }
-    return -(lo + hi) / 2;
+    h = Math.pow(10, (lo + hi) / 2); an = e.fort ? ca : ca * KA / (KA + h);
+    return { ph: -Math.log10(h), h: h, oh: KW / h, na: cna, cl: e.fort ? ca : 0, ac: e.fort ? 0 : an, ha: e.fort ? 0 : ca - an, vt: vt };
   }
-  function fractionRose(p) { return 1 / (1 + Math.pow(10, PKI - p)); }
-  function etatNeuf(p) { return { n: 0, pret: true, rempli: true, bidon: PROTO[p].rincage, eau: 0, nuage: 0, tau: 0.6, chute: null }; }
-  function vVerse(e) { return e.n * GOUTTE; }
-  function volBecher(p, e) { return PROTO[p].va + vVerse(e) + PROTO[p].indicateur * GOUTTE + e.eau; }
-  function phBecher(p, e) { return pH(caDilue(), PROTO[p].va, CB, vVerse(e), e.eau); }
-  function rose(p, e) { return e.pret ? fractionRose(phBecher(p, e)) : 0; }
-  function couleur(f) { return f < 0.05 ? "incolore" : f < 0.9 ? "rose pâle" : "rose"; }
+  function sigma(c) { return 10 * (LAMBDA.h * c.h + LAMBDA.oh * c.oh + LAMBDA.na * c.na + LAMBDA.cl * c.cl + LAMBDA.ac * c.ac); }   // mS/cm
+  function fBase(ind, ph) { return 1 / (1 + Math.pow(10, ind.pki - ph)); }
+  function nomCouleur(ind, f) { return !ind.pki ? "incolore" : f < ind.seuils[0] ? ind.noms[0] : f < ind.seuils[1] ? ind.noms[1] : ind.noms[2]; }
+  /* Couleur de l'indicateur : melange soustractif des deux formes, [rgb, opacite]. */
+  function teinte(ind, f) {
+    if (!ind.pki) return null;
+    if (!ind.acide) return [ind.base, f < 0.05 ? 0 : 0.15 + 0.7 * Math.pow((f - 0.05) / 0.95, 2)];
+    return [[0, 1, 2].map(function (i) { return Math.round(255 * Math.pow(ind.acide[i] / 255, 1 - f) * Math.pow(ind.base[i] / 255, f)); }), 0.7];
+  }
+  function rgba(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a.toFixed(3) + ")"; }
+  function tirerGoutte() { return GOUTTE * Sim.borne(1 + 0.08 * Sim.gauss(), 0.8, 1.2); }
+  /* Robinet : fermé sous 8 degres, goutte a goutte jusqu'a 35 degres, puis un filet. mL/s */
+  function debit(a) { return a < 8 ? 0 : a < 35 ? 0.012 + (a - 8) / 27 * 0.288 : 0.3 + (a - 35) / 55 * 0.9; }
+  function signe() { return Math.random() < 0.5 ? -1 : 1; }
 
-  /* ---------- Reglages ---------- */
+  /* ---------- L'etat : un par experience ---------- */
+  var reg = { flacon: "blanc", indic: "phenol", prelev: "pipette", oeil: 0.55 };
+  var exp = "ind", etats = {};
+  function E() { return etats[exp]; }
+  var LVIDE = 26.5;              // lecture du niveau quand la burette est vide jusqu'au robinet
+  function etatNeuf(x) {
+    var e = { exp: x, essai: 0, bidon: 0, recup: 0, sous: x === "ser" ? "titrage" : "recup",
+      rempli: false, lev: LVIDE, bulle: 0, videPointe: true, rincee: false, cb: CB, angle: 0,
+      pendante: 0, vg: tirerGoutte(), chutes: [], filet: 0, flash: 0, chasse: 0, depuis: 0, bulleSeuil: 1, bulleAnim: 0,
+      agit: false, phase: 0, secoue: 0, nm: 0, r: 0, seringue: false,
+      pm: { decal: signe() * (0.12 + 0.18 * Math.random()), pente: 0.93 + 0.04 * Math.random() },
+      cm: { k: 1 + signe() * (0.03 + 0.05 * Math.random()) },
+      sonde: "becher", aff: NaN, lu: NaN, stable: false, gouttes: 0, pret: false, vuRobinet: false, vuOeil: false, vuPiston: false };
+    preparerBecher(e);
+    return e;
+  }
+  function preparerBecher(e) {
+    var X = EXP[e.exp], fl = FLACONS[reg.flacon];
+    var sd = e.exp === "ser" ? 0.005 : reg.prelev === "pipette" ? 0.012 : 0.15;
+    e.pret = true; e.essai++; e.fort = fl.fort; e.ca = cFlacon(fl) / fl.dilution; e.indic = reg.indic;
+    e.va = X.va + sd * Sim.gauss(); e.vb = 0; e.nm = 0; e.eau = X.eau; e.gouttes = 0; e.nomVu = null; e.ditAgit = false;
+    e.vind = reg.indic === "aucun" ? 0 : X.ind * GOUTTE;
+  }
+
+  /* ---------- Les reglages ---------- */
   var R = document.getElementById("reglages");
-  Sim.choix(R, { label: "Le flacon", valeur: "blanc",
+  function rePreparer(t) {
+    Object.keys(etats).forEach(function (k) { var e = etats[k]; if (e.pret && e.vb > 0) e.bidon += contenu(e); preparerBecher(e); });
+    poserDefis(); dessinerFond(); message(t);
+  }
+  Sim.choix(R, { label: "Le flacon", valeur: reg.flacon,
     options: Object.keys(FLACONS).map(function (k) { return { val: k, texte: FLACONS[k].texte }; }),
-    surChange: function (v) { reglage.flacon = v; etats.A = etatNeuf("A"); etats.B = etatNeuf("B"); etats.A.eau = reglage.phmetre ? 40 : 0; toutMontrer("Nouveau flacon : les deux protocoles recommencent, burette et seringue rincées puis remplies."); } });
-  var cPh = Sim.choix(R, { label: "Le pH-mètre (protocole A seulement)", valeur: "non",
-    options: [{ val: "non", texte: "Rangé" }, { val: "oui", texte: "Sonde dans le bécher, avec 40 mL d'eau" }],
-    surChange: function (v) { reglage.phmetre = v === "oui"; etats.A = etatNeuf("A"); etats.A.eau = reglage.phmetre ? 40 : 0; toutMontrer(reglage.phmetre ? "Sonde dans le bécher : 40 mL d'eau ajoutés pour l'immerger." : "pH-mètre rangé."); } });
+    surChange: function (v) { reg.flacon = v; rePreparer("Nouveau flacon : un bécher neuf est prêt. " + (FLACONS[v].fort ? "Le détartrant a été dilué vingt fois." : "Le vinaigre a été dilué dix fois.")); } });
+  Sim.choix(R, { label: "L'indicateur coloré", valeur: reg.indic,
+    options: Object.keys(INDIC).map(function (k) { return { val: k, texte: INDIC[k].texte }; }),
+    surChange: function (v) { reg.indic = v; rePreparer(v === "aucun" ? "Bécher neuf, sans indicateur." : "Bécher neuf, avec quelques gouttes de " + INDIC[v].court + "."); } });
+  var cPrelev = Sim.choix(R, { label: "Prélever les 10 mL de vinaigre dilué", valeur: reg.prelev,
+    options: [{ val: "pipette", texte: "Pipette jaugée de 10 mL" }, { val: "eprouvette", texte: "Éprouvette graduée de 10 mL" }],
+    surChange: function (v) { reg.prelev = v; rePreparer(v === "pipette" ? "Prise d'essai à la pipette jaugée : 10,0 mL à 0,02 mL près." : "Prise d'essai à l'éprouvette : 10 mL à quelques dixièmes près."); } });
 
-  /* ---------- Commandes ---------- */
-  ["A", "B"].forEach(function (p) {
-    var zone = document.getElementById("verser" + p);
-    PROTO[p].pas.forEach(function (s, i) {
-      var b = Sim.el("button", { type: "button", classe: "bouton" + (i === 0 ? " principal" : ""), texte: s.texte });
-      b.addEventListener("click", function () { verser(s.n); });
-      zone.appendChild(b);
-    });
-  });
+  /* ---------- Les instruments et les releves ---------- */
   var I = document.getElementById("instruments");
-  var aBidon = Sim.afficheur(I, { nom: "Bidon de récupération", unite: "mL", dec: 1 });
-  var aGouttes = Sim.afficheur(I, { nom: "Gouttes comptées", unite: "", dec: 0 });
-  var aPh = Sim.afficheur(I, { nom: "pH-mètre", unite: "", dec: 2 });
-
-  function message(t) { document.getElementById("etat").textContent = t; }
-  function verser(n) {
-    var P = PROTO[proto], e = etats[proto];
-    if (!e.pret) { message("Le bécher est vide : clique sur « Nouveau titrage »."); return; }
-    var reste = Math.round((P.plein - vVerse(e)) / GOUTTE);
-    if (reste <= 0) { message(proto === "A" ? "La burette est vide." : "La seringue est vide."); return; }
-    var avant = rose(proto, e);
-    e.n += Math.min(n, reste);
-    var ve = vEquivalence(proto), f = rose(proto, e);
-    e.chute = 0;
-    e.tau = 0.5 + 2.5 * Sim.borne(1 - (ve - vVerse(e)) / (0.04 * ve), 0, 1);
-    if (f >= 0.05) message(avant >= 0.05 ? "La solution reste " + couleur(f) + "." : "Le rose apparaît et tient après agitation.");
-    else message("La goutte colore la solution en rose là où elle tombe, puis le rose disparaît quand on agite.");
-    dessiner(); afficher(true);
+  var A = {
+    ph: Sim.afficheur(I, { nom: "pH-mètre", unite: "", dec: 2, note: "" }),
+    cond: Sim.afficheur(I, { nom: "Conductimètre", unite: "mS/cm", dec: 3, note: "" }),
+    gouttes: Sim.afficheur(I, { nom: "Gouttes comptées", unite: "", dec: 0 }),
+    bidon: Sim.afficheur(I, { nom: "Bidon de récupération", unite: "mL", dec: 1 })
+  };
+  var relInd = Sim.releve("#vueInd", { colonnes: [{ cle: "essai", titre: "Essai", dec: 0 }, { cle: "ind", titre: "Indicateur" }, { cle: "lu", titre: "Lecture", unite: "mL", dec: 2 }, { cle: "coul", titre: "Couleur" }] });
+  var relSer = Sim.releve("#vueSer", { colonnes: [{ cle: "essai", titre: "Essai", dec: 0 }, { cle: "n", titre: "Gouttes", dec: 0 }, { cle: "lu", titre: "Lecture", unite: "mL", dec: 2 }, { cle: "coul", titre: "Couleur" }] });
+  function axeV(gr, lignes, o) {
+    var vmax = 14; lignes.forEach(function (l) { vmax = Math.max(vmax, l.V); });
+    o.xmax = Math.min(26, Math.ceil((vmax + 2) / 2) * 2); gr.axes(o).effacer();
   }
-  document.getElementById("nouveau").addEventListener("click", function () {
-    var e = etats[proto], ajout = e.pret ? volBecher(proto, e) : 0;
-    e.bidon += ajout; e.n = 0; e.pret = true; e.rempli = true;
-    message((ajout ? "Bécher titré jeté au bidon : + " + Sim.fr(ajout, 2) + " mL. " : "") +
-      (proto === "A" ? "Burette remplie au zéro, nouveau bécher prêt." : "Seringue remplie à 5,0 mL, nouveau tube prêt."));
-    dessiner(); afficher(true);
-  });
-  document.getElementById("vider").addEventListener("click", function () {
-    var P = PROTO[proto], e = etats[proto], ajout = 0;
-    if (e.pret) ajout += volBecher(proto, e);
-    if (e.rempli) ajout += P.plein - vVerse(e);
-    if (!ajout) { message("Tout est déjà vidé."); return; }
-    e.bidon += ajout; e.pret = false; e.rempli = false; e.n = 0;
-    message("Au bidon : + " + Sim.fr(ajout, 2) + " mL, dont la soude restée dans " + (proto === "A" ? "la burette." : "la seringue."));
-    dessiner(); afficher(true);
-  });
-
-  /* ---------- Releves ---------- */
-  var relA = Sim.releve("#releveA", {
-    colonnes: [{ cle: "V", titre: "Burette", unite: "mL", dec: 2 }, { cle: "ph", titre: "pH", dec: 2 }, { cle: "coul", titre: "Couleur" }],
+  var relPh = Sim.releve("#vuePh", {
+    colonnes: [{ cle: "essai", titre: "Essai", dec: 0 }, { cle: "V", titre: "V", unite: "mL", dec: 2 }, { cle: "ph", titre: "pH", dec: 2 }, { cle: "pente", titre: "ΔpH ÷ ΔV", unite: "par mL", dec: 2 }],
     graphe: { x: "V", y: "ph", xmin: 0, xmax: 16, ymin: 0, ymax: 14, pasY: 2, titreX: "V (mL)", titreY: "pH", largeur: 620, hauteur: 340 },
+    avantPoints: function (gr, lignes) { axeV(gr, lignes, {}); }
+  });
+  var relCond = Sim.releve("#vueCond", {
+    colonnes: [{ cle: "essai", titre: "Essai", dec: 0 }, { cle: "V", titre: "V", unite: "mL", dec: 2 }, { cle: "s", titre: "σ", unite: "mS/cm", dec: 3 }],
+    graphe: { x: "V", y: "s", xmin: 0, xmax: 16, ymin: 0, ymax: 2, titreX: "V (mL)", titreY: "σ (mS/cm)", largeur: 620, hauteur: 340 },
     avantPoints: function (gr, lignes) {
-      var vmax = 14; lignes.forEach(function (l) { vmax = Math.max(vmax, l.V); });
-      gr.axes({ xmax: Math.min(26, Math.ceil((vmax + 2) / 2) * 2) }).effacer();
+      var smax = 1; lignes.forEach(function (l) { smax = Math.max(smax, l.s); });
+      axeV(gr, lignes, { ymax: Math.ceil(smax * 1.15 * 2) / 2 });
     }
   });
-  var relB = Sim.releve("#releveB", {
-    colonnes: [{ cle: "n", titre: "Gouttes", dec: 0 }, { cle: "Vr", titre: "Seringue, volume restant", unite: "mL", dec: 2 }, { cle: "coul", titre: "Couleur" }]
-  });
-  document.getElementById("garder").addEventListener("click", function () {
-    var e = etats[proto];
-    if (!e.pret) { message("Le bécher est vide : clique sur « Nouveau titrage »."); return; }
-    var c = couleur(rose(proto, e));
-    if (proto === "A") relA.ajouter({ V: Sim.mesure(vVerse(e), { absolu: 0.012, resolution: 0.05 }), ph: reglage.phmetre ? lecturePh() : NaN, coul: c });
-    else relB.ajouter({ n: e.n, Vr: Sim.mesure(PROTO.B.plein - vVerse(e), { absolu: 0.015, resolution: 0.05 }), coul: c });
-  });
-  function lecturePh() { return Sim.mesure(phBecher("A", etats.A), { absolu: 0.02, resolution: 0.01 }); }
 
-  /* ---------- Defis ---------- */
-  ["A", "B"].forEach(function (p) {
-    var D = document.getElementById("defis" + p), tol = p === "A" ? 0.02 : 0.08;
-    Sim.defi(D, { question: "Volume de soude versé à l'équivalence, V<sub>E</sub>, au premier rose qui tient :", unite: "mL",
-      attendu: function () { return vEquivalence(p); }, tolerance: 0, toleranceAbsolue: 0.1,
-      methode: p === "A" ? "Lis la burette dans la loupe, au bas du ménisque, dès que le rose tient après agitation." : "V<sub>E</sub> = 5,0 mL moins le volume restant, ou le nombre de gouttes × 0,05 mL." });
-    Sim.defi(D, { question: "Concentration du vinaigre dilué, C<sub>a</sub> = C<sub>b</sub> × V<sub>E</sub> ÷ V<sub>a</sub>, avec V<sub>a</sub> = " + (p === "A" ? "10,0" : "1,00") + " mL :", unite: "mol/L",
-      attendu: function () { return caDilue(); }, tolerance: tol,
-      methode: "C<sub>b</sub> = 0,10 mol/L ; V<sub>E</sub> et V<sub>a</sub> dans la même unité." });
-    Sim.defi(D, { question: "Degré du vinaigre, en grammes d'acide pour 100 g de vinaigre :", unite: "°",
-      attendu: function () { return FLACONS[reglage.flacon].degre; }, tolerance: tol,
+  /* ---------- Les defis : juste ou pas encore, jamais la valeur ---------- */
+  var METH_VE = {
+    ind: "Arrête-toi au premier virage qui tient après agitation. V<sub>E</sub> = lecture au virage − lecture de départ, au bas du ménisque, l'œil au niveau du trait. L'indicateur doit virer là où le pH saute.",
+    ph: "V<sub>E</sub> est là où la courbe monte le plus vite : la plus grande pente ΔpH ÷ ΔV. Resserre les mesures près du saut.",
+    cond: "Trace une droite par les points d'avant le changement de pente, une par ceux d'après : V<sub>E</sub> est à leur croisement.",
+    ser: "V<sub>E</sub> = lecture de départ − lecture au virage, ou nombre de gouttes × 0,05 mL."
+  };
+  function poserDefis() {
+    var D = document.getElementById("defis"), X = EXP[exp], fl = FLACONS[reg.flacon], va = exp === "ser" ? "1,00" : "10,0";
+    D.innerHTML = "";
+    Sim.defi(D, { question: "Volume de soude versé à l'équivalence, V<sub>E</sub> :", unite: "mL",
+      attendu: function () { return veVrai(E()); }, tolerance: 0, toleranceAbsolue: X.tolVe, methode: METH_VE[exp] });
+    Sim.defi(D, { question: "Concentration de l'acide dans le bécher, C<sub>a</sub> = C<sub>b</sub> × V<sub>E</sub> ÷ V<sub>a</sub>, avec V<sub>a</sub> = " + va + " mL :", unite: "mol/L",
+      attendu: function () { return E().ca; }, tolerance: X.tolC, methode: "C<sub>b</sub> = 0,100 mol/L ; V<sub>E</sub> et V<sub>a</sub> dans la même unité." });
+    if (fl.fort) Sim.defi(D, { question: "Concentration du détartrant avant dilution, C = 20 × C<sub>a</sub> :", unite: "mol/L",
+      attendu: function () { return cFlacon(FLACONS[reg.flacon]); }, tolerance: X.tolC, methode: "Le détartrant a été dilué vingt fois : C = 20 × C<sub>a</sub>." });
+    else Sim.defi(D, { question: "Degré du vinaigre, en grammes d'acide pour 100 g de vinaigre :", unite: "°",
+      attendu: function () { return FLACONS[reg.flacon].degre; }, tolerance: X.tolC,
       methode: "Avant dilution, C = 10 × C<sub>a</sub>. Masse d'acide dans 1 L = C × 60 g ; un litre pèse 1 000 g : ramène à 100 g." });
-  });
+    document.getElementById("consigneResultat").innerHTML = "Calcule avec <b>tes</b> lectures. Données : C<sub>b</sub> = 0,100 mol/L" +
+      (fl.fort ? " ; le détartrant a été dilué vingt fois." : " ; le vinaigre a été dilué dix fois ; M = 60 g/mol ; 1 L de vinaigre a une masse de 1 000 g.");
+  }
 
-  /* ---------- Scene ---------- */
-  var S = document.getElementById("scene"), svg = Sim.svg, g = {};
-  var ROSE = "#d6408a", EAU = "#d9e7f2";
+  /* ---------- La scene : couches fixes et couches redessinees ---------- */
+  var S = document.getElementById("scene"), svg = Sim.svg, Lc = {};
   function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-  function texte(x, y, t, o) {
+  ["fond", "liq", "verre", "avant"].forEach(function (k) { Lc[k] = svg("g", {}, S); });
+  Lc.robinet = svg("g", { "class": "prise", tabindex: 0, role: "slider", "aria-label": "Clé du robinet de la burette", "aria-valuemin": 0, "aria-valuemax": 90 }, S);
+  Lc.piston = svg("g", { "class": "prise", tabindex: 0, role: "slider", "aria-label": "Piston de la seringue, à pousser vers le bas" }, S);
+  Lc.oeil = svg("g", { "class": "prise", tabindex: 0, role: "slider", "aria-label": "Ton œil devant la loupe, à monter ou descendre" }, S);
+
+  var XB = 190, Y0 = 40, PXB = 13, YR = 398, YPB = 451;   // burette : zero, px par mL, robinet, goutte pendante
+  var YS0 = 330, PXS = 30, YPS = 375;                     // seringue : zero, px par mL, goutte pendante
+  var LX = 372, LY = 30, LW = 190, LH = 246;              // la loupe
+  var DIM_RECUP = { cap: 100, l: 70, h: 96 }, DIM_TUBE = { px: 22, bas: 519 };
+  function yB(v) { return Y0 + PXB * v; }
+  function yS(v) { return YS0 - PXS * v; }
+  function positions(e) {
+    var sous = { x: XB, bas: 530 }, cote = { x: 322, bas: 560 };
+    return e.sous === "titrage" ? { titrage: sous, recup: cote } : { titrage: cote, recup: sous };
+  }
+  function surface(dim, pos, vol) { return pos.bas - 3 - vol * (dim.h - 12) / dim.cap; }
+  function surfaceCible(e, cible) {
+    if (exp === "ser") return e.pret ? DIM_TUBE.bas - contenu(e) * DIM_TUBE.px : DIM_TUBE.bas;
+    var P = positions(e)[cible];
+    if (cible === "recup") return surface(DIM_RECUP, P, e.recup);
+    return e.pret ? surface(EXP[exp].becher, P, contenu(e)) : P.bas;
+  }
+  function becher(parent, pos, d) {
+    var g = pos.x - d.l / 2, dr = pos.x + d.l / 2, h = pos.bas - d.h;
+    svg("path", { d: "M" + (g - 5) + " " + h + " Q" + g + " " + h + " " + g + " " + (h + 6) + " L" + g + " " + (pos.bas - 5) + " Q" + g + " " + pos.bas + " " + (g + 5) + " " + pos.bas +
+      " L" + (dr - 5) + " " + pos.bas + " Q" + dr + " " + pos.bas + " " + dr + " " + (pos.bas - 5) + " L" + dr + " " + (h + 6) + " Q" + dr + " " + h + " " + (dr + 5) + " " + h, "class": "verre" }, parent);
+  }
+  function texte(parent, x, y, t, o) {
     o = o || {};
-    return svg("text", { x: x, y: y, "font-size": o.taille || 12, "text-anchor": o.ancre || "start", "font-weight": o.gras ? 600 : 400,
-      fill: o.couleur || css("--encre2"), texte: t }, o.parent || S);
-  }
-  function alphaRose(f) { return f < 0.05 ? 0 : 0.15 + 0.7 * Math.pow((f - 0.05) / 0.95, 2); }
-
-  function dessiner() {
-    S.innerHTML = "";
-    var e = etats[proto];
-    svg("rect", { x: 0, y: 410, width: 600, height: 30, fill: css("--carte2") }, S);
-    svg("line", { x1: 0, y1: 410, x2: 600, y2: 410, stroke: css("--trait"), "stroke-width": 2 }, S);
-    svg("rect", { x: 40, y: 400, width: 216, height: 10, rx: 2, fill: css("--encre2") }, S);
-    svg("line", { x1: 76, y1: 16, x2: 76, y2: 400, stroke: css("--encre2"), "stroke-width": 6 }, S);
-    if (proto === "A") dessinerBurette(e); else dessinerSeringue(e);
-    // la goutte qui tombe et le nuage rose ou elle arrive
-    g.nuage = svg("ellipse", { cx: 190, cy: g.surface + 5, rx: proto === "A" ? 16 : 10, ry: 4, fill: ROSE, opacity: 0 }, S);
-    g.goutte = svg("ellipse", { cx: 190, cy: 350, rx: 2.6, ry: 3.6, fill: css("--accent-doux"), stroke: css("--encre2"), "stroke-width": 1, opacity: 0 }, S);
-    dessinerLoupe(e);
+    return svg("text", { x: x, y: y, "class": o.classe || "etiq", "text-anchor": o.ancre || "start", texte: t }, parent);
   }
 
-  function liquide(x, largeur, fond, vol, pxParMl, e, rayon) {
-    var h = Math.min(vol * pxParMl, 1000), y = fond - h;
-    g.surface = e.pret ? y : fond;
-    if (!e.pret) return;
-    svg("rect", { x: x, y: y, width: largeur, height: h, rx: rayon || 0, fill: EAU }, S);
-    svg("rect", { x: x, y: y, width: largeur, height: h, rx: rayon || 0, fill: ROSE, opacity: alphaRose(rose(proto, e)) }, S);
+  function dessinerFond() {
+    var e = E(), F = Lc.fond, V = Lc.verre, X = EXP[exp];
+    F.innerHTML = ""; V.innerHTML = "";
+    svg("rect", { x: 0, y: 560, width: 640, height: 40, fill: css("--carte2") }, F);
+    svg("line", { x1: 0, y1: 560, x2: 640, y2: 560, stroke: css("--trait"), "stroke-width": 2 }, F);
+    // la potence et sa pince
+    svg("rect", { x: 20, y: 548, width: 96, height: 12, rx: 2, "class": "metal" }, F);
+    svg("line", { x1: 50, y1: 14, x2: 50, y2: 548, stroke: css("--encre2"), "stroke-width": 6, "stroke-linecap": "round" }, F);
+    var yP = X.burette ? 150 : 250;
+    svg("line", { x1: 50, y1: yP, x2: XB - 12, y2: yP, stroke: css("--encre"), "stroke-width": 4 }, F);
+    svg("rect", { x: XB - 13, y: yP - 7, width: 26, height: 14, rx: 3, fill: "none", stroke: css("--encre"), "stroke-width": 2.5 }, V);
+    if (X.burette) fondBurette(F, V, e); else fondSeringue(F, V, e);
+    // les flacons
+    var fl = FLACONS[reg.flacon];
+    flacon(F, 416, fl.l1, fl.l2);
+    flacon(F, 466, "soude", "0,100 mol/L");
+    if (X.sonde) fondInstrument(F, V);
+    // la loupe
+    var clip = svg("clipPath", { id: "clipLoupe" }, F);
+    svg("rect", { x: LX, y: LY, width: LW, height: LH, rx: 10 }, clip);
+    svg("rect", { x: LX, y: LY, width: LW, height: LH, rx: 10, fill: css("--carte") }, F);
+    texte(F, LX + LW / 2, 22, X.burette ? "loupe sur la burette" : "loupe sur la seringue", { ancre: "middle" });
+    svg("rect", { x: LX, y: LY, width: LW, height: LH, rx: 10, fill: "none", stroke: css("--encre2"), "stroke-width": 2 }, V);
+    if (X.burette) {
+      svg("line", { x1: 604, y1: LY + 6, x2: 604, y2: LY + LH - 6, stroke: css("--trait"), "stroke-width": 3, "stroke-linecap": "round" }, F);
+      svg("line", { x1: 596, y1: LY + LH / 2, x2: 612, y2: LY + LH / 2, stroke: css("--encre2"), "stroke-width": 1.5 }, F);
+      texte(F, 604, 22, "ton œil", { ancre: "middle" });
+    }
   }
-
-  function dessinerBurette(e) {
-    var encre = css("--encre"), yB = function (v) { return 40 + v * 9.6; };
-    svg("line", { x1: 76, y1: 112, x2: 180, y2: 112, stroke: encre, "stroke-width": 4 }, S);
-    if (e.rempli) svg("rect", { x: 182, y: yB(vVerse(e)), width: 16, height: 300 - yB(vVerse(e)), fill: css("--accent-doux") }, S);
-    svg("rect", { x: 180, y: 24, width: 20, height: 276, rx: 2, fill: "none", stroke: encre, "stroke-width": 2 }, S);
+  function flacon(F, x, l1, l2) {
+    svg("path", { d: "M" + (x - 18) + " 560 L" + (x - 18) + " 500 Q" + (x - 18) + " 490 " + (x - 8) + " 488 L" + (x - 6) + " 476 L" + (x + 6) + " 476 L" + (x + 8) + " 488 Q" + (x + 18) + " 490 " + (x + 18) + " 500 L" + (x + 18) + " 560 Z",
+      fill: css("--carte"), stroke: css("--encre"), "stroke-width": 1.8 }, F);
+    svg("rect", { x: x - 8, y: 470, width: 16, height: 7, rx: 2, "class": "metal" }, F);
+    svg("rect", { x: x - 16, y: 508, width: 32, height: 30, fill: css("--carte2"), stroke: css("--encre2"), "stroke-width": 1 }, F);
+    svg("text", { x: x, y: 520, "text-anchor": "middle", "font-size": 8, "font-weight": 700, fill: css("--encre"), texte: l1 }, F);
+    svg("text", { x: x, y: 531, "text-anchor": "middle", "font-size": 8, fill: css("--encre"), texte: l2 }, F);
+  }
+  function fondBurette(F, V, e) {
+    var X = EXP[exp], P = positions(e);
+    // l'agitateur magnetique
+    svg("rect", { x: 110, y: 530, width: 160, height: 30, rx: 4, "class": "boite" }, F);
+    svg("circle", { cx: 252, cy: 545, r: 7, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.5 }, F);
+    texte(F, 120, 549, "agitateur");
+    // la burette : tube, graduations tous les millilitres, chiffres tous les cinq
+    svg("path", { d: "M181 10 L181 385 L185 392 M199 10 L199 385 L195 392", "class": "verre" }, V);
+    svg("path", { d: "M185 405 L188.6 448 L191.4 448 L195 405", "class": "verre", "stroke-width": 1.6 }, V);
+    svg("rect", { x: 181, y: 390, width: 18, height: 16, rx: 3, "class": "boite" }, V);
     for (var v = 0; v <= 25; v++) {
-      svg("line", { x1: 180, y1: yB(v), x2: 180 + (v % 5 === 0 ? 9 : 5), y2: yB(v), stroke: encre, "stroke-width": 1 }, S);
-      if (v % 5 === 0) texte(174, yB(v) + 4, String(v), { taille: 11, ancre: "end" });
+      svg("line", { x1: 181, y1: yB(v), x2: 181 + (v % 5 ? 5 : 9), y2: yB(v), "class": "grad" }, V);
+      if (v % 5 === 0) texte(V, 176, yB(v) + 4, String(v), { classe: "grad-txt", ancre: "end" });
     }
-    svg("rect", { x: 176, y: 300, width: 28, height: 14, rx: 2, fill: css("--carte2"), stroke: encre, "stroke-width": 2 }, S);
-    svg("line", { x1: 204, y1: 307, x2: 220, y2: 307, stroke: encre, "stroke-width": 4, "stroke-linecap": "round" }, S);
-    svg("path", { d: "M186 314 L194 314 L191.5 346 L188.5 346 Z", fill: css("--accent-doux"), stroke: encre, "stroke-width": 1.5 }, S);
-    texte(214, 40, "burette de 25 mL", { couleur: encre, gras: true });
-    texte(214, 56, "soude à 0,10 mol/L");
-    // becher de 100 mL
-    liquide(141, 98, 399, volBecher("A", e), 0.9, e);
-    svg("path", { d: "M134 314 Q140 314 140 320 L140 400 L240 400 L240 320 Q240 314 246 314", fill: "none", stroke: encre, "stroke-width": 2.5 }, S);
-    texte(262, 376, "bécher : 10,0 mL de vinaigre dilué", { couleur: encre });
-    texte(262, 392, "+ 3 gouttes de phénolphtaléine");
-    if (reglage.phmetre) {
-      svg("path", { d: "M229 250 L229 226 L317 226 L317 206", fill: "none", stroke: encre, "stroke-width": 2 }, S);
-      svg("rect", { x: 224, y: 250, width: 10, height: 136, rx: 3, fill: css("--encre2") }, S);
-      svg("circle", { cx: 229, cy: 390, r: 6, fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, S);
-      svg("rect", { x: 262, y: 150, width: 110, height: 56, rx: 6, fill: css("--carte"), stroke: encre, "stroke-width": 2 }, S);
-      svg("rect", { x: 272, y: 158, width: 90, height: 24, rx: 2, fill: "#cfd8cf", stroke: css("--encre2"), "stroke-width": 1 }, S);
-      g.lcd = svg("text", { x: 317, y: 175, "text-anchor": "middle", "font-size": 13, "font-family": "Consolas, monospace", fill: "#1d2a1d", texte: "" }, S);
-      texte(317, 198, "pH-mètre", { taille: 11, ancre: "middle" });
-    } else g.lcd = null;
+    texte(F, 206, 64, "burette de 25 mL", { classe: "etiq-titre" });
+    texte(F, 206, 80, "soude à 0,100 mol/L");
+    // les deux bechers
+    becher(V, P.titrage, X.becher);
+    becher(V, P.recup, DIM_RECUP);
+    texte(F, P.titrage.x, 578, "bécher à titrer", { ancre: "middle" });
+    texte(F, P.recup.x, 578, "récupération", { ancre: "middle" });
+    texte(F, XB, 592, "sous la burette", { ancre: "middle", classe: "grad-txt" });
   }
-
-  function dessinerSeringue(e) {
-    var encre = css("--encre"), yS = function (v) { return 292 - v * 28; };
-    var vr = e.rempli ? PROTO.B.plein - vVerse(e) : 0, yp = yS(vr);
-    svg("line", { x1: 76, y1: 222, x2: 176, y2: 222, stroke: encre, "stroke-width": 4 }, S);
-    if (e.rempli) svg("rect", { x: 180, y: yp, width: 20, height: 300 - yp, fill: css("--accent-doux") }, S);
-    // piston : tige, appui, joint
-    svg("rect", { x: 186, y: yp - 118, width: 8, height: 108, fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, S);
-    svg("rect", { x: 172, y: yp - 124, width: 36, height: 6, rx: 2, fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, S);
-    svg("rect", { x: 180, y: yp - 10, width: 20, height: 10, fill: "#2b2b2e" }, S);
-    svg("rect", { x: 178, y: 144, width: 24, height: 156, rx: 2, fill: "none", stroke: encre, "stroke-width": 2 }, S);
-    svg("rect", { x: 166, y: 140, width: 48, height: 6, rx: 2, fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, S);
+  function fondSeringue(F, V, e) {
+    // le support du tube
+    svg("rect", { x: 136, y: 448, width: 108, height: 8, rx: 2, "class": "metal" }, F);
+    svg("rect", { x: 136, y: 530, width: 108, height: 6, rx: 2, "class": "metal" }, F);
+    svg("line", { x1: 144, y1: 456, x2: 144, y2: 560, stroke: css("--encre2"), "stroke-width": 4 }, F);
+    svg("line", { x1: 236, y1: 456, x2: 236, y2: 560, stroke: css("--encre2"), "stroke-width": 4 }, F);
+    // la seringue de 5 mL, pointe en bas
+    svg("path", { d: "M179 172 L179 330 L201 330 L201 172", "class": "verre" }, V);
+    svg("rect", { x: 166, y: 167, width: 48, height: 5, rx: 2, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.5 }, V);
+    svg("path", { d: "M184 330 L188.6 373 L191.4 373 L196 330", "class": "verre", "stroke-width": 1.6 }, V);
     for (var k = 0; k <= 10; k++) {
-      var v = k / 2;
-      svg("line", { x1: 178, y1: yS(v), x2: 178 + (k % 2 === 0 ? 9 : 5), y2: yS(v), stroke: encre, "stroke-width": 1 }, S);
-      if (k % 2 === 0) texte(172, yS(v) + 4, String(v), { taille: 11, ancre: "end" });
+      svg("line", { x1: 179, y1: yS(k / 2), x2: 179 + (k % 2 ? 5 : 9), y2: yS(k / 2), "class": "grad" }, V);
+      if (k % 2 === 0) texte(V, 174, yS(k / 2) + 4, String(k / 2), { classe: "grad-txt", ancre: "end" });
     }
-    svg("path", { d: "M184 300 L196 300 L196 312 L192 312 L191 346 L189 346 L188 312 L184 312 Z", fill: css("--accent-doux"), stroke: encre, "stroke-width": 1.5 }, S);
-    texte(214, 160, "seringue de 5 mL", { couleur: encre, gras: true });
-    texte(214, 176, "soude à 0,10 mol/L");
-    // petit tube de 5 mL
-    liquide(167, 46, 399, volBecher("B", e), 10, e, 4);
-    svg("path", { d: "M164 342 L166 344 L166 392 Q166 400 174 400 L206 400 Q214 400 214 392 L214 344 L216 342", fill: "none", stroke: encre, "stroke-width": 2.5 }, S);
-    texte(226, 376, "petit tube : 1,00 mL de vinaigre dilué", { couleur: encre });
-    texte(226, 392, "+ 1 goutte de phénolphtaléine");
-    g.lcd = null;
+    texte(F, 214, 186, "seringue de 5 mL", { classe: "etiq-titre" });
+    texte(F, 214, 202, "soude à 0,100 mol/L");
+    // le petit tube
+    svg("path", { d: "M178 392 L178 508 Q178 522 190 522 Q202 522 202 508 L202 392", "class": "verre" }, V);
+    texte(F, 190, 578, "tube : 1,00 mL de vinaigre dilué", { ancre: "middle" });
   }
-
-  function dessinerLoupe(e) {
-    var encre = css("--encre"), x0 = 404, y0 = 40, w = 184, h = 236, yc = 158;
-    texte(x0 + w / 2, 28, "loupe sur la graduation", { ancre: "middle", taille: 12 });
-    var clip = svg("clipPath", { id: "loupe" }, S);
-    svg("rect", { x: x0, y: y0, width: w, height: h, rx: 10 }, clip);
-    svg("rect", { x: x0, y: y0, width: w, height: h, rx: 10, fill: css("--carte") }, S);
-    var L = svg("g", { "clip-path": "url(#loupe)" }, S);
-    var k, v, y;
-    if (proto === "A") {
-      var V = vVerse(e), vc = Sim.borne(V, 1.3, 23.7), yA = function (v) { return yc + (v - vc) * 80; };
-      if (e.rempli) {
-        var yM = yA(V);
-        svg("path", { d: "M426 " + (yM - 7) + " Q496 " + (yM + 7) + " 566 " + (yM - 7) + " L566 300 L426 300 Z", fill: css("--accent-doux"), stroke: css("--encre2"), "stroke-width": 1.5 }, L);
-      }
-      svg("line", { x1: 426, y1: y0, x2: 426, y2: y0 + h, stroke: encre, "stroke-width": 2 }, L);
-      svg("line", { x1: 566, y1: y0, x2: 566, y2: y0 + h, stroke: encre, "stroke-width": 2 }, L);
-      for (k = Math.max(0, Math.floor((vc - 1.6) * 10)); k <= Math.min(250, Math.ceil((vc + 1.6) * 10)); k++) {
-        v = k / 10; y = yA(v);
-        svg("line", { x1: 426, y1: y, x2: 426 + (k % 10 === 0 ? 40 : k % 5 === 0 ? 26 : 14), y2: y, stroke: encre, "stroke-width": k % 10 === 0 ? 2 : 1.2 }, L);
-        if (k % 10 === 0) svg("text", { x: 472, y: y + 5, "font-size": 15, "font-weight": 600, fill: encre, stroke: css("--carte"), "stroke-width": 3, "class": "halo", texte: String(v) }, L);
-      }
+  function fondInstrument(F, V) {
+    var ph = exp === "ph";
+    svg("rect", { x: 398, y: 296, width: 132, height: 70, rx: 6, "class": "boite" }, F);
+    svg("rect", { x: 408, y: 304, width: 112, height: 32, rx: 2, "class": "lcd" }, F);
+    texte(F, 464, 356, ph ? "pH-mètre" : "conductimètre", { ancre: "middle" });
+    if (ph) {
+      svg("path", { d: "M526 560 L526 510 L570 510 L570 560 Z", fill: "#f3e6a0", opacity: 0.8 }, F);
+      svg("path", { d: "M582 560 L582 510 L626 510 L626 560 Z", fill: "#f2c4c4", opacity: 0.8 }, F);
+      becher(V, { x: 548, bas: 560 }, { l: 44, h: 54 });
+      becher(V, { x: 604, bas: 560 }, { l: 44, h: 54 });
+      texte(F, 548, 578, "pH 7", { ancre: "middle" });
+      texte(F, 604, 578, "pH 4", { ancre: "middle" });
+      texte(F, 576, 592, "solutions tampons", { ancre: "middle", classe: "grad-txt" });
     } else {
-      var vr = e.rempli ? PROTO.B.plein - vVerse(e) : 0, vcb = Sim.borne(vr, 0.5, 4.5), yBb = function (v) { return yc - (v - vcb) * 200; };
-      var yP = yBb(vr);
-      svg("rect", { x: 476, y: y0 - 10, width: 40, height: Math.max(0, yP - 34 - y0 + 10), fill: css("--carte2"), stroke: encre, "stroke-width": 1.5 }, L);
-      svg("rect", { x: 437, y: yP - 34, width: 118, height: 34, fill: "#2b2b2e" }, L);
-      svg("line", { x1: 437, y1: yP - 22, x2: 555, y2: yP - 22, stroke: "#55555a", "stroke-width": 2 }, L);
-      if (e.rempli) svg("rect", { x: 437, y: yP, width: 118, height: 300 - yP, fill: css("--accent-doux") }, L);
-      svg("line", { x1: 436, y1: y0, x2: 436, y2: y0 + h, stroke: encre, "stroke-width": 2 }, L);
-      svg("line", { x1: 556, y1: y0, x2: 556, y2: y0 + h, stroke: encre, "stroke-width": 2 }, L);
-      for (k = Math.max(0, Math.floor((vcb - 0.7) * 10)); k <= Math.min(50, Math.ceil((vcb + 0.7) * 10)); k++) {
-        v = k / 10; y = yBb(v);
-        svg("line", { x1: 436, y1: y, x2: 436 + (k % 10 === 0 ? 36 : k % 5 === 0 ? 26 : 14), y2: y, stroke: k === 0 ? encre : "#8a8f96", "stroke-width": k % 5 === 0 ? 2 : 1.2 }, L);
-        if (k % 5 === 0) svg("text", { x: 478, y: y + 5, "font-size": 15, "font-weight": 600, fill: encre, stroke: css("--carte"), "stroke-width": 3, "class": "halo", texte: Sim.fr(v, k % 10 === 0 ? 0 : 1) }, L);
+      svg("path", { d: "M556 560 L556 510 L600 510 L600 560 Z", "class": "liquide" }, F);
+      becher(V, { x: 578, bas: 560 }, { l: 44, h: 54 });
+      texte(F, 578, 578, "étalon KCl", { ancre: "middle" });
+      texte(F, 578, 592, "1,413 mS/cm", { ancre: "middle", classe: "grad-txt" });
+    }
+  }
+
+  /* ---------- Ce qui bouge : redessine a chaque image ---------- */
+  var dernierDessin = 0;
+  function dessiner() {
+    var e = E(), X = EXP[exp];
+    Lc.liq.innerHTML = ""; Lc.avant.innerHTML = "";
+    if (X.burette) { dynBurette(e); dynBechers(e); dynLoupeBurette(e); dynOeil(); }
+    else { dynSeringue(e); dynTube(e); dynLoupeSeringue(e); }
+    // les gouttes qui tombent, et le filet
+    var yp = X.burette ? YPB : YPS;
+    e.chutes.forEach(function (d) { svg("ellipse", { cx: XB, cy: d.y, rx: 2.6, ry: 3.6, "class": "liquide", stroke: css("--encre2"), "stroke-width": 1 }, Lc.avant); });
+    if (e.filet > 0 || e.flash > 0) {
+      var cible = e.sous, ys = surfaceCible(e, cible);
+      svg("line", { x1: XB, y1: yp - 2, x2: XB, y2: ys, stroke: css("--encre2"), "stroke-width": 2.6 }, Lc.avant);
+      svg("line", { x1: XB, y1: yp - 2, x2: XB, y2: ys, stroke: css("--liquide"), "stroke-width": 1.4 }, Lc.avant);
+    } else if (e.pendante > 0.002) {
+      var k = Math.cbrt(Sim.borne(e.pendante / e.vg, 0, 1));
+      svg("ellipse", { cx: XB, cy: yp + 3 * k, rx: 1.5 + 1.6 * k, ry: 1.5 + 2.6 * k, "class": "liquide", stroke: css("--encre2"), "stroke-width": 1 }, Lc.avant);
+    }
+    if (X.sonde) dynInstrument(e);
+    if (document.getElementById("especes").checked) dessinerZoom(e);
+  }
+  function dynBurette(e) {
+    var Q = Lc.liq;
+    if (e.rempli) svg("rect", { x: 182.5, y: yB(e.lev), width: 15, height: 385 - yB(e.lev), "class": "liquide" }, Q);
+    if (!e.videPointe) {
+      svg("path", { d: "M186 392 L186 405 L189 447 L191 447 L194 405 L194 392 Z", "class": "liquide" }, Q);
+      if (e.bulle > 0) svg("ellipse", { cx: XB, cy: 420, rx: 2.4, ry: 3 + 18 * e.bulle, fill: css("--bulle"), stroke: css("--encre2"), "stroke-width": 0.8 }, Lc.avant);
+    }
+    if (e.bulleAnim > 0) svg("circle", { cx: XB, cy: YPB + 40 * (0.5 - e.bulleAnim), r: 3, fill: "none", stroke: css("--encre2"), "stroke-width": 1 }, Lc.avant);
+    // la cle du robinet : fermee a l'horizontale, ouverte a la verticale
+    var G = Lc.robinet, a = e.angle * Math.PI / 180, dx = -Math.cos(a), dy = -Math.sin(a);
+    G.innerHTML = "";
+    G.setAttribute("aria-valuenow", Math.round(e.angle));
+    G.setAttribute("aria-valuetext", e.angle < 8 ? "fermé" : e.angle < 35 ? "goutte à goutte" : "grand ouvert");
+    svg("circle", { cx: XB + 36 * dx, cy: YR + 36 * dy, r: 46, fill: "transparent" }, G);
+    svg("circle", { cx: XB + 36 * dx, cy: YR + 36 * dy, r: 18, "class": "prise-zone" }, G);
+    svg("line", { x1: XB - 8 * dx, y1: YR - 8 * dy, x2: XB + 36 * dx, y2: YR + 36 * dy, stroke: css("--encre"), "stroke-width": 6, "stroke-linecap": "round" }, G);
+    svg("circle", { cx: XB, cy: YR, r: 5, fill: css("--carte"), stroke: css("--encre"), "stroke-width": 2 }, G);
+    svg("circle", { cx: XB + 36 * dx, cy: YR + 36 * dy, r: 6, fill: css("--encre") }, G);
+    if (!e.vuRobinet) svg("text", { x: 144, y: 438, "text-anchor": "end", "class": "indice", texte: "tourne la clé ↻" }, G);
+  }
+  function dynBechers(e) {
+    var P = positions(e), X = EXP[exp], Q = Lc.liq;
+    // la recuperation
+    if (e.recup > 0.01) {
+      var yr = surface(DIM_RECUP, P.recup, e.recup);
+      svg("rect", { x: P.recup.x - DIM_RECUP.l / 2 + 2.5, y: yr, width: DIM_RECUP.l - 5, height: P.recup.bas - 3 - yr, "class": "liquide" }, Q);
+    }
+    if (!e.pret) return;
+    var d = X.becher, pos = P.titrage, g = pos.x - d.l / 2 + 2.5, w = d.l - 5, yt = surface(d, pos, contenu(e));
+    var tourne = e.agit && e.sous === "titrage", creux = tourne ? 6 : 0;
+    var chemin = "M" + g + " " + (pos.bas - 3) + " L" + g + " " + yt + " L" + (pos.x - 14) + " " + yt + " Q" + pos.x + " " + (yt + 2 * creux) + " " + (pos.x + 14) + " " + yt +
+      " L" + (g + w) + " " + yt + " L" + (g + w) + " " + (pos.bas - 3) + " Z";
+    svg("path", { d: chemin, "class": "liquide" }, Q);
+    var ind = INDIC[e.indic], c = e._c;
+    if (ind.pki && c) {
+      var t = teinte(ind, fBase(ind, c.ph));
+      if (t[1] > 0) svg("path", { d: chemin, fill: rgba(t[0], t[1]) }, Q);
+      // la goutte qui vient de tomber colore la solution la ou elle arrive
+      var op = Sim.borne(e.nm / 0.05, 0, 1);
+      if (op > 0.02 && e.sous === "titrage" && fBase(ind, c.ph) < 0.9) {
+        var tb = teinte(ind, 1);
+        svg("ellipse", { cx: XB, cy: yt + 8 + 10 * (1 - op), rx: 6 + 22 * (1 - op), ry: 4 + 6 * (1 - op), fill: rgba(tb[0], 0.85 * Math.max(op, tb[1] > 0.5 ? op : 0.9 * op)) }, Q);
       }
     }
-    svg("rect", { x: x0, y: y0, width: w, height: h, rx: 10, fill: "none", stroke: css("--encre2"), "stroke-width": 2 }, S);
+    // le barreau aimante
+    if (e.sous === "titrage") {
+      var c1 = Math.abs(Math.cos(e.phase));
+      svg("rect", { x: XB - 2 - 10 * c1, y: 522, width: 4 + 20 * c1, height: 5, rx: 2.5, fill: css("--encre2") }, Lc.avant);
+    } else svg("rect", { x: pos.x - 12, y: pos.bas - 8, width: 24, height: 5, rx: 2.5, fill: css("--encre2") }, Lc.avant);
   }
-
-  /* ---------- Affichage ---------- */
-  function afficher(tout) {
-    var e = etats[proto];
-    aBidon.set(e.bidon, proto === "A" ? 1 : 2);
-    aGouttes.set(e.n);
-    if (proto === "A" && reglage.phmetre && e.pret) { var p = lecturePh(); aPh.set(p); if (g.lcd) g.lcd.textContent = Sim.fr(p, 2); }
-    else aPh.set("—");
-    if (tout) {
-      aGouttes.noeud.hidden = proto !== "B";
-      aPh.noeud.hidden = !(proto === "A" && reglage.phmetre);
+  function dynSeringue(e) {
+    var Q = Lc.liq, yJ = yS(e.r);
+    if (e.seringue && e.r > 0) svg("rect", { x: 181, y: yJ, width: 18, height: YS0 - yJ, "class": "liquide" }, Q);
+    if (e.seringue) svg("path", { d: "M185 330 L189 372 L191 372 L195 330 Z", "class": "liquide" }, Q);
+    // le piston : joint noir, tige, appui du pouce
+    var G = Lc.piston, yT = yJ - 167;
+    G.innerHTML = "";
+    G.setAttribute("aria-valuenow", Sim.fr(e.r, 2));
+    svg("rect", { x: 140, y: yT - 34, width: 100, height: 70, fill: "transparent" }, G);
+    svg("rect", { x: 158, y: yT - 14, width: 64, height: 32, rx: 8, "class": "prise-zone" }, G);
+    svg("rect", { x: 186, y: yJ - 160, width: 8, height: 150, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.5 }, G);
+    svg("rect", { x: 168, y: yT, width: 44, height: 7, rx: 2, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.5 }, G);
+    svg("rect", { x: 180, y: yJ - 10, width: 20, height: 10, fill: "#2b2b2e" }, G);
+    if (!e.vuPiston && e.seringue) svg("text", { x: 150, y: yT - 20, "text-anchor": "end", "class": "indice", texte: "pousse ↓" }, G);
+  }
+  function dynTube(e) {
+    if (!e.pret) return;
+    var Q = Lc.liq, dx = e.secoue > 0 ? 3 * Math.sin(e.secoue * 40) : 0, ys = DIM_TUBE.bas - contenu(e) * DIM_TUBE.px;
+    var chemin = "M" + (180.5 + dx) + " " + ys + " L" + (180.5 + dx) + " 508 Q" + (180.5 + dx) + " 520 " + (190 + dx) + " 520 Q" + (199.5 + dx) + " 520 " + (199.5 + dx) + " 508 L" + (199.5 + dx) + " " + ys + " Z";
+    svg("path", { d: chemin, "class": "liquide" }, Q);
+    var ind = INDIC[e.indic], c = e._c;
+    if (ind.pki && c) {
+      var t = teinte(ind, fBase(ind, c.ph));
+      if (t[1] > 0) svg("path", { d: chemin, fill: rgba(t[0], t[1]) }, Q);
+      var op = Sim.borne(e.nm / 0.05, 0, 1);
+      if (op > 0.02 && fBase(ind, c.ph) < 0.9) svg("ellipse", { cx: 190 + dx, cy: ys + 5 + 6 * (1 - op), rx: 5 + 4 * (1 - op), ry: 3 + 5 * (1 - op), fill: rgba(teinte(ind, 1)[0], 0.85 * op) }, Q);
     }
   }
-  function toutMontrer(t) {
-    ["A", "B"].forEach(function (p) {
-      document.getElementById("verser" + p).hidden = p !== proto;
-      document.getElementById("defis" + p).hidden = p !== proto;
+  function dynInstrument(e) {
+    var A0 = Lc.avant, P = positions(e), d = EXP[exp].becher, x, y1, y2;
+    if (e.sonde === "becher") { x = P.titrage.x + d.l / 2 - 16; y1 = P.titrage.bas - d.h - 44; y2 = P.titrage.bas - 16; }
+    else { x = exp === "cond" ? 578 : e.sonde === "t7" ? 548 : 604; y1 = 452; y2 = 548; }
+    svg("path", { d: "M" + x + " " + y1 + " C" + x + " " + (y1 - 50) + " 360 330 398 330", fill: "none", stroke: css("--encre2"), "stroke-width": 2 }, A0);
+    if (exp === "ph") {
+      svg("rect", { x: x - 5, y: y1, width: 10, height: y2 - y1 - 6, rx: 3, fill: css("--encre2") }, A0);
+      svg("circle", { cx: x, cy: y2 - 4, r: 6, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.5 }, A0);
+    } else {
+      svg("rect", { x: x - 4, y: y1, width: 8, height: y2 - y1 - 14, rx: 3, fill: css("--encre2") }, A0);
+      svg("rect", { x: x - 8, y: y2 - 16, width: 16, height: 16, rx: 2, fill: "none", stroke: css("--encre"), "stroke-width": 2 }, A0);
+    }
+    var t = !isFinite(e.lu) ? "- - -" : exp === "ph" ? Sim.fr(e.lu, 2) : Sim.fr(e.lu, e.lu < 10 ? 3 : 2);
+    svg("text", { x: 514, y: 327, "text-anchor": "end", "class": "lcd-txt", texte: t }, A0);
+    if (exp === "cond") svg("text", { x: 412, y: 332, "class": "lcd-petit", texte: "mS/cm" }, A0);
+    if (e.stable && isFinite(e.lu)) svg("text", { x: 412, y: 314, "class": "lcd-petit", texte: "STABLE" }, A0);
+  }
+  /* La loupe de la burette, avec la parallaxe : un trait vu d'au-dessus est une ellipse. */
+  function anneau(G, y, t, complet) {
+    var xg = 400, xd = 534, rx = 67, R = 24, ry = Math.abs(R * t), yc = y - R * t;
+    if (ry < 0.6) { svg("line", { x1: xg, y1: y, x2: complet ? xd : xg + 46, y2: y, "class": "grad", "stroke-width": complet ? 2 : 1.5 }, G); return; }
+    var avant = t > 0 ? 0 : 1;
+    svg("path", { d: "M" + xg + " " + yc + " A" + rx + " " + ry + " 0 0 " + avant + " " + xd + " " + yc, fill: "none", stroke: css("--encre"), "stroke-width": complet ? 2 : 1.5 }, G);
+    if (complet) svg("path", { d: "M" + xg + " " + yc + " A" + rx + " " + ry + " 0 0 " + (1 - avant) + " " + xd + " " + yc, fill: "none", stroke: css("--encre2"), "stroke-width": 1, "stroke-dasharray": "3 3" }, G);
+  }
+  function dynLoupeBurette(e) {
+    var G = svg("g", { "clip-path": "url(#clipLoupe)" }, Lc.avant);
+    var xg = 400, xd = 534, xm = 467, K = 80, R = 24, t = 0.5 * reg.oeil, yc = LY + LH / 2;
+    var V = e.rempli ? e.lev : LVIDE, vc = Sim.borne(V, -1.2, 25.4);
+    function yv(v) { return yc + (v - vc) * K; }
+    if (e.rempli) {
+      var ym = yv(V) - R * t;
+      svg("path", { d: "M" + xg + " " + (ym - 8) + " Q" + xm + " " + (ym + 8) + " " + xd + " " + (ym - 8) + " L" + xd + " " + (LY + LH + 10) + " L" + xg + " " + (LY + LH + 10) + " Z",
+        "class": "liquide", stroke: css("--encre2"), "stroke-width": 1.5 }, G);
+    }
+    svg("line", { x1: xg, y1: LY, x2: xg, y2: LY + LH, stroke: css("--encre"), "stroke-width": 2 }, G);
+    svg("line", { x1: xd, y1: LY, x2: xd, y2: LY + LH, stroke: css("--encre"), "stroke-width": 2 }, G);
+    var k0 = Math.max(0, Math.floor((vc - 1.7) * 10)), k1 = Math.min(250, Math.ceil((vc + 1.7) * 10));
+    for (var k = k0; k <= k1; k++) {
+      var y = yv(k / 10);
+      if (k % 5 === 0) anneau(G, y, t, k % 10 === 0);
+      else svg("line", { x1: xg, y1: y, x2: xg + 16, y2: y, "class": "grad", "stroke-width": 1.2 }, G);
+      if (k % 10 === 0) svg("text", { x: xg + 22, y: y - 5, "font-size": 15, "font-weight": 600, fill: css("--encre"), stroke: css("--carte"), "stroke-width": 3, "class": "halo", texte: String(k / 10) }, G);
+    }
+  }
+  function dynOeil() {
+    var G = Lc.oeil, y = LY + LH / 2 - reg.oeil * 100, x = 604;
+    G.innerHTML = "";
+    G.setAttribute("aria-valuenow", reg.oeil.toFixed(2));
+    G.setAttribute("aria-valuetext", Math.abs(reg.oeil) < 0.05 ? "au niveau du trait" : reg.oeil > 0 ? "trop haut" : "trop bas");
+    svg("rect", { x: 562, y: y - 48, width: 78, height: 96, fill: "transparent" }, G);   // 40 px de doigt sur un telephone
+    svg("circle", { cx: x, cy: y, r: 17, "class": "prise-zone" }, G);
+    svg("path", { d: "M" + (x - 13) + " " + y + " Q" + x + " " + (y - 11) + " " + (x + 13) + " " + y + " Q" + x + " " + (y + 11) + " " + (x - 13) + " " + y + " Z", fill: css("--carte"), stroke: css("--encre"), "stroke-width": 1.8 }, G);
+    svg("circle", { cx: x - 3, cy: y, r: 4, fill: css("--encre") }, G);
+    if (!E().vuOeil) svg("text", { x: x, y: y + 34, "text-anchor": "middle", "class": "indice", texte: "↕" }, G);
+  }
+  function dynLoupeSeringue(e) {
+    var G = svg("g", { "clip-path": "url(#clipLoupe)" }, Lc.avant), yc = LY + LH / 2;
+    var vr = e.seringue ? e.r : 0, vc = Sim.borne(vr, 0.5, 4.6);
+    function yv(v) { return yc - (v - vc) * 200; }
+    var yP = yv(vr);
+    svg("rect", { x: 447, y: LY - 10, width: 40, height: Math.max(0, yP - 34 - LY + 10), fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.5 }, G);
+    svg("rect", { x: 408, y: yP - 34, width: 118, height: 34, fill: "#2b2b2e" }, G);
+    svg("line", { x1: 408, y1: yP - 22, x2: 526, y2: yP - 22, stroke: "#55555a", "stroke-width": 2 }, G);
+    if (e.seringue) svg("rect", { x: 408, y: yP, width: 118, height: LY + LH + 10 - yP, "class": "liquide" }, G);
+    svg("line", { x1: 407, y1: LY, x2: 407, y2: LY + LH, stroke: css("--encre"), "stroke-width": 2 }, G);
+    svg("line", { x1: 527, y1: LY, x2: 527, y2: LY + LH, stroke: css("--encre"), "stroke-width": 2 }, G);
+    for (var k = Math.max(0, Math.floor((vc - 0.7) * 10)); k <= Math.min(50, Math.ceil((vc + 0.7) * 10)); k++) {
+      var y = yv(k / 10);
+      svg("line", { x1: 407, y1: y, x2: 407 + (k % 10 === 0 ? 36 : k % 5 === 0 ? 26 : 14), y2: y, stroke: k % 5 === 0 ? css("--encre") : "#8a8f96", "stroke-width": k % 5 === 0 ? 2 : 1.2 }, G);
+      if (k % 5 === 0) svg("text", { x: 449, y: y + 5, "font-size": 15, "font-weight": 600, fill: css("--encre"), stroke: css("--carte"), "stroke-width": 3, "class": "halo", texte: Sim.fr(k / 10, k % 10 === 0 ? 0 : 1) }, G);
+    }
+  }
+
+  /* ---------- Vu de tres pres : une pastille pour un douzieme de l'acide de depart ---------- */
+  var PLACES = (function () {
+    var p = [], graine = 7;
+    function alea() { graine = (graine * 16807) % 2147483647; return graine / 2147483647; }
+    for (var r = 0; r < 5; r++) for (var c = 0; c < 16; c++) p.push([14 + c * 19.5 + (r % 2) * 7 + 4 * alea(), 16 + r * 21 + 5 * alea()]);
+    for (var i = p.length - 1; i > 0; i--) { var j = Math.floor(alea() * (i + 1)), t = p[i]; p[i] = p[j]; p[j] = t; }
+    return p;
+  })();
+  var ESPECES = { AH: "#8a8f96", "A⁻": "#2c6da6", "Na⁺": "#7b4fa0", "HO⁻": "#c0392b", "H₃O⁺": "#d9822b", "Cl⁻": "#2f7a55" };
+  function dessinerZoom(e) {
+    var Z = document.getElementById("zoomSvg"), c = e._c;
+    Z.innerHTML = "";
+    if (!e.pret || !c) { svg("text", { x: 160, y: 80, "text-anchor": "middle", "class": "etiq", texte: "Pas de bécher à titrer." }, Z); return; }
+    var u = e.ca * e.va / 12;
+    function nb(conc) { return Math.round(conc * c.vt / u); }
+    var poses = [];
+    function poser(nom, debut, n) { for (var i = 0; i < n && debut + i < PLACES.length; i++) poses.push([nom, PLACES[debut + i]]); }
+    if (e.fort) { poser("Cl⁻", 0, 12); poser("H₃O⁺", 12, Math.min(12, nb(c.h))); }
+    else { var na = Math.min(12, nb(c.ac)); poser("A⁻", 0, na); poser("AH", na, 12 - na); }
+    poser("Na⁺", 24, nb(c.na)); poser("HO⁻", 52, nb(c.oh));
+    poses.forEach(function (p) {
+      svg("circle", { cx: p[1][0], cy: p[1][1], r: 8.5, fill: ESPECES[p[0]] }, Z);
+      svg("text", { x: p[1][0], y: p[1][1] + 3, "text-anchor": "middle", "font-size": 7.5, "font-weight": 700, fill: "#fff", texte: p[0] }, Z);
     });
-    cPh.noeud.hidden = proto !== "A";
-    document.getElementById("legende").textContent = proto === "A" ?
-      "La burette est graduée tous les 0,1 mL, zéro en haut : la loupe grossit la graduation autour du niveau. Lis au bas du ménisque." :
-      "La seringue, pointe en bas, sert de burette. Elle est graduée tous les 0,1 mL et indique le volume qui reste dedans : lis au bord du joint noir. 20 gouttes font 1,0 mL.";
-    document.getElementById("consigneReleve").textContent = proto === "A" ?
-      "Garde une mesure à chaque changement de couleur. Avec le pH-mètre, garde une mesure tous les millilitres, puis plus souvent près du saut." :
-      "Garde une mesure au départ, puis au premier rose qui tient : les gouttes comptées et le volume restant.";
-    if (t) message(t);
-    dessiner(); afficher(true);
+    var leg = e.fort ? [["H₃O⁺", "ion oxonium"], ["Cl⁻", "ion chlorure"], ["Na⁺", "ion sodium"], ["HO⁻", "ion hydroxyde"]]
+      : [["AH", "CH₃COOH"], ["A⁻", "CH₃COO⁻"], ["Na⁺", "ion sodium"], ["HO⁻", "ion hydroxyde"]];
+    leg.forEach(function (l, i) {
+      var x = 14 + (i % 2) * 150, y = 126 + Math.floor(i / 2) * 17;
+      svg("circle", { cx: x, cy: y, r: 6.5, fill: ESPECES[l[0]] }, Z);
+      svg("text", { x: x + 11, y: y + 4, "font-size": 10.5, fill: css("--encre"), texte: l[0] + " · " + l[1] }, Z);
+    });
+    svg("text", { x: 8, y: 166, "font-size": 9.5, fill: css("--encre2"), texte: "Une pastille : un douzième de l'acide de départ. L'eau n'est pas dessinée." }, Z);
   }
 
-  var cumul = 0;
-  Sim.animer(function (dt) {
-    var e = etats[proto];
-    if (e.chute !== null) {
-      e.chute += dt / 0.25;
-      if (e.chute >= 1) { e.chute = null; e.nuage = rose(proto, e) >= 0.05 ? 0 : 1; }
+  /* ---------- Faire couler ---------- */
+  function message(t) { if (t) document.getElementById("etat").textContent = t; }
+  function versDans(e, cible, v) {
+    if (v <= 0) return;
+    if (cible === "titrage") { if (e.pret) { e.vb += v; e.nm += v; } else e.bidon += v; }
+    else e.recup += v;
+  }
+  function lacherGoutte(e) {
+    var n = e.chutes.length;
+    e.pendante = Math.max(0, e.pendante - e.vg);
+    e.chutes.push({ y: (EXP[exp].burette ? YPB : YPS) - 6 * (n % 4), v: e.vg, cible: e.sous });
+    e.vg = tirerGoutte();
+  }
+  function sortirBulle(e) {
+    e.lev += e.bulle; e.bulle = 0; e.bulleAnim = 0.5;
+    message(e.sous === "recup" ? "La bulle d'air est partie : le niveau a baissé d'un coup. La pointe est pleine, tu peux ajuster le zéro."
+      : "Une bulle d'air vient de quitter la pointe : le niveau a baissé sans que la soude ne tombe dans le bécher. Ta lecture sera fausse d'autant.");
+  }
+  function pasBurette(e, dt) {
+    var q = e.rempli ? debit(e.angle) : 0;
+    e.filet = 0;
+    if (q <= 0) return;
+    var dv = Math.min(q * dt, LVIDE - e.lev);
+    if (e.bulle > 0) {
+      if (q >= 0.6) e.chasse += dt;
+      if (e.chasse >= 0.25 || e.depuis + dv >= e.bulleSeuil) sortirBulle(e);
     }
-    e.nuage = Math.max(0, e.nuage - dt / e.tau);
-    if (g.goutte) {
-      g.goutte.setAttribute("opacity", e.chute === null ? 0 : 1);
-      g.goutte.setAttribute("cy", 350 + (e.chute || 0) * (g.surface - 352));
-      g.nuage.setAttribute("opacity", 0.8 * e.nuage);
+    e.lev += dv; e.depuis += dv;
+    if (q >= 0.3) { versDans(e, e.sous, dv + e.pendante); e.pendante = 0; e.filet = q; }
+    else { e.pendante += dv; while (e.pendante >= e.vg) lacherGoutte(e); }
+    if (e.lev >= LVIDE - 1e-9) {
+      e.lev = LVIDE; e.rempli = false; e.videPointe = true; e.bulle = 0;
+      message("La burette est vide. Remplis-la, et note la lecture de départ avant de reprendre.");
+    }
+  }
+  function pousserSeringue(e, dv) {
+    if (!e.seringue || e.r <= 1e-9) { message(e.seringue ? "La seringue est vide." : "Rince et remplis d'abord la seringue."); return; }
+    dv = Math.min(dv, e.r);
+    if (dv <= 0) return;
+    e.r -= dv; e.pendante += dv;
+    while (e.pendante >= e.vg) lacherGoutte(e);
+  }
+  function uneGoutte() {
+    var e = E();
+    if (exp === "ser") { pousserSeringue(e, e.vg - e.pendante + 1e-9); return; }
+    if (!e.rempli) { message("La burette est vide : remplis-la d'abord."); return; }
+    if (debit(e.angle) > 0) { message("Le robinet est déjà ouvert : ferme-le pour verser goutte par goutte."); return; }
+    var besoin = Math.min(e.vg - e.pendante, LVIDE - e.lev);
+    if (e.bulle > 0 && e.depuis + besoin >= e.bulleSeuil) sortirBulle(e);
+    e.lev += besoin; e.depuis += besoin; e.pendante += besoin + 1e-9;
+    if (e.pendante >= e.vg) lacherGoutte(e);
+  }
+
+  /* ---------- La boucle ---------- */
+  var cumul = 0;
+  function pas(dt) {
+    var e = E(), X = EXP[exp];
+    if (X.burette) pasBurette(e, dt);
+    e.flash = Math.max(0, e.flash - dt); e.bulleAnim = Math.max(0, e.bulleAnim - dt); e.secoue = Math.max(0, e.secoue - dt);
+    // les gouttes tombent
+    for (var i = e.chutes.length - 1; i >= 0; i--) {
+      var d = e.chutes[i];
+      d.y += 360 * dt;
+      if (d.y >= surfaceCible(e, d.cible)) {
+        versDans(e, d.cible, d.v); e.chutes.splice(i, 1);
+        if (d.cible === "titrage" && e.pret) {
+          e.gouttes++;
+          if (X.burette && !e.agit && !e.ditAgit && INDIC[e.indic].pki) { e.ditAgit = true; message("Sans agitation, la couleur reste là où tombe la goutte : mets l'agitateur en marche."); }
+        }
+      }
+    }
+    // le melange, plus lent pres de l'equivalence
+    if (e.pret) {
+      var ve = veVrai(e), proche = Sim.borne(1 - Math.abs(ve - e.vb) / (0.04 * ve), 0, 1);
+      var tau = (X.burette ? (e.agit && e.sous === "titrage" ? 0.35 : 40) : (e.secoue > 0 ? 0.2 : 8)) * (1 + 5 * proche);
+      e.nm *= Math.exp(-dt / tau);
+      if (e.nm < 1e-6) e.nm = 0;
+      e._c = compo(e);
+      var ind = INDIC[e.indic];
+      if (ind.pki && e.nm < 0.004) {
+        var nom = nomCouleur(ind, fBase(ind, e._c.ph));
+        if (e.nomVu && nom !== e.nomVu) message("Après agitation, la solution est " + nom + ", et la couleur tient.");
+        e.nomVu = nom;
+      }
+    } else e._c = null;
+    if (e.agit && e.sous === "titrage") e.phase += dt * 14;
+    // les instruments suivent avec un temps de reponse
+    if (X.sonde) {
+      var cible = NaN;
+      if (exp === "ph") {
+        var vrai = e.sonde === "t7" ? 7 : e.sonde === "t4" ? 4 : e._c ? e._c.ph : NaN;
+        cible = 7 + e.pm.pente * (vrai - 7) + e.pm.decal;
+      } else cible = e.cm.k * (e.sonde === "kcl" ? 1.413 : e._c ? sigma(e._c) : NaN);
+      if (!isFinite(cible)) e.aff = NaN;
+      else if (!isFinite(e.aff)) e.aff = cible;
+      else e.aff += (cible - e.aff) * (1 - Math.exp(-dt / (exp === "ph" ? (e.agit ? 1.3 : 3) : 0.9)));
+      e.stable = isFinite(cible) && Math.abs(cible - e.aff) < (exp === "ph" ? 0.02 : 0.004 * Math.max(1, cible));
     }
     cumul += dt;
-    if (cumul > 0.5) { cumul = 0; afficher(false); }
+    if (cumul >= 0.3) { cumul = 0; lireInstruments(e); afficher(); }
+    var t = performance.now();
+    if (t - dernierDessin > 14) { dernierDessin = t; dessiner(); }
+  }
+  function lireInstruments(e) {
+    if (!EXP[exp].sonde || !isFinite(e.aff)) { e.lu = NaN; return; }
+    e.lu = exp === "ph" ? Sim.mesure(e.aff, { absolu: 0.004, resolution: 0.01 }) : Sim.mesure(e.aff, { relatif: 0.002, resolution: e.aff < 10 ? 0.001 : 0.01 });
+  }
+  function afficher() {
+    var e = E();
+    A.bidon.set(e.bidon + e.recup, 1);
+    A.gouttes.set(e.gouttes, 0);
+    A.ph.set(exp === "ph" && isFinite(e.lu) ? e.lu : "—", 2); A.ph.note(e.stable ? "stable" : isFinite(e.lu) ? "se stabilise…" : "");
+    A.cond.set(exp === "cond" && isFinite(e.lu) ? e.lu : "—", 3); A.cond.note(e.stable ? "stable" : isFinite(e.lu) ? "se stabilise…" : "");
+    var bA = document.getElementById("bAgiter");
+    if (exp === "ser") { bA.textContent = "Agiter le tube"; bA.setAttribute("aria-pressed", "false"); }
+    else { bA.textContent = e.agit ? "Agitateur en marche" : "Agitateur arrêté"; bA.setAttribute("aria-pressed", e.agit ? "true" : "false"); }
+    document.getElementById("bEchanger").textContent = e.sous === "titrage" ? "Mettre la récupération sous la burette" : "Mettre le bécher à titrer sous la burette";
+  }
+
+  /* ---------- Le doigt : cle du robinet, piston, oeil ---------- */
+  function point(ev) { var p = S.createSVGPoint(); p.x = ev.clientX; p.y = ev.clientY; return p.matrixTransform(S.getScreenCTM().inverse()); }
+  function glisser(el, debut, bouge) {
+    el.addEventListener("touchstart", function (ev) { ev.preventDefault(); }, { passive: false });
+    el.addEventListener("pointerdown", function (ev) {
+      ev.preventDefault();
+      try { el.setPointerCapture(ev.pointerId); } catch (x) { /* evenement de synthese */ }
+      var p0 = point(ev), etat0 = debut(p0);
+      function mv(e2) { bouge(point(e2), p0, etat0); }
+      function fin() { el.removeEventListener("pointermove", mv); el.removeEventListener("pointerup", fin); el.removeEventListener("pointercancel", fin); }
+      el.addEventListener("pointermove", mv); el.addEventListener("pointerup", fin); el.addEventListener("pointercancel", fin);
+    });
+  }
+  function angleRobinet(p) {
+    var dx = p.x - XB, dy = p.y - YR;
+    if (dx > 0) return dy < 0 ? 90 : 0;
+    return Sim.borne(Math.atan2(-dy, -dx) * 180 / Math.PI, 0, 90);
+  }
+  glisser(Lc.robinet, function (p) { E().vuRobinet = true; return null; }, function (p) { var e = E(); if (e.rempli || true) e.angle = angleRobinet(p); });
+  glisser(Lc.piston, function (p) { var e = E(); e.vuPiston = true; return e.r; },
+    function (p, p0, r0) { var e = E(), cible = r0 - (p.y - p0.y) / PXS; if (cible < e.r) pousserSeringue(e, e.r - cible); });
+  glisser(Lc.oeil, function (p) { E().vuOeil = true; return reg.oeil; },
+    function (p, p0, o0) { var o = Sim.borne(o0 - (p.y - p0.y) / 100, -1, 1); reg.oeil = Math.abs(o) < 0.05 ? 0 : o; });
+  function clavier(el, f) { el.addEventListener("keydown", function (ev) { var k = ev.key; if (f(k)) ev.preventDefault(); }); }
+  clavier(Lc.robinet, function (k) {
+    var e = E();
+    if (k === "ArrowUp" || k === "ArrowRight") e.angle = Math.min(90, e.angle + 3);
+    else if (k === "ArrowDown" || k === "ArrowLeft") e.angle = Math.max(0, e.angle - 3);
+    else if (k === "Home") e.angle = 0; else if (k === "End") e.angle = 90; else return false;
+    e.vuRobinet = true; return true;
+  });
+  clavier(Lc.piston, function (k) { if (k !== "ArrowDown") return false; uneGoutte(); E().vuPiston = true; return true; });
+  clavier(Lc.oeil, function (k) {
+    if (k === "ArrowUp") reg.oeil = Math.min(1, reg.oeil + 0.05); else if (k === "ArrowDown") reg.oeil = Math.max(-1, reg.oeil - 0.05); else return false;
+    if (Math.abs(reg.oeil) < 0.03) reg.oeil = 0; E().vuOeil = true; return true;
   });
 
-  etats.A = etatNeuf("A"); etats.B = etatNeuf("B");
-  var vus = {};
-  var og = Sim.onglets("#protocoles", function (id) {
-    proto = id === "releveA" ? "A" : "B";
-    toutMontrer(vus[proto] ? "" : proto === "A" ? "Burette rincée avec 5 mL de soude, jetés au bidon, puis remplie au zéro. Le bécher est prêt." :
-      "Seringue rincée avec 0,5 mL de soude, jetés au bidon, puis remplie à 5,0 mL. Le tube est prêt.");
-    if (vus[proto]) message(proto === "A" ? "Protocole A : la burette et le bécher sont comme tu les as laissés." : "Protocole B : la seringue et le tube sont comme tu les as laissés.");
-    vus[proto] = true;
+  /* ---------- Les boutons ---------- */
+  function clic(id, f) { document.getElementById(id).addEventListener("click", f); }
+  clic("bRincer", function () {
+    var e = E(), v = 5 + (e.rempli ? LVIDE - e.lev : 0) + e.pendante;
+    e.pendante = 0; e.lev = LVIDE; e.rempli = false; e.bulle = 0; e.videPointe = true; e.rincee = true; e.angle = 0; e.flash = 1.2;
+    versDans(e, e.sous, v);
+    message(e.sous === "titrage" && e.pret ? "Le rinçage a coulé dans le bécher à titrer : il n'est plus bon. Clique sur « Nouveau titrage »."
+      : "Burette rincée avec 5 mL de soude, partis dans la récupération. Remplis-la maintenant.");
   });
-  if (location.hash === "#B") og.montrer("releveB");   // lien direct vers le protocole B
+  clic("bRemplir", function () {
+    var e = E();
+    if (e.rempli && e.lev < 0.3) { message("La burette est déjà pleine."); return; }
+    if (e.videPointe) { e.bulle = 0.10 + 0.12 * Math.random(); e.bulleSeuil = 0.4 + 2 * Math.random(); e.chasse = 0; e.depuis = 0; e.videPointe = false; }
+    e.cb = e.rincee ? CB : CB * 0.988;
+    e.lev = -(0.5 + 0.9 * Math.random()); e.rempli = true;
+    message(!e.rincee ? "Burette remplie sans l'avoir rincée à la soude : l'eau qui restait dedans dilue un peu la soude."
+      : e.bulle > 0 ? "Burette remplie au-dessus du zéro. Une bulle d'air reste sous le robinet : chasse-la d'un grand coup de robinet au-dessus de la récupération, puis ajuste le zéro."
+      : "Burette remplie au-dessus du zéro : ajuste le zéro goutte à goutte, au-dessus de la récupération.");
+  });
+  clic("bEchanger", function () {
+    var e = E(); e.sous = e.sous === "titrage" ? "recup" : "titrage"; e.chutes = []; dessinerFond(); afficher();
+    message(e.sous === "titrage" ? "Le bécher à titrer est sous la burette, sur l'agitateur." : "La récupération est sous la burette : ce qui coule part au bidon.");
+  });
+  clic("bSeringue", function () {
+    var e = E(), v = 0.5 + e.r + e.pendante;
+    e.bidon += v; e.pendante = 0; e.chutes = []; e.seringue = true; e.r = Math.round((5 - 0.2 * Math.random()) * 100) / 100;
+    message("Seringue rincée avec 0,5 mL de soude, jetés au bidon, puis remplie. Lis le volume de départ dans la loupe, au bord du joint noir.");
+  });
+  clic("bGoutte", uneGoutte);
+  clic("bFermer", function () { E().angle = 0; });
+  clic("bAgiter", function () {
+    var e = E();
+    if (exp === "ser") { e.secoue = 0.8; return; }
+    e.agit = !e.agit; afficher();
+    message(e.agit ? "L'agitateur tourne : chaque goutte se mélange aussitôt." : "Agitateur arrêté.");
+  });
+  clic("bEtalonner", function () {
+    var e = E();
+    if (!isFinite(e.aff)) return;
+    if (exp === "ph") {
+      if (e.sonde === "t7") { e.pm.decal -= e.aff - 7; message(e.stable ? "Étalonné sur le tampon pH 7." : "Étalonné alors que l'afficheur n'était pas stable : recommence quand il l'est."); }
+      else if (e.sonde === "t4") {
+        var ecart = 7 + e.pm.decal - e.aff;
+        if (ecart > 0.5) e.pm.pente *= 3 / ecart;
+        message(e.stable ? "Étalonné sur le tampon pH 4." : "Étalonné alors que l'afficheur n'était pas stable : recommence quand il l'est.");
+      } else message("Plonge d'abord la sonde dans un tampon : on étalonne sur une solution dont on connaît le pH.");
+    } else {
+      if (e.sonde === "kcl") { e.cm.k *= 1.413 / e.aff; message(e.stable ? "Étalonné sur la solution de KCl à 1,413 mS/cm." : "Étalonné alors que l'afficheur n'était pas stable : recommence quand il l'est."); }
+      else message("Plonge d'abord la cellule dans l'étalon de KCl.");
+    }
+  });
+  var inpLecture = document.getElementById("lecture");
+  clic("garder", function () {
+    var e = E();
+    if (!e.pret) { message("Il n'y a pas de bécher à titrer : clique sur « Nouveau titrage »."); return; }
+    var ind = INDIC[e.indic], coul = e._c ? nomCouleur(ind, fBase(ind, e._c.ph)) : "";
+    if (exp === "ind" || exp === "ser") {
+      var v = Sim.lire(inpLecture.value);
+      if (!isFinite(v)) { message("Écris d'abord ta lecture de la " + (exp === "ser" ? "seringue" : "burette") + ", faite dans la loupe."); inpLecture.focus(); return; }
+      if (exp === "ind") relInd.ajouter({ essai: e.essai, ind: ind.court, lu: v, coul: coul });
+      else relSer.ajouter({ essai: e.essai, n: e.gouttes, lu: v, coul: coul });
+      inpLecture.value = "";
+      return;
+    }
+    if (e.sonde !== "becher") { message("La sonde n'est pas dans le bécher."); return; }
+    if (!e.rempli && e.lev >= LVIDE) { message("La burette est vide : sa lecture n'a plus de sens."); return; }
+    if (e.lev < -0.02 || e.lev > 25.02) { message("Le niveau de la burette est hors de la graduation : on ne peut pas le lire."); return; }
+    lireInstruments(e);
+    var V = Sim.mesure(e.lev, { absolu: 0.01, resolution: 0.05 });
+    if (exp === "ph") {
+      var prec = relPh.lignes().slice(-1)[0];
+      relPh.ajouter({ essai: e.essai, V: V, ph: e.lu, pente: prec && prec.essai === e.essai && V > prec.V + 1e-9 ? (e.lu - prec.ph) / (V - prec.V) : NaN });
+    } else relCond.ajouter({ essai: e.essai, V: V, s: e.lu });
+    if (!e.stable) message("Mesure gardée, mais l'afficheur n'était pas stable : attends quelques secondes avant la suivante.");
+  });
+  clic("nouveau", function () {
+    var e = E();
+    if (e.pret && e.vb === 0 && e.nm === 0) { message("Le bécher est encore neuf : il n'y a rien à refaire."); return; }
+    var v = e.pret ? contenu(e) : 0;
+    e.bidon += v; e.chutes = []; preparerBecher(e);
+    message((v ? "Bécher titré jeté au bidon : + " + Sim.fr(v, 1) + " mL. " : "") + (exp === "ser" ? "Nouveau tube prêt. La seringue reste comme tu l'as laissée : lis son volume de départ."
+      : "Nouveau bécher prêt. La burette reste comme tu l'as laissée : note sa lecture de départ, ou refais le zéro."));
+  });
+  clic("vider", function () {
+    var e = E(), X = EXP[exp];
+    var v = (e.pret ? contenu(e) : 0) + e.recup + e.pendante + (X.burette ? (e.rempli ? LVIDE - e.lev : 0) : e.r);
+    if (v < 1e-6) { message("Tout est déjà vidé."); return; }
+    e.bidon += v; e.recup = 0; e.pret = false; e.pendante = 0; e.chutes = []; e.angle = 0;
+    if (X.burette) { e.rempli = false; e.lev = LVIDE; e.bulle = 0; e.videPointe = true; } else { e.r = 0; e.seringue = false; }
+    message("Tout est au bidon : + " + Sim.fr(v, 1) + " mL" + (X.burette ? ", dont la soude restée dans la burette." : ", dont la soude restée dans la seringue."));
+  });
+  document.getElementById("especes").addEventListener("change", function (ev) { document.getElementById("zoom").hidden = !ev.target.checked; });
+
+  /* ---------- Changer d'experience ---------- */
+  var cSonde = null;
+  var TEXTES = {
+    ind: { legende: "Tourne la clé du robinet du doigt : un peu, la soude tombe goutte à goutte ; beaucoup, elle coule en filet. Lis la burette dans la loupe, au bas du ménisque, l'œil au niveau du trait : vu de trop haut, un trait devient une ellipse.",
+      releve: "Écris ta lecture au départ, puis au premier virage qui tient après agitation, et garde-la. La couleur est notée pour toi.",
+      accueil: "Commence par rincer la burette à la soude, au-dessus de la récupération, puis remplis-la." },
+    ph: { legende: "40 mL d'eau ont été ajoutés au vinaigre pour que la sonde trempe : cela ne change pas le volume à l'équivalence. Étalonne le pH-mètre dans les tampons avant de mesurer.",
+      releve: "Garde une mesure tous les millilitres, puis tous les deux ou trois dixièmes près du saut. Attends que le pH-mètre soit stable. Le volume est lu pour toi, à la graduation près.",
+      accueil: "Rince et remplis la burette, puis étalonne le pH-mètre : sonde dans le tampon pH 7, puis dans le tampon pH 4." },
+    cond: { legende: "100 mL d'eau ont été ajoutés : le volume change peu pendant le titrage, les points s'alignent. Étalonne le conductimètre dans la solution de KCl.",
+      releve: "Garde une mesure tous les millilitres, bien au-delà de l'équivalence : il faut des points des deux côtés. Le volume est lu pour toi.",
+      accueil: "Rince et remplis la burette, puis étalonne le conductimètre dans la solution de KCl." },
+    ser: { legende: "Pousse le piston du doigt : une goutte tombe à peu près tous les 0,05 mL. La seringue indique le volume qui reste dedans : lis au bord du joint noir. Agite le tube après chaque goutte.",
+      releve: "Écris la lecture de la seringue au départ, puis au premier virage qui tient. Les gouttes sont comptées pour toi.",
+      accueil: "Rince et remplis la seringue, puis lis son volume de départ dans la loupe." }
+  };
+  var vus = {};
+  function changerExp(x) {
+    exp = x;
+    if (!etats[x]) etats[x] = etatNeuf(x);
+    var X = EXP[x], e = E();
+    function montrer(id, oui) { document.getElementById(id).hidden = !oui; }
+    ["bRincer", "bRemplir", "bEchanger", "bFermer"].forEach(function (id) { montrer(id, X.burette); });
+    montrer("bSeringue", !X.burette); montrer("rgSonde", !!X.sonde); montrer("rgLecture", x === "ind" || x === "ser");
+    A.ph.noeud.hidden = x !== "ph"; A.cond.noeud.hidden = x !== "cond"; A.gouttes.noeud.hidden = x !== "ser";
+    cPrelev.noeud.hidden = x === "ser";
+    Lc.robinet.style.display = X.burette ? "" : "none"; Lc.oeil.style.display = X.burette ? "" : "none"; Lc.piston.style.display = X.burette ? "none" : "";
+    var Z = document.getElementById("choixSonde"); Z.innerHTML = "";
+    if (X.sonde) cSonde = Sim.choix(Z, { label: x === "ph" ? "La sonde du pH-mètre est dans" : "La cellule du conductimètre est dans", valeur: e.sonde,
+      options: x === "ph" ? [{ val: "becher", texte: "le bécher" }, { val: "t7", texte: "le tampon pH 7" }, { val: "t4", texte: "le tampon pH 4" }]
+        : [{ val: "becher", texte: "le bécher" }, { val: "kcl", texte: "l'étalon KCl" }],
+      surChange: function (v) { E().sonde = v; } });
+    document.getElementById("legende").textContent = TEXTES[x].legende;
+    document.getElementById("consigneReleve").textContent = TEXTES[x].releve;
+    inpLecture.value = "";
+    poserDefis(); dessinerFond(); afficher(); dessiner();
+    message(vus[x] ? "L'expérience est comme tu l'as laissée." : TEXTES[x].accueil);
+    vus[x] = true;
+  }
+  var og = Sim.onglets("#experiences", function (id) { changerExp({ vueInd: "ind", vuePh: "ph", vueCond: "cond", vueSer: "ser" }[id]); });
+  var ancre = { "#B": "vueSer", "#seringue": "vueSer", "#ph": "vuePh", "#conductimetre": "vueCond", "#indicateur": "vueInd" }[location.hash];
+  if (ancre) og.montrer(ancre);
+  Sim.animer(pas);
+
+  /* Porte des essais : la page se pilote sans doigt, dans un navigateur qui ne dessine pas. */
+  window.titrage = { etat: E, exp: function () { return exp; }, reglage: reg, ve: function () { return veVrai(E()); }, compo: function () { return compo(E()); },
+    ouvrir: function (a) { E().angle = a; }, goutte: uneGoutte, pousser: function (v) { pousserSeringue(E(), v); }, dessiner: dessiner, lire: function () { lireInstruments(E()); return E().lu; } };
 })();
 </script>
 <footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation, et détaillé dans la fiche professeur du TP SIM-16.</footer>
