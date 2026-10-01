@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>La puissance en alternatif</title>
-<meta name="description" content="Branche un appareil sur le secteur. Observe la tension, l&#x27;intensité et leur produit à l&#x27;oscilloscope, ou mesure-les au voltmètre, à l&#x27;ampèremètre et au wattmètre, puis compare la puissance consommée au produit U × I.">
-<meta name="etiquette" content="Simulation · SIM-09">
+<title>Porteur diesel ou électrique</title>
+<meta name="description" content="Un porteur de 19 t sur le banc à rouleaux, puis en tournée de livraison. L&#x27;énergie du gazole se calcule par son PCI, celle de la batterie par E = U × Q : quelle part arrive vraiment aux roues ?">
 <style>
 /* Simulations des TP · feuille commune, inlinee dans chaque page par assembler-simulations.py.
    Palette du kit web (kit.css) : papier, graphite, un seul accent. Polices du systeme : la page
@@ -792,459 +791,642 @@ var Sim = (function () {
 <body>
 <div class="page">
 <header class="tete">
-<div class="surtitre">Physique-chimie · simulation du TP SIM-09</div>
-<h1>La puissance en alternatif</h1>
-<p class="chapeau">Branche un appareil sur le secteur. Observe la tension, l'intensité et leur produit à l'oscilloscope, ou mesure-les au voltmètre, à l'ampèremètre et au wattmètre, puis compare la puissance consommée au produit U × I.</p>
+<div class="surtitre">Physique-chimie · terminale CTRM, séquence 2</div>
+<h1>Porteur diesel ou électrique</h1>
+<p class="chapeau">Un porteur de 19 t sur le banc à rouleaux, puis en tournée de livraison. L'énergie du gazole se calcule par son PCI, celle de la batterie par E = U × Q : quelle part arrive vraiment aux roues ?</p>
 </header>
 <style>
-table.lecture{margin-top:2px}
-table.lecture th[scope=row]{text-align:left;font-size:.82rem;background:var(--carte2)}
-table.lecture td{font-family:ui-monospace,"Cascadia Mono",Consolas,"Roboto Mono",monospace;font-variant-numeric:tabular-nums}
-.pastille-u{color:var(--accent);font-weight:700}
-.pastille-i{color:var(--faux);font-weight:700}
-.pastille-p{color:var(--juste);font-weight:700}
-#releveA table.releve{font-size:.85rem}
-#releveA table.releve th,#releveA table.releve td{padding:4px 5px}
-@media (max-width:480px){
-  #releveA table.releve{font-size:.74rem}
-  #releveA table.releve th,#releveA table.releve td{padding:3px 2px}
-}
+:root{--route:#8a8f96;--orange-ht:#e07b22}
+.trait{fill:none;stroke:var(--encre);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.objet{fill:var(--carte);stroke:var(--encre);stroke-width:2;stroke-linejoin:round}
+.caisse{fill:var(--carte2);stroke:var(--encre);stroke-width:2;stroke-linejoin:round}
+.pneu{fill:#2b2c2f}
+.jante{fill:#a7adb4}
+.etiq{font-size:11px;fill:var(--encre2)}
+.etiq-titre{font-size:12px;font-weight:700;fill:var(--encre)}
+.lcd{fill:#cfd8cf;stroke:var(--encre2);stroke-width:1}
+.lcd-txt{font-family:ui-monospace,Consolas,monospace;font-size:13px;font-weight:600;fill:#1d2a1d}
+.lcd-unite{font-family:ui-monospace,Consolas,monospace;font-size:8px;fill:#1d2a1d}
+.fumee{fill:var(--encre2)}
+.carte [hidden]{display:none!important}
+.sous-titre{font-size:.75rem;font-weight:700;color:var(--encre2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:-6px}
+.case{display:flex;gap:8px;align-items:center;font-size:.92rem;font-weight:600}
+.case input{width:20px;height:20px;accent-color:var(--accent)}
+.fiche{font-size:.9rem;color:var(--encre2);margin:0}
+.fiche b{color:var(--encre)}
+#fluxBloc{background:var(--scene);border:1px solid var(--trait2);border-radius:var(--r)}
+#fluxBloc svg{display:block;width:100%;height:auto}
+.releve-zone > div{overflow-x:auto}
 </style>
 
+<nav class="onglets" id="experiences" aria-label="Expériences">
+  <button type="button" data-vue="vueBanc">Le banc à rouleaux</button>
+  <button type="button" data-vue="vueTour">La tournée de livraison</button>
+</nav>
+
 <div class="carte">
-  <h2><span class="num">1</span>Choisis l'appareil et mets-le en marche</h2>
-  <p class="consigne">L'appareil est branché sur le secteur : 230 V, 50 Hz. Les deux protocoles mesurent le même appareil.</p>
-  <div class="commandes">
-    <div id="reglages"></div>
-    <div class="rangee"><button type="button" class="bouton principal" id="marche">Mettre en marche</button></div>
-    <p class="alerte" id="etat">L'appareil est à l'arrêt.</p>
+  <h2><span class="num">1</span>Le camion</h2>
+  <p class="consigne">Un porteur de 19 t de PTAC. Changer un réglage remet les deux expériences au départ.</p>
+  <div class="commandes" id="reglages"></div>
+  <p class="fiche" id="fiche"></p>
+</div>
+
+<div class="plan">
+  <div class="carte">
+    <h2><span class="num">2</span><span id="titreScene">Sur le banc à rouleaux</span></h2>
+    <div class="scene">
+      <svg id="scene" viewBox="0 0 640 380" role="img" aria-label="Le porteur sur le banc à rouleaux ou sur la route"></svg>
+    </div>
+    <p class="legende" id="legende"></p>
+  </div>
+  <div class="carte">
+    <h2><span class="num">3</span>Roule et mesure</h2>
+    <div class="commandes">
+      <div id="cmdBanc" class="commandes"></div>
+      <div class="rangee">
+        <button type="button" class="bouton principal" id="bMarche">Lancer l'essai</button>
+        <button type="button" class="bouton" id="bZero">Compteurs à zéro</button>
+      </div>
+      <div class="afficheurs" id="instruments"></div>
+      <div id="vitesse"></div>
+      <label class="case"><input type="checkbox" id="voirFlux"> Montrer où va l'énergie</label>
+      <div id="fluxBloc" hidden><svg id="flux" viewBox="0 0 320 176" role="img" aria-label="Où va la puissance, en ce moment"></svg></div>
+      <p class="alerte" id="etat"></p>
+    </div>
   </div>
 </div>
 
-<nav class="onglets" id="onglets">
-  <button type="button" data-vue="vueA">Protocole A · l'oscilloscope</button>
-  <button type="button" data-vue="vueB">Protocole B · les appareils de mesure</button>
-</nav>
-
-<section class="vue" id="vueA">
-  <div class="plan">
-    <div class="carte">
-      <h2><span class="num">2</span>L'écran de l'oscilloscope</h2>
-      <div class="scene">
-        <svg id="ecran" viewBox="0 0 600 510" role="img" aria-label="L'écran de l'oscilloscope : la tension u, l'intensité i et leur produit p"></svg>
-      </div>
-      <p class="legende"><span class="pastille-u">Voie 1</span> : la tension u, prise par une sonde différentielle. <span class="pastille-i">Voie 2</span> : l'intensité i, prise par une pince de courant. <span class="pastille-p">M</span> : le produit p = u × i, calculé par l'oscilloscope. L'écran démarre quand u passe par zéro en montant.</p>
-    </div>
-    <div class="carte">
-      <h2><span class="num">3</span>Les réglages et les curseurs</h2>
-      <div class="commandes">
-        <div id="calibres"></div>
-        <div id="curseurs"></div>
-        <table class="releve lecture">
-          <thead><tr><th></th><th>t (ms)</th><th>u (V)</th><th>i (A)</th><th>p (W)</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Curseur 1</th><td id="l1t">—</td><td id="l1u">—</td><td id="l1i">—</td><td id="l1p">—</td></tr>
-            <tr><th scope="row">Curseur 2</th><td id="l2t">—</td><td id="l2u">—</td><td id="l2i">—</td><td id="l2p">—</td></tr>
-            <tr><th scope="row">Écart 2 − 1</th><td id="ldt">—</td><td colspan="3"></td></tr>
-          </tbody>
-        </table>
-        <div class="rangee">
-          <button type="button" class="bouton" id="garder1">Garder le curseur 1</button>
-          <button type="button" class="bouton" id="garder2">Garder le curseur 2</button>
-        </div>
-      </div>
-    </div>
+<div class="carte">
+  <h2><span class="num">4</span>Le relevé</h2>
+  <p class="consigne" id="consigneReleve"></p>
+  <div id="vueBanc" class="vue"></div>
+  <div id="vueTour" class="vue"></div>
+  <div class="rangee" style="margin-top:10px">
+    <button type="button" class="bouton" id="garder">Garder une mesure à la main</button>
   </div>
-  <div class="carte">
-    <h2><span class="num">4</span>Le relevé des curseurs</h2>
-    <p class="consigne">Place un curseur sur un point remarquable d'une courbe, puis garde sa lecture.</p>
-    <div id="releveA"></div>
-  </div>
-</section>
-
-<section class="vue" id="vueB">
-  <div class="plan">
-    <div class="carte">
-      <h2><span class="num">2</span>Le montage</h2>
-      <div class="scene">
-        <svg id="montage" viewBox="0 0 640 360" role="img" aria-label="L'appareil branché sur le secteur, avec un ampèremètre, un wattmètre et un voltmètre"></svg>
-      </div>
-      <p class="legende">L'ampèremètre et le circuit courant du wattmètre sont traversés par le courant de l'appareil ; le voltmètre et le circuit tension du wattmètre sont branchés entre la phase et le neutre.</p>
-    </div>
-    <div class="carte">
-      <h2><span class="num">3</span>Les instruments</h2>
-      <div class="commandes">
-        <div class="afficheurs" id="instruments"></div>
-        <button type="button" class="bouton" id="garderB">Garder cette mesure dans le tableau</button>
-      </div>
-    </div>
-  </div>
-  <div class="carte">
-    <h2><span class="num">4</span>Le relevé des instruments</h2>
-    <p class="consigne">Une ligne par appareil, en marche.</p>
-    <div id="releveB"></div>
-  </div>
-</section>
+</div>
 
 <div class="carte">
-  <h2><span class="num">5</span>Vérifie tes calculs</h2>
-  <p class="consigne">Pour l'appareil en marche, avec <b>tes</b> lectures. Au secteur, T = 20 ms.</p>
+  <h2><span class="num">5</span>Le résultat</h2>
+  <p class="consigne" id="consigneResultat"></p>
   <div class="commandes" id="defis"></div>
   <details class="modele">
     <summary>Ce que la simulation simplifie</summary>
     <ul>
-      <li>La tension du secteur est une sinusoïde parfaite de 230 V qui ne baisse pas quand on branche un appareil. En réalité, elle varie de quelques volts et sa forme est un peu aplatie.</li>
-      <li>Chaque appareil garde toujours la même puissance et le même déphasage : ni l'échauffement, ni la charge du moteur, ni l'usure ne les changent.</li>
-      <li>Le courant du ventilateur et du tube est pris parfaitement sinusoïdal. Le vrai est un peu déformé, surtout celui du tube.</li>
-      <li>Le chargeur est un pont de diodes suivi d'un condensateur, qui ne se remplit qu'au sommet de la tension : son courant arrive par à-coups.</li>
-      <li>Au laboratoire, on ne branche jamais le secteur sur un oscilloscope : il faut une sonde différentielle et une pince de courant, que la simulation suppose parfaites.</li>
+      <li>Le gazole : masse volumique 0,84 kg/L et PCI 11,9 kWh/kg, soit 42,8 MJ/kg. Le moteur consomme une part fixe, frottements et auxiliaires, plus une part proportionnelle à la puissance fournie : son rendement est mauvais à faible charge et approche 45 % à forte charge.</li>
+      <li>Les batteries suivent les ordres de grandeur des porteurs de 2025-2026 : blocs de 66 à 207 kWh, 150 à 170 Wh/kg, 600 ou 800 V. Leur tension baisse un peu avec la charge et sous fort courant ; la température n'est pas simulée.</li>
+      <li>Le moteur électrique et son électronique perdent 0,8 kW plus 5 % de la puissance ; les auxiliaires, compresseur et direction, prennent 1,5 kW en roulant. Au freinage, 85 % de l'effort passe par la récupération, dans la limite de 250 kW ; le reste chauffe les freins.</li>
+      <li>La route est sèche, sans vent ni circulation ; le conducteur anticipe toujours de la même façon. Une vraie tournée change d'un jour à l'autre, d'un conducteur à l'autre.</li>
+      <li>Le banc impose au camion la résistance de la route : roulement, air et pente choisie. L'énergie de la recharge n'est pas comptée : environ 10 % de plus sont pris au réseau.</li>
     </ul>
   </details>
 </div>
 
 <script>
 (function () {
-  /* ---------- Physique : le secteur et les appareils (fonctions pures) ---------- */
-  var U = 230, F = 50, T = 1 / F, W = 2 * Math.PI * F, UM = U * Math.SQRT2;
-  var APPAREILS = {
-    radiateur: { texte: "Radiateur", P: 1000, fp: 1 },
-    lampe: { texte: "Lampe à incandescence", court: "Lampe", P: 60, fp: 1 },
-    ventilateur: { texte: "Ventilateur", P: 45, fp: 0.80 },
-    tube: { texte: "Tube fluorescent", court: "Tube", P: 45, fp: 0.45 },
-    chargeur: { texte: "Chargeur de téléphone", court: "Chargeur", onde: true }
+  /* ---------- Les donnees ---------- */
+  var G = 9.81, RHO_AIR = 1.2, CRR = 0.0075, CDA = 6.0, PTAC = 19000;
+  var RHO_GAZ = 0.84, PCI = 11.9, KWH_L = RHO_GAZ * PCI;          // kWh par litre de gazole
+  var DIESEL = { vide: 8600, Pmax: 235000, P0: 20000, e: 0.46, tr: 0.93, reservoir: 200 };   // P0 : frottements et auxiliaires, 2 L/h au ralenti
+  var BLOCS = {
+    nmc: { texte: "Lithium NMC · blocs de 66 kWh", E: 66, whkg: 150, U: 600, n: [3, 6], defaut: 4 },
+    nca: { texte: "Lithium NCA · blocs de 94 kWh", E: 94, whkg: 170, U: 600, n: [2, 6], defaut: 4 },
+    lfp: { texte: "Lithium fer phosphate LFP · blocs de 207 kWh", E: 207, whkg: 160, U: 800, n: [1, 3], defaut: 2 }
   };
-
-  /* Le chargeur : pont de diodes, condensateur de 10 µF, résistance d'entrée de 22 Ω, et un
-     convertisseur qui tire 11,5 W sur le condensateur. On calcule le régime établi sur 40 périodes. */
-  function ondeChargeur() {
-    var n = 2000, dt = T / n, vc = UM * 0.9, Rs = 22, C = 10e-6, Vd = 1.6, Pdc = 11.5;
-    var onde = new Float64Array(n);
-    for (var c = 0; c < 40; c++) {
-      for (var k = 0; k < n; k++) {
-        var u = UM * Math.sin(W * k * dt), e = Math.abs(u) - Vd, i = e > vc ? (e - vc) / Rs : 0;
-        vc += (i - Pdc / vc) / C * dt;
-        if (c === 39) onde[k] = u >= 0 ? i : -i;
+  var ELEC = { chassis: 6450, Pmax: 370000, red: 0.97, regMax: 250000 };
+  var ROUTE = [
+    { nom: "dépôt et ville", L: 6, v: 50, p: 0, arrets: 3 },
+    { nom: "départementale", L: 22, v: 80, p: 1.0, arrets: 0 },
+    { nom: "village", L: 4, v: 50, p: 0, arrets: 3 },
+    { nom: "montée du col", L: 5, v: 60, p: 5, arrets: 0 },
+    { nom: "descente du col", L: 5, v: 60, p: -5, arrets: 0 },
+    { nom: "départementale", L: 25, v: 80, p: -0.9, arrets: 0 },
+    { nom: "zone commerciale", L: 8, v: 50, p: 0, arrets: 5 },
+    { nom: "retour au dépôt", L: 25, v: 80, p: 0, arrets: 0 }
+  ];
+  var ARRETS = [], POINTS = [], debutSeg = [], alt = [0];
+  (function () {
+    var x = 0;
+    ROUTE.forEach(function (s, i) {
+      debutSeg.push(x);
+      var liv = [];
+      for (var k = 0; k < s.arrets; k++) liv.push(x + s.L * (k + 0.5) / s.arrets);
+      liv.forEach(function (d) { ARRETS.push(d); POINTS.push({ d: d, livraison: true }); });
+      // en agglomeration, un feu tous les 1,1 km, loin des livraisons
+      if (s.v <= 50) for (var f = 0.7; f < s.L - 0.2; f += 1.1) {
+        var d = x + f;
+        if (liv.every(function (l) { return Math.abs(l - d) > 0.25; })) POINTS.push({ d: d, livraison: false });
       }
-    }
-    return onde;
+      x += s.L; alt.push(alt[i] + s.L * 10 * s.p);
+    });
+    POINTS.sort(function (a, b) { return a.d - b.d; });
+  })();
+  var NB_ARRETS = ARRETS.length, LONGUEUR = 100;
+  function segment(d) { for (var i = ROUTE.length - 1; i >= 0; i--) if (d >= debutSeg[i] - 1e-9) return i; return 0; }
+  function altitude(d) { var i = segment(Math.min(d, LONGUEUR - 1e-6)); return alt[i] + (d - debutSeg[i]) * 10 * ROUTE[i].p; }
+
+  /* ---------- Les reglages ---------- */
+  var reg = { camion: "diesel", charge: 8, chimie: "nca", blocs: 4, vitesse: 10 };
+  function batterie() { var b = BLOCS[reg.chimie]; return { E: b.E * reg.blocs, U: b.U, masse: b.E * reg.blocs * 1000 / b.whkg, whkg: b.whkg }; }
+  function masseVide() { return reg.camion === "diesel" ? DIESEL.vide : ELEC.chassis + batterie().masse; }
+  function chargeMax() { return (PTAC - masseVide()) / 1000; }
+
+  /* ---------- L'etat : un par experience ---------- */
+  var exp = "banc", etats = {};
+  function E() { return etats[exp]; }
+  function etatNeuf(x) {
+    var b = batterie();
+    return { exp: x, t: 0, v: 0, d: 0, marche: false, consigne: 50, pente: 0, phi: 0,
+      charge: Math.min(reg.charge, chargeMax()), chargeDepart: Math.min(reg.charge, chargeMax()), arret: -1, finArret: 0, faits: 0, livraisons: 0, fini: false,
+      // compteurs depuis la remise a zero
+      z: { t: 0, d: 0, Eroues: 0, litres: 0, Ah: 0, Eterm: 0, Esoc: 0 },
+      litres: 0, reservoir: DIESEL.reservoir, soc: 1, U: b.U, I: 0, Pfuel: 0, flux: {}, fumees: [], moteur: false };
   }
-  var ONDE = ondeChargeur();
-
-  /* Entrées : l'appareil et son état. Sorties : les grandeurs vraies et i(t). */
-  function grandeurs(cle, marche) {
-    var a = APPAREILS[cle];
-    if (!marche) return { U: U, I: 0, P: 0, phi: 0, i: function () { return 0; } };
-    if (a.onde) {
-      var n = ONDE.length, s2 = 0, sp = 0;
-      for (var k = 0; k < n; k++) { var u = UM * Math.sin(W * k * T / n); s2 += ONDE[k] * ONDE[k]; sp += u * ONDE[k]; }
-      return { U: U, I: Math.sqrt(s2 / n), P: sp / n, phi: null,
-        i: function (t) { var x = ((t % T) + T) % T / T * n, k0 = Math.floor(x) % n, k1 = (k0 + 1) % n, r = x - Math.floor(x); return ONDE[k0] * (1 - r) + ONDE[k1] * r; } };
-    }
-    var I = a.P / (U * a.fp), phi = Math.acos(a.fp);
-    return { U: U, I: I, P: a.P, phi: phi, i: function (t) { return I * Math.SQRT2 * Math.sin(W * t - phi); } };
+  function toutRemettre(t) {
+    etats = {}; etats.banc = etatNeuf("banc"); etats.tour = etatNeuf("tour");
+    Object.keys(REL).forEach(function (k) { if (ENR[k].actif()) ENR[k].arreter(); });
+    poserFiche(); poserCommandes(); poserDefis(); afficher(); message(t);
   }
-  function u(t) { return UM * Math.sin(W * t); }
 
-  var etat = { app: "lampe", marche: false, vue: "vueA", cu: 100, ci: 0.2, cp: 50, base: 2, t1: 5, t2: 10 };
-  var G = grandeurs(etat.app, false);
+  /* ---------- La chaine d'energie ---------- */
+  function masse(e) { return masseVide() + e.charge * 1000; }
+  function forceRoute(m, v, pente) { var a = Math.atan(pente / 100); return m * G * (CRR * Math.cos(a) + Math.sin(a)) + 0.5 * RHO_AIR * CDA * v * v; }
+  /* Pw : puissance demandee aux roues (W), positive en traction, negative au freinage. */
+  function energie(e, Pw, dt, auRepos) {
+    var f = { entree: 0, roues: Math.max(0, Pw), freins: 0, chaleur: 0, aux: 0, recup: 0 };
+    if (reg.camion === "diesel") {
+      var Pfuel = 0;
+      if (e.moteur) {
+        if (Pw > 0) Pfuel = DIESEL.P0 + Pw / DIESEL.tr / DIESEL.e;
+        else if (auRepos) Pfuel = DIESEL.P0;                 // ralenti
+        else Pfuel = 0;                                      // frein moteur : injection coupee
+      }
+      if (Pw < 0) f.freins = -Pw;
+      e.Pfuel = Pfuel;
+      var dl = Pfuel * dt / 3.6e6 / KWH_L;
+      e.litres += dl; e.z.litres += dl; e.reservoir = Math.max(0, e.reservoir - dl);
+      f.entree = Pfuel; f.chaleur = Math.max(0, Pfuel - Math.max(0, Pw));
+    } else {
+      var b = batterie(), R = b.U === 800 ? 0.075 : 0.05, Paux = e.moteur ? 1500 : 300, Pbat, pertes = 0;
+      if (Pw >= 0) { var Pm = Pw / ELEC.red; pertes = (Pw > 0 ? 800 : 0) + 0.05 * Pm + Pm - Pw; Pbat = Pw + pertes + Paux; }
+      else {
+        var reg2 = Math.min(-Pw * 0.85, ELEC.regMax); f.freins = -Pw - reg2;
+        var Pe = reg2 * ELEC.red - 800 - 0.05 * reg2; if (Pe < 0) Pe = 0;
+        pertes = reg2 - Pe; f.recup = Pe; Pbat = Paux - Pe;
+      }
+      var U0 = b.U * (0.93 + 0.1 * e.soc), disc = U0 * U0 - 4 * R * Pbat;
+      var I = (U0 - Math.sqrt(Math.max(0, disc))) / (2 * R), U = U0 - R * I;
+      e.U = U; e.I = I;
+      var dAh = I * dt / 3600, dEt = U * I * dt, dEs = U0 * I * dt;
+      e.z.Ah += dAh; e.z.Eterm += dEt; e.z.Esoc += dEs;
+      e.soc = Math.max(0, Math.min(1, e.soc - dEs / (b.E * 3.6e6)));
+      f.entree = Math.max(0, Pbat); f.chaleur = pertes + R * I * I; f.aux = Paux;
+    }
+    if (Pw > 0) e.z.Eroues += Pw * dt;
+    e.flux = f;
+  }
 
-  /* ---------- Réglages ---------- */
-  var S = Sim.svg;
+  /* ---------- Le banc a rouleaux ---------- */
+  function pasBanc(e, dt) {
+    var m = masse(e), vc = e.consigne / 3.6, a;
+    if (e.marche) a = Sim.borne((vc - e.v) / 2, -1, 0.5);
+    else a = e.v > 0 ? -1 : 0;
+    var F = forceRoute(m, e.v, e.pente) + 1.05 * m * a, Pw = F * e.v;
+    var Pmax = reg.camion === "diesel" ? DIESEL.Pmax * DIESEL.tr : ELEC.Pmax;
+    if (Pw > Pmax) { Pw = Pmax; a = (Pmax / Math.max(e.v, 0.5) - forceRoute(m, e.v, e.pente)) / (1.05 * m); }
+    e.v = Math.max(0, e.v + a * dt);
+    if (!e.marche && e.v < 0.05) e.v = 0;
+    energie(e, Pw, dt, e.v < 0.1);
+    e.t += dt; e.z.t += dt; e.d += e.v * dt / 1000; e.z.d += e.v * dt / 1000;
+    e.phi += e.v * dt / 0.5;
+  }
+
+  /* ---------- La tournee ---------- */
+  function vCible(e) {
+    var i = segment(e.d), lim = ROUTE[i].v / 3.6, c = lim;
+    var k = e.faits;                                         // le prochain arret, feu ou livraison : on vise de s'y poser
+    if (k < POINTS.length) c = Math.min(c, Math.sqrt(2 * 0.9 * Math.max(0, (POINTS[k].d - e.d) * 1000 - 2)) + 0.8);
+    c = Math.min(c, Math.sqrt(2 * 0.9 * Math.max(0, (LONGUEUR - e.d) * 1000 - 2)) + 0.8);
+    for (var j = i + 1; j < ROUTE.length; j++) {
+      var dist = (debutSeg[j] - e.d) * 1000; if (dist > 800) break;
+      c = Math.min(c, Math.sqrt(Math.pow(ROUTE[j].v / 3.6, 2) + 2 * 0.7 * Math.max(0, dist)));
+    }
+    return c;
+  }
+  function pasTour(e, dt) {
+    if (e.fini) { energie(e, 0, dt, true); e.t += dt; return; }
+    var m = masse(e), pente = ROUTE[segment(e.d)].p;
+    if (e.arret >= 0) {                                       // au feu, ou a quai pour livrer
+      var liv = POINTS[e.arret].livraison;
+      e.moteur = !liv || e.t - e.debutArret < 60;             // a quai, le moteur tourne une minute, puis on le coupe
+      energie(e, 0, dt, true);
+      e.t += dt; e.z.t += dt;
+      if (e.t >= e.finArret) {
+        if (liv) { e.charge = Math.max(0, e.charge - e.chargeDepart / NB_ARRETS); e.livraisons++; }
+        e.faits++; e.arret = -1; e.moteur = true;
+      }
+      return;
+    }
+    if (!e.marche) { energie(e, 0, dt, true); return; }
+    e.moteur = true;
+    var vc = vCible(e), a = Sim.borne((vc - e.v) / 1.5, -1.2, 0.6);
+    var F = forceRoute(m, e.v, pente) + 1.05 * m * a, Pw = F * e.v;
+    var Pmax = reg.camion === "diesel" ? DIESEL.Pmax * DIESEL.tr : ELEC.Pmax;
+    if (Pw > Pmax) { Pw = Pmax; a = (Pmax / Math.max(e.v, 0.5) - forceRoute(m, e.v, pente)) / (1.05 * m); }
+    e.v = Math.max(0, e.v + a * dt);
+    energie(e, Pw, dt, e.v < 0.1);
+    var dd = e.v * dt / 1000;
+    e.d += dd; e.z.d += dd; e.t += dt; e.z.t += dt; e.phi += e.v * dt / 0.5;
+    var k = e.faits;
+    if (k < POINTS.length && e.d >= POINTS[k].d - 0.005) {
+      e.v = 0; e.d = Math.max(e.d, POINTS[k].d); e.arret = k; e.debutArret = e.t; e.finArret = e.t + (POINTS[k].livraison ? 600 : 30);
+      if (POINTS[k].livraison) message("Livraison " + (e.livraisons + 1) + " sur " + NB_ARRETS + " : dix minutes à quai, moteur coupé après une minute.");
+    }
+    if (e.d >= LONGUEUR - 0.005) {
+      e.d = LONGUEUR; e.v = 0; e.fini = true; e.marche = false; e.moteur = false;
+      message("Tournée terminée : 100 km, " + NB_ARRETS + " livraisons. Relève les compteurs.");
+    }
+  }
+
+  /* ---------- Lectures des instruments ---------- */
+  function kmh(e) { return Sim.mesure(e.v * 3.6, { absolu: 0.15, resolution: 0.1 }); }
+  function lectures(e) {
+    var l = { v: kmh(e), Proues: Sim.mesure(e.flux.roues / 1000, { relatif: 0.005, resolution: 0.1 }), Eroues: Math.floor(e.z.Eroues / 3600) / 1000 };
+    if (reg.camion === "diesel") {
+      l.debit = Sim.mesure(e.Pfuel / 1000 / KWH_L, { relatif: 0.005, resolution: 0.01 });
+      l.litres = Math.floor(e.z.litres * 100) / 100;
+      l.jauge = Math.round(100 * e.reservoir / DIESEL.reservoir);
+    } else {
+      l.U = Sim.mesure(e.U, { absolu: 0.3, resolution: 0.1 }); l.I = Sim.mesure(e.I, { absolu: 0.3, resolution: 0.1 });
+      l.Ah = Math.round(e.z.Ah * 100) / 100; l.kWh = Math.round(e.z.Eterm / 3600) / 1000; l.soc = Math.round(1000 * e.soc) / 10;
+    }
+    return l;
+  }
+  function duree(s) { s = Math.floor(s); var h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, r = s % 60; return (h ? h + " h " : "") + m + " min " + (r < 10 ? "0" : "") + r + " s"; }
+
+  /* ---------- Les reglages, rebatis selon le camion ---------- */
+  function message(t) { if (t) document.getElementById("etat").textContent = t; }
+  var R = document.getElementById("reglages"), cCharge = null;
+  function poserReglages() {
+    R.innerHTML = "";
+    Sim.choix(R, { label: "Le porteur", valeur: reg.camion, options: [{ val: "diesel", texte: "Diesel · 235 kW" }, { val: "electrique", texte: "Électrique · 370 kW" }],
+      surChange: function (v) { reg.camion = v; poserReglages(); toutRemettre(v === "diesel" ? "Porteur diesel : réservoir de 200 L, plein." : "Porteur électrique : batterie chargée à 100 %."); } });
+    if (reg.camion === "electrique") {
+      Sim.choix(R, { label: "La batterie de traction", valeur: reg.chimie, options: Object.keys(BLOCS).map(function (k) { return { val: k, texte: BLOCS[k].texte }; }),
+        surChange: function (v) { reg.chimie = v; reg.blocs = BLOCS[v].defaut; poserReglages(); toutRemettre("Nouvelle batterie montée, chargée à 100 %."); } });
+      var b = BLOCS[reg.chimie];
+      Sim.curseur(R, { label: "Nombre de blocs", min: b.n[0], max: b.n[1], pas: 1, valeur: reg.blocs, dec: 0,
+        surChange: function (v) { reg.blocs = v; if (reg.charge > chargeMax()) reg.charge = Math.floor(chargeMax() * 2) / 2; poserReglages(); toutRemettre("Batterie de " + (b.E * v) + " kWh, chargée à 100 %."); } });
+    }
+    var cm = Math.floor(chargeMax() * 2) / 2;
+    if (reg.charge > cm) reg.charge = cm;
+    cCharge = Sim.curseur(R, { label: "Charge utile au départ", min: 0, max: cm, pas: 0.5, valeur: reg.charge, unite: "t", dec: 1,
+      surChange: function (v) { reg.charge = v; toutRemettre("Chargé de " + Sim.fr(v, 1) + " t au départ."); } });
+  }
+  function poserFiche() {
+    var t;
+    if (reg.camion === "diesel") t = "<b>Diesel</b> · 7,7 L, 235 kW · réservoir de 200 L · masse à vide <b>" + Sim.fr(DIESEL.vide, 0) + " kg</b> · gazole : <b>0,84 kg/L</b>, PCI <b>11,9 kWh/kg</b>.";
+    else {
+      var b = batterie(), B = BLOCS[reg.chimie];
+      t = "<b>Électrique</b> · 2 moteurs, 370 kW · batterie <b>" + reg.blocs + " × " + B.E + " kWh = " + b.E + " kWh</b> sous <b>" + b.U + " V</b>, " + b.whkg + " Wh/kg · châssis sans batterie <b>" + Sim.fr(ELEC.chassis, 0) + " kg</b>.";
+    }
+    document.getElementById("fiche").innerHTML = t + " Charge utile possible : <b>" + Sim.fr(chargeMax(), 1) + " t</b>.";
+  }
+
+  /* ---------- Les commandes de la carte 3 ---------- */
+  var cConsigne = null, cPente = null;
+  function poserCommandes() {
+    var Z = document.getElementById("cmdBanc"), e = E();
+    Z.innerHTML = ""; cConsigne = cPente = null;
+    if (exp === "banc") {
+      cConsigne = Sim.curseur(Z, { label: "Régulateur de vitesse", min: 20, max: 90, pas: 5, valeur: e.consigne, unite: "km/h", dec: 0, surChange: function (v) { E().consigne = v; } });
+      cPente = Sim.curseur(Z, { label: "Pente simulée par le banc", min: 0, max: 6, pas: 0.5, valeur: e.pente, unite: "%", dec: 1, surChange: function (v) { E().pente = v; } });
+    }
+    poserInstruments();
+  }
+  var I = document.getElementById("instruments"), A = {};
+  function poserInstruments() {
+    I.innerHTML = ""; A = {};
+    var d = reg.camion === "diesel";
+    if (exp === "banc") {
+      A.v = Sim.afficheur(I, { nom: "Banc · vitesse", unite: "km/h", dec: 1 });
+      A.P = Sim.afficheur(I, { nom: "Banc · puissance aux roues", unite: "kW", dec: 1 });
+      A.Er = Sim.afficheur(I, { nom: "Banc · énergie aux roues", unite: "kWh", dec: 3 });
+    } else {
+      A.v = Sim.afficheur(I, { nom: "Vitesse", unite: "km/h", dec: 1 });
+      A.d = Sim.afficheur(I, { nom: "Distance", unite: "km", dec: 1 });
+    }
+    if (d) {
+      A.debit = Sim.afficheur(I, { nom: "Débitmètre · gazole", unite: "L/h", dec: 2 });
+      A.litres = Sim.afficheur(I, { nom: "Gazole consommé", unite: "L", dec: 2 });
+      if (exp === "tour") A.jauge = Sim.afficheur(I, { nom: "Jauge du réservoir", unite: "%", dec: 0 });
+    } else {
+      A.U = Sim.afficheur(I, { nom: "Batterie · tension U", unite: "V", dec: 1 });
+      A.I = Sim.afficheur(I, { nom: "Batterie · intensité I", unite: "A", dec: 1 });
+      A.Ah = Sim.afficheur(I, { nom: "Batterie · compteur Q", unite: "A·h", dec: 2 });
+      if (exp === "tour") { A.kWh = Sim.afficheur(I, { nom: "Énergie consommée", unite: "kWh", dec: 1 }); A.soc = Sim.afficheur(I, { nom: "Charge de la batterie", unite: "%", dec: 1 }); }
+    }
+    A.t = Sim.afficheur(I, { nom: exp === "banc" ? "Durée de l'essai" : "Heure de tournée", unite: "", dec: 0 });
+  }
+  function afficher() {
+    var e = E(), l = lectures(e);
+    if (A.v) A.v.set(l.v, 1);
+    if (A.P) A.P.set(l.Proues, 1);
+    if (A.Er) A.Er.set(l.Eroues, 3);
+    if (A.d) A.d.set(Math.floor(e.d * 10) / 10, 1);
+    if (A.debit) A.debit.set(l.debit, 2);
+    if (A.litres) A.litres.set(l.litres, 2);
+    if (A.jauge) A.jauge.set(l.jauge, 0);
+    if (A.U) A.U.set(l.U, 1);
+    if (A.I) A.I.set(l.I, 1);
+    if (A.Ah) A.Ah.set(l.Ah, 2);
+    if (A.kWh) A.kWh.set(l.kWh, 1);
+    if (A.soc) A.soc.set(l.soc, 1);
+    if (A.t) A.t.set(duree(e.z.t));
+    var b = document.getElementById("bMarche");
+    b.textContent = exp === "banc" ? (e.marche ? "Arrêter l'essai" : "Lancer l'essai") : (e.fini ? "Tournée terminée" : e.marche ? "Pause" : e.t > 0 ? "Reprendre la tournée" : "Partir en tournée");
+    b.disabled = exp === "tour" && e.fini;
+  }
+
+  /* ---------- Les releves et leurs enregistreurs ---------- */
+  var COLS = {
+    banc: [{ cle: "camion", titre: "Camion" }, { cle: "t", titre: "t", unite: "min", dec: 2 }, { cle: "v", titre: "v", unite: "km/h", dec: 1 }, { cle: "p", titre: "Pente", unite: "%", dec: 1 },
+      { cle: "Er", titre: "E roues", unite: "kWh", dec: 3 }, { cle: "c1", titre: "Gazole (L) · Q (A·h)", dec: 2 }, { cle: "c2", titre: "U", unite: "V", dec: 1 }],
+    tour: [{ cle: "camion", titre: "Camion" }, { cle: "t", titre: "t", unite: "min", dec: 1 }, { cle: "d", titre: "d", unite: "km", dec: 1 },
+      { cle: "c", titre: "Gazole (L) · énergie (kWh)", dec: 2 }, { cle: "niveau", titre: "Jauge · batterie", unite: "%", dec: 1 }]
+  };
+  var REL = {}, ENR = {};
+  function ligne(x, tMin) {
+    var e = etats[x], l = lectures(e), d = reg.camion === "diesel";
+    if (x === "banc") return { camion: d ? "diesel" : "électrique", t: tMin, v: l.v, p: e.pente, Er: l.Eroues, c1: d ? l.litres : l.Ah, c2: d ? NaN : l.U };
+    return { camion: d ? "diesel" : "électrique", t: tMin, d: Math.floor(e.d * 10) / 10, c: d ? l.litres : l.kWh, niveau: d ? l.jauge : l.soc };
+  }
+  ["banc", "tour"].forEach(function (x) {
+    var V = document.getElementById(x === "banc" ? "vueBanc" : "vueTour"), haut = Sim.el("div"), bas = Sim.el("div");
+    V.appendChild(haut); V.appendChild(bas);
+    var o = { colonnes: COLS[x], surChange: function () { if (ENR[x]) ENR[x].majInfo(); } };
+    if (x === "tour") { o.graphe = { x: "d", y: "niveau", xmin: 0, xmax: 100, ymin: 0, ymax: 100, pasY: 10, titreX: "d (km)", titreY: "niveau (%)", largeur: 620, hauteur: 320 }; }
+    REL[x] = Sim.releve(bas, o);
+    ENR[x] = Sim.enregistreur(haut, REL[x], {
+      periodes: x === "banc" ? [{ val: 30, texte: "30 s" }, { val: 60, texte: "1 min" }, { val: 120, texte: "2 min" }] : [{ val: 60, texte: "1 min" }, { val: 300, texte: "5 min" }, { val: 600, texte: "10 min" }],
+      valeur: x === "banc" ? 60 : 300,
+      lire: function (tPlan, tDebut) { return ligne(x, (tPlan - tDebut) / 60); }
+    });
+  });
+  document.getElementById("garder").addEventListener("click", function () { REL[exp].ajouter(ligne(exp, E().z.t / 60)); message("Mesure gardée à la main : son temps est celui des compteurs."); });
+
+  /* ---------- Les verifications : juste ou pas encore, jamais la valeur ---------- */
+  function poserDefis() {
+    var D = document.getElementById("defis"), d = reg.camion === "diesel";
+    D.innerHTML = "";
+    if (exp === "banc") {
+      if (d) {
+        Sim.defi(D, { question: "Énergie contenue dans le gazole consommé depuis la remise à zéro, E = V × ρ × PCI :", unite: "kWh",
+          attendu: function () { return E().z.litres * KWH_L; }, tolerance: 0.03, toleranceAbsolue: 0.01,
+          methode: "V en litres, ρ = 0,84 kg/L donne la masse en kg, puis × 11,9 kWh/kg." });
+        Sim.defi(D, { question: "Rendement du porteur diesel, η = E<sub>roues</sub> ÷ E<sub>gazole</sub>, en pourcentage :", unite: "%",
+          attendu: function () { var e = E(); return e.z.litres > 0.005 ? 100 * e.z.Eroues / 3.6e6 / (e.z.litres * KWH_L) : NaN; }, tolerance: 0, toleranceAbsolue: 2,
+          methode: "Les deux énergies en kWh ; remets les compteurs à zéro une fois la vitesse stable." });
+      } else {
+        Sim.defi(D, { question: "Énergie fournie par la batterie depuis la remise à zéro, E = U × Q :", unite: "kWh",
+          attendu: function () { return E().z.Eterm / 3.6e6; }, tolerance: 0.03, toleranceAbsolue: 0.01,
+          methode: "Q en ampères-heures, U en volts : E en wattheures, puis ÷ 1 000." });
+        Sim.defi(D, { question: "Rendement du porteur électrique, η = E<sub>roues</sub> ÷ E<sub>batterie</sub>, en pourcentage :", unite: "%",
+          attendu: function () { var e = E(); return e.z.Eterm > 3600 ? 100 * e.z.Eroues / e.z.Eterm : NaN; }, tolerance: 0, toleranceAbsolue: 2,
+          methode: "Les deux énergies dans la même unité ; remets les compteurs à zéro une fois la vitesse stable." });
+      }
+      document.getElementById("consigneResultat").innerHTML = "Lance un essai, attends que la vitesse soit stable, <b>remets les compteurs à zéro</b>, puis laisse rouler quelques minutes. Gazole : ρ = 0,84 kg/L, PCI = 11,9 kWh/kg.";
+    } else {
+      if (d) {
+        Sim.defi(D, { question: "Consommation du porteur diesel, en litres aux 100 km :", unite: "L/100 km",
+          attendu: function () { var e = E(); return e.z.d > 5 ? 100 * e.z.litres / e.z.d : NaN; }, tolerance: 0.03,
+          methode: "Gazole consommé ÷ distance parcourue × 100." });
+        Sim.defi(D, { question: "Énergie consommée aux 100 km, en kWh, E = V × ρ × PCI :", unite: "kWh",
+          attendu: function () { var e = E(); return e.z.d > 5 ? 100 * e.z.litres * KWH_L / e.z.d : NaN; }, tolerance: 0.03,
+          methode: "Les litres aux 100 km × 0,84 kg/L × 11,9 kWh/kg." });
+        Sim.defi(D, { question: "Autonomie avec le réservoir plein de 200 L, à cette consommation :", unite: "km",
+          attendu: function () { var e = E(); return e.z.litres > 0.1 ? 200 * e.z.d / e.z.litres : NaN; }, tolerance: 0.04,
+          methode: "200 L ÷ la consommation aux 100 km × 100." });
+      } else {
+        Sim.defi(D, { question: "Consommation du porteur électrique, en kWh aux 100 km :", unite: "kWh/100 km",
+          attendu: function () { var e = E(); return e.z.d > 5 ? 100 * e.z.Eterm / 3.6e6 / e.z.d : NaN; }, tolerance: 0.03,
+          methode: "Énergie consommée ÷ distance parcourue × 100." });
+        Sim.defi(D, { question: "Capacité de la batterie, Q = E ÷ U, avec son énergie et sa tension nominales :", unite: "A·h",
+          attendu: function () { var b = batterie(); return b.E * 1000 / b.U; }, tolerance: 0.02,
+          methode: "E en wattheures : kWh × 1 000, puis ÷ U en volts." });
+        Sim.defi(D, { question: "Masse de la batterie, m = E ÷ énergie par kilogramme :", unite: "kg",
+          attendu: function () { return batterie().masse; }, tolerance: 0.02,
+          methode: "E en wattheures ÷ les Wh/kg de la batterie." });
+        Sim.defi(D, { question: "Autonomie en gardant 10 % de réserve, à cette consommation :", unite: "km",
+          attendu: function () { var e = E(); return e.z.Eterm > 3.6e6 ? 0.9 * batterie().E / (e.z.Eterm / 3.6e6 / e.z.d) : NaN; }, tolerance: 0.05,
+          methode: "90 % de l'énergie nominale ÷ la consommation aux 100 km × 100." });
+      }
+      document.getElementById("consigneResultat").innerHTML = "Fais la tournée entière, puis calcule avec <b>tes</b> relevés. Gazole : ρ = 0,84 kg/L, PCI = 11,9 kWh/kg.";
+    }
+  }
+
+  /* ---------- La scene ---------- */
+  var S = document.getElementById("scene"), svg = Sim.svg;
   function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-  var cApp = Sim.choix("#reglages", { label: "L'appareil branché", valeur: etat.app,
-    options: Object.keys(APPAREILS).map(function (k) { return { val: k, texte: APPAREILS[k].texte }; }),
-    surChange: function (v) { etat.app = v; maj(true); } });
-  var bMarche = document.getElementById("marche");
-  bMarche.addEventListener("click", function () { etat.marche = !etat.marche; maj(true); });
-
-  var cCu = Sim.choix("#calibres", { label: "Voie 1 · u (V/div)", valeur: etat.cu,
-    options: [50, 100, 200].map(function (v) { return { val: v, texte: Sim.fr(v, 0) }; }), surChange: function (v) { etat.cu = v; ecran(); } });
-  var cCi = Sim.choix("#calibres", { label: "Voie 2 · i (A/div)", valeur: etat.ci,
-    options: [0.05, 0.1, 0.2, 0.5, 1, 2].map(function (v) { return { val: v, texte: Sim.fr(v, v < 0.1 ? 2 : v < 1 ? 1 : 0) }; }), surChange: function (v) { etat.ci = v; ecran(); } });
-  var cCp = Sim.choix("#calibres", { label: "M · p (W/div)", valeur: etat.cp,
-    options: [5, 10, 20, 50, 100, 200, 500, 1000].map(function (v) { return { val: v, texte: Sim.fr(v, 0) }; }), surChange: function (v) { etat.cp = v; ecran(); } });
-  var cBase = Sim.choix("#calibres", { label: "Base de temps (ms/div)", valeur: etat.base,
-    options: [1, 2, 5].map(function (v) { return { val: v, texte: Sim.fr(v, 0) }; }), surChange: function (v) { etat.base = v; bornerCurseurs(); ecran(); } });
-  document.getElementById("calibres").className = "commandes";
-
-  var k1 = Sim.curseur("#curseurs", { label: "Curseur 1", min: 0, max: 20, pas: 0.05, valeur: etat.t1, unite: "ms", dec: 2, surChange: function (v) { etat.t1 = v; lire(); ecran(); } });
-  var k2 = Sim.curseur("#curseurs", { label: "Curseur 2", min: 0, max: 20, pas: 0.05, valeur: etat.t2, unite: "ms", dec: 2, surChange: function (v) { etat.t2 = v; lire(); ecran(); } });
-  document.getElementById("curseurs").className = "commandes";
-  function bornerCurseurs() {
-    var tmax = 10 * etat.base;
-    [[k1, "t1"], [k2, "t2"]].forEach(function (x) {
-      var inp = x[0].noeud.querySelector("input"), bornes = x[0].noeud.querySelectorAll(".bornes span");
-      inp.max = tmax; bornes[1].textContent = Sim.fr(tmax, 0) + " ms";
-      if (etat[x[1]] > tmax) { etat[x[1]] = tmax; }
-      x[0].set(etat[x[1]], true);
-    });
-    lire();
+  function texte(p, x, y, t, o) { o = o || {}; return svg("text", { x: x, y: y, "class": o.classe || "etiq", "text-anchor": o.ancre || "start", texte: t }, p); }
+  function roue(G, x, y, r, phi) {
+    svg("circle", { cx: x, cy: y, r: r, "class": "pneu" }, G);
+    svg("circle", { cx: x, cy: y, r: r * 0.55, "class": "jante" }, G);
+    for (var k = 0; k < 3; k++) { var a = phi + k * 2.094; svg("line", { x1: x, y1: y, x2: x + r * 0.5 * Math.cos(a), y2: y + r * 0.5 * Math.sin(a), stroke: "#5d6166", "stroke-width": 2 }, G); }
   }
-
-  /* ---------- Lectures des instruments : bruitées et arrondies ---------- */
-  function resI(I) { return Math.abs(I) < 1 ? 0.001 : 0.01; }
-  function resP(P) { return Math.abs(P) < 100 ? 0.1 : 1; }
-  function lectureU() { return Sim.mesure(G.U, { relatif: 0.001, resolution: 0.1 }); }
-  function lectureI() { return G.I > 0 ? Sim.mesure(G.I, { relatif: 0.004, resolution: resI(G.I) }) : 0; }
-  function lectureP() { return G.P > 0 ? Sim.mesure(G.P, { relatif: 0.005, resolution: resP(G.P) }) : 0; }
-  function lecturePoint(t) {
-    var uu = u(t / 1000), ii = G.i(t / 1000), pp = uu * ii, Imax = G.I * Math.SQRT2 || 0.1;
-    return {
-      t: t,
-      u: Sim.mesure(uu, { relatif: 0.004, absolu: 0.6, resolution: 1 }),
-      i: Sim.mesure(ii, { relatif: 0.004, absolu: Imax * 0.002, resolution: resI(Imax) }),
-      p: Sim.mesure(pp, { relatif: 0.004, absolu: UM * Imax * 0.001, resolution: resP(UM * Imax) })
-    };
-  }
-  var L1 = null, L2 = null;
-  function td(id, v, dec) { document.getElementById(id).textContent = Sim.fr(v, dec); }
-  function lire() {
-    L1 = lecturePoint(etat.t1); L2 = lecturePoint(etat.t2);
-    [[L1, "l1"], [L2, "l2"]].forEach(function (x) {
-      var L = x[0], p = x[1], Imax = G.I * Math.SQRT2;
-      td(p + "t", L.t, 2); td(p + "u", L.u, 0); td(p + "i", L.i, Imax < 1 ? 3 : 2); td(p + "p", L.p, UM * Imax < 100 ? 1 : 0);
-    });
-    td("ldt", etat.t2 - etat.t1, 2);
-  }
-
-  /* ---------- L'écran de l'oscilloscope ---------- */
-  var E = document.getElementById("ecran");
-  var X0 = 40, Y0 = 50, LX = 520, LY = 416, DX = LX / 10, DY = LY / 8, YC = Y0 + LY / 2;
-  function ecran() {
-    E.innerHTML = "";
-    var fond = css("--carte"), grille = css("--trait2"), axe = css("--trait"), encre = css("--encre"), encre2 = css("--encre2");
-    var cU = css("--accent"), cI = css("--faux"), cP = css("--juste");
-    S("rect", { x: X0, y: Y0, width: LX, height: LY, fill: fond, stroke: encre2, "stroke-width": 1.5 }, E);
-    for (var k = 1; k < 10; k++) S("line", { x1: X0 + k * DX, y1: Y0, x2: X0 + k * DX, y2: Y0 + LY, stroke: grille, "stroke-width": 1 }, E);
-    for (k = 1; k < 8; k++) S("line", { x1: X0, y1: Y0 + k * DY, x2: X0 + LX, y2: Y0 + k * DY, stroke: grille, "stroke-width": 1 }, E);
-    S("line", { x1: X0, y1: YC, x2: X0 + LX, y2: YC, stroke: axe, "stroke-width": 1.4 }, E);
-    S("line", { x1: X0 + LX / 2, y1: Y0, x2: X0 + LX / 2, y2: Y0 + LY, stroke: axe, "stroke-width": 1.4 }, E);
-    for (k = 0; k <= 50; k++) { var xx = X0 + k * DX / 5; S("line", { x1: xx, y1: YC - 4, x2: xx, y2: YC + 4, stroke: axe, "stroke-width": 1 }, E); }
-    for (k = 0; k <= 40; k++) { var yy = Y0 + k * DY / 5; S("line", { x1: X0 + LX / 2 - 4, y1: yy, x2: X0 + LX / 2 + 4, y2: yy, stroke: axe, "stroke-width": 1 }, E); }
-    // repere du zero commun aux trois voies
-    S("path", { d: "M" + (X0 - 12) + " " + (YC - 7) + " L" + (X0 - 2) + " " + YC + " L" + (X0 - 12) + " " + (YC + 7) + " Z", fill: encre2 }, E);
-    S("text", { x: X0 - 16, y: YC + 5, "text-anchor": "end", "font-size": 14, fill: encre2, texte: "0" }, E);
-    // les courbes, coupees au bord de l'ecran
-    var clip = S("clipPath", { id: "clip-ecran" }, E);
-    S("rect", { x: X0, y: Y0, width: LX, height: LY }, clip);
-    var g = S("g", { "clip-path": "url(#clip-ecran)" }, E);
-    var tmax = 10 * etat.base / 1000, n = 520;
-    function trace(f, cal, coul, larg) {
-      var d = "";
-      for (var j = 0; j <= n; j++) {
-        var t = tmax * j / n, v = f(t) + Sim.gauss() * cal * 0.012;
-        var y = YC - v / cal * DY;
-        y = Math.max(Y0 - 40, Math.min(Y0 + LY + 40, y));
-        d += (j ? " L" : "M") + (X0 + LX * j / n).toFixed(1) + " " + y.toFixed(1);
-      }
-      S("path", { d: d, fill: "none", stroke: coul, "stroke-width": larg, "stroke-linejoin": "round" }, g);
-    }
-    trace(u, etat.cu, cU, 2.2);
-    if (etat.marche) {
-      trace(G.i, etat.ci, cI, 2.2);
-      trace(function (t) { return u(t) * G.i(t); }, etat.cp, cP, 2.6);
+  /* Le porteur vu de cote, cabine a droite. x0 : arriere de la caisse ; yS : le sol ; s : echelle. */
+  function camion(G, x0, yS, s, e) {
+    var X = function (x) { return x0 + x * s; }, Y = function (y) { return yS - y * s; };
+    var diesel = reg.camion === "diesel";
+    svg("rect", { x: X(0), y: Y(150), width: 205 * s, height: 112 * s, rx: 3, "class": "caisse" }, G);
+    texte(G, X(102), Y(92), "19 t", { ancre: "middle", classe: "etiq-titre" });
+    svg("line", { x1: X(0), y1: Y(36), x2: X(272), y2: Y(36), stroke: css("--encre"), "stroke-width": 5 * s }, G);
+    svg("path", { d: "M" + X(210) + " " + Y(36) + " L" + X(210) + " " + Y(128) + " L" + X(250) + " " + Y(130) + " L" + X(272) + " " + Y(100) + " L" + X(272) + " " + Y(36) + " Z", "class": "objet" }, G);
+    svg("path", { d: "M" + X(240) + " " + Y(122) + " L" + X(252) + " " + Y(122) + " L" + X(266) + " " + Y(100) + " L" + X(240) + " " + Y(100) + " Z", fill: css("--scene"), stroke: css("--encre"), "stroke-width": 1.5 }, G);
+    if (diesel) {
+      svg("rect", { x: X(125), y: Y(48), width: 46 * s, height: 22 * s, rx: 6, "class": "objet" }, G);
+      texte(G, X(148), Y(33), "200 L", { ancre: "middle" });
+      svg("rect", { x: X(203), y: Y(160), width: 6 * s, height: 124 * s, fill: css("--encre2") }, G);
+      e.fumees.forEach(function (f) { svg("circle", { cx: X(206) + f.x, cy: Y(160) - f.y, r: f.r, "class": "fumee", "fill-opacity": f.o }, G); });
     } else {
-      trace(function () { return 0; }, etat.ci, cI, 2.2);
-      trace(function () { return 0; }, etat.cp, cP, 2.6);
+      var n = reg.blocs, w = Math.min(26, 112 / n);
+      for (var k = 0; k < n; k++) svg("rect", { x: X(84 + k * (w + 2)), y: Y(52), width: w * s, height: 26 * s, rx: 2, fill: "#3a5f86", stroke: css("--encre"), "stroke-width": 1.2 }, G);
+      svg("path", { d: "M" + X(84 + n * (w + 2)) + " " + Y(40) + " L" + X(222) + " " + Y(40), fill: "none", stroke: css("--orange-ht"), "stroke-width": 3 * s }, G);
+      texte(G, X(102), Y(62), "batterie " + n + " × " + BLOCS[reg.chimie].E + " kWh", { ancre: "middle" });
     }
-    // curseurs
-    [[etat.t1, "1"], [etat.t2, "2"]].forEach(function (c) {
-      if (c[0] > 10 * etat.base + 1e-9) return;
-      var x = X0 + c[0] / (10 * etat.base) * LX;
-      S("line", { x1: x, y1: Y0, x2: x, y2: Y0 + LY, stroke: encre, "stroke-width": 1.4, "stroke-dasharray": "6 5" }, E);
-      S("rect", { x: x - 9, y: Y0 + 3, width: 18, height: 18, rx: 3, fill: encre }, E);
-      S("text", { x: x, y: Y0 + 17, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: fond, texte: c[1] }, E);
+    roue(G, X(48), Y(22), 22 * s, e.phi);
+    roue(G, X(76), Y(22), 22 * s, e.phi);
+    roue(G, X(236), Y(22), 22 * s, e.phi);
+  }
+  var dernierDessin = 0;
+  function dessiner() {
+    var e = E();
+    S.innerHTML = "";
+    if (exp === "banc") dessinerBanc(e); else dessinerTour(e);
+    if (document.getElementById("voirFlux").checked) dessinerFlux(e);
+  }
+  function lcd(G, x, y, w, val, unite) {
+    svg("rect", { x: x, y: y, width: w, height: 22, rx: 2, "class": "lcd" }, G);
+    svg("text", { x: x + w - 26, y: y + 15.5, "text-anchor": "end", "class": "lcd-txt", texte: val }, G);
+    svg("text", { x: x + w - 3, y: y + 15, "text-anchor": "end", "class": "lcd-unite", texte: unite }, G);
+  }
+  function dessinerBanc(e) {
+    var yS = 300, l = lectures(e);
+    svg("rect", { x: 0, y: yS, width: 640, height: 80, fill: css("--carte2") }, S);
+    svg("line", { x1: 0, y1: yS, x2: 640, y2: yS, stroke: css("--trait"), "stroke-width": 2 }, S);
+    // la fosse et les rouleaux, sous les roues arriere
+    var xr = 150 + 62 * 1.3;
+    svg("rect", { x: xr - 64, y: yS, width: 128, height: 34, fill: css("--scene"), stroke: css("--encre2"), "stroke-width": 1.5 }, S);
+    [-26, 26].forEach(function (dx) {
+      svg("circle", { cx: xr + dx, cy: yS + 12, r: 13, fill: "#8d949c", stroke: css("--encre"), "stroke-width": 1.5 }, S);
+      var a = -e.phi * 1.7; svg("line", { x1: xr + dx, y1: yS + 12, x2: xr + dx + 11 * Math.cos(a), y2: yS + 12 + 11 * Math.sin(a), stroke: css("--encre"), "stroke-width": 1.5 }, S);
     });
-    // etiquettes des voies et de la base de temps
-    var lab = [["1", "u", Sim.fr(etat.cu, 0) + " V/div", cU], ["2", "i", cCiTexte() + " A/div", cI], ["M", "p = u × i", Sim.fr(etat.cp, 0) + " W/div", cP]];
-    lab.forEach(function (l, j) {
-      var x = X0 + j * 178;
-      S("rect", { x: x, y: 12, width: 22, height: 22, rx: 4, fill: l[3] }, E);
-      S("text", { x: x + 11, y: 28, "text-anchor": "middle", "font-size": 14, "font-weight": 700, fill: "#fff", texte: l[0] }, E);
-      S("text", { x: x + 30, y: 28, "font-size": 15, "font-weight": 600, fill: encre, texte: l[1] + " : " + l[2] }, E);
-    });
-    S("text", { x: X0, y: Y0 + LY + 30, "font-size": 15, "font-weight": 600, fill: encre, texte: "Base de temps : " + Sim.fr(etat.base, 0) + " ms/div" }, E);
-    S("text", { x: X0 + LX, y: Y0 + LY + 30, "text-anchor": "end", "font-size": 14, fill: encre2, texte: "déclenchement : voie 1, front montant" }, E);
-  }
-  function cCiTexte() { var v = etat.ci; return Sim.fr(v, v < 0.1 ? 2 : v < 1 ? 1 : 0); }
-
-  /* ---------- Le montage, protocole B ---------- */
-  var M = document.getElementById("montage"), g = {};
-  function boitier(x, y, l, h, nom, parent) {
-    S("rect", { x: x, y: y, width: l, height: h, rx: 8, fill: css("--carte"), stroke: css("--encre"), "stroke-width": 2 }, parent);
-    S("rect", { x: x + 10, y: y + 10, width: l - 20, height: 30, rx: 3, fill: "#cfd8cf", stroke: css("--encre2"), "stroke-width": 1 }, parent);
-    var t = S("text", { x: x + l / 2, y: y + 30, "text-anchor": "middle", "font-size": 13, "font-family": "Consolas, monospace", fill: "#1d2a1d", texte: "0" }, parent);
-    S("text", { x: x + l / 2, y: y + h - 14, "text-anchor": "middle", "font-size": 12, fill: css("--encre2"), texte: nom }, parent);
-    return t;
-  }
-  function borne(x, y, coul, parent) { S("circle", { cx: x, cy: y, r: 5, fill: coul, stroke: css("--encre"), "stroke-width": 1.2 }, parent); }
-  function point(x, y, parent) { S("circle", { cx: x, cy: y, r: 4, fill: css("--encre") }, parent); }
-  function fil(d, coul, parent) { S("path", { d: d, fill: "none", stroke: coul, "stroke-width": 3, "stroke-linejoin": "round" }, parent); }
-  var ROUGE = "#c0392b", NOIR = "#222";
-  function montage() {
-    M.innerHTML = "";
-    var encre = css("--encre"), encre2 = css("--encre2");
-    // prise murale
-    S("rect", { x: 14, y: 130, width: 70, height: 120, rx: 10, fill: css("--carte2"), stroke: css("--trait"), "stroke-width": 2 }, M);
-    S("circle", { cx: 49, cy: 190, r: 25, fill: css("--carte"), stroke: encre2, "stroke-width": 2 }, M);
-    S("circle", { cx: 40, cy: 190, r: 4, fill: encre }, M); S("circle", { cx: 58, cy: 190, r: 4, fill: encre }, M);
-    S("text", { x: 49, y: 118, "text-anchor": "middle", "font-size": 13, "font-weight": 600, fill: encre, texte: "secteur" }, M);
-    S("text", { x: 49, y: 272, "text-anchor": "middle", "font-size": 12, fill: encre2, texte: "230 V · 50 Hz" }, M);
-    // fils : phase en rouge, neutre en noir
-    fil("M84 165 L120 165 L120 140", ROUGE, M);
-    fil("M180 140 L180 165 L236 165 L236 140", ROUGE, M);
-    fil("M284 140 L284 165 L470 165 L470 190 L482 190", ROUGE, M);
-    fil("M84 225 L100 225 L100 290 L470 290 L470 260 L482 260", NOIR, M);
-    fil("M330 140 L330 158 A7 7 0 0 1 330 172 L330 290", NOIR, M);
-    fil("M400 165 L400 192", ROUGE, M);
-    fil("M400 262 L400 290", NOIR, M);
-    borne(84, 165, ROUGE, M); borne(84, 225, NOIR, M);
-    S("text", { x: 84, y: 155, "font-size": 11, fill: encre2, texte: "phase" }, M);
-    S("text", { x: 104, y: 220, "font-size": 11, fill: encre2, texte: "neutre" }, M);
-    point(400, 165, M); point(400, 290, M); point(330, 290, M);
-    // instruments
-    g.lcdA = boitier(100, 40, 100, 100, "ampèremètre", M);
-    g.lcdW = boitier(216, 40, 134, 100, "wattmètre", M);
-    g.lcdV = boitier(362, 192, 76, 70, "voltmètre", M);
-    borne(120, 140, ROUGE, M); borne(180, 140, NOIR, M);
-    borne(236, 140, ROUGE, M); borne(284, 140, NOIR, M); borne(330, 140, NOIR, M);
-    borne(400, 192, ROUGE, M); borne(400, 262, NOIR, M);
-    // appareil
-    g.app = S("g", {}, M);
-    dessinerAppareil();
-  }
-  var angle = 0;
-  function dessinerAppareil() {
-    var A = g.app; A.innerHTML = "";
-    var encre = css("--encre"), encre2 = css("--encre2"), carte = css("--carte"), on = etat.marche;
-    borne(482, 190, ROUGE, A); borne(482, 260, NOIR, A);
-    var nom = APPAREILS[etat.app].texte;
-    S("text", { x: 626, y: 30, "text-anchor": "end", "font-size": 14, "font-weight": 650, fill: encre, texte: nom }, A);
-    if (etat.app === "radiateur") {
-      S("rect", { x: 496, y: 120, width: 124, height: 170, rx: 8, fill: on ? "#f4d7cf" : carte, stroke: encre, "stroke-width": 2.5 }, A);
-      for (var k = 0; k < 6; k++) S("rect", { x: 506 + k * 19, y: 132, width: 11, height: 146, rx: 4, fill: on ? "#e39a86" : css("--carte2"), stroke: encre2, "stroke-width": 1.2 }, A);
-      fil("M482 190 L496 190", ROUGE, A); fil("M482 260 L496 260", NOIR, A);
-    } else if (etat.app === "lampe") {
-      fil("M482 190 L520 190 L540 236", ROUGE, A); fil("M482 260 L560 260 L560 250", NOIR, A);
-      if (on) S("circle", { cx: 550, cy: 190, r: 62, fill: "#f7e7a1", "fill-opacity": 0.55 }, A);
-      S("rect", { x: 532, y: 226, width: 36, height: 26, rx: 3, fill: css("--carte2"), stroke: encre, "stroke-width": 2 }, A);
-      S("path", { d: "M534 228 C 500 190, 520 140, 550 140 C 580 140, 600 190, 566 228 Z", fill: on ? "#fbf1c4" : carte, stroke: encre, "stroke-width": 2.5 }, A);
-      S("path", { d: "M540 226 L544 186 L548 196 L552 186 L556 196 L560 186 L564 226", fill: "none", stroke: on ? "#b8801f" : encre2, "stroke-width": 1.6 }, A);
-    } else if (etat.app === "ventilateur") {
-      S("rect", { x: 532, y: 280, width: 64, height: 14, rx: 4, fill: css("--encre2") }, A);
-      S("line", { x1: 564, y1: 280, x2: 564, y2: 210, stroke: encre, "stroke-width": 7 }, A);
-      fil("M482 190 L500 190 L500 284 L532 284", ROUGE, A); fil("M482 260 L490 260 L490 291 L532 291", NOIR, A);
-      S("circle", { cx: 564, cy: 156, r: 56, fill: carte, stroke: encre, "stroke-width": 2.5 }, A);
-      g.pales = S("g", { transform: "rotate(" + angle + " 564 156)" }, A);
-      for (k = 0; k < 3; k++) S("path", { d: "M564 156 C 554 128, 562 108, 574 106 C 588 108, 582 134, 564 156 Z", fill: css("--carte2"), stroke: encre2, "stroke-width": 1.5, transform: "rotate(" + (k * 120) + " 564 156)" }, g.pales);
-      S("circle", { cx: 564, cy: 156, r: 10, fill: encre2 }, A);
-      for (k = 0; k < 4; k++) S("circle", { cx: 564, cy: 156, r: 16 + k * 12, fill: "none", stroke: css("--trait"), "stroke-width": 1 }, A);
-    } else if (etat.app === "tube") {
-      if (on) S("rect", { x: 492, y: 88, width: 142, height: 42, rx: 21, fill: "#dfe8f1", "fill-opacity": 0.7 }, A);
-      S("rect", { x: 498, y: 94, width: 130, height: 30, rx: 15, fill: on ? "#f4f8fc" : carte, stroke: encre, "stroke-width": 2.5 }, A);
-      S("rect", { x: 494, y: 130, width: 138, height: 44, rx: 5, fill: css("--carte2"), stroke: encre, "stroke-width": 2 }, A);
-      S("text", { x: 563, y: 157, "text-anchor": "middle", "font-size": 12, fill: encre2, texte: "ballast et starter" }, A);
-      fil("M482 190 L506 190 L506 174", ROUGE, A);
-      fil("M482 260 L520 260 L520 174", NOIR, A);
+    texte(S, xr, yS + 52, "rouleaux du banc", { ancre: "middle" });
+    camion(S, 150, yS, 1.3, e);
+    // le pupitre du banc
+    svg("rect", { x: 14, y: 40, width: 116, height: 126, rx: 6, "class": "objet" }, S);
+    texte(S, 72, 34, "pupitre du banc", { ancre: "middle" });
+    lcd(S, 22, 50, 100, Sim.fr(l.v, 1), "km/h");
+    lcd(S, 22, 82, 100, Sim.fr(l.Proues, 1), "kW");
+    lcd(S, 22, 114, 100, Sim.fr(l.Eroues, 3), "kWh");
+    texte(S, 72, 154, "pente " + Sim.fr(e.pente, 1) + " %", { ancre: "middle" });
+    svg("path", { d: "M72 166 C 72 230, 110 300, " + (xr - 64) + " 316", fill: "none", stroke: css("--encre2"), "stroke-width": 2 }, S);
+    // l'instrument de la source d'energie
+    svg("rect", { x: 510, y: 40, width: 120, height: 126, rx: 6, "class": "objet" }, S);
+    if (reg.camion === "diesel") {
+      texte(S, 570, 34, "débitmètre de gazole", { ancre: "middle" });
+      lcd(S, 518, 56, 104, Sim.fr(l.debit, 2), "L/h");
+      lcd(S, 518, 92, 104, Sim.fr(l.litres, 2), "L");
+      texte(S, 570, 140, "sur la ligne de gazole", { ancre: "middle" });
+      svg("path", { d: "M570 166 C 570 230, 420 260, " + (150 + 148 * 1.3) + " " + (yS - 48 * 1.3), fill: "none", stroke: css("--encre2"), "stroke-width": 2, "stroke-dasharray": "5 4" }, S);
+      // la hotte d'extraction des gaz
+      var xc = 150 + 206 * 1.3;
+      svg("path", { d: "M" + xc + " " + (yS - 164 * 1.3) + " C " + xc + " 40, " + (xc + 40) + " 20, " + (xc + 60) + " 0", fill: "none", stroke: css("--trait"), "stroke-width": 14 }, S);
     } else {
-      S("rect", { x: 500, y: 196, width: 50, height: 68, rx: 8, fill: carte, stroke: encre, "stroke-width": 2.5 }, A);
-      fil("M482 190 L492 190 L492 214 L500 214", ROUGE, A); fil("M482 260 L492 260 L492 246 L500 246", NOIR, A);
-      S("path", { d: "M550 236 C 574 236, 589 250, 589 222", fill: "none", stroke: encre, "stroke-width": 3 }, A);
-      S("rect", { x: 566, y: 130, width: 46, height: 92, rx: 8, fill: css("--carte2"), stroke: encre, "stroke-width": 2.5 }, A);
-      S("rect", { x: 578, y: 160, width: 22, height: 36, rx: 2, fill: "none", stroke: encre2, "stroke-width": 2 }, A);
-      S("rect", { x: 584, y: 155, width: 10, height: 5, fill: encre2 }, A);
-      if (on) S("rect", { x: 581, y: 178, width: 16, height: 15, fill: css("--juste") }, A);
+      texte(S, 570, 34, "mesure sur la batterie", { ancre: "middle" });
+      lcd(S, 518, 50, 104, Sim.fr(l.U, 1), "V");
+      lcd(S, 518, 80, 104, Sim.fr(l.I, 1), "A");
+      lcd(S, 518, 110, 104, Sim.fr(l.Ah, 2), "A·h");
+      texte(S, 570, 150, "tension, intensité, A·h", { ancre: "middle" });
+      svg("path", { d: "M570 166 C 570 230, 420 250, " + (150 + 200 * 1.3) + " " + (yS - 40 * 1.3), fill: "none", stroke: css("--orange-ht"), "stroke-width": 2, "stroke-dasharray": "5 4" }, S);
     }
-    S("text", { x: 556, y: 330, "text-anchor": "middle", "font-size": 12, fill: encre2, texte: on ? "en marche" : "à l'arrêt" }, A);
+  }
+  function dessinerTour(e) {
+    // le profil de la route, vu de haut en bas
+    var x0 = 30, x1 = 610, kx = (x1 - x0) / LONGUEUR, yb = 112, ka = 0.16;
+    function X(d) { return x0 + d * kx; } function Yp(d) { return yb - altitude(d) * ka; }
+    svg("rect", { x: 0, y: 0, width: 640, height: 150, fill: css("--scene") }, S);
+    var pts = []; for (var d = 0; d <= LONGUEUR; d += 0.5) pts.push(X(d) + " " + Yp(d));
+    svg("path", { d: "M" + X(0) + " 140 L" + pts.join(" L") + " L" + X(LONGUEUR) + " 140 Z", fill: css("--carte2"), stroke: "none" }, S);
+    svg("path", { d: "M" + pts.join(" L"), fill: "none", stroke: css("--route"), "stroke-width": 3 }, S);
+    ARRETS.forEach(function (a, k) {
+      var x = X(a), y = Yp(a);
+      svg("line", { x1: x, y1: y, x2: x, y2: y - 14, stroke: k < e.livraisons ? css("--juste") : css("--encre2"), "stroke-width": 1.5 }, S);
+      svg("path", { d: "M" + x + " " + (y - 14) + " l8 3 l-8 3 Z", fill: k < e.livraisons ? css("--juste") : css("--encre2") }, S);
+    });
+    texte(S, x0, 18, "dépôt", {}); texte(S, X(30.5), Yp(32) - 26, "col", { ancre: "middle" });
+    texte(S, x1, 18, "100 km", { ancre: "end" });
+    var xc = X(e.d), yc = Yp(e.d);
+    svg("circle", { cx: xc, cy: yc, r: 7, fill: css("--accent"), stroke: css("--carte"), "stroke-width": 2 }, S);
+    texte(S, x0, 140, "profil de la tournée : " + NB_ARRETS + " livraisons, un col", {});
+    // le camion sur la route, la route qui defile sous lui
+    var yS = 330, p = ROUTE[segment(Math.min(e.d, LONGUEUR - 1e-6))].p, ang = -Math.atan(p / 100 * 3) * 180 / Math.PI;
+    var G0 = svg("g", { transform: "rotate(" + ang.toFixed(2) + " 320 " + yS + ")" }, S);
+    svg("rect", { x: -60, y: yS, width: 760, height: 60, fill: css("--carte2") }, G0);
+    svg("line", { x1: -60, y1: yS, x2: 700, y2: yS, stroke: css("--trait"), "stroke-width": 2 }, G0);
+    var dec = (e.d * 1000 * 4) % 80;
+    for (var k = -1; k < 11; k++) {
+      var xp = k * 80 - dec;
+      svg("line", { x1: xp, y1: yS + 26, x2: xp + 36, y2: yS + 26, stroke: css("--carte"), "stroke-width": 4 }, G0);
+      if (k % 3 === 0) { svg("line", { x1: xp + 20, y1: yS, x2: xp + 20, y2: yS - 70, stroke: css("--trait"), "stroke-width": 3 }, G0); svg("circle", { cx: xp + 20, cy: yS - 82, r: 16, fill: css("--carte2"), stroke: css("--trait"), "stroke-width": 2 }, G0); }
+    }
+    camion(G0, 170, yS, 1.05, e);
+    var seg = ROUTE[segment(Math.min(e.d, LONGUEUR - 1e-6))];
+    texte(S, 20, 172, e.fini ? "Tournée terminée" : e.arret >= 0 ? (POINTS[e.arret].livraison ? "À quai : livraison " + (e.livraisons + 1) + " sur " + NB_ARRETS : "Au feu rouge, moteur au ralenti") : seg.nom + " · limité à " + seg.v + " km/h · pente " + Sim.fr(seg.p, 1) + " %", { classe: "etiq-titre" });
+    texte(S, 20, 190, "charge à bord : " + Sim.fr(e.charge, 1) + " t", {});
+  }
+  /* Ou va la puissance en ce moment : une barre par destination, sans valeur. */
+  function dessinerFlux(e) {
+    var Z = document.getElementById("flux"), f = e.flux, k = 190 / 300000, d = reg.camion === "diesel";
+    Z.innerHTML = "";
+    var lignes = d ? [["gazole brûlé", f.entree, "#2c6da6"], ["roues", f.roues, "#2f7a55"], ["chaleur : échappement, radiateur", f.chaleur, "#c0392b"], ["freins", f.freins, "#b8801f"]]
+      : [["batterie, en sortie", f.entree, "#2c6da6"], ["roues", f.roues, "#2f7a55"], ["chaleur : moteur, électronique", f.chaleur, "#c0392b"], ["auxiliaires", f.aux, "#8a8f96"],
+        ["freins", f.freins, "#b8801f"], ["rendue à la batterie au freinage", f.recup, "#5c9bd1"]];
+    lignes.forEach(function (l, i) {
+      var y = 8 + i * 25;
+      svg("text", { x: 4, y: y + 12, "font-size": 10, fill: css("--encre"), texte: l[0] }, Z);
+      svg("rect", { x: 160, y: y + 2, width: Math.max(0, Math.min(156, (l[1] || 0) * k)), height: 14, rx: 3, fill: l[2] }, Z);
+    });
+    svg("text", { x: 4, y: 170, "font-size": 9.5, fill: css("--encre2"), texte: "Longueurs proportionnelles aux puissances, en ce moment." }, Z);
   }
 
-  /* ---------- Instruments du protocole B ---------- */
-  var I = document.getElementById("instruments");
-  var aV = Sim.afficheur(I, { nom: "Voltmètre · U", unite: "V", dec: 1 });
-  var aA = Sim.afficheur(I, { nom: "Ampèremètre · I", unite: "A", dec: 3 });
-  var aW = Sim.afficheur(I, { nom: "Wattmètre · P", unite: "W", dec: 1 });
-  var LB = { U: 0, I: 0, P: 0 };
-  function instruments() {
-    LB = { U: lectureU(), I: lectureI(), P: lectureP() };
-    var decI = G.I < 1 ? 3 : 2, decP = G.P < 100 ? 1 : 0;
-    aV.set(LB.U, 1); aA.set(LB.I, decI); aW.set(LB.P, decP);
-    if (g.lcdV) { g.lcdV.textContent = Sim.fr(LB.U, 1) + " V"; g.lcdA.textContent = Sim.fr(LB.I, decI) + " A"; g.lcdW.textContent = Sim.fr(LB.P, decP) + " W"; }
-  }
-
-  /* ---------- Relevés ---------- */
-  function court() { var a = APPAREILS[etat.app]; return a.court || a.texte; }
-  var relA = Sim.releve("#releveA", {
-    colonnes: [{ cle: "app", titre: "Appareil" }, { cle: "c", titre: "Curseur" }, { cle: "t", titre: "t", unite: "ms", dec: 2 },
-      { cle: "u", titre: "u", unite: "V", dec: 0 }, { cle: "i", titre: "i", unite: "A", dec: 3 }, { cle: "p", titre: "p", unite: "W", dec: 1 }]
+  /* ---------- Les boutons ---------- */
+  document.getElementById("bMarche").addEventListener("click", function () {
+    var e = E();
+    if (exp === "banc") {
+      e.marche = !e.marche; e.moteur = e.marche || e.v > 0;
+      message(e.marche ? "Essai lancé : le régulateur amène le camion à " + e.consigne + " km/h. Attends que la vitesse soit stable, puis remets les compteurs à zéro." : "Essai arrêté : le banc freine le camion.");
+    } else {
+      if (e.fini) return;
+      e.marche = !e.marche;
+      message(e.marche ? "En route : le conducteur suit les limitations et anticipe les arrêts." : "Tournée en pause.");
+    }
+    afficher();
   });
-  function garder(L, c) {
-    if (!etat.marche) { message("Mets l'appareil en marche avant de garder une lecture."); return; }
-    /* Le tableau garde ce que l'écran affichait, avec ses décimales : pas une précision de plus. */
-    var Imax = G.I * Math.SQRT2, di = Imax < 1 ? 3 : 2, dp = UM * Imax < 100 ? 1 : 0;
-    relA.ajouter({ app: court(), c: c, t: Sim.fr(L.t, 2), u: Sim.fr(L.u, 0), i: Sim.fr(L.i, di), p: Sim.fr(L.p, dp) });
-  }
-  document.getElementById("garder1").addEventListener("click", function () { garder(L1, "1"); });
-  document.getElementById("garder2").addEventListener("click", function () { garder(L2, "2"); });
-  var relB = Sim.releve("#releveB", {
-    colonnes: [{ cle: "app", titre: "Appareil" }, { cle: "U", titre: "U", unite: "V", dec: 1 }, { cle: "I", titre: "I", unite: "A", dec: 3 }, { cle: "P", titre: "P", unite: "W", dec: 1 }]
+  document.getElementById("bZero").addEventListener("click", function () {
+    var e = E(); e.z = { t: 0, d: 0, Eroues: 0, litres: 0, Ah: 0, Eterm: 0, Esoc: 0 };
+    message("Compteurs à zéro : énergie aux roues, gazole ou ampères-heures, durée.");
+    afficher();
   });
-  document.getElementById("garderB").addEventListener("click", function () {
-    if (!etat.marche) { message("Mets l'appareil en marche avant de garder une mesure."); return; }
-    relB.ajouter({ app: court(), U: Sim.fr(LB.U, 1), I: Sim.fr(LB.I, G.I < 1 ? 3 : 2), P: Sim.fr(LB.P, G.P < 100 ? 1 : 0) });
-  });
+  Sim.choix("#vitesse", { label: "Vitesse du temps", valeur: reg.vitesse, options: [{ val: 0, texte: "pause" }, { val: 1, texte: "× 1" }, { val: 10, texte: "× 10" }, { val: 60, texte: "× 60" }],
+    surChange: function (v) { reg.vitesse = v; } });
+  document.getElementById("voirFlux").addEventListener("change", function (ev) { document.getElementById("fluxBloc").hidden = !ev.target.checked; });
 
-  /* ---------- Défis : juste ou pas encore, jamais la valeur ---------- */
-  var D = document.getElementById("defis");
-  function vrai() { return etat.marche ? G : null; }
-  Sim.defi(D, { question: "Le produit U × I des valeurs efficaces :", unite: "VA",
-    attendu: function () { var v = vrai(); return v ? v.U * v.I : NaN; }, tolerance: 0.03,
-    methode: "Multiplie la tension lue au voltmètre par l'intensité lue à l'ampèremètre. À l'oscilloscope : U = Umax ÷ √2 et I = Imax ÷ √2." });
-  Sim.defi(D, { question: "La puissance moyenne lue sur la courbe p, (p<sub>max</sub> + p<sub>min</sub>) ÷ 2 :", unite: "W",
-    attendu: function () { var v = vrai(); return v ? v.P : NaN; }, tolerance: 0.05, toleranceAbsolue: 0.5,
-    methode: "Lis le plus haut et le plus bas de la courbe p, puis fais leur moyenne. Cette règle ne vaut que si p a la forme d'une sinusoïde." });
-  Sim.defi(D, { question: "Le déphasage φ = 360° × Δt ÷ T :", unite: "°",
-    attendu: function () { var v = vrai(); return v && v.phi !== null ? v.phi * 180 / Math.PI : NaN; }, tolerance: 0, toleranceAbsolue: 4,
-    methode: "Δt sépare le passage de u par zéro en montant de celui de i. Il n'a de sens que si i est une sinusoïde." });
-  Sim.defi(D, { question: "Le facteur de puissance, P ÷ (U × I) :", unite: "",
-    attendu: function () { var v = vrai(); return v ? v.P / (v.U * v.I) : NaN; }, tolerance: 0, toleranceAbsolue: 0.03,
-    methode: "Divise la puissance lue au wattmètre, ou la moyenne de p, par le produit U × I. Le résultat n'a pas d'unité." });
-
-  /* ---------- Mise à jour ---------- */
-  function message(t) { document.getElementById("etat").textContent = t; }
-  function maj(changement) {
-    G = grandeurs(etat.app, etat.marche);
-    bMarche.textContent = etat.marche ? "Arrêter" : "Mettre en marche";
-    message(etat.marche ? APPAREILS[etat.app].texte + " en marche : le courant circule." : APPAREILS[etat.app].texte + " à l'arrêt : la tension est là, mais aucun courant ne circule.");
-    if (changement) { dessinerAppareil(); }
-    lire(); ecran(); instruments();
-  }
-  Sim.onglets("#onglets", function (id) { etat.vue = id; });
-
+  /* ---------- La boucle ---------- */
   var cumul = 0;
-  Sim.animer(function (dt) {
-    if (etat.marche && etat.app === "ventilateur" && g.pales) { angle = (angle + dt * 540) % 360; g.pales.setAttribute("transform", "rotate(" + angle.toFixed(1) + " 564 156)"); }
+  function pas(dt) {
+    var e = E(), dts = dt * reg.vitesse, n = Math.max(1, Math.ceil(dts / 0.5));
+    if (dts > 0) for (var i = 0; i < n; i++) { if (exp === "banc") pasBanc(e, dts / n); else pasTour(e, dts / n); ENR[exp].tic(e.t); }
+    // la fumee du diesel, d'autant plus epaisse que le debit est fort
+    if (reg.camion === "diesel" && reg.vitesse > 0 && e.moteur && Math.random() < 0.15 + e.Pfuel / 200000) e.fumees.push({ x: 0, y: 0, r: 2 + e.Pfuel / 60000, o: 0.25 + Math.min(0.4, e.Pfuel / 500000) });
+    e.fumees.forEach(function (f) { f.y += 1.2; f.x -= 0.6 + e.v * 0.05; f.r += 0.15; f.o *= 0.96; });
+    e.fumees = e.fumees.filter(function (f) { return f.o > 0.03; }).slice(-30);
     cumul += dt;
-    if (cumul > 0.5) { cumul = 0; instruments(); }
-  });
+    if (cumul >= 0.25) { cumul = 0; afficher(); }
+    var t = performance.now();
+    if (t - dernierDessin > 30) { dernierDessin = t; dessiner(); }
+  }
 
-  /* Porte des essais et des captures : ?vue=B&app=tube&marche=1&ci=0.2&cp=50&base=2&t1=5&t2=8.5 */
-  var q = {};
-  (location.search || "").replace(/^\?/, "").split("&").forEach(function (x) { var kv = x.split("="); if (kv[0]) q[kv[0]] = decodeURIComponent(kv[1] || ""); });
-  montage();
-  if (q.app && APPAREILS[q.app]) { etat.app = q.app; cApp.set(q.app, true); }
-  if (q.marche === "1") etat.marche = true;
-  if (q.cu) { etat.cu = Number(q.cu); cCu.set(etat.cu, true); }
-  if (q.ci) { etat.ci = Number(q.ci); cCi.set(etat.ci, true); }
-  if (q.cp) { etat.cp = Number(q.cp); cCp.set(etat.cp, true); }
-  if (q.base) { etat.base = Number(q.base); cBase.set(etat.base, true); }
-  if (q.t1) etat.t1 = Number(q.t1);
-  if (q.t2) etat.t2 = Number(q.t2);
-  bornerCurseurs();
-  maj(true);
-  if (q.vue === "B") document.querySelector('[data-vue="vueB"]').click();
+  /* ---------- Changer d'experience ---------- */
+  var TEXTES = {
+    banc: { titre: "Sur le banc à rouleaux", legende: "Les roues arrière tournent sur les rouleaux : le banc mesure la force et la vitesse, donc la puissance et l'énergie aux roues. Il oppose au camion la résistance de la route, pente comprise.",
+      releve: "Lance l'enregistreur une fois la vitesse stable et les compteurs remis à zéro : il garde la vitesse, l'énergie aux roues et le compteur de la source à chaque intervalle.",
+      accueil: "Choisis la vitesse et la pente, lance l'essai, attends la vitesse stable, puis remets les compteurs à zéro." },
+    tour: { titre: "En tournée de livraison", legende: "100 km et " + NB_ARRETS + " livraisons : ville et ses feux, départementale, un col à 5 %. À chaque livraison, dix minutes à quai, et une partie de la charge descend du camion.",
+      releve: "Lance l'enregistreur au départ : une mesure toutes les 5 minutes suffit, et la courbe suit la jauge ou la batterie le long de la tournée.",
+      accueil: "Règle le camion et sa charge, puis pars en tournée. Le temps « × 60 » fait passer une minute par seconde." }
+  };
+  function changerExp(x) {
+    exp = x;
+    document.getElementById("titreScene").textContent = TEXTES[x].titre;
+    document.getElementById("legende").textContent = TEXTES[x].legende;
+    document.getElementById("consigneReleve").textContent = TEXTES[x].releve;
+    poserCommandes(); poserDefis(); afficher(); dessiner();
+    message(TEXTES[x].accueil);
+  }
+  poserReglages();
+  etats.banc = etatNeuf("banc"); etats.tour = etatNeuf("tour");
+  var og = Sim.onglets("#experiences", function (id) { changerExp(id === "vueBanc" ? "banc" : "tour"); });
+  if (location.hash === "#tournee") og.montrer("vueTour");
+  poserFiche();
+  Sim.animer(pas);
+
+  /* Porte des essais : la page se pilote sans doigt, dans un navigateur qui ne dessine pas. */
+  window.porteur = { etat: E, exp: function () { return exp; }, reglage: reg, batterie: batterie, enr: function () { return ENR[exp]; }, releve: function () { return REL[exp]; },
+    dessiner: function () { dessiner(); afficher(); }, lectures: function () { return lectures(E()); } };
 })();
 </script>
-<footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation, et détaillé dans la fiche professeur du TP SIM-09.</footer>
+<footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation.</footer>
 </div>
 </body>
 </html>
