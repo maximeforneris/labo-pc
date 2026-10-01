@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chauffer de l'eau : quel rendement ?</title>
-<meta name="description" content="Chauffe un litre d&#x27;eau avec une bouilloire, puis avec une casserole sur deux plaques différentes. Compare l&#x27;énergie consommée au compteur à l&#x27;énergie reçue par l&#x27;eau.">
+<title>Chauffer de l'eau</title>
+<meta name="description" content="Une vraie cuisine : remplis au robinet, pèse sur la balance, chauffe à la bouilloire ou sur une plaque, et laisse l&#x27;enregistreur relever la température tout seul. Trois expériences : le rendement, l&#x27;ébullition, le refroidissement.">
 <meta name="etiquette" content="Simulation · SIM-17">
 <style>
 /* Simulations des TP · feuille commune, inlinee dans chaque page par assembler-simulations.py.
@@ -97,6 +97,14 @@ table.releve th{background:var(--carte2);font-weight:650;font-size:.82rem}
 table.releve tr.vide td{color:var(--encre2);font-style:italic}
 .graphe{background:var(--carte);border:1px solid var(--trait2);border-radius:var(--r)}
 .graphe canvas{display:block;width:100%;height:auto}
+
+/* Enregistreur : une mesure toute seule, a intervalle regulier du temps simule */
+.enregistreur{border:1px solid var(--trait);border-radius:var(--r);background:var(--carte2);padding:10px 12px;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.enr-lampe{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--trait)}
+.enr-lampe.actif{background:var(--faux)}
+.enr-lampe.eclair{animation:eclair .6s ease-out}
+@keyframes eclair{from{box-shadow:0 0 0 0 var(--faux)}to{box-shadow:0 0 0 10px transparent}}
+.enr-info{font-size:.88rem;color:var(--encre2)}
 
 /* Defi : l'eleve propose une valeur, la page dit juste ou pas encore, jamais la reponse */
 .defi{border:1px dashed var(--trait);border-radius:var(--r);padding:12px 14px;background:var(--carte2)}
@@ -389,6 +397,53 @@ var Sim = (function () {
     };
   }
 
+  /* Enregistreur : garde une ligne du releve tout seul, a intervalle regulier du temps SIMULE,
+     comme une centrale d'acquisition. La simulation appelle tic(t) a chaque pas de calcul.
+     o : { periodes: [{val, texte}], valeur, lire: function (tPlanifie, tLancement) -> ligne ou null, label } */
+  function enregistreur(parent, rel, o) {
+    var periode = o.valeur, actif = false, prochain = null, dernier = 0, debut = 0;
+    var zone = el("div", { classe: "enregistreur" });
+    choix(zone, { label: o.label || "Enregistrement automatique : une mesure toutes les", valeur: periode, options: o.periodes,
+      surChange: function (v) { periode = v; if (actif && prochain !== null) prochain = dernier + v; } });
+    var b = el("button", { type: "button", classe: "bouton principal", texte: "Lancer l'enregistrement" });
+    var lampe = el("span", { classe: "enr-lampe", "aria-hidden": "true" });
+    var info = el("span", { classe: "enr-info", "aria-live": "polite" });
+    zone.appendChild(el("div", { classe: "rangee" }, [b, lampe, info]));
+    $(parent).appendChild(zone);
+    function majInfo() {
+      var n = rel.lignes().length;
+      info.textContent = (actif ? "enregistre" : "à l'arrêt") + (n ? " · " + n + " mesure" + (n > 1 ? "s" : "") + " dans le tableau" : "");
+    }
+    function poser(oui) {
+      actif = oui; prochain = null;
+      b.textContent = oui ? "Arrêter l'enregistrement" : "Lancer l'enregistrement";
+      lampe.className = "enr-lampe" + (oui ? " actif" : "");
+      majInfo();
+      if (o.surEtat) o.surEtat(oui);
+    }
+    b.addEventListener("click", function () { poser(!actif); });
+    majInfo();
+    return {
+      tic: function (t) {
+        if (!actif) return;
+        if (prochain === null) { prochain = t; debut = t; }
+        if (t + 1e-9 < prochain) return;
+        var l = o.lire(prochain, debut);
+        dernier = prochain; prochain += periode;
+        if (prochain <= t) prochain = t + periode;      // un pas trop long : pas de rattrapage en rafale
+        if (l) {
+          rel.ajouter(l); majInfo();
+          lampe.classList.remove("eclair"); void lampe.offsetWidth; lampe.classList.add("eclair");
+        }
+      },
+      actif: function () { return actif; },
+      lancer: function () { if (!actif) poser(true); },
+      arreter: function () { if (actif) poser(false); },
+      majInfo: majInfo,
+      noeud: zone
+    };
+  }
+
   /* Defi : une valeur a trouver. La page dit juste ou pas encore, et rappelle la methode,
      jamais la valeur attendue. attendu : nombre ou fonction qui le calcule au moment du clic. */
   function defi(parent, o) {
@@ -443,7 +498,7 @@ var Sim = (function () {
   }
 
   return { fr: fr, lire: lire, el: el, $: $, borne: borne, mesure: mesure, gauss: gauss, onglets: onglets, curseur: curseur, choix: choix,
-    afficheur: afficheur, graphe: graphe, releve: releve, defi: defi, animer: animer, avancer: avancer, svg: svg };
+    afficheur: afficheur, graphe: graphe, releve: releve, enregistreur: enregistreur, defi: defi, animer: animer, avancer: avancer, svg: svg };
 })();
 
 </script>
@@ -452,249 +507,755 @@ var Sim = (function () {
 <div class="page">
 <header class="tete">
 <div class="surtitre">Physique-chimie · simulation du TP SIM-17</div>
-<h1>Chauffer de l'eau : quel rendement ?</h1>
-<p class="chapeau">Chauffe un litre d'eau avec une bouilloire, puis avec une casserole sur deux plaques différentes. Compare l'énergie consommée au compteur à l'énergie reçue par l'eau.</p>
+<h1>Chauffer de l'eau</h1>
+<p class="chapeau">Une vraie cuisine : remplis au robinet, pèse sur la balance, chauffe à la bouilloire ou sur une plaque, et laisse l'enregistreur relever la température tout seul. Trois expériences : le rendement, l'ébullition, le refroidissement.</p>
 </header>
 <style>
-.voyant-on{fill:#d9534f}
-.bulle{fill:none;stroke:#ffffff;stroke-opacity:.85;stroke-width:1.4}
-.vapeur{fill:none;stroke:var(--encre2);stroke-opacity:.35;stroke-width:3;stroke-linecap:round}
+:root{--eau:#8fbde3;--fonte:#3b3b3d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--eau:#3f6f97}}
+:root[data-theme="dark"]{--eau:#3f6f97}
+.trait{fill:none;stroke:var(--encre);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.objet{fill:var(--carte);stroke:var(--encre);stroke-width:2.2;stroke-linejoin:round}
+.eau{fill:var(--eau)}
+.etiq{font-size:11px;fill:var(--encre2)}
+.etiq-titre{font-size:12px;font-weight:700;fill:var(--encre)}
+.lcd{fill:#cfd8cf;stroke:var(--encre2);stroke-width:1}
+.lcd-txt{font-family:ui-monospace,Consolas,monospace;font-size:13px;font-weight:600;fill:#1d2a1d}
+.lcd-petit{font-family:ui-monospace,Consolas,monospace;font-size:7.5px;fill:#1d2a1d}
+.bulle{fill:none;stroke:#ffffff;stroke-opacity:.85;stroke-width:1.3}
+.vapeur{fill:none;stroke:var(--encre2);stroke-width:3;stroke-linecap:round}
+.prise{cursor:grab;touch-action:none;outline:none}
+.prise:active{cursor:grabbing}
+.clic{cursor:pointer}
+.prise-zone{fill:var(--accent);fill-opacity:.08;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3}
+.indice{font-size:12px;font-weight:650;fill:var(--accent)}
+.carte [hidden]{display:none!important}
+.sous-titre{font-size:.75rem;font-weight:700;color:var(--encre2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:-6px}
+.case{display:flex;gap:8px;align-items:center;font-size:.92rem;font-weight:600}
+.case input{width:20px;height:20px;accent-color:var(--accent)}
+.bouton[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+#fluxBloc{background:var(--scene);border:1px solid var(--trait2);border-radius:var(--r)}
+#fluxBloc svg{display:block;width:100%;height:auto}
+.releve-zone > div{overflow-x:auto}
 </style>
 
+<nav class="onglets" id="experiences" aria-label="Expériences">
+  <button type="button" data-vue="vueRen">Le rendement</button>
+  <button type="button" data-vue="vueEbu">L'ébullition</button>
+  <button type="button" data-vue="vueRef">Le refroidissement</button>
+</nav>
+
 <div class="carte">
-  <h2><span class="num">1</span>Choisis l'appareil et l'eau</h2>
-  <p class="consigne">Changer un réglage remet l'expérience à zéro : l'eau repart de sa température initiale et le compteur de zéro.</p>
+  <h2><span class="num">1</span>L'appareil et l'eau</h2>
+  <p class="consigne" id="consigneReglages"></p>
   <div class="commandes" id="reglages"></div>
 </div>
 
 <div class="plan">
   <div class="carte">
-    <h2><span class="num">2</span>Chauffe et lis les instruments</h2>
+    <h2><span class="num">2</span>La cuisine</h2>
     <div class="scene">
-      <svg id="scene" viewBox="0 0 600 360" role="img" aria-label="L'appareil de chauffage branché sur un wattmètre-prise"></svg>
+      <svg id="scene" viewBox="0 0 640 470" role="img" aria-label="La cuisine : le robinet et l'évier, la balance, l'appareil de chauffage sur son wattmètre-prise, le thermomètre"></svg>
     </div>
-    <p class="legende">Le wattmètre-prise se branche entre la prise et l'appareil : il affiche la puissance et compte l'énergie consommée depuis sa remise à zéro.</p>
+    <p class="legende" id="legende"></p>
   </div>
   <div class="carte">
-    <h2><span class="num">3</span>Les instruments</h2>
+    <h2><span class="num">3</span>Remplis, chauffe, mesure</h2>
     <div class="commandes">
+      <div class="sous-titre">L'eau</div>
       <div class="rangee">
-        <button type="button" class="bouton principal" id="marche">Mettre en marche</button>
-        <button type="button" class="bouton" id="zero">Remettre à zéro</button>
+        <button type="button" class="bouton" id="bEvier">À l'évier</button>
+        <button type="button" class="bouton" id="bBalance">Sur la balance</button>
+        <button type="button" class="bouton" id="bStation">Sur le socle</button>
       </div>
-      <div id="vitesse"></div>
+      <div class="rangee">
+        <button type="button" class="bouton" id="bRobinet">Ouvrir le robinet</button>
+        <button type="button" class="bouton" id="bVider">Vider dans l'évier</button>
+        <button type="button" class="bouton" id="bTare">Tare de la balance</button>
+      </div>
+      <div class="sous-titre">Chauffer</div>
+      <div class="rangee" id="rgChauffe">
+        <button type="button" class="bouton" id="bMarche">Mettre en marche</button>
+        <button type="button" class="bouton" id="bCouvercle" aria-pressed="false">Couvercle</button>
+      </div>
+      <div id="rgReglage"></div>
+      <div class="sous-titre">Mesurer</div>
+      <div id="choixSonde"></div>
+      <div class="rangee">
+        <button type="button" class="bouton" id="bMode">Wattmètre : MODE</button>
+        <button type="button" class="bouton" id="bCompteur">Compteur à zéro</button>
+      </div>
+      <div class="rangee">
+        <button type="button" class="bouton" id="bChrono">Chronomètre : départ</button>
+        <button type="button" class="bouton" id="bChronoZero">Chronomètre à zéro</button>
+      </div>
       <div class="afficheurs" id="instruments"></div>
-      <button type="button" class="bouton" id="garder">Garder cette mesure dans le tableau</button>
-      <p class="alerte" id="etat">L'appareil est à l'arrêt.</p>
+      <div id="vitesse"></div>
+      <label class="case"><input type="checkbox" id="voirFlux"> Montrer où va l'énergie</label>
+      <div id="fluxBloc" hidden><svg id="flux" viewBox="0 0 320 168" role="img" aria-label="Où va la puissance, en ce moment"></svg></div>
+      <p class="alerte" id="etat"></p>
     </div>
   </div>
 </div>
 
 <div class="carte">
-  <h2><span class="num">4</span>Le relevé : la température en fonction du temps</h2>
-  <p class="consigne">Garde une mesure toutes les 30 secondes environ, jusqu'à ce que l'eau bouille.</p>
-  <div id="releve"></div>
+  <h2><span class="num">4</span>Le relevé</h2>
+  <p class="consigne" id="consigneReleve"></p>
+  <div id="vueRen" class="vue"></div>
+  <div id="vueEbu" class="vue"></div>
+  <div id="vueRef" class="vue"></div>
+  <div class="rangee" style="margin-top:10px">
+    <button type="button" class="bouton" id="garder">Garder une mesure à la main</button>
+  </div>
 </div>
 
 <div class="carte">
-  <h2><span class="num">5</span>Le rendement</h2>
-  <p class="consigne">Quand l'eau bout, l'appareil s'arrête. Calcule avec <b>tes</b> lectures relevées à cet instant : l'eau refroidit ensuite, mais la vérification garde la température de l'arrêt. Donnée : c<sub>eau</sub> = 4 180 J/(kg·°C), 1 L d'eau a une masse de 1 kg.</p>
+  <h2><span class="num">5</span>Le résultat</h2>
+  <p class="consigne" id="consigneResultat"></p>
   <div class="commandes" id="defis"></div>
   <details class="modele">
     <summary>Ce que la simulation simplifie</summary>
     <ul>
-      <li>La puissance de chaque appareil est constante ; la tension du réseau ne varie presque pas.</li>
-      <li>Une part fixe de la puissance ne va pas dans la casserole : elle chauffe la plaque et l'air autour. Elle est plus grande pour la plaque en fonte que pour l'induction.</li>
-      <li>La paroi de l'appareil s'échauffe avec l'eau, et l'appareil perd de la chaleur vers la pièce d'autant plus que l'eau est chaude.</li>
-      <li>Le chauffage se coupe à 100 °C : la vaporisation de l'eau n'est pas simulée.</li>
+      <li>La tension du réseau reste la même pendant toute la séance, quelque part entre 229 et 233 V : la puissance réelle s'écarte un peu de celle de la plaque signalétique.</li>
+      <li>L'eau a partout la même température : le mélange est parfait. La sonde lit au fond quelques degrés de plus, là où le fond chauffe.</li>
+      <li>La plaque en fonte est un seul bloc à une seule température ; son thermostat coupe et remet le courant entre deux seuils. L'induction ne chauffe que si une casserole est posée.</li>
+      <li>L'eau s'évapore d'autant plus qu'elle est chaude et que la casserole est ouverte ; à 100 °C, toute l'énergie en plus la vaporise, sous la pression normale.</li>
+      <li>La pièce reste à 20 °C, sans courant d'air. La bouilloire se coupe huit secondes après le début de l'ébullition.</li>
     </ul>
   </details>
 </div>
 
 <script>
 (function () {
-  var C_EAU = 4180, T_AIR = 20;
-  var APPAREILS = {
-    bouilloire: { texte: "Bouilloire", P: 2200, transfert: 0.97, C: 400, G: 1.5, plaque: "2 200 W" },
-    fonte: { texte: "Plaque en fonte", P: 1500, transfert: 0.66, C: 450, G: 4, plaque: "1 500 W" },
-    induction: { texte: "Plaque à induction", P: 2000, transfert: 0.92, C: 450, G: 4, plaque: "2 000 W" }
+  /* ---------- La physique ---------- */
+  var C_EAU = 4180, LV = 2.26e6, T_AIR = 20, EV = 300;             // EV : evaporation d'une casserole ouverte a 100 degres, W
+  var U = 229.5 + 3 * Math.random(), KU = Math.pow(U / 230, 2);    // tension du reseau, fixee a l'ouverture
+  var DECAL = (Math.random() - 0.5) * 0.4;                          // justesse du thermometre
+  var APP = {
+    bouilloire: { nom: "bouilloire", P: 2200, ray: 0.99, Cr: 350, G: 1.6, ev: 0.06, vide: 980, cap: 1.7, plaque: "2 200 W" },
+    fonte: { nom: "plaque en fonte", P: 1500, Cp: 700, K: 9, Gp: 0.9, Cr: 450, G: 3, ev: 1, vide: 900, cap: 2.5, plaque: "1 500 W" },
+    induction: { nom: "plaque à induction", P: 2000, ray: 0.92, Cr: 450, G: 3, ev: 1, vide: 900, cap: 2.5, plaque: "2 000 W" }
   };
-  var etat = { app: "bouilloire", V: 1.0, t0: 18, theta: 18, thetaArret: 18, t: 0, E: 0, marche: false, bout: false, vitesse: 10, Pmes: 0 };
-  /* La temperature qui compte pour le bilan est celle de l'arret du chauffage : apres, l'eau refroidit. */
-  function thetaFin() { return etat.marche ? etat.theta : etat.thetaArret; }
+  var CONSIGNE = [0, 110, 150, 190, 230, 300, 400];                  // thermostat de la fonte, position 0 a 6
+  function psat(t) { return 0.61094 * Math.exp(17.625 * t / (t + 243.04)); }
+  function fevap(t) { return Math.max(0, (psat(Math.min(t, 100)) - 2.34) / (101.3 - 2.34)); }
+  var EXP = {
+    ren: { apps: [["bouilloire", "Bouilloire · 2 200 W"], ["fonte", "Casserole · plaque en fonte · 1 500 W"], ["induction", "Casserole · plaque à induction · 2 000 W"]],
+      periode: 30, vitesse: 10, surBalance: false },
+    ebu: { apps: [["induction", "Casserole · plaque à induction posée sur la balance"]], periode: 30, vitesse: 10, surBalance: true },
+    ref: { apps: [["bouilloire", "Bouilloire"], ["induction", "Casserole · plaque à induction"], ["fonte", "Casserole · plaque en fonte"]],
+      periode: 60, vitesse: 60, surBalance: false }
+  };
 
-  /* ---------- Reglages ---------- */
-  var R = document.getElementById("reglages");
-  var cApp = Sim.choix(R, { label: "Appareil", valeur: "bouilloire",
-    options: Object.keys(APPAREILS).map(function (k) { return { val: k, texte: APPAREILS[k].texte + " · " + APPAREILS[k].plaque }; }),
-    surChange: function (v) { etat.app = v; raz(); } });
-  var cV = Sim.curseur(R, { label: "Volume d'eau", min: 0.5, max: 1.7, pas: 0.1, valeur: 1.0, unite: "L", dec: 1, surChange: function (v) { etat.V = v; raz(); } });
-  var cT0 = Sim.curseur(R, { label: "Température de l'eau du robinet", min: 10, max: 25, pas: 1, valeur: 18, unite: "°C", dec: 0, surChange: function (v) { etat.t0 = v; raz(); } });
-  Sim.choix("#vitesse", { label: "Vitesse du temps", valeur: 10, options: [{ val: 1, texte: "× 1" }, { val: 10, texte: "× 10" }, { val: 30, texte: "× 30" }],
-    surChange: function (v) { etat.vitesse = v; } });
+  /* ---------- L'etat : un par experience ---------- */
+  var reg = { t0: 18, vitesse: 10 };
+  var exp = "ren", etats = {};
+  function E() { return etats[exp]; }
+  function etatNeuf(x, app) {
+    var X = EXP[x];
+    return { exp: x, app: app || X.apps[0][0], t: 0, mw: 0, th: T_AIR, Tp: T_AIR, couv: false,
+      place: X.surBalance ? "station" : "balance", glisse: null, robinet: 0,
+      on: false, pos: 0, relais: true, ind: false, niveau: 0,
+      Ec: 0, tare: 0, mode: 0, sonde: "eau", thAff: T_AIR + DECAL, chrono: 0, chronoMarche: false,
+      chauffe: false, depart: null, arret: null, tBout: null, bouillait: false, vapPalier: 0, thDemi: null, th30: null,
+      flux: { el: 0, eau: 0, rec: 0, plaque: 0, vap: 0, air: 0 }, bulles: [], vu: {} };
+  }
+  function st(e) { return e.place === "station" && e.glisse === null; }
+  function casserole(e) { return e.app !== "bouilloire"; }
+  function masseRecipient(e) { return APP[e.app].vide + (e.couv ? 300 : 0) + e.mw * 1000; }
 
-  /* ---------- Instruments ---------- */
-  var I = document.getElementById("instruments");
-  var aP = Sim.afficheur(I, { nom: "Wattmètre · puissance", unite: "W", dec: 0 });
-  var aE = Sim.afficheur(I, { nom: "Wattmètre · énergie", unite: "kWh", dec: 3 });
-  var aT = Sim.afficheur(I, { nom: "Chronomètre", unite: "", dec: 0 });
-  var aTh = Sim.afficheur(I, { nom: "Thermomètre", unite: "°C", dec: 1 });
-
-  function lectureTheta() { return Sim.mesure(etat.theta, { absolu: 0.04, resolution: 0.1 }); }
-  function lectureE() { return Math.floor(etat.E / 3.6e6 * 1000) / 1000; }
-  function chrono(t) { var s = Math.floor(t); return Math.floor(s / 60) + " min " + (s % 60 < 10 ? "0" : "") + (s % 60) + " s"; }
-
-  /* ---------- Releve ---------- */
-  var rel = Sim.releve("#releve", {
-    colonnes: [{ cle: "t", titre: "Temps", unite: "s", dec: 0 }, { cle: "theta", titre: "Température", unite: "°C", dec: 1 }, { cle: "E", titre: "Énergie au compteur", unite: "kWh", dec: 3 }],
-    graphe: { x: "t", y: "theta", xmin: 0, xmax: 600, ymin: 0, ymax: 110, titreX: "t (s)", titreY: "θ (°C)", largeur: 620, hauteur: 360 },
-    avantPoints: function (gr, lignes) {
-      var tmax = 120; lignes.forEach(function (l) { tmax = Math.max(tmax, l.t); });
-      gr.axes({ xmax: Math.ceil(tmax * 1.1 / 60) * 60 }).effacer();
+  /* Un pas de calcul, dt en secondes de temps simule. */
+  function pasPhysique(e, dt) {
+    var a = APP[e.app], s = st(e), Pel = 0, Putile = 0, Pw = 0, Pplaque = 0, Papp = 0;
+    // le robinet remplit le recipient pose dans l'evier, a la temperature du robinet
+    if (e.robinet > 3 && e.place === "evier" && e.glisse === null) {
+      var dq = 0.12 * e.robinet / 90 * dt, Cr0 = a.Cr + (e.couv ? 150 : 0);
+      e.th = ((e.mw * C_EAU + Cr0) * e.th + dq * C_EAU * reg.t0) / ((e.mw + dq) * C_EAU + Cr0);
+      e.mw += dq;
+      if (e.mw > a.cap) { e.mw = a.cap; if (!e.vu.deborde) { e.vu.deborde = true; message("Ça déborde : le récipient est plein. Ferme le robinet."); } }
     }
+    // la puissance electrique
+    if (e.app === "bouilloire") {
+      if (e.on && !(s && e.mw >= 0.25)) { e.on = false; message(s ? "Il n'y a plus assez d'eau : la bouilloire s'arrête." : "La bouilloire, soulevée de son socle, s'arrête."); }
+      if (e.on) Putile = a.P * KU;
+      Pel = Putile;
+    } else if (e.app === "fonte") {
+      if (e.pos > 0) {
+        if (e.Tp >= CONSIGNE[e.pos]) e.relais = false; else if (e.Tp <= CONSIGNE[e.pos] - 20) e.relais = true;
+        Putile = e.relais ? a.P * KU : 0;
+      }
+      Pel = Putile;
+    } else {
+      if (e.ind) { Putile = s ? a.P * KU * e.niveau / 9 : 0; Pel = Putile + 1.5; } else Pel = 0.3;   // l'electronique consomme aussi
+    }
+    e.Ec += Pel * dt;
+    // ou va cette puissance
+    if (e.app === "fonte") {
+      var flux = s ? a.K * (e.Tp - e.th) : 0, pp = a.Gp * (e.Tp - T_AIR);
+      e.Tp += (Putile - flux - pp) / a.Cp * dt;
+      Pw = flux; Papp = pp; Pplaque = Putile - flux - pp;
+    } else { Pw = a.ray * Putile; Papp = Pel - Pw; }
+    // l'eau et son recipient
+    var G = a.G * (e.couv ? 0.65 : 1), ev = a.ev * (e.couv ? 0.15 : 1), Cr = a.Cr + (e.couv ? 150 : 0);
+    var Pperte = G * (e.th - T_AIR), Pev = e.mw > 0.01 ? EV * ev * fevap(e.th) : 0;
+    var net = Pw - Pperte - Pev, Ctot = e.mw * C_EAU + Cr, Pebu = 0;
+    if (e.mw > 0.01 && e.th >= 100 && net > 0) { Pebu = net; e.th = 100; }
+    else { e.th += net / Ctot * dt; if (e.mw > 0.01 && e.th > 100) e.th = 100; }
+    if (e.mw <= 0.01 && e.th > 250) e.th = 250;
+    var dm = (Pev + Pebu) / LV * dt;
+    e.mw = Math.max(0, e.mw - dm);
+    if (e.mw > 0.01 && e.th >= 99.95) { if (!e.bouillait) { e.bouillait = true; e.vapPalier = 0; } e.vapPalier += dm; }
+    else if (e.th < 99.5) e.bouillait = false;
+    var chauffeEau = net > 0 && !Pebu;
+    e.flux = { el: Pel, eau: chauffeEau ? net * e.mw * C_EAU / Ctot : 0, rec: chauffeEau ? net * Cr / Ctot : 0, plaque: Pplaque, vap: Pev + Pebu, air: Pperte + Papp };
+    // la bouilloire se coupe peu apres l'ebullition
+    if (e.app === "bouilloire" && e.on) {
+      if (e.th >= 99.95) { if (e.tBout === null) e.tBout = e.t; if (e.t - e.tBout >= 8) { e.on = false; message("La bouilloire s'est coupée seule : la vapeur a fait sauter l'interrupteur. Relève tout de suite."); } }
+      else e.tBout = null;
+    }
+    // debut et fin de chauffe, pour les verifications
+    var chauffe = e.app === "bouilloire" ? e.on : e.app === "fonte" ? e.pos > 0 : (e.ind && e.niveau > 0 && s);
+    if (chauffe && !e.chauffe) { e.depart = { t: e.t, th: e.th, Ec: e.Ec, m: e.mw }; e.arret = null; e.thDemi = null; e.th30 = null; }
+    if (!chauffe && e.chauffe) e.arret = { t: e.t, th: e.th, Ec: e.Ec };
+    e.chauffe = chauffe;
+    if (e.arret && e.thDemi === null && e.th - T_AIR <= (e.arret.th - T_AIR) / 2) e.thDemi = (e.t - e.arret.t) / 60;
+    if (e.arret && e.th30 === null && e.t - e.arret.t >= 1800) e.th30 = e.th;
+    // la sonde du thermometre, avec son temps de reponse
+    var cible;
+    if (e.sonde === "air" || e.mw < 0.01) cible = T_AIR + (e.th - T_AIR) * (e.app === "bouilloire" ? 0.85 : e.couv ? 0.8 : 0.3);
+    else if (e.sonde === "fond") cible = e.th + (e.app === "fonte" ? 0.06 * Math.max(0, e.Tp - e.th) : Pw / 320);
+    else cible = e.th;
+    e.thAff += (cible + DECAL - e.thAff) * (1 - Math.exp(-dt / 3));
+    if (e.chronoMarche) e.chrono += dt;
+    e.t += dt;
+  }
+
+  /* ---------- Les lectures : ce que montrent les instruments ---------- */
+  var MODES = [["W", "puissance"], ["kWh", "énergie"], ["V", "tension"], ["A", "intensité"]];
+  function lectureTh(e) { return Sim.mesure(e.thAff, { absolu: 0.03, resolution: 0.1 }); }
+  function lectureKwh(e) { return Math.floor(e.Ec / 3600) / 1000; }          // compteur au wattheure, tronque
+  function lectureWatt(e) {
+    var m = MODES[e.mode][0], P = e.flux.el;
+    if (m === "W") return Sim.mesure(P, { relatif: 0.003, resolution: P < 10 ? 0.1 : 1 });
+    if (m === "kWh") return lectureKwh(e);
+    if (m === "V") return Sim.mesure(U, { absolu: 0.15, resolution: 0.1 });
+    return Sim.mesure(P / U, { relatif: 0.004, resolution: 0.01 });
+  }
+  function decWatt(e) { var m = MODES[e.mode][0], P = e.flux.el; return m === "W" ? (P < 10 ? 1 : 0) : m === "kWh" ? 3 : m === "V" ? 1 : 2; }
+  function lectureBalance(e) {
+    var brut = EXP[exp].surBalance ? 2600 + (st(e) ? masseRecipient(e) : 0) : (e.place === "balance" && e.glisse === null ? masseRecipient(e) : 0);
+    return brut > 5000 ? NaN : Math.round(brut - e.tare);
+  }
+  function chronoTexte(t) { var s = Math.floor(t); return Math.floor(s / 60) + " min " + (s % 60 < 10 ? "0" : "") + (s % 60) + " s"; }
+
+  /* ---------- Les reglages, rebatis a chaque experience ---------- */
+  function message(t) { if (t) document.getElementById("etat").textContent = t; }
+  function poserReglages() {
+    var R = document.getElementById("reglages"), X = EXP[exp];
+    R.innerHTML = "";
+    if (X.apps.length > 1) Sim.choix(R, { label: exp === "ref" ? "Le récipient" : "L'appareil", valeur: E().app, options: X.apps.map(function (a) { return { val: a[0], texte: a[1] }; }),
+      surChange: function (v) {
+        var vieux = E(); etats[exp] = etatNeuf(exp, v); etats[exp].Tp = T_AIR; etats[exp].vu = vieux.vu;
+        poserCommandes(); poserDefis(); dessinerFond();
+        message("Nouvel appareil : le récipient est vide, sur la balance. Fais la tare, remplis-le à l'évier, pèse-le.");
+      } });
+    Sim.curseur(R, { label: "Température de l'eau du robinet", min: 10, max: 25, pas: 1, valeur: reg.t0, unite: "°C", dec: 0, surChange: function (v) { reg.t0 = v; } });
+    document.getElementById("consigneReglages").textContent = exp === "ebu"
+      ? "La plaque à induction est posée sur la balance : on suit la masse d'eau pendant l'ébullition. Changer l'eau du robinet ne touche qu'à l'eau qui coulera ensuite."
+      : "Changer d'appareil vide la cuisine et repart de zéro. Changer l'eau du robinet ne touche qu'à l'eau qui coulera ensuite.";
+  }
+  var cReglage = null;
+  function poserCommandes() {
+    var e = E(), Z = document.getElementById("rgReglage");
+    Z.innerHTML = ""; cReglage = null;
+    if (e.app === "fonte") cReglage = Sim.curseur(Z, { label: "Bouton de la plaque en fonte (thermostat)", min: 0, max: 6, pas: 1, valeur: e.pos, dec: 0,
+      surChange: function (v) { E().pos = v; } });
+    if (e.app === "induction") cReglage = Sim.curseur(Z, { label: "Niveau de la plaque à induction", min: 0, max: 9, pas: 1, valeur: e.niveau, dec: 0,
+      surChange: function (v) { var e2 = E(); if (!e2.ind && v > 0) { e2.ind = true; } e2.niveau = v; } });
+    document.getElementById("bMarche").hidden = e.app === "fonte";
+    document.getElementById("bCouvercle").hidden = !casserole(e);
+    document.getElementById("bStation").textContent = e.app === "bouilloire" ? "Sur le socle" : "Sur la plaque";
+    document.getElementById("bBalance").hidden = EXP[exp].surBalance;
+    var S2 = document.getElementById("choixSonde"); S2.innerHTML = "";
+    Sim.choix(S2, { label: "La sonde du thermomètre est", valeur: e.sonde,
+      options: [{ val: "air", texte: "au-dessus de l'eau" }, { val: "eau", texte: "dans l'eau" }, { val: "fond", texte: "contre le fond" }],
+      surChange: function (v) { E().sonde = v; E().vu.sonde = true; } });
+    afficher();
+  }
+
+  /* ---------- Les instruments ---------- */
+  var I = document.getElementById("instruments");
+  var A = {
+    watt: Sim.afficheur(I, { nom: "Wattmètre-prise", unite: "W", dec: 0, note: "" }),
+    th: Sim.afficheur(I, { nom: "Thermomètre", unite: "°C", dec: 1 }),
+    bal: Sim.afficheur(I, { nom: "Balance", unite: "g", dec: 0 }),
+    chrono: Sim.afficheur(I, { nom: "Chronomètre", unite: "", dec: 0 })
+  };
+  Sim.choix("#vitesse", { label: "Vitesse du temps", valeur: reg.vitesse,
+    options: [{ val: 0, texte: "pause" }, { val: 1, texte: "× 1" }, { val: 10, texte: "× 10" }, { val: 60, texte: "× 60" }],
+    surChange: function (v) { reg.vitesse = v; } });
+  var cVitesse = document.querySelector("#vitesse .choix");
+  function poserVitesse(v) { reg.vitesse = v; cVitesse.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.textContent === (v === 0 ? "pause" : "× " + v) ? "true" : "false"); }); }
+
+  /* ---------- Les releves et leurs enregistreurs ---------- */
+  function axeT(gr, lignes) {
+    var tmax = 4; lignes.forEach(function (l) { tmax = Math.max(tmax, l.t); });
+    gr.axes({ xmax: tmax <= 10 ? Math.ceil(tmax * 1.15) : Math.ceil(tmax * 1.1 / 5) * 5 }).effacer();
+  }
+  var COLS = {
+    ren: [{ cle: "app", titre: "Appareil" }, { cle: "t", titre: "t", unite: "min", dec: 2 }, { cle: "th", titre: "θ", unite: "°C", dec: 1 }, { cle: "E", titre: "Compteur", unite: "kWh", dec: 3 }],
+    ebu: [{ cle: "t", titre: "t", unite: "min", dec: 2 }, { cle: "th", titre: "θ", unite: "°C", dec: 1 }, { cle: "m", titre: "Balance", unite: "g", dec: 0 }, { cle: "E", titre: "Compteur", unite: "kWh", dec: 3 }],
+    ref: [{ cle: "app", titre: "Récipient" }, { cle: "t", titre: "t", unite: "min", dec: 2 }, { cle: "th", titre: "θ", unite: "°C", dec: 1 }]
+  };
+  var VUES = { ren: "vueRen", ebu: "vueEbu", ref: "vueRef" }, REL = {}, ENR = {};
+  function ligne(x, tMin) {
+    var e = etats[x], l = { t: tMin, th: lectureTh(e) };
+    if (x === "ren") l.app = e.app === "bouilloire" ? "bouilloire" : (e.app === "fonte" ? "fonte" : "induction") + (e.couv ? ", couvercle" : "");
+    if (x === "ref") l.app = e.app === "bouilloire" ? "bouilloire" : "casserole" + (e.couv ? " couverte" : "") + (e.app === "fonte" ? ", sur la fonte" : "");
+    if (x !== "ref") l.E = lectureKwh(e);
+    if (x === "ebu") l.m = lectureBalance(e);
+    return l;
+  }
+  Object.keys(VUES).forEach(function (x) {
+    var V = document.getElementById(VUES[x]), haut = Sim.el("div"), bas = Sim.el("div");
+    V.appendChild(haut); V.appendChild(bas);
+    REL[x] = Sim.releve(bas, { colonnes: COLS[x],
+      graphe: { x: "t", y: "th", xmin: 0, xmax: 10, ymin: 0, ymax: 110, pasY: 10, titreX: "t (min)", titreY: "θ (°C)", largeur: 620, hauteur: 340 },
+      avantPoints: axeT, surChange: function () { if (ENR[x]) ENR[x].majInfo(); } });
+    ENR[x] = Sim.enregistreur(haut, REL[x], {
+      periodes: [{ val: 10, texte: "10 s" }, { val: 30, texte: "30 s" }, { val: 60, texte: "1 min" }, { val: 300, texte: "5 min" }],
+      valeur: EXP[x].periode,
+      lire: function (tPlan, tDebut) { return ligne(x, (tPlan - tDebut) / 60); },
+      surEtat: function (oui) { message(oui ? "L'enregistreur garde une mesure à chaque intervalle de temps, tout seul : le temps du tableau part de son lancement." : "Enregistrement arrêté."); }
+    });
   });
   document.getElementById("garder").addEventListener("click", function () {
-    rel.ajouter({ t: Math.floor(etat.t), theta: lectureTheta(), E: lectureE() });
+    var e = E(); REL[exp].ajouter(ligne(exp, e.chrono / 60));
+    message("Mesure gardée à la main : son temps est celui du chronomètre, " + chronoTexte(e.chrono) + ".");
   });
 
-  /* ---------- Defis ---------- */
-  var D = document.getElementById("defis");
-  function mEau() { return etat.V * 1; }
-  Sim.defi(D, { question: "Énergie électrique consommée, lue au wattmètre et convertie en joules (1 kWh = 3 600 000 J) :", unite: "J",
-    attendu: function () { return lectureE() * 3.6e6; }, tolerance: 0.02, toleranceAbsolue: 3600,
-    methode: "Lis l'énergie au compteur en kWh, puis multiplie par 3 600 000." });
-  Sim.defi(D, { question: "Énergie reçue par l'eau, Q = m × c × (θ<sub>finale</sub> − θ<sub>initiale</sub>) :", unite: "J",
-    attendu: function () { return mEau() * C_EAU * (thetaFin() - etat.t0); }, tolerance: 0.03,
-    methode: "m en kg (1 L d'eau = 1 kg), c = 4 180 J/(kg·°C), l'écart de température en °C." });
-  Sim.defi(D, { question: "Rendement de l'appareil, η = Q ÷ E<sub>électrique</sub>, en pourcentage :", unite: "%",
-    attendu: function () { return etat.E > 0 ? 100 * mEau() * C_EAU * (thetaFin() - etat.t0) / etat.E : NaN; }, tolerance: 0, toleranceAbsolue: 3,
-    methode: "Divise l'énergie reçue par l'eau par l'énergie consommée, les deux en joules, puis multiplie par 100." });
-
-  /* ---------- Scene ---------- */
-  var S = document.getElementById("scene"), svg = Sim.svg;
-  function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-  var g = {};
-  function dessinerScene() {
-    S.innerHTML = "";
-    var app = APPAREILS[etat.app];
-    // plan de travail et mur
-    svg("rect", { x: 0, y: 300, width: 600, height: 60, fill: css("--carte2") }, S);
-    svg("line", { x1: 0, y1: 300, x2: 600, y2: 300, stroke: css("--trait"), "stroke-width": 2 }, S);
-    // prise murale et wattmetre-prise
-    svg("rect", { x: 26, y: 150, width: 64, height: 64, rx: 8, fill: css("--carte"), stroke: css("--trait"), "stroke-width": 2 }, S);
-    svg("rect", { x: 34, y: 162, width: 48, height: 92, rx: 7, fill: css("--carte"), stroke: css("--encre2"), "stroke-width": 2 }, S);
-    svg("rect", { x: 40, y: 172, width: 36, height: 22, rx: 2, fill: "#cfd8cf", stroke: css("--encre2"), "stroke-width": 1 }, S);
-    g.lcd = svg("text", { x: 58, y: 188, "text-anchor": "middle", "font-size": 11, "font-family": "Consolas, monospace", fill: "#1d2a1d", texte: "0 W" }, S);
-    svg("text", { x: 58, y: 142, "text-anchor": "middle", "font-size": 11, fill: css("--encre2"), texte: "wattmètre-prise" }, S);
-    // cable
-    var xApp = etat.app === "bouilloire" ? 330 : 340;
-    svg("path", { d: "M58 254 C 58 300, 120 318, 200 312 S " + (xApp - 60) + " 300, " + (xApp - 40) + " 292", fill: "none", stroke: css("--encre"), "stroke-width": 3 }, S);
-    // hauteur d'eau : proportionnelle au volume
-    if (etat.app === "bouilloire") {
-      var bas = 290, haut = 110, fond = bas - 8;
-      svg("rect", { x: 250, y: bas - 4, width: 170, height: 12, rx: 4, fill: css("--encre2") }, S); // socle
-      g.voyant = svg("circle", { cx: 402, cy: bas + 2, r: 4, fill: css("--trait") }, S);
-      var corps = "M268 " + fond + " L276 " + haut + " Q335 " + (haut - 14) + " 394 " + haut + " L402 " + fond + " Z";
-      svg("path", { d: corps, fill: css("--carte"), stroke: css("--encre"), "stroke-width": 2.5 }, S);
-      // fenetre de niveau
-      var niv = fond - (fond - haut - 20) * (etat.V / 1.8);
-      svg("clipPath", { id: "fen" }, S).appendChild(svg("rect", { x: 300, y: haut + 18, width: 30, height: fond - haut - 26, rx: 6 }));
-      svg("rect", { x: 300, y: haut + 18, width: 30, height: fond - haut - 26, rx: 6, fill: css("--scene"), stroke: css("--encre2"), "stroke-width": 1.5 }, S);
-      g.eau = svg("rect", { x: 300, y: niv, width: 30, height: fond - niv, fill: "#8fbde3", "clip-path": "url(#fen)" }, S);
-      [0.5, 1.0, 1.5].forEach(function (v) { var y = fond - (fond - haut - 20) * (v / 1.8); svg("line", { x1: 330, y1: y, x2: 338, y2: y, stroke: css("--encre2") }, S); svg("text", { x: 342, y: y + 4, "font-size": 11, fill: css("--encre2"), texte: Sim.fr(v, 1) + " L" }, S); });
-      svg("path", { d: "M394 140 C 440 140, 446 230, 400 238", fill: "none", stroke: css("--encre"), "stroke-width": 9, "stroke-linecap": "round" }, S); // poignee
-      svg("path", { d: "M276 124 L246 108 L250 102 L280 114", fill: css("--carte"), stroke: css("--encre"), "stroke-width": 2.5 }, S); // bec
-      g.bulles = svg("g", { "clip-path": "url(#fen)" }, S); g.zoneB = { x: 300, w: 30, bas: fond, haut: niv };
-      g.vapeur = svg("g", {}, S); g.vx = 250; g.vy = 96;
-      // sonde du thermometre
-      svg("line", { x1: 315, y1: 40, x2: 315, y2: fond - 12, stroke: css("--encre"), "stroke-width": 3 }, S);
-      svg("text", { x: 322, y: 50, "font-size": 11, fill: css("--encre2"), texte: "sonde du thermomètre" }, S);
+  /* ---------- Les verifications ---------- */
+  function poserDefis() {
+    var D = document.getElementById("defis"); D.innerHTML = "";
+    if (exp === "ren") {
+      Sim.defi(D, { question: "Énergie électrique consommée pendant la chauffe, lue au wattmètre et convertie en joules (1 kWh = 3 600 000 J) :", unite: "J",
+        attendu: function () { var e = E(); return e.arret && e.depart ? e.arret.Ec - e.depart.Ec : NaN; }, tolerance: 0.02, toleranceAbsolue: 3600,
+        methode: "Compteur à zéro avant la mise en marche ; lis les kWh à l'arrêt, puis multiplie par 3 600 000." });
+      Sim.defi(D, { question: "Énergie reçue par l'eau, Q = m × c × (θ<sub>finale</sub> − θ<sub>initiale</sub>) :", unite: "J",
+        attendu: function () { var e = E(); return e.arret && e.depart ? e.depart.m * C_EAU * (e.arret.th - e.depart.th) : NaN; }, tolerance: 0.03,
+        methode: "m en kg, pesée avant de chauffer ; θ initiale lue avant la mise en marche, θ finale à l'arrêt, la sonde dans l'eau ; c = 4 180 J/(kg·°C)." });
+      Sim.defi(D, { question: "Rendement de l'appareil, η = Q ÷ E, en pourcentage :", unite: "%",
+        attendu: function () { var e = E(); return e.arret && e.depart && e.arret.Ec > e.depart.Ec ? 100 * e.depart.m * C_EAU * (e.arret.th - e.depart.th) / (e.arret.Ec - e.depart.Ec) : NaN; },
+        tolerance: 0, toleranceAbsolue: 3, methode: "Q et E dans la même unité, le joule ; puis × 100." });
+      document.getElementById("consigneResultat").innerHTML = "Calcule avec <b>tes</b> lectures, prises à l'arrêt du chauffage. Donnée : c<sub>eau</sub> = 4 180 J/(kg·°C).";
+    } else if (exp === "ebu") {
+      Sim.defi(D, { question: "Température de l'eau pendant qu'elle bout :", unite: "°C", attendu: 100, tolerance: 0, toleranceAbsolue: 0.6,
+        methode: "Lis le thermomètre, la sonde dans l'eau, pendant le palier." });
+      Sim.defi(D, { question: "Masse d'eau vaporisée depuis le début de l'ébullition, lue à la balance :", unite: "g",
+        attendu: function () { return E().bouillait || E().vapPalier > 0 ? 1000 * E().vapPalier : NaN; }, tolerance: 0.03, toleranceAbsolue: 2,
+        methode: "Note la balance quand l'eau commence à bouillir, puis maintenant : la différence est la masse partie en vapeur. Mets le temps en pause pour lire." });
+      Sim.defi(D, { question: "Énergie qu'il a fallu pour vaporiser cette masse, Q = m × L, avec L = 2 260 J/g :", unite: "J",
+        attendu: function () { return E().bouillait || E().vapPalier > 0 ? 1000 * E().vapPalier * 2260 : NaN; }, tolerance: 0.04,
+        methode: "m en grammes × 2 260 J/g, avec la masse de la question précédente." });
+      document.getElementById("consigneResultat").innerHTML = "Le temps tourne : <b>mets-le en pause</b> pour lire la balance et vérifier. Donnée : L<sub>vaporisation</sub> = 2 260 J/g.";
     } else {
-      var yPl = 276;
-      if (etat.app === "fonte") {
-        svg("rect", { x: 220, y: yPl, width: 240, height: 18, rx: 3, fill: css("--carte"), stroke: css("--encre"), "stroke-width": 2 }, S);
-        g.plaque = svg("ellipse", { cx: 340, cy: yPl + 2, rx: 92, ry: 8, fill: "#3b3b3d" }, S);
+      Sim.defi(D, { question: "Durée pour que l'écart de température avec la pièce, à 20 °C, soit divisé par deux, à compter de l'arrêt du chauffage :", unite: "min",
+        attendu: function () { return E().thDemi === null ? NaN : E().thDemi; }, tolerance: 0, toleranceAbsolue: 2,
+        methode: "À l'arrêt, l'écart vaut θ − 20 ; cherche dans le tableau quand il ne vaut plus que la moitié, et compte le temps depuis l'arrêt." });
+      Sim.defi(D, { question: "Température de l'eau 30 minutes après l'arrêt du chauffage :", unite: "°C",
+        attendu: function () { return E().th30 === null ? NaN : E().th30; }, tolerance: 0, toleranceAbsolue: 1,
+        methode: "Lis-la dans le tableau, à 30 minutes de l'arrêt, ou entre deux mesures." });
+      document.getElementById("consigneResultat").innerHTML = "Chauffe jusqu'à l'ébullition, arrête, et laisse l'enregistreur tourner une demi-heure au moins : le temps « × 60 » fait passer une minute par seconde.";
+    }
+  }
+
+  /* ---------- La scene ---------- */
+  var S = document.getElementById("scene"), svg = Sim.svg, Lc = {};
+  function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  ["fond", "objets", "avant"].forEach(function (k) { Lc[k] = svg("g", {}, S); });
+  ["robinet", "recipient", "sonde", "commande", "tare", "mode", "couvercle"].forEach(function (k) {
+    Lc[k] = svg("g", { "class": k === "tare" || k === "mode" || k === "couvercle" ? "clic" : "prise" }, S);
+  });
+  function SLOTS() { return EXP[exp].surBalance ? { station: 230, evier: 548 } : { station: 230, balance: 410, evier: 548 }; }
+  function xRec(e) { return e.glisse !== null ? e.glisse : SLOTS()[e.place]; }
+  function basRec(e) {
+    if (e.glisse !== null) return 330;
+    if (e.place === "evier") return 434;
+    if (e.place === "balance") return 374;
+    if (EXP[exp].surBalance) return 366;
+    return e.app === "bouilloire" ? 388 : e.app === "fonte" ? 374 : 384;
+  }
+  function texte(p, x, y, t, o) { o = o || {}; return svg("text", { x: x, y: y, "class": o.classe || "etiq", "text-anchor": o.ancre || "start", texte: t }, p); }
+
+  function dessinerFond() {
+    var e = E(), F = Lc.fond;
+    F.innerHTML = "";
+    svg("rect", { x: 0, y: 400, width: 640, height: 70, fill: css("--carte2") }, F);
+    svg("line", { x1: 0, y1: 400, x2: 640, y2: 400, stroke: css("--trait"), "stroke-width": 2 }, F);
+    // l'evier et son robinet
+    svg("path", { d: "M470 400 L478 438 L618 438 L626 400", fill: css("--scene"), stroke: css("--encre2"), "stroke-width": 2 }, F);
+    svg("path", { d: "M640 128 L606 128 Q590 128 590 144 L590 150 M640 140 L612 140 Q602 140 602 150", fill: "none", stroke: css("--encre2"), "stroke-width": 3 }, F);
+    svg("path", { d: "M596 150 Q596 160 584 160 L560 160 Q548 160 548 172 L548 206", fill: "none", stroke: css("--encre"), "stroke-width": 8, "stroke-linecap": "round" }, F);
+    texte(F, 548, 456, "évier", { ancre: "middle" });
+    // la prise murale et le wattmetre-prise
+    svg("rect", { x: 22, y: 236, width: 72, height: 72, rx: 9, fill: css("--carte"), stroke: css("--trait"), "stroke-width": 2 }, F);
+    svg("rect", { x: 30, y: 250, width: 56, height: 104, rx: 8, "class": "objet" }, F);
+    svg("rect", { x: 36, y: 258, width: 44, height: 26, rx: 2, "class": "lcd" }, F);
+    texte(F, 58, 230, "wattmètre-prise", { ancre: "middle" });
+    svg("path", { d: "M58 354 C58 410, 150 404, " + (EXP[exp].surBalance ? "170 392" : e.app === "bouilloire" ? "196 394" : "160 392"), fill: "none", stroke: css("--encre"), "stroke-width": 3 }, F);
+    // le thermometre a sonde
+    svg("rect", { x: 22, y: 26, width: 120, height: 58, rx: 7, "class": "objet" }, F);
+    svg("rect", { x: 30, y: 33, width: 104, height: 26, rx: 2, "class": "lcd" }, F);
+    texte(F, 82, 76, "thermomètre à sonde", { ancre: "middle" });
+    // la balance, ou la plaque sur la balance
+    if (EXP[exp].surBalance) {
+      svg("rect", { x: 160, y: 380, width: 140, height: 20, rx: 3, "class": "objet" }, F);
+      svg("rect", { x: 152, y: 366, width: 156, height: 14, rx: 3, fill: "#26272b", stroke: css("--encre"), "stroke-width": 2 }, F);
+      texte(F, 230, 418, "plaque à induction posée sur la balance", { ancre: "middle" });
+    } else {
+      svg("rect", { x: 360, y: 380, width: 100, height: 20, rx: 3, "class": "objet" }, F);
+      svg("rect", { x: 366, y: 374, width: 88, height: 6, rx: 2, fill: css("--encre2") }, F);
+      texte(F, 410, 418, "balance au gramme", { ancre: "middle" });
+      // le poste de chauffe
+      if (e.app === "bouilloire") {
+        svg("rect", { x: 172, y: 388, width: 116, height: 12, rx: 4, fill: css("--encre2") }, F);
+        texte(F, 230, 418, "socle de la bouilloire · 2 200 W", { ancre: "middle" });
+      } else if (e.app === "fonte") {
+        svg("rect", { x: 140, y: 380, width: 180, height: 20, rx: 3, "class": "objet" }, F);
+        texte(F, 230, 418, "plaque en fonte · 1 500 W", { ancre: "middle" });
       } else {
-        svg("rect", { x: 220, y: yPl, width: 240, height: 18, rx: 3, fill: "#2a2b2e", stroke: css("--encre"), "stroke-width": 2 }, S);
-        g.plaque = svg("g", {}, S);
-        [30, 55, 80].forEach(function (r) { svg("ellipse", { cx: 340, cy: yPl + 9, rx: r, ry: 4, fill: "none", stroke: "#8b8f96", "stroke-width": 1.2 }, g.plaque); });
-      }
-      g.voyant = svg("circle", { cx: 444, cy: yPl + 9, r: 4, fill: css("--trait") }, S);
-      var hB = 150, yB = yPl - hB;
-      svg("clipPath", { id: "cas" }, S).appendChild(svg("rect", { x: 262, y: yB, width: 156, height: hB }));
-      var nivC = yPl - hB * (etat.V / 2.0);
-      g.eau = svg("rect", { x: 262, y: nivC, width: 156, height: yPl - nivC, fill: "#8fbde3" }, S);
-      svg("path", { d: "M258 " + yB + " L262 " + yPl + " L418 " + yPl + " L422 " + yB, fill: "none", stroke: css("--encre"), "stroke-width": 3 }, S);
-      svg("line", { x1: 422, y1: yB + 20, x2: 520, y2: yB + 10, stroke: css("--encre"), "stroke-width": 8, "stroke-linecap": "round" }, S);
-      g.bulles = svg("g", { "clip-path": "url(#cas)" }, S); g.zoneB = { x: 262, w: 156, bas: yPl, haut: nivC };
-      g.vapeur = svg("g", {}, S); g.vx = 330; g.vy = yB - 6;
-      svg("line", { x1: 300, y1: 40, x2: 300, y2: yPl - 10, stroke: css("--encre"), "stroke-width": 3 }, S);
-      svg("text", { x: 306, y: 50, "font-size": 11, fill: css("--encre2"), texte: "sonde du thermomètre" }, S);
-    }
-    svg("text", { x: 580, y: 30, "text-anchor": "end", "font-size": 13, "font-weight": 600, fill: css("--encre"), texte: app.texte + " · " + app.plaque }, S);
-  }
-  var bulles = [];
-  function animerDecor(dt) {
-    var chaud = Sim.borne((etat.theta - 70) / 30, 0, 1);
-    if (etat.marche && Math.random() < chaud * 0.9) bulles.push({ x: g.zoneB.x + 4 + Math.random() * (g.zoneB.w - 8), y: g.zoneB.bas - 4, r: 1.5 + Math.random() * 2.5 });
-    bulles = bulles.filter(function (b) { b.y -= (30 + 60 * chaud) * dt; return b.y > g.zoneB.haut + 2; });
-    g.bulles.innerHTML = "";
-    bulles.forEach(function (b) { Sim.svg("circle", { cx: b.x, cy: b.y, r: b.r, "class": "bulle" }, g.bulles); });
-    g.vapeur.innerHTML = "";
-    if (etat.theta > 85) {
-      var k = Sim.borne((etat.theta - 85) / 15, 0, 1), t = performance.now() / 700;
-      for (var i = 0; i < 3; i++) {
-        var x = g.vx + (etat.app === "bouilloire" ? 0 : (i - 1) * 40), d = Math.sin(t + i) * 8;
-        Sim.svg("path", { d: "M" + x + " " + g.vy + " q " + (10 + d) + " -20 0 -40 q " + (-10 - d) + " -20 0 -40", "class": "vapeur", "stroke-opacity": 0.12 + 0.3 * k }, g.vapeur);
+        svg("rect", { x: 140, y: 384, width: 180, height: 16, rx: 3, fill: "#26272b", stroke: css("--encre"), "stroke-width": 2 }, F);
+        texte(F, 230, 418, "plaque à induction · 2 000 W", { ancre: "middle" });
       }
     }
-    g.voyant.setAttribute("fill", etat.marche ? "#d9534f" : css("--trait"));
-    if (etat.app === "fonte") g.plaque.setAttribute("fill", etat.marche ? "#7a2e22" : "#3b3b3d");
   }
 
-  /* ---------- Physique ---------- */
-  function raz() {
-    etat.theta = etat.t0; etat.thetaArret = etat.t0; etat.t = 0; etat.E = 0; etat.marche = false; etat.bout = false; bulles = [];
-    document.getElementById("marche").textContent = "Mettre en marche";
-    dessinerScene(); afficher();
-    message("L'appareil est à l'arrêt. Le compteur du wattmètre est à zéro.");
+  /* Ce qui bouge, redessine a chaque image. */
+  var dernierDessin = 0;
+  function dessiner() {
+    var e = E(), O = Lc.objets, Av = Lc.avant, x = xRec(e), yb = basRec(e);
+    O.innerHTML = ""; Av.innerHTML = "";
+    // la plaque : fonte qui rougit, induction qui affiche son niveau
+    if (e.app === "fonte" && !EXP[exp].surBalance) {
+      var k = Sim.borne((e.Tp - 80) / 270, 0, 1), c0 = [59, 59, 61], c1 = [150, 46, 30];
+      var coul = "rgb(" + c0.map(function (v, i) { return Math.round(v + (c1[i] - v) * k); }).join(",") + ")";
+      svg("rect", { x: 172, y: 374, width: 116, height: 6, rx: 2, fill: coul, stroke: css("--encre"), "stroke-width": 1.5 }, O);
+    }
+    if (e.app === "induction") {
+      var yI = EXP[exp].surBalance ? 373 : 392, xI = EXP[exp].surBalance ? 230 : 230;
+      [24, 44].forEach(function (r) { svg("ellipse", { cx: xI, cy: yI, rx: r * 1.6, ry: 3, fill: "none", stroke: "#6d7178", "stroke-width": 1 }, O); });
+    }
+    // l'eau qui coule du robinet
+    if (e.robinet > 3) {
+      var ys = e.place === "evier" && e.glisse === null ? surfaceEau(e, x, yb) : 436;
+      svg("line", { x1: 548, y1: 208, x2: 548, y2: ys, stroke: css("--eau"), "stroke-width": 2 + 4 * e.robinet / 90, "stroke-linecap": "round" }, O);
+    }
+    if (casserole(e)) dessinerCasserole(O, x, yb, e); else dessinerBouilloire(O, x, yb, e);
+    dessinerSonde(Av, x, yb, e);
+    dessinerRobinet(e); dessinerCommande(e); dessinerLcd(Av, e);
+    if (document.getElementById("voirFlux").checked) dessinerFlux(e);
   }
-  function message(t) { document.getElementById("etat").textContent = t; }
-  function pas(dt) {
-    var app = APPAREILS[etat.app], mc = etat.V * C_EAU + app.C;
-    var Putile = etat.marche ? app.transfert * app.P : 0;
-    etat.theta += (Putile - app.G * (etat.theta - T_AIR)) / mc * dt;
-    if (etat.marche) etat.E += app.P * dt;
-    if (etat.marche && etat.theta >= 100) {
-      etat.theta = 100; etat.thetaArret = 100; etat.marche = false; etat.bout = true;
-      document.getElementById("marche").textContent = "Mettre en marche";
-      message("L'eau bout : le chauffage s'est coupé. Relève tout de suite le temps, la température et l'énergie.");
+  function surfaceEau(e, x, yb) { return casserole(e) ? yb - 2 - e.mw * 35 : yb - 14 - 112 * e.mw / 1.8; }
+  function bulles(O, e, zone, clip) {
+    var chaud = Sim.borne((e.th - 70) / 30, 0, 1);
+    if (reg.vitesse > 0 && e.mw > 0.01 && Math.random() < chaud * 0.8) e.bulles.push({ x: zone.x + 3 + Math.random() * (zone.w - 6), y: zone.bas - 3, r: 1.2 + Math.random() * 2.2 });
+    e.bulles = e.bulles.filter(function (b) { b.y -= 2 + 3 * chaud; return b.y > zone.haut + 2; }).slice(-40);
+    var G = svg("g", clip ? { "clip-path": clip } : {}, O);
+    e.bulles.forEach(function (b) { if (b.x >= zone.x && b.x <= zone.x + zone.w) svg("circle", { cx: b.x, cy: b.y, r: b.r, "class": "bulle" }, G); });
+  }
+  function vapeur(O, x, y, e, n) {
+    if (e.th < 80 || e.mw < 0.01) return;
+    var k = Sim.borne((e.th - 80) / 20, 0, 1), t = performance.now() / 700;
+    for (var i = 0; i < n; i++) {
+      var dx = (i - (n - 1) / 2) * 30, d = Math.sin(t + i) * 7;
+      svg("path", { d: "M" + (x + dx) + " " + y + " q " + (9 + d) + " -18 0 -36 q " + (-9 - d) + " -18 0 -36", "class": "vapeur", "stroke-opacity": 0.1 + 0.3 * k }, O);
     }
   }
+  function dessinerBouilloire(O, x, yb, e) {
+    svg("path", { d: "M" + (x - 46) + " " + (yb - 118) + " L" + (x - 78) + " " + (yb - 136) + " L" + (x - 74) + " " + (yb - 143) + " L" + (x - 43) + " " + (yb - 130) + " Z", "class": "objet" }, O);
+    svg("path", { d: "M" + (x - 52) + " " + yb + " L" + (x - 44) + " " + (yb - 138) + " Q" + x + " " + (yb - 150) + " " + (x + 44) + " " + (yb - 138) + " L" + (x + 52) + " " + yb + " Z", "class": "objet" }, O);
+    svg("path", { d: "M" + (x + 44) + " " + (yb - 130) + " C" + (x + 92) + " " + (yb - 130) + " " + (x + 92) + " " + (yb - 36) + " " + (x + 50) + " " + (yb - 30), fill: "none", stroke: css("--encre"), "stroke-width": 9, "stroke-linecap": "round" }, O);
+    svg("ellipse", { cx: x, cy: yb - 143, rx: 30, ry: 6, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 2 }, O);
+    svg("rect", { x: x - 8, y: yb - 154, width: 16, height: 7, rx: 3, fill: css("--encre2") }, O);
+    // la fenetre de niveau, graduee
+    var wy = yb - 126, wh = 112, id = "fenetre";
+    var clip = svg("clipPath", { id: id }, O); svg("rect", { x: x - 13, y: wy, width: 26, height: wh, rx: 6 }, clip);
+    svg("rect", { x: x - 13, y: wy, width: 26, height: wh, rx: 6, fill: css("--scene"), stroke: css("--encre2"), "stroke-width": 1.5 }, O);
+    var yn = surfaceEau(e, x, yb);
+    if (e.mw > 0.005) svg("rect", { x: x - 13, y: yn, width: 26, height: yb - 14 - yn, "class": "eau", "clip-path": "url(#" + id + ")" }, O);
+    bulles(O, e, { x: x - 13, w: 26, bas: yb - 14, haut: yn }, "url(#" + id + ")");
+    [[0.25, "MIN"], [0.5, "0,5"], [1, "1,0"], [1.5, "1,5"], [1.7, "MAX"]].forEach(function (g) {
+      var y = yb - 14 - 112 * g[0] / 1.8;
+      svg("line", { x1: x + 13, y1: y, x2: x + 19, y2: y, stroke: css("--encre2"), "stroke-width": 1 }, O);
+      svg("text", { x: x + 22, y: y + 3.5, "font-size": 8.5, fill: css("--encre2"), texte: g[1] }, O);
+    });
+    vapeur(O, x - 76, yb - 146, e, 1);
+  }
+  function dessinerCasserole(O, x, yb, e) {
+    var h = 92, ys = surfaceEau(e, x, yb);
+    svg("line", { x1: x - 75, y1: yb - h + 12, x2: x - 138, y2: yb - h + 2, stroke: css("--encre"), "stroke-width": 8, "stroke-linecap": "round" }, O);
+    if (e.mw > 0.005) svg("rect", { x: x - 73, y: ys, width: 146, height: yb - 2 - ys, "class": "eau" }, O);
+    bulles(O, e, { x: x - 72, w: 144, bas: yb - 3, haut: ys }, null);
+    svg("path", { d: "M" + (x - 75) + " " + (yb - h) + " L" + (x - 75) + " " + (yb - 4) + " Q" + (x - 75) + " " + yb + " " + (x - 71) + " " + yb + " L" + (x + 71) + " " + yb + " Q" + (x + 75) + " " + yb + " " + (x + 75) + " " + (yb - 4) + " L" + (x + 75) + " " + (yb - h), "class": "trait", "stroke-width": 3 }, O);
+    svg("line", { x1: x - 80, y1: yb - h, x2: x - 75, y2: yb - h, "class": "trait", "stroke-width": 3 }, O);
+    svg("line", { x1: x + 75, y1: yb - h, x2: x + 80, y2: yb - h, "class": "trait", "stroke-width": 3 }, O);
+    // le couvercle, qu'on pose ou qu'on retire d'un clic
+    var Cv = Lc.couvercle; Cv.innerHTML = "";
+    if (e.couv) {
+      svg("path", { d: "M" + (x - 82) + " " + (yb - h) + " Q" + x + " " + (yb - h - 30) + " " + (x + 82) + " " + (yb - h) + " Z", fill: css("--carte2"), "fill-opacity": 0.85, stroke: css("--encre"), "stroke-width": 2 }, Cv);
+      svg("ellipse", { cx: x, cy: yb - h - 18, rx: 10, ry: 5, fill: css("--encre2") }, Cv);
+      vapeur(O, x + 70, yb - h - 4, e, 1);
+    } else {
+      svg("rect", { x: x - 80, y: yb - h - 30, width: 160, height: 28, fill: "transparent" }, Cv);
+      vapeur(O, x, yb - h - 6, e, 3);
+    }
+    Cv.style.display = "";
+  }
+  function dessinerSonde(Av, x, yb, e) {
+    var G = Lc.sonde, haut = casserole(e) ? yb - 92 : yb - 150, xs = x + (casserole(e) ? 40 : 18);
+    var bout = e.sonde === "air" ? haut + 14 : e.sonde === "fond" ? yb - 5 : Math.min(yb - 18, Math.max(surfaceEau(e, x, yb) + 18, (surfaceEau(e, x, yb) + yb) / 2));
+    if (!casserole(e) && e.sonde === "air") bout = haut + 26;
+    var y0 = bout - 120;
+    G.innerHTML = "";
+    svg("path", { d: "M142 55 C 210 55, " + xs + " " + (y0 - 60) + ", " + xs + " " + y0, fill: "none", stroke: css("--encre2"), "stroke-width": 2 }, Av);
+    svg("rect", { x: xs - 30, y: y0 - 6, width: 60, height: bout - y0 + 16, fill: "transparent" }, G);
+    svg("rect", { x: xs - 6, y: y0 - 8, width: 12, height: 22, rx: 4, fill: css("--encre2") }, G);
+    svg("line", { x1: xs, y1: y0 + 14, x2: xs, y2: bout, stroke: css("--encre"), "stroke-width": 3, "stroke-linecap": "round" }, G);
+    svg("rect", { x: xs - 14, y: y0 - 14, width: 28, height: 34, rx: 6, "class": "prise-zone" }, G);
+    if (!e.vu.sonde) svg("text", { x: xs + 18, y: y0 + 4, "class": "indice", texte: "sonde ↕" }, G);
+  }
+  function dessinerRobinet(e) {
+    var G = Lc.robinet, a = e.robinet * Math.PI / 180, dx = -Math.cos(a), dy = -Math.sin(a), px = 606, py = 120;
+    G.innerHTML = "";
+    G.setAttribute("aria-valuenow", Math.round(e.robinet));
+    svg("circle", { cx: px + 30 * dx, cy: py + 30 * dy, r: 34, fill: "transparent" }, G);
+    svg("circle", { cx: px + 30 * dx, cy: py + 30 * dy, r: 15, "class": "prise-zone" }, G);
+    svg("rect", { x: px - 7, y: py - 2, width: 14, height: 10, rx: 3, fill: css("--encre2") }, G);
+    svg("line", { x1: px, y1: py, x2: px + 30 * dx, y2: py + 30 * dy, stroke: css("--encre"), "stroke-width": 6, "stroke-linecap": "round" }, G);
+    if (!e.vu.robinet) svg("text", { x: 570, y: 96, "text-anchor": "end", "class": "indice", texte: "ouvre ↻" }, G);
+  }
+  function dessinerCommande(e) {
+    var G = Lc.commande, x = xRec(e), yb = basRec(e);
+    G.innerHTML = "";
+    if (e.app === "bouilloire") {
+      G.setAttribute("class", "clic");
+      svg("rect", { x: x + 34, y: yb - 64, width: 64, height: 60, fill: "transparent" }, G);
+      svg("rect", { x: x + 52, y: yb - 40, width: 15, height: 9, rx: 2, fill: e.on ? "#d9534f" : css("--carte2"), stroke: css("--encre"), "stroke-width": 1.6 }, G);
+      if (!e.vu.marche && st(e) && e.mw >= 0.25) svg("text", { x: x + 84, y: yb - 32, "class": "indice", texte: "marche" }, G);
+    } else if (e.app === "fonte") {
+      G.setAttribute("class", "prise");
+      var ang = (-135 + 45 * e.pos) * Math.PI / 180, cx = 304, cy = 390;
+      svg("circle", { cx: cx, cy: cy, r: 24, fill: "transparent" }, G);
+      svg("circle", { cx: cx, cy: cy, r: 8, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.8 }, G);
+      svg("line", { x1: cx, y1: cy, x2: cx + 7 * Math.sin(ang), y2: cy - 7 * Math.cos(ang), stroke: css("--encre"), "stroke-width": 2.2, "stroke-linecap": "round" }, G);
+      svg("text", { x: cx - 30, y: cy + 4, "text-anchor": "end", "font-size": 10, "font-weight": 700, fill: css("--encre"), texte: String(e.pos) }, G);
+      svg("circle", { cx: 160, cy: 390, r: 3.5, fill: e.pos > 0 && e.relais ? "#d9534f" : css("--trait") }, G);
+    } else {
+      G.setAttribute("class", "clic");
+      var yI = EXP[exp].surBalance ? 373 : 392, xc = EXP[exp].surBalance ? 284 : 292;
+      [["power", xc - 18, ""], ["moins", xc, "−"], ["plus", xc + 18, "+"]].forEach(function (b) {
+        svg("rect", { x: b[1] - 8, y: yI - 8, width: 16, height: 16, rx: 3, fill: "transparent", "data-action": b[0] }, G);
+        if (b[2]) svg("text", { x: b[1], y: yI + 4, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "#d8dade", "data-action": b[0], texte: b[2] }, G);
+        else {
+          svg("path", { d: "M" + (b[1] - 3.2) + " " + (yI - 3) + " A4.5 4.5 0 1 0 " + (b[1] + 3.2) + " " + (yI - 3), fill: "none", stroke: e.ind ? "#ff6b4a" : "#d8dade", "stroke-width": 1.6, "data-action": "power" }, G);
+          svg("line", { x1: b[1], y1: yI - 6, x2: b[1], y2: yI, stroke: e.ind ? "#ff6b4a" : "#d8dade", "stroke-width": 1.6, "data-action": "power" }, G);
+        }
+      });
+      var clign = e.ind && !st(e) && Math.floor(performance.now() / 500) % 2;
+      svg("text", { x: xc - 40, y: yI + 4, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: e.ind ? "#ff6b4a" : "#55585e",
+        texte: !e.ind ? "·" : !st(e) ? (clign ? "U" : "") : String(e.niveau) }, G);
+    }
+  }
+  function dessinerLcd(Av, e) {
+    var w = lectureWatt(e);
+    svg("text", { x: 78, y: 276, "text-anchor": "end", "class": "lcd-txt", texte: Sim.fr(w, decWatt(e)) }, Av);
+    svg("text", { x: 58, y: 298, "text-anchor": "middle", "font-size": 10, "font-weight": 700, fill: css("--encre"), texte: MODES[e.mode][0] }, Av);
+    var G = Lc.mode; G.innerHTML = "";
+    svg("circle", { cx: 58, cy: 322, r: 28, fill: "transparent" }, G);
+    svg("circle", { cx: 58, cy: 322, r: 8, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.5 }, G);
+    svg("text", { x: 58, y: 346, "text-anchor": "middle", "font-size": 8, "font-weight": 700, fill: css("--encre2"), texte: "MODE" }, G);
+    svg("text", { x: 130, y: 52, "text-anchor": "end", "class": "lcd-txt", texte: Sim.fr(lectureTh(e), 1) + " °C" }, Av);
+    var b = lectureBalance(e), xb = EXP[exp].surBalance ? 168 : 366, yb = EXP[exp].surBalance ? 384 : 383;
+    svg("rect", { x: xb, y: yb, width: 52, height: 13, rx: 2, "class": "lcd" }, Av);
+    svg("text", { x: xb + 49, y: yb + 10.5, "text-anchor": "end", "class": "lcd-txt", "font-size": 10, texte: isFinite(b) ? b + " g" : "- - - -" }, Av);
+    var T = Lc.tare; T.innerHTML = "";
+    svg("rect", { x: xb + 54, y: yb - 20, width: 50, height: 46, fill: "transparent" }, T);
+    svg("rect", { x: xb + 58, y: yb, width: 22, height: 13, rx: 3, fill: css("--carte2"), stroke: css("--encre"), "stroke-width": 1.2 }, T);
+    svg("text", { x: xb + 69, y: yb + 10, "text-anchor": "middle", "font-size": 8, "font-weight": 700, fill: css("--encre"), texte: "TARE" }, T);
+  }
+  /* Ou va la puissance en ce moment : une barre par destination, sans valeur. */
+  function dessinerFlux(e) {
+    var Z = document.getElementById("flux"), f = e.flux, k = 200 / 2600;
+    Z.innerHTML = "";
+    var lignes = [["électricité, à la prise", f.el, "#2c6da6"], ["eau qui chauffe", f.eau, "#3f8fd0"], ["récipient qui chauffe", f.rec, "#8a8f96"],
+      [f.plaque >= 0 ? "plaque qui chauffe" : "plaque qui rend sa chaleur", Math.abs(f.plaque), f.plaque >= 0 ? "#b0552f" : "#e08a4a"],
+      ["eau qui s'évapore", f.vap, "#9fb7c9"], ["pertes vers l'air", f.air, "#c0392b"]];
+    lignes.forEach(function (l, i) {
+      var y = 10 + i * 24;
+      svg("text", { x: 4, y: y + 12, "font-size": 10.5, fill: css("--encre"), texte: l[0] }, Z);
+      svg("rect", { x: 128, y: y + 2, width: Math.max(0, Math.min(190, l[1] * k)), height: 14, rx: 3, fill: l[2] }, Z);
+    });
+    svg("text", { x: 4, y: 164, "font-size": 9.5, fill: css("--encre2"), texte: "Longueurs proportionnelles aux puissances, en ce moment." }, Z);
+  }
+
+  /* ---------- Afficher les instruments ---------- */
   function afficher() {
-    var app = APPAREILS[etat.app];
-    etat.Pmes = etat.marche ? Sim.mesure(app.P, { relatif: 0.004, resolution: 1 }) : 0;
-    aP.set(etat.Pmes); aE.set(lectureE()); aT.set(chrono(etat.t)); aTh.set(lectureTheta());
-    if (g.lcd) g.lcd.textContent = Sim.fr(etat.Pmes, 0) + " W";
+    var e = E(), w = lectureWatt(e);
+    A.watt.set(w, decWatt(e)); A.watt.noeud.querySelector(".unite").textContent = MODES[e.mode][0]; A.watt.note(MODES[e.mode][1]);
+    A.th.set(lectureTh(e), 1);
+    var b = lectureBalance(e); A.bal.set(isFinite(b) ? b : "- - - -", 0);
+    A.chrono.set(chronoTexte(e.chrono));
+    document.getElementById("bMarche").textContent = e.app === "bouilloire" ? (e.on ? "Arrêter la bouilloire" : "Mettre en marche") : (e.ind ? "Éteindre la plaque" : "Allumer la plaque");
+    document.getElementById("bCouvercle").setAttribute("aria-pressed", e.couv ? "true" : "false");
+    document.getElementById("bCouvercle").textContent = e.couv ? "Couvercle posé" : "Couvercle retiré";
+    document.getElementById("bRobinet").textContent = e.robinet > 3 ? "Fermer le robinet" : "Ouvrir le robinet";
+    document.getElementById("bChrono").textContent = e.chronoMarche ? "Chronomètre : arrêt" : "Chronomètre : départ";
+    if (cReglage) { var v = e.app === "fonte" ? e.pos : e.niveau; if (cReglage.get() !== v) cReglage.set(v, true); }
   }
-  document.getElementById("marche").addEventListener("click", function () {
-    if (etat.theta >= 99.9) { message("L'eau est déjà à 100 °C. Remets à zéro pour recommencer."); return; }
-    etat.marche = !etat.marche;
-    if (!etat.marche) etat.thetaArret = etat.theta;
-    this.textContent = etat.marche ? "Arrêter" : "Mettre en marche";
-    message(etat.marche ? "Chauffage en cours. Le compteur du wattmètre avance." : "Chauffage arrêté : l'eau commence à refroidir.");
-  });
-  document.getElementById("zero").addEventListener("click", raz);
 
-  var cumul = 0;
-  Sim.animer(function (dt) {
-    var dts = dt * etat.vitesse, n = Math.ceil(dts / 0.5);
-    for (var i = 0; i < n; i++) { if (etat.marche) etat.t += dts / n; pas(dts / n); }
-    cumul += dt;
-    if (cumul > 0.25) { cumul = 0; afficher(); }
-    animerDecor(dt);
+  /* ---------- Le doigt dans la scene ---------- */
+  function point(ev) { var p = S.createSVGPoint(); p.x = ev.clientX; p.y = ev.clientY; return p.matrixTransform(S.getScreenCTM().inverse()); }
+  function glisser(el, debut, bouge, fin) {
+    el.addEventListener("touchstart", function (ev) { ev.preventDefault(); }, { passive: false });
+    el.addEventListener("pointerdown", function (ev) {
+      if (el.getAttribute("class") !== "prise") return;
+      ev.preventDefault();
+      try { el.setPointerCapture(ev.pointerId); } catch (x) { /* evenement de synthese */ }
+      var p0 = point(ev), d = debut(p0);
+      function mv(e2) { bouge(point(e2), p0, d); }
+      function stop() { el.removeEventListener("pointermove", mv); el.removeEventListener("pointerup", stop); el.removeEventListener("pointercancel", stop); if (fin) fin(); }
+      el.addEventListener("pointermove", mv); el.addEventListener("pointerup", stop); el.addEventListener("pointercancel", stop);
+    });
+  }
+  function angleLevier(p, cx, cy) { var dx = p.x - cx, dy = p.y - cy; if (dx > 0) return dy < 0 ? 90 : 0; return Sim.borne(Math.atan2(-dy, -dx) * 180 / Math.PI, 0, 90); }
+  glisser(Lc.robinet, function () { E().vu.robinet = true; return null; }, function (p) { E().robinet = angleLevier(p, 606, 120); });
+  glisser(Lc.recipient, function () { var e = E(); e.vu.glisse = true; var x0 = xRec(e); e.glisse = x0; e.robinetAvant = e.robinet; return x0; },
+    function (p, p0, x0) { E().glisse = Sim.borne(x0 + p.x - p0.x, 140, 600); },
+    function () {
+      var e = E(), sl = SLOTS(), meilleur = null, dmin = 1e9;
+      Object.keys(sl).forEach(function (k) { var d = Math.abs(sl[k] - e.glisse); if (d < dmin) { dmin = d; meilleur = k; } });
+      e.glisse = null; poser(meilleur);
+    });
+  glisser(Lc.sonde, function (p) { var e = E(); e.vu.sonde = true; return p.y; }, function (p, p0) {
+    var e = E(), x = xRec(e), yb = basRec(e), ys = surfaceEau(e, x, yb), haut = casserole(e) ? yb - 92 : yb - 150;
+    var cur = { air: haut + 14, eau: (ys + yb) / 2, fond: yb - 5 }, yv = (e.sonde === "air" ? cur.air : e.sonde === "fond" ? cur.fond : cur.eau) + (p.y - p0.y);
+    var n = yv < (cur.air + Math.max(ys, cur.air + 10)) / 2 ? "air" : yv > yb - 12 ? "fond" : "eau";
+    if (n !== e.sonde) { e.sonde = n; poserCommandes(); }
   });
-  raz();
+  glisser(Lc.commande, function (p) { E().vu.marche = true; return null; }, function (p) {
+    var e = E(); if (e.app !== "fonte") return;
+    var a = Math.atan2(p.x - 304, -(p.y - 390)) * 180 / Math.PI;
+    e.pos = Sim.borne(Math.round((a + 135) / 45), 0, 6);
+  });
+  Lc.commande.addEventListener("click", function (ev) {
+    var e = E(); e.vu.marche = true;
+    if (e.app === "bouilloire") { basculerBouilloire(); return; }
+    if (e.app === "induction") {
+      var act = ev.target.getAttribute && ev.target.getAttribute("data-action");
+      if (act === "power") basculerInduction();
+      else if (act === "moins" && e.ind) e.niveau = Math.max(0, e.niveau - 1);
+      else if (act === "plus" && e.ind) e.niveau = Math.min(9, e.niveau + 1);
+      afficher();
+    }
+  });
+  Lc.tare.addEventListener("click", tare);
+  Lc.mode.addEventListener("click", function () { var e = E(); e.mode = (e.mode + 1) % MODES.length; afficher(); });
+  Lc.couvercle.addEventListener("click", basculerCouvercle);
+  // pour saisir le recipient : une zone invisible sur tout son corps
+  function zoneRecipient() {
+    var e = E(), G = Lc.recipient, x = xRec(e), yb = basRec(e);
+    G.innerHTML = "";
+    if (casserole(e)) svg("rect", { x: x - 76, y: yb - 92, width: 152, height: 92, fill: "transparent" }, G);
+    else svg("rect", { x: x - 52, y: yb - 140, width: 92, height: 92, fill: "transparent" }, G);
+    if (!e.vu.glisse) svg("text", { x: x - 30, y: yb - (casserole(e) ? 104 : 164), "text-anchor": "end", "class": "indice", texte: "↔ glisse-moi" }, G);
+  }
+
+  /* ---------- Les gestes ---------- */
+  function poser(place) {
+    var e = E();
+    if (!SLOTS()[place]) return;
+    e.place = place; e.bulles = [];
+    var m = { evier: "Dans l'évier, sous le robinet.", balance: "Sur la balance : lis la masse, ou fais la tare.",
+      station: e.app === "bouilloire" ? "Sur son socle : la bouilloire peut chauffer." : "Sur la plaque : elle peut chauffer." }[place];
+    message(m);
+  }
+  function tare() { var e = E(), b = lectureBalance(e); if (isFinite(b)) { e.tare += b; message("Tare faite : la balance affiche 0 g avec ce qui est posé dessus."); } }
+  function basculerBouilloire() {
+    var e = E();
+    if (e.on) { e.on = false; message("Bouilloire arrêtée à la main."); return; }
+    if (!st(e)) { message("Pose d'abord la bouilloire sur son socle."); return; }
+    if (e.mw < 0.25) { message("Moins d'un quart de litre : la bouilloire refuse de chauffer à vide."); return; }
+    e.on = true; message("La bouilloire chauffe : le voyant est rouge, le compteur avance.");
+  }
+  function basculerInduction() {
+    var e = E(); e.ind = !e.ind; if (!e.ind) e.niveau = 0;
+    message(e.ind ? (st(e) ? "Plaque allumée : monte le niveau avec +." : "Plaque allumée, mais sans casserole : elle affiche « U » et ne chauffe pas.") : "Plaque éteinte.");
+    afficher();
+  }
+  function basculerCouvercle() { var e = E(); if (!casserole(e)) return; e.couv = !e.couv; message(e.couv ? "Couvercle posé : moins de vapeur s'échappe." : "Couvercle retiré."); afficher(); }
+  function clic(id, f) { document.getElementById(id).addEventListener("click", f); }
+  clic("bEvier", function () { poser("evier"); });
+  clic("bBalance", function () { poser("balance"); });
+  clic("bStation", function () { poser("station"); });
+  clic("bRobinet", function () { var e = E(); e.robinet = e.robinet > 3 ? 0 : 60; e.vu.robinet = true; afficher(); });
+  clic("bVider", function () {
+    var e = E();
+    if (e.place !== "evier") { message("Mets d'abord le récipient dans l'évier."); return; }
+    e.mw = 0; e.th = (e.th + T_AIR) / 2; e.vu.deborde = false; message("Récipient vidé dans l'évier.");
+  });
+  clic("bTare", tare);
+  clic("bMarche", function () { var e = E(); e.vu.marche = true; if (e.app === "bouilloire") basculerBouilloire(); else basculerInduction(); });
+  clic("bCouvercle", basculerCouvercle);
+  clic("bMode", function () { var e = E(); e.mode = (e.mode + 1) % MODES.length; afficher(); });
+  clic("bCompteur", function () { E().Ec = 0; message("Compteur du wattmètre remis à zéro."); afficher(); });
+  clic("bChrono", function () { var e = E(); e.chronoMarche = !e.chronoMarche; afficher(); });
+  clic("bChronoZero", function () { var e = E(); e.chrono = 0; afficher(); });
+  document.getElementById("voirFlux").addEventListener("change", function (ev) { document.getElementById("fluxBloc").hidden = !ev.target.checked; });
+
+  /* ---------- La boucle ---------- */
+  var cumul = 0;
+  function pas(dt) {
+    var e = E(), dts = dt * reg.vitesse, n = Math.max(1, Math.ceil(dts / 0.5));
+    if (e.robinet > 3 && reg.vitesse === 0) dts = dt;                   // le robinet coule meme en pause
+    if (dts > 0) for (var i = 0; i < n; i++) { pasPhysique(e, dts / n); ENR[exp].tic(e.t); }
+    cumul += dt;
+    if (cumul >= 0.25) { cumul = 0; afficher(); }
+    var t = performance.now();
+    if (t - dernierDessin > 30) { dernierDessin = t; dessiner(); zoneRecipient(); }
+  }
+
+  /* ---------- Changer d'experience ---------- */
+  var TEXTES = {
+    ren: { legende: "Fais glisser le récipient du doigt entre l'évier, la balance et l'appareil. Tourne le robinet, appuie sur l'interrupteur, tourne le bouton de la plaque, place la sonde. Le wattmètre-prise compte l'énergie depuis sa remise à zéro ; MODE change ce qu'il affiche.",
+      releve: "Lance l'enregistreur au moment où tu mets en marche : il garde le temps, la température et le compteur toutes les 30 secondes. Arrête-le à l'ébullition, ou laisse-le pour voir l'eau refroidir.",
+      accueil: "Le récipient vide est sur la balance. Fais la tare, puis remplis-le à l'évier." },
+    ebu: { legende: "La plaque à induction est posée sur la balance : la balance pèse la plaque, la casserole et l'eau. Fais la tare quand tout est prêt ; la balance descendra sous zéro à mesure que l'eau part en vapeur.",
+      releve: "Lance l'enregistreur à la mise en marche, et laisse bouillir quelques minutes : la température fait un palier, la masse baisse.",
+      accueil: "Remplis la casserole à l'évier, repose-la sur la plaque, puis fais la tare de la balance." },
+    ref: { legende: "Chauffe l'eau jusqu'à l'ébullition, arrête, puis laisse-la refroidir dans son récipient. Le temps « × 60 » fait passer une minute par seconde.",
+      releve: "Une mesure par minute suffit pour un refroidissement : lance l'enregistreur à l'arrêt du chauffage, et laisse-le tourner une demi-heure ou plus.",
+      accueil: "Le récipient vide est sur la balance. Remplis-le à l'évier, chauffe-le jusqu'à l'ébullition, puis arrête." }
+  };
+  var vus = {};
+  function changerExp(x) {
+    exp = x;
+    if (!etats[x]) etats[x] = etatNeuf(x);
+    poserVitesse(vus[x] ? reg.vitesse : EXP[x].vitesse);
+    poserReglages(); poserCommandes(); poserDefis(); dessinerFond(); dessiner(); zoneRecipient(); afficher();
+    document.getElementById("legende").textContent = TEXTES[x].legende;
+    document.getElementById("consigneReleve").textContent = TEXTES[x].releve;
+    message(vus[x] ? "L'expérience est comme tu l'as laissée." : TEXTES[x].accueil);
+    vus[x] = true;
+  }
+  var og = Sim.onglets("#experiences", function (id) { changerExp({ vueRen: "ren", vueEbu: "ebu", vueRef: "ref" }[id]); });
+  var ancre = { "#ebullition": "vueEbu", "#refroidissement": "vueRef", "#rendement": "vueRen" }[location.hash];
+  if (ancre) og.montrer(ancre);
+  Sim.animer(pas);
+
+  /* Porte des essais : la page se pilote sans doigt, dans un navigateur qui ne dessine pas. */
+  window.bouilloire = { etat: E, exp: function () { return exp; }, reglage: reg, poser: poser, tare: tare, enr: function () { return ENR[exp]; },
+    releve: function () { return REL[exp]; }, dessiner: function () { dessiner(); zoneRecipient(); afficher(); },
+    marche: function () { var e = E(); if (e.app === "bouilloire") basculerBouilloire(); else if (e.app === "induction") basculerInduction(); } };
 })();
 </script>
 <footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation, et détaillé dans la fiche professeur du TP SIM-17.</footer>
