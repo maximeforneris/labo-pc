@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP 2DE-09 · Le ventilateur solaire</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=145f52a2">
+<link rel="stylesheet" href="../assets/site.css?v=145f52a2">
+<link rel="stylesheet" href="../assets/doc.css?v=145f52a2">
+<link rel="stylesheet" href="../assets/impression.css?v=145f52a2">
+<script src="../assets/kit.js?v=145f52a2-83ecf6" defer></script>
+<script src="../assets/site.js?v=145f52a2" defer></script>
+<script src="../assets/plan.js?v=145f52a2" defer></script>
+<script src="../assets/doc.js?v=145f52a2" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="seconde/2DE-09-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="2DE-08-ELEVE.html" rel="prev" title="TP 2DE-08 · La fréquence du diapason" aria-label="TP 2DE-08 · La fréquence du diapason">&lsaquo;</a></span><button type="button" class="lu" data-lu="seconde/2DE-09-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">2de et 1re Bac Pro · toutes spécialités · TP commun 2DE-09</p>
+    <h1>Le ventilateur solaire<span>photopile et puissance</span></h1>
+  </div>
+  <p class="accroche">Comment placer et brancher un panneau solaire pour qu'il donne le plus de puissance au ventilateur ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>Brancher un voltmètre et un ampèremètre</b><span class="car">chaque mesure du TP se fait avec les deux</span></li><li><b>La puissance électrique P = U × I, vue au collège</b><span class="car">on la calcule pour chaque mesure</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-a-la-lampe">Protocole A · à la lampe</a><a href="#protocole-b-au-soleil">Protocole B · au soleil</a></div></nav>
+<p><strong>Sujet.</strong> Dans un jardin partagé, l’abri à outils sent le renfermé. On a posé sur son toit un petit panneau solaire, branché directement sur un ventilateur : ni pile, ni batterie. Le matin, le ventilateur tourne à peine ; à midi, il souffle bien.</p>
+
+<figure><img src="img/2DE-09-ELEVE/fig1-situation.png" alt="" /></figure>
+
+<p><strong>Problématique : comment placer et brancher un panneau solaire pour qu’il donne le plus de puissance au ventilateur ?</strong></p>
+
+<p>Au laboratoire, le panneau est remplacé par une <strong>cellule solaire</strong> dans son coffret, et le ventilateur par un petit <strong>moteur à hélice</strong>.</p>
+
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+
+<p>La notice du ventilateur donne, pour son panneau en plein soleil :</p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+<col style="width: 25%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>Cellules au silicium</th>
+
+<th>Tension à vide</th>
+
+<th>Courant de court-circuit</th>
+
+<th>Puissance au mieux</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>12, en série</td>
+
+<td>7,2 V</td>
+
+<td>0,52 A</td>
+
+<td>2,8 W</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le moteur fonctionne de 3 à 6 V. Conseil de pose : « face au soleil de midi, sans aucune ombre ».</p>
+
+<p><strong>a)</strong> Le panneau est un <strong>photodétecteur</strong> : il reçoit une grandeur et en donne deux autres. Compléter avec : éclairement, tension, intensité ; lux, volt, ampère.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>La grandeur</th>
+
+<th>Son unité</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’il reçoit, la grandeur d’entrée</td>
+
+<td>……………………………</td>
+
+<td>…………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’il donne, une grandeur de sortie</td>
+
+<td>……………………………</td>
+
+<td>…………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qu’il donne, l’autre grandeur de sortie</td>
+
+<td>……………………………</td>
+
+<td>…………………</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Les douze cellules du panneau sont identiques.</p>
+
+<p><strong>b)</strong> En série, les tensions des cellules s’ajoutent. Calculer la tension à vide d’<strong>une seule</strong> cellule du panneau.</p>
+
+<p>U = ……………… ÷ ……………… = ……………… V</p>
+
+<p><strong>c)</strong> Convertir. Le premier est fait en exemple. Puis un jour de soleil, le moteur reçoit U = 5,5 V et I = 0,45 A : calculer la puissance qu’il reçoit, P = U × I.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>0,52 A</th>
+
+<th>0,45 A</th>
+
+<th>64 mA</th>
+
+<th>350 mW</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>520 mA</td>
+
+<td>………… mA</td>
+
+<td>………… A</td>
+
+<td>………… W</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>P = ……………… × ……………… = ……………… W. Est-ce la puissance au mieux du panneau ? <strong>oui · non</strong></p>
+
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+
+<p>Deux protocoles répondent à la même question. <strong>Une partie de la classe prend A, l’autre prend B</strong>, et on compare à la fin.</p>
+
+<figure><img src="img/2DE-09-ELEVE/fig2-deux-protocoles.png" alt="" /></figure>
+
+<p><strong>Protocole A · à la lampe, en salle.</strong> On fait varier la <strong>résistance du rhéostat</strong> branché sur une cellule, de zéro à très grande, et on relève U et I : c’est la <strong>caractéristique</strong> de la cellule.</p>
+
+<p><strong>Protocole B · au soleil, dans la cour.</strong> On change l’<strong>orientation</strong> de deux cellules, puis leur <strong>branchement</strong> sur le moteur, et on relève U et I aux bornes du moteur.</p>
+
+<p><strong>d)</strong> Comparer les deux protocoles. Dans la dernière ligne, entourer.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th></th>
+
+<th>Protocole A</th>
+
+<th>Protocole B</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Ce qu’on fait varier</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>Ce qui reçoit l’énergie de la cellule</td>
+
+<td>……………………………</td>
+
+<td>……………………………</td>
+
+</tr>
+
+<tr>
+
+<td>La lumière</td>
+
+<td>lampe · soleil</td>
+
+<td>lampe · soleil</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Le choix se fait maintenant, avant de toucher au matériel.</p>
+
+<p><strong>e)</strong> Quel protocole prenez-vous ? Justifier en une phrase. Le professeur peut vous imposer celui qui reste disponible.</p>
+
+<p>Je prends le protocole ……… parce que ……………………………………………………………………</p>
+
+<p>Les deux protocoles mesurent d’abord la cellule <strong>seule</strong>, sous deux éclairements : sa <strong>tension à vide</strong> au voltmètre seul, son <strong>courant de court-circuit</strong> à l’ampèremètre seul.</p>
+
+<p><strong>f)</strong> Avant de mesurer, faire une hypothèse. Quand l’éclairement de la cellule diminue, entourer :</p>
+
+<p>Sa tension à vide : <strong>diminue beaucoup · diminue un peu · ne change pas</strong></p>
+
+<p>Son courant de court-circuit : <strong>diminue beaucoup · diminue un peu · ne change pas</strong></p>
+
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+
+<blockquote>
+
+<p><strong>Avant de commencer</strong></p>
+
+<p><strong>Ne jamais regarder le soleil</strong>, ni en face, ni dans un reflet : on oriente la cellule avec l’ombre d’un crayon. L’ampoule et l’abat-jour <strong>brûlent</strong> : on ne déplace la lampe qu’éteinte, par son pied. Doigts et cheveux loin de l’hélice.</p>
+
+<p>L’ampèremètre seul sur les bornes, pour le courant de court-circuit : <strong>sur une cellule solaire seulement</strong>. Sur un générateur, le fusible saute. Borne et calibre <strong>10 A</strong> d’abord.</p>
+
+</blockquote>
+
+<h2 id="protocole-a-a-la-lampe">Protocole A · à la lampe</h2>
+
+<ol type="1">
+
+<li>Cellule sous la lampe, à <strong>d = 25 cm</strong> de l’ampoule, mesurés au réglet. DEL du coffret <strong>éteinte</strong> : le professeur montre la position de l’interrupteur.</li>
+
+<li>Allumer. Relever <strong>E</strong>, luxmètre posé à la place de la cellule, puis <strong>U à vide</strong> au voltmètre seul et <strong>I de court-circuit</strong> à l’ampèremètre seul. Refaire à <strong>d = 50 cm</strong>, puis revenir à 25 cm.</li>
+
+<li>Après la question <strong>g</strong>, câbler la figure 2 : cellule, ampèremètre et rhéostat <strong>en série</strong>, par les bornes A et C ; voltmètre aux bornes de la cellule. Calibre <strong>mA</strong> si I de court-circuit reste sous 200 mA. Faire vérifier.</li>
+
+<li>Point 1 : curseur contre A. Points 2 à 7 : l’éloigner par petits pas, <strong>plus petits quand I chute</strong>. Point 8 : rhéostat débranché. Lampe éteinte entre deux séries : une cellule chaude donne moins.</li>
+
+</ol>
+
+<h2 id="protocole-b-au-soleil">Protocole B · au soleil</h2>
+
+<ol type="1">
+
+<li>Dans la cour, une cellule <strong>à plat</strong>, DEL éteinte. Relever <strong>E</strong>, luxmètre à plat à côté, puis <strong>U à vide</strong> et <strong>I de court-circuit</strong>. Refaire <strong>face au soleil</strong> : un crayon tenu droit sur la cellule ne fait presque plus d’ombre, et le luxmètre se tient contre elle.</li>
+
+<li>Après la question <strong>g</strong>, câbler la figure 2 avec <strong>une seule</strong> cellule : ampèremètre en série avec le moteur, voltmètre aux bornes du moteur. Relever U et I, regarder l’hélice. Si elle ne démarre pas, souffler dessus.</li>
+
+<li>Deux cellules <strong>en série</strong>, la borne + de l’une sur la borne − de l’autre ; puis <strong>en parallèle</strong>, + avec +, − avec −. Relever U et I, regarder l’hélice.</li>
+
+<li>S’il reste du temps : en série, cacher <strong>la moitié d’une cellule</strong> avec un carton.</li>
+
+</ol>
+
+<p><strong>g)</strong> Avant de câbler, schématiser votre montage avec les symboles normalisés. En B, celui des deux cellules en série.</p>
+
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+
+<p><strong>h)</strong> Relever les mesures de la cellule seule, dans la ligne de votre protocole. Sur le calibre 10 A, un affichage de 0,22 A s’écrit 220 mA.</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>La cellule seule</th>
+
+<th>E (lx)</th>
+
+<th>U à vide (V)</th>
+
+<th>I de court-circuit (mA)</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>A : à 25 cm · B : à plat</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+<tr>
+
+<td>A : à 50 cm · B : face au soleil</td>
+
+<td></td>
+
+<td></td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Avec U en volts et I en milliampères, P = U × I sort en milliwatts.</p>
+
+<p><strong>i)</strong> Relever les mesures de votre protocole et calculer P. Protocole A, lampe à 25 cm :</p>
+
+<div class="enveloppe-tbl"><table>
+
+<thead>
+
+<tr>
+
+<th>A · point</th>
+
+<th>1</th>
+
+<th>2</th>
+
+<th>3</th>
+
+<th>4</th>
+
+<th>5</th>
+
+<th>6</th>
+
+<th>7</th>
+
+<th>8</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>U (V)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+</tr>
+
+<tr>
+
+<td>I (mA)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>0</td>
+
+</tr>
+
+<tr>
+
+<td>P (mW)</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>………</td>
+
+<td>0</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p>Pour le graphique <strong>j</strong>, carreaux de 1 cm. <strong>A</strong>, la caractéristique I = ƒ(U) : U en abscisse, 1 cm pour 0,2 V ; I en ordonnée, 1 cm pour 10 mA, ou 20 mA au-delà de 80 mA. Relier à main levée, entourer le point où P est la plus grande.</p>
+
+<p><strong>B</strong> : un bâton de hauteur P par branchement, 1 cm pour 50 mW, ou 100 mW au-delà de 400 mW.</p>
+
+<p><em>Protocole B seulement, cellules face au soleil :</em></p>
+
+<div class="enveloppe-tbl"><table>
+
+<colgroup>
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+<col style="width: 20%" />
+
+</colgroup>
+
+<thead>
+
+<tr>
+
+<th>Branchement</th>
+
+<th>U (V)</th>
+
+<th>I (mA)</th>
+
+<th>P (mW)</th>
+
+<th>L’hélice, entourer</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Une seule cellule</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>arrêt · lente · rapide</td>
+
+</tr>
+
+<tr>
+
+<td>Deux en série</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>arrêt · lente · rapide</td>
+
+</tr>
+
+<tr>
+
+<td>Deux en parallèle</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>arrêt · lente · rapide</td>
+
+</tr>
+
+<tr>
+
+<td>En série, une demi-cellule à l’ombre</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>…………</td>
+
+<td>arrêt · lente · rapide</td>
+
+</tr>
+
+</tbody>
+
+</table></div>
+
+<p><strong>j)</strong> Tracer le graphique de votre protocole.</p>
+
+<figure><img src="img/2DE-09-ELEVE/fig4-cadre-graphique.png" alt="" /></figure>
+
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+
+<p><strong>k)</strong> Protocole A : la caractéristique est-elle une droite qui passe par l’origine, comme celle d’un conducteur ohmique ? Sous quelle tension la cellule donne-t-elle le plus de puissance ? Comparer à U à vide. Protocole B : quel branchement fait tourner l’hélice le plus vite ? Est-ce celui où P est la plus grande ?</p>
+
+<p><strong>l)</strong> Votre hypothèse de la question <strong>f</strong> est-elle confirmée ? Comparer votre tableau <strong>h</strong> avec celui d’un groupe qui a pris l’autre protocole : qui a eu le plus de lumière ? Sa tension à vide et son courant de court-circuit ont-ils changé comme les vôtres ?</p>
+
+<p><strong>m)</strong> Répondre à la problématique en deux phrases, pour les jardiniers : où placer le panneau, et comment brancher ses cellules ?</p>
+
+<p>Ce que ce TP a établi, et qui vaut pour tout panneau solaire :</p>
+
+<blockquote>
+
+<p><strong>À RETENIR</strong></p>
+
+<p>Une cellule solaire, ou <strong>photopile</strong>, est un photodétecteur. Quand l’<strong>éclairement</strong> augmente, son <strong>courant de court-circuit augmente à peu près dans la même proportion</strong> et sa <strong>tension à vide change peu</strong> : d’où le panneau face au soleil, sans ombre.</p>
+
+<p>Sa caractéristique I = ƒ(U) n’est <strong>pas une droite</strong> : la puissance P = U × I est la plus grande <strong>dans le coude</strong> de la courbe, vers les trois quarts de la tension à vide.</p>
+
+<p>En <strong>série</strong>, les tensions des cellules s’ajoutent ; en <strong>parallèle</strong>, ce sont les intensités.</p>
+
+</blockquote>
+
+<h1 id="pour-aller-plus-loin-une-journée-de-ventilation">Pour aller plus loin · une journée de ventilation</h1>
+
+<p>D’après votre tableau <strong>h</strong> et la question <strong>b</strong>, combien de cellules de 0,6 V le coffret du labo contient-il, en série ? ……………… Un jour d’été, le ventilateur reçoit en moyenne <strong>2,4 W</strong> pendant <strong>7 h</strong> : E = P × t = ……………………… Wh. Le panneau rejette-t-il du CO₂ pour produire cette énergie ? Et pour être fabriqué ?</p>
+
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="2DE-08-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP 2DE-08 · La fréquence du diapason</span></a></div></nav>
+<p class="pied">TP commun de physique-chimie, toutes spécialités. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+
