@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>TP CAP-08 · Le fusible et la multiprise</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="../assets/kit.css?v=63a06512">
+<link rel="stylesheet" href="../assets/site.css?v=63a06512">
+<link rel="stylesheet" href="../assets/doc.css?v=63a06512">
+<link rel="stylesheet" href="../assets/impression.css?v=63a06512">
+<script src="../assets/kit.js?v=63a06512-30e62a" defer></script>
+<script src="../assets/site.js?v=63a06512" defer></script>
+<script src="../assets/plan.js?v=63a06512" defer></script>
+<script src="../assets/doc.js?v=63a06512" defer></script>
+
+<div class="page" data-site="labo-pc" data-page="cap/CAP-08-ELEVE">
+<div class="jauge-lecture" id="jauge-lecture"><i></i></div><div class="barre-site"><a class="accueil" href="../index.html">Le labo de physique-chimie</a><span class="fleches"><a class="fleche" href="CAP-07-ELEVE.html" rel="prev" title="TP CAP-07 · La machine à laver qui pique" aria-label="TP CAP-07 · La machine à laver qui pique">&lsaquo;</a></span><button type="button" class="lu" data-lu="cap/CAP-08-ELEVE">Marquer comme lu</button></div>
+<header class="tete">
+  
+  <div class="titraille">
+    <p class="sur">CAP à Tle Bac Pro · toutes spécialités · TP commun CAP-08</p>
+    <h1>Le fusible et la multiprise<span>protection des matériels</span></h1>
+  </div>
+  <p class="accroche">Quatre appareils sur la multiprise, rien ne coupe ; deux radiateurs, et le fusible fond. Pourquoi ?</p>
+  <p class="contenu">3 figures</p>
+  
+</header>
+<aside class="prerequis"><p class="chapeau-p">Avant de commencer</p><ul><li><b>Convertir des milliampères en ampères</b><span class="car">les intensités des culots s'additionnent en ampères</span></li><li><b>Brancher un ampèremètre en série</b><span class="car">le courant de la multiprise se mesure dans le fil principal</span></li></ul></aside>
+<nav class="somm"><div class="in"><a href="#protocole-a-le-fusible">Protocole A · le fusible</a><a href="#protocole-b-la-limite-de-l-alimentation">Protocole B · la limite de l’alimentation</a></div></nav>
+<p><strong>Sujet.</strong> Sur la multiprise de sa chambre, Sofia branche son chargeur, sa box, sa télévision et son ordinateur : quatre appareils, et rien n’a jamais coupé. En janvier, elle y branche deux radiateurs d’appoint : le fusible du tableau fond.</p>
+<figure><img src="img/CAP-08-ELEVE/fig1-situation.png" alt="" /></figure>
+<p><strong>Problématique : pourquoi deux radiateurs font-ils fondre le fusible, et quatre appareils jamais ?</strong></p>
+<p>Au laboratoire, le secteur est remplacé par une <strong>alimentation de 6 V</strong>, chaque appareil par une <strong>lampe</strong>, et le fusible du tableau par un <strong>fusible de 1 A</strong>.</p>
+<div class="enveloppe-tbl"><table>
+<thead>
+<tr>
+<th>La lampe, d’après son culot</th>
+<th>6 V · 50 mA</th>
+<th>6 V · 350 mA</th>
+<th>6 V · 1 A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Elle joue</td>
+<td>le chargeur</td>
+<td>l’ordinateur</td>
+<td>un radiateur</td>
+</tr>
+</tbody>
+</table></div>
+<h1 id="partie-1-appropriation">Partie 1 · Appropriation</h1>
+<p>Voici l’étiquette de la multiprise de Sofia et le fusible du laboratoire.</p>
+<figure><img src="img/CAP-08-ELEVE/fig2-plaques.png" alt="" /></figure>
+<p><strong>a)</strong> Relever ce qui est écrit, puis entourer la grandeur.</p>
+<div class="enveloppe-tbl"><table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>On cherche</th>
+<th>Écrit dessus</th>
+<th>La grandeur, entourer</th>
+<th>Unité, en lettres</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>courant max</td>
+<td>………… A</td>
+<td>tension · intensité · puissance</td>
+<td>……………………</td>
+</tr>
+<tr>
+<td>puissance max</td>
+<td>………… W</td>
+<td>tension · intensité · puissance</td>
+<td>……………………</td>
+</tr>
+<tr>
+<td>calibre du fusible</td>
+<td>………… A</td>
+<td>tension · intensité · puissance</td>
+<td>……………………</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Série · milliampères et ampères.</strong> On divise par 1 000 pour passer en ampères, on multiplie par 1 000 pour passer en milliampères. Le premier est fait.</p>
+<div class="enveloppe-tbl"><table>
+<thead>
+<tr>
+<th>50 mA = <strong>0,05 A</strong></th>
+<th>350 mA = …………………… A</th>
+<th>100 mA = …………………… A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 A = …………………… mA</td>
+<td>0,4 A = …………………… mA</td>
+<td>0,05 A = …………………… mA</td>
+</tr>
+</tbody>
+</table></div>
+<h1 id="partie-2-analyse">Partie 2 · Analyse</h1>
+<p>Deux protocoles répondent à la même question. <strong>Une partie de la classe prend A, l’autre prend B</strong>, et on compare à la fin.</p>
+<figure><img src="img/CAP-08-ELEVE/fig3-deux-protocoles.png" alt="" /></figure>
+<p><strong>Protocole A · le fusible.</strong> Un fusible de 1 A est dans le fil principal. On regarde s’il tient ou s’il fond.</p>
+<p><strong>Protocole B · la limite de l’alimentation.</strong> Pas de fusible : l’alimentation ne donne jamais plus de <strong>1,5 A</strong>. Au-delà, sa tension baisse et les lampes faiblissent.</p>
+<p><strong>b)</strong> Comparer les deux protocoles, puis entourer le vôtre et la raison.</p>
+<div class="enveloppe-tbl"><table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th>Protocole A</th>
+<th>Protocole B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ce qui protège</td>
+<td>le fusible · l’alimentation</td>
+<td>le fusible · l’alimentation</td>
+</tr>
+<tr>
+<td>Ensuite, il faut</td>
+<td>changer le fusible · rien</td>
+<td>changer le fusible · rien</td>
+</tr>
+</tbody>
+</table></div>
+<p>Le professeur peut imposer le protocole qui reste libre.</p>
+<p><strong>Protocole A · Protocole B</strong>, parce que : <strong>on veut voir le fusible fondre · on veut pouvoir recommencer</strong></p>
+<p>Avant de brancher, on fait une hypothèse.</p>
+<p><strong>c)</strong> Ce qui fait fondre le fusible, entourer :</p>
+<p><strong>le nombre d’appareils branchés · ce que demande chaque appareil</strong></p>
+<h1 id="partie-3-réaliser">Partie 3 · Réaliser</h1>
+<blockquote>
+<p><strong>Avant de commencer</strong></p>
+<p>L’alimentation est réglée sur <strong>6 V</strong> et reste <strong>éteinte</strong> pendant qu’on branche ou qu’on change une lampe.</p>
+<p>L’ampèremètre se branche <strong>dans le fil principal</strong> : bornes <strong>COM</strong> et <strong>10 A</strong>, sélecteur sur <strong>10 A continu</strong>.</p>
+<p><strong>La lampe de 1 A et le fusible qui vient de fondre sont très chauds</strong> : on ne les touche pas, on attend qu’ils refroidissent, alimentation éteinte.</p>
+<p>Le professeur vérifie le montage avant la mise sous tension.</p>
+</blockquote>
+<h2 id="protocole-a-le-fusible">Protocole A · le fusible</h2>
+<ol type="1">
+<li>Réaliser le montage : alimentation, ampèremètre, porte-fusible, deux douilles en dérivation.</li>
+<li><strong>Essai 1 ·</strong> visser le chargeur et l’ordinateur. Allumer, lire I, observer une minute, éteindre.</li>
+<li><strong>Essai 2 ·</strong> remplacer ces deux lampes par <strong>un</strong> radiateur. Mêmes gestes.</li>
+<li><strong>Essai 3 ·</strong> visser le second radiateur. Allumer en lançant le chronomètre, lire I tout de suite. Arrêter le chronomètre quand les lampes s’éteignent. Trois minutes au plus.</li>
+</ol>
+<h2 id="protocole-b-la-limite-de-l-alimentation">Protocole B · la limite de l’alimentation</h2>
+<ol type="1">
+<li>Réaliser le montage : alimentation, ampèremètre, deux douilles en dérivation. Un second multimètre, en voltmètre, <strong>aux bornes des lampes</strong> : bornes <strong>COM</strong> et <strong>V</strong>, <strong>20 V continu</strong>. On ne touche pas au bouton du courant de l’alimentation.</li>
+<li><strong>Essai 1 ·</strong> visser le chargeur et l’ordinateur. Allumer, lire I et U, regarder les lampes, éteindre.</li>
+<li><strong>Essai 2 ·</strong> remplacer ces deux lampes par <strong>un</strong> radiateur. Mêmes relevés.</li>
+<li><strong>Essai 3 ·</strong> visser le second radiateur. Mêmes relevés.</li>
+</ol>
+<p><strong>d)</strong> Schématiser votre montage avec les symboles normalisés.</p>
+<p>Le fusible se dessine ainsi : <img src="img/CAP-08-ELEVE/fig4-symbole-fusible.png" /></p>
+<p><em>Le schéma se dessine sur la feuille du TP.</em></p>
+<p><strong>e)</strong> Compléter le tableau pour votre protocole. L’autre colonne se remplit en <strong>g</strong>.</p>
+<div class="enveloppe-tbl"><table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>L’essai</th>
+<th>La somme des culots</th>
+<th>I mesurée</th>
+<th>A · le fusible</th>
+<th>B · les lampes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 ·</strong> chargeur et ordinateur, <strong>2 appareils</strong></td>
+<td>0,05 + 0,35 = ………… A</td>
+<td>………… A</td>
+<td>tient · fond</td>
+<td>normales · faibles</td>
+</tr>
+<tr>
+<td><strong>2 ·</strong> un radiateur, <strong>1 appareil</strong></td>
+<td>………… A</td>
+<td>………… A</td>
+<td>tient · fond</td>
+<td>normales · faibles</td>
+</tr>
+<tr>
+<td><strong>3 ·</strong> deux radiateurs, <strong>2 appareils</strong></td>
+<td>1 + 1 = ………… A</td>
+<td>………… A</td>
+<td>fond après ……… s · tient</td>
+<td>normales · faibles</td>
+</tr>
+</tbody>
+</table></div>
+<p>En B, la tension U aux essais 1, 2 et 3 : ……………… V · ……………… V · ……………… V</p>
+<h1 id="partie-4-interprétation-des-résultats-et-réponse-au-problème">Partie 4 · Interprétation des résultats et réponse au problème</h1>
+<p><strong>f)</strong> D’après le tableau <strong>e</strong>, entourer.</p>
+<p>Essais 1 et 2 : la somme des culots et I sont <strong>égales · différentes</strong>.</p>
+<p>La protection a réagi à l’essai n° ……… : la somme y est <strong>la plus petite · la plus grande</strong>.</p>
+<p>Les essais 1 et 3 ont <strong>le même nombre · un nombre différent</strong> d’appareils.</p>
+<p><strong>g)</strong> Recopier en <strong>e</strong> la colonne d’un groupe de l’autre protocole.</p>
+<p>L’autre protocole a réagi au même essai : <strong>oui · non</strong>. Sinon, essai n° ………</p>
+<p>Votre hypothèse <strong>c</strong> est confirmée : <strong>oui · non</strong></p>
+<p><strong>Série · la multiprise de 16 A.</strong> On additionne ce que demandent les appareils de Sofia, sous 230 V, puis on compare à 16 A, le maximum de la multiprise.</p>
+<div class="enveloppe-tbl"><table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr>
+<th>Appareil</th>
+<th>chargeur</th>
+<th>box</th>
+<th>télévision</th>
+<th>ordinateur</th>
+<th>grille-pain</th>
+<th>radiateur</th>
+<th>bouilloire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intensité</td>
+<td>0,1 A</td>
+<td>0,1 A</td>
+<td>0,4 A</td>
+<td>0,3 A</td>
+<td>4,3 A</td>
+<td>8,7 A</td>
+<td>9,6 A</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Attention aux unités. Le premier est fait.</em></p>
+<div class="enveloppe-tbl"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>radiateur et bouilloire : 8,7 + 9,6 = <strong>18,3 A</strong> : <strong>plus</strong></th>
+<th>dix chargeurs : 10 × 0,1 = ………… A : plus · moins</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>télévision, box et ordinateur : 0,4 + 0,1 + 0,3 = ………… A : plus · moins</td>
+<td>bouilloire et grille-pain : 9,6 + 4,3 = ………… A : plus · moins</td>
+</tr>
+<tr>
+<td>deux radiateurs : 8,7 + 8,7 = ………… A : plus · moins</td>
+<td>radiateur et trois chargeurs : 8,7 A + 300 mA = ………… A : plus · moins</td>
+</tr>
+</tbody>
+</table></div>
+<p>Le fusible de Sofia a fondu. Son voisin le remplace par un fil de cuivre, et rebranche les deux radiateurs.</p>
+<p><strong>h)</strong> Entourer ce qui se passe alors.</p>
+<div class="enveloppe-tbl"><table>
+<thead>
+<tr>
+<th>Le courant</th>
+<th>est coupé · n’est plus jamais coupé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Les fils et la multiprise</td>
+<td>chauffent · restent froids</td>
+</tr>
+<tr>
+<td>C’est</td>
+<td>sans danger · un risque d’incendie</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pour finir, on revient à Sofia.</p>
+<p><strong>i)</strong> Répondre à la problématique en une phrase : pourquoi deux radiateurs font-ils fondre le fusible, et quatre appareils jamais ?</p>
+<p>Ce que ce TP a établi, à écrire sous la dictée du professeur :</p>
+<blockquote>
+<p><strong>À RETENIR</strong></p>
+<p><em>À compléter en classe, sur la feuille du TP.</em></p>
+</blockquote>
+<nav class="suite"><p class="chapeau-s">La suite</p><div class="pas-a-pas"><a class="av" href="CAP-07-ELEVE.html" rel="prev"><span class="k">&lsaquo; Précédent</span><span class="t">TP CAP-07 · La machine à laver qui pique</span></a></div></nav>
+<p class="pied">TP commun de physique-chimie, toutes spécialités. Le travail se fait sur la feuille du TP : cette page en est la version à l'écran, sans les lignes à remplir. Rien n'est enregistré.</p><p class="pied-site"><a class="mentions" href="../mentions-legales.html">Mentions légales</a></p>
+</div>
+
