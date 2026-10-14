@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Simulations des TP</title>
-<meta name="description" content="Six parcours d&#x27;une heure sur tablette pour le CAP et la seconde, menés comme un projet et qui finissent par un fichier pour le professeur ; et des simulations pour faire les TP de première et de terminale quand le montage n&#x27;est pas possible. Toutes s&#x27;ouvrent sans réseau : les nôtres, et une copie de celles de PhET.">
+<meta name="description" content="Six parcours d&#x27;une heure sur tablette pour le CAP et la seconde, menés comme un projet ; quatorze entraînements au CCF pour la première et la terminale, sur nos simulations, avec les deux appels professeur ; tous finissent par un fichier pour le professeur. Et des simulations pour faire les TP de première et de terminale quand le montage n&#x27;est pas possible. Toutes s&#x27;ouvrent sans réseau : les nôtres, et une copie de celles de PhET.">
 <meta name="etiquette" content="Par thème">
 <meta name="porte-compte" content="27 simulations">
 <style>
@@ -244,6 +244,63 @@ details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-siz
 .pc-en-cours .tete .chapeau{display:none}
 .pc-en-cours .tete h1{font-size:1.3rem;margin:2px 0 0}
 @media print{.pc-tete,.pc-remise,.pc-q .rangee{display:none}}
+/* Entrainement au CCF (premiere, terminale) : deux modes, la paillasse empruntee, les appels professeur */
+.pc [hidden],.pc-voile[hidden],.pc-modes [hidden]{display:none!important}
+.pc-modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px}
+.pc-mode{font:inherit;text-align:left;display:flex;flex-direction:column;gap:2px;padding:12px 14px;min-height:56px;cursor:pointer;
+  border-radius:var(--r);border:1.5px solid var(--trait);background:var(--carte);color:var(--encre)}
+.pc-mode b{font-size:1rem}
+.pc-mode span{font-size:.85rem;color:var(--encre2)}
+.pc-mode[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-doux)}
+.pc-en-cours .pc-modes{display:none}
+@media (max-width:480px){.pc-modes{grid-template-columns:1fr}}
+.pc-problematique{margin:12px 0 0;padding:10px 12px;border-left:4px solid var(--accent);background:var(--carte2);border-radius:0 var(--r) var(--r) 0}
+.pc-grille{list-style:none;margin:10px 0;padding:0;border-top:1px solid var(--trait2)}
+.pc-grille li{padding:7px 0;border-bottom:1px solid var(--trait2)}
+.pc-grille-ligne{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.pc-grille-ou{font-size:.85rem;font-weight:650;color:var(--accent);text-align:right}
+.pc-grille-cap{font-size:.84rem;color:var(--encre2);margin-top:2px}
+.pc-appel-annonce{display:flex;gap:8px;align-items:flex-start}
+.pc-main{font-size:1.25rem;line-height:1;margin-right:.35em}
+.pc-q.pc-appel{border-style:dashed;border-color:var(--accent);background:var(--carte)}
+.pc-q[data-etat="attente"]{border-color:var(--tiede);border-style:solid}
+.pc-badge-appel{font:inherit;font-weight:700;font-size:.85rem;min-height:40px;padding:6px 12px;border-radius:999px;cursor:pointer;
+  border:2px solid var(--tiede);background:var(--carte);color:var(--encre);animation:pc-pulse 1.6s ease-in-out infinite}
+@keyframes pc-pulse{50%{box-shadow:0 0 0 5px var(--accent-doux)}}
+.pc-methode{margin:6px 0 0;font-size:.92rem;color:var(--encre2);border-left:3px solid var(--trait);padding-left:8px}
+.pc-aide-btn{color:var(--encre2)}
+.pc-autonomie{margin:10px 0 0}
+.pc-voile{position:fixed;inset:0;z-index:30;background:rgba(20,20,22,.5);display:grid;place-items:center;padding:16px}
+.pc-prof{width:min(100%,600px);max-height:90vh;overflow:auto;margin:0}
+.pc-prof-liste .pc-q{margin-top:10px}
+.pc-attendus{margin:0 0 10px;padding-left:1.2em;font-size:.92rem}
+.pc-cotes .pc-option{flex:1 1 9em}
+.pc-prof-pied{justify-content:flex-end;margin-top:10px}
+/* une partie qui emprunte la paillasse : la simulation a gauche, les questions a droite, qui restent en vue */
+.plan.pc-avec-paillasse{grid-template-columns:minmax(0,1.8fr) minmax(280px,1fr)}
+.pc-paillasse .plan{grid-template-columns:1fr}
+.pc-paillasse > .carte,.pc-paillasse .plan > .carte{background:var(--carte2);box-shadow:none;margin-bottom:12px}
+.pc-avec-paillasse > .pc-questions{position:sticky;top:92px;max-height:calc(100vh - 104px);overflow:auto}
+@media (max-width:820px){.plan.pc-avec-paillasse{grid-template-columns:minmax(0,1fr)}.pc-avec-paillasse > .pc-questions{position:static;max-height:none}}
+/* une colonne bornee ne grandit pas a la taille de son contenu : ce qui est large defile dans son cadre */
+.pc-avec-paillasse > *,.pc-paillasse,.pc-paillasse > *{min-width:0}
+.pc-paillasse .releve-zone{grid-template-columns:minmax(0,1fr)}
+.pc-paillasse .releve-zone > div,.pc-paillasse table.releve{overflow-x:auto}
+/* les documents d'un sujet : fiches, consignes, annexe */
+.pc-docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.pc-docs section{border:1px solid var(--trait);border-radius:var(--r);background:var(--carte2);padding:10px 12px}
+.pc-docs h3{font-size:.95rem;margin:0 0 6px}
+.pc-docs p{margin:0 0 6px;font-size:.93rem}
+.pc-docs table{width:100%}
+.pc-docs td{font-size:.88rem;vertical-align:top}
+.pc-docs .pc-annexe{border-style:dashed}
+.pc-paillasse .num{display:none}
+/* sur un telephone, la paillasse perd une epaisseur de marge, et un afficheur trop long passe a la ligne au lieu de deborder */
+@media (max-width:620px){
+  .pc-avec-paillasse > .pc-scene{padding:10px}
+  .pc-paillasse > .carte,.pc-paillasse .plan > .carte{padding:12px}
+  .afficheur .val{white-space:normal;overflow-wrap:anywhere}
+}
 
 .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:10px 0 22px}
 section h2{font-size:1.1rem;margin-top:8px}
@@ -265,9 +322,10 @@ section h2{font-size:1.1rem;margin-top:8px}
 <header class="tete">
 <div class="surtitre">Physique-chimie · 1re et Tle Bac Pro</div>
 <h1>Simulations des TP</h1>
-<p class="chapeau">Six parcours d'une heure sur tablette pour le CAP et la seconde, menés comme un projet et qui finissent par un fichier pour le professeur ; et des simulations pour faire les TP de première et de terminale quand le montage n'est pas possible. Toutes s'ouvrent sans réseau : les nôtres, et une copie de celles de PhET.</p>
+<p class="chapeau">Six parcours d'une heure sur tablette pour le CAP et la seconde, menés comme un projet ; quatorze entraînements au CCF pour la première et la terminale, sur nos simulations, avec les deux appels professeur ; tous finissent par un fichier pour le professeur. Et des simulations pour faire les TP de première et de terminale quand le montage n'est pas possible. Toutes s'ouvrent sans réseau : les nôtres, et une copie de celles de PhET.</p>
 </header>
 <section><h2>Les parcours du CAP et de la seconde</h2><div class="grille"><a class="carte-sim" href="mission-lune.html"><span class="code">PAR-01</span><span class="nom">Mission Lune</span><span class="quoi">masse et poids, le dynamomètre, la gravité de la Lune</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="appartement.html"><span class="code">PAR-02</span><span class="nom">L'appartement à rallumer</span><span class="quoi">série et dérivation, mesures au multimètre, loi des nœuds, fusible</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="detective-menage.html"><span class="code">PAR-03</span><span class="nom">Le détective du ménage</span><span class="quoi">pH au papier et au pH-mètre, dilution, pictogrammes, mélanges interdits</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="bar-sirops.html"><span class="code">PAR-04</span><span class="nom">Le bar à sirops</span><span class="quoi">concentration massique, dissolution, verrerie, échelle de teintes</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="rayon-perdu.html"><span class="code">PAR-05</span><span class="nom">Le rayon perdu</span><span class="quoi">réflexion, réfraction, rapporteur, sécurité laser ; réflexion totale en seconde</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="concert.html"><span class="code">PAR-06</span><span class="nom">Le concert sans danger</span><span class="quoi">niveau sonore et seuils, protections, fréquence à l'oscilloscope</span><span class="origine">hors ligne</span></a></div></section>
+<section><h2>Les entraînements au CCF de première et de terminale</h2><div class="grille"><a class="carte-sim" href="verin-hydraulique.html#ccf"><span class="code">CCF-01</span><span class="nom">Le cric de l'atelier</span><span class="quoi">pression, force pressante, vérin ; 150 N au levier au plus</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="debit.html#ccf"><span class="code">CCF-02</span><span class="nom">Le plein d'huile hydraulique</span><span class="quoi">débit, conservation du débit ; l'eau de l'essai contre l'huile</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="pile-accumulateur.html#ccf"><span class="code">CCF-03</span><span class="nom">La pile du télégraphe</span><span class="quoi">pile Daniell, électrodes, durée de fonctionnement</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="moteur.html#ccf"><span class="code">CCF-04</span><span class="nom">Le volet de la serre</span><span class="quoi">moteur, vitesse, tension et charge ; batterie faible</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="redressement.html#ccf"><span class="code">CCF-05</span><span class="nom">L'alimentation du module d'alarme</span><span class="quoi">redressement, lissage, le creux à l'oscilloscope</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="triphase.html#ccf"><span class="code">CCF-06</span><span class="nom">Le banc triphasé des apprentis</span><span class="quoi">tensions simples et composées, ordre des phases</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="puissance-alternatif.html#ccf"><span class="code">CCF-07</span><span class="nom">Les réglettes de l'entrepôt</span><span class="quoi">puissance active, facteur de puissance, disjoncteur</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="transmission.html#ccf"><span class="code">CCF-08</span><span class="nom">La télécommande de la barrière</span><span class="quoi">transmettre un code, portée, lumière ambiante, fibre</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="attenuation-son.html#ccf"><span class="code">CCF-09</span><span class="nom">La paroi du bureau d'atelier</span><span class="quoi">atténuation d'une paroi, loi de masse, 35 dB</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="titrage.html#ccf"><span class="code">CCF-10</span><span class="nom">Le vinaigre livré sans étiquette</span><span class="quoi">titrage à la burette, indicateur coloré, 8° à 5 % près</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="bouilloire.html#ccf"><span class="code">CCF-11</span><span class="nom">L'eau chaude de la pause</span><span class="quoi">rendement, bouilloire contre plaque à induction</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="porteur.html#ccf"><span class="code">CCF-12</span><span class="nom">Le porteur électrique et ses deux tournées</span><span class="quoi">E = U × Q, autonomie et réserve ; le banc contre la route</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="photovoltaique-eolienne.html#ccf"><span class="code">CCF-13</span><span class="nom">La balise solaire et l'ombre du poteau</span><span class="quoi">panneau photovoltaïque, puissance maximale, ombre partielle</span><span class="origine">entraînement au CCF · hors ligne</span></a><a class="carte-sim" href="isolant.html#ccf"><span class="code">CCF-14</span><span class="nom">Le caisson isotherme</span><span class="quoi">conduction, conductance G = λS/e, deux épaisseurs</span><span class="origine">entraînement au CCF · hors ligne</span></a></div></section>
 <section><h2>Mécanique et fluides</h2><div class="grille"><a class="carte-sim" href="phet/buoyancy_fr.html?screens=3&amp;yotta=false"><span class="code">SIM-01</span><span class="nom">Poussée d'Archimède</span><span class="quoi">poids apparent, volume déplacé, eau douce et eau de mer</span><span class="origine">PhET · hors ligne</span></a><a class="carte-sim" href="phet/balancing-act_fr.html?screens=2&amp;yotta=false"><span class="code">SIM-02</span><span class="nom">Moments et équilibre</span><span class="quoi">équilibrer une planche, trouver une masse inconnue</span><span class="origine">PhET · hors ligne</span></a><a class="carte-sim" href="phet/under-pressure_fr.html?yotta=false"><span class="code">SIM-03</span><span class="nom">Pression dans un liquide</span><span class="quoi">la pression selon la profondeur et le liquide</span><span class="origine">PhET · hors ligne</span></a><a class="carte-sim" href="verin-hydraulique.html"><span class="code">SIM-03</span><span class="nom">Le vérin hydraulique</span><span class="quoi">deux pistons, une pression, deux forces</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="debit.html"><span class="code">SIM-04</span><span class="nom">Le débit d'un fluide</span><span class="quoi">débit volumique, débit massique, vitesse dans un tuyau</span><span class="origine">hors ligne</span></a></div></section>
 <section><h2>Électricité et magnétisme</h2><div class="grille"><a class="carte-sim" href="pile-accumulateur.html"><span class="code">SIM-05</span><span class="nom">Pile et accumulateur</span><span class="quoi">la pile zinc-cuivre, la charge et la décharge d'un accumulateur</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="moteur.html"><span class="code">SIM-06</span><span class="nom">Le moteur : vitesse et rendement</span><span class="quoi">vitesse selon la tension, levage d'une charge</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="redressement.html"><span class="code">SIM-07</span><span class="nom">Redresser un courant</span><span class="quoi">diode, pont de diodes, oscilloscope</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="triphase.html"><span class="code">SIM-08</span><span class="nom">Le réseau triphasé</span><span class="quoi">trois tensions décalées, 230 V et 400 V</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="puissance-alternatif.html"><span class="code">SIM-09</span><span class="nom">La puissance en alternatif</span><span class="quoi">u, i et p à l'oscilloscope, le facteur de puissance</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="phet/faradays-electromagnetic-lab_fr.html?screens=3&amp;currentFlow=conventional&amp;colorProfile=projector&amp;yotta=false"><span class="code">SIM-10</span><span class="nom">Le champ d'une bobine</span><span class="quoi">électro-aimant, intensité et nombre de spires</span><span class="origine">PhET · hors ligne</span></a><a class="carte-sim" href="phet/faradays-electromagnetic-lab_fr.html?screens=2,5&amp;currentFlow=conventional&amp;colorProfile=projector&amp;yotta=false"><span class="code">SIM-11</span><span class="nom">L'induction</span><span class="quoi">aimant et bobine, l'alternateur</span><span class="origine">PhET · hors ligne</span></a></div></section>
 <section><h2>Signaux, lumière et son</h2><div class="grille"><a class="carte-sim" href="phet/bending-light_fr.html?screens=1&amp;yotta=false"><span class="code">SIM-12</span><span class="nom">La fibre optique</span><span class="quoi">réfraction, réflexion totale, angle limite</span><span class="origine">PhET · hors ligne</span></a><a class="carte-sim" href="transmission.html"><span class="code">SIM-12</span><span class="nom">Transmettre un message</span><span class="quoi">codage binaire, propagation libre et guidée</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="phet/geometric-optics_fr.html?screens=1&amp;focalLengthControl=direct&amp;yotta=false"><span class="code">SIM-13</span><span class="nom">La lentille convergente</span><span class="quoi">image nette, distance focale, grandissement</span><span class="origine">PhET · hors ligne</span></a><a class="carte-sim" href="attenuation-son.html"><span class="code">SIM-14</span><span class="nom">Un son à travers une paroi</span><span class="quoi">sonomètre, matériau, épaisseur, atténuation</span><span class="origine">hors ligne</span></a></div></section>

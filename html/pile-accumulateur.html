@@ -222,6 +222,7 @@ details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-siz
 .pc-pied{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:flex-end;margin:4px 0 20px}
 .pc-bravo{margin:0;flex:1 1 280px;color:var(--juste);font-weight:650}
 .pc-suite{min-height:48px;font-size:1rem;padding:10px 18px}
+.pc-vers-fin{min-height:44px;margin-right:auto;color:var(--encre2)}
 .pc-apercu{width:100%;margin-top:10px;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;border:1px solid var(--trait);
   border-radius:var(--r);background:var(--carte2);color:var(--encre);padding:8px}
 .pc-recap td,.pc-recap th{text-align:left}
@@ -242,6 +243,63 @@ details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-siz
 .pc-en-cours .tete .chapeau{display:none}
 .pc-en-cours .tete h1{font-size:1.3rem;margin:2px 0 0}
 @media print{.pc-tete,.pc-remise,.pc-q .rangee{display:none}}
+/* Entrainement au CCF (premiere, terminale) : deux modes, la paillasse empruntee, les appels professeur */
+.pc [hidden],.pc-voile[hidden],.pc-modes [hidden]{display:none!important}
+.pc-modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px}
+.pc-mode{font:inherit;text-align:left;display:flex;flex-direction:column;gap:2px;padding:12px 14px;min-height:56px;cursor:pointer;
+  border-radius:var(--r);border:1.5px solid var(--trait);background:var(--carte);color:var(--encre)}
+.pc-mode b{font-size:1rem}
+.pc-mode span{font-size:.85rem;color:var(--encre2)}
+.pc-mode[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-doux)}
+.pc-en-cours .pc-modes{display:none}
+@media (max-width:480px){.pc-modes{grid-template-columns:1fr}}
+.pc-problematique{margin:12px 0 0;padding:10px 12px;border-left:4px solid var(--accent);background:var(--carte2);border-radius:0 var(--r) var(--r) 0}
+.pc-grille{list-style:none;margin:10px 0;padding:0;border-top:1px solid var(--trait2)}
+.pc-grille li{padding:7px 0;border-bottom:1px solid var(--trait2)}
+.pc-grille-ligne{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.pc-grille-ou{font-size:.85rem;font-weight:650;color:var(--accent);text-align:right}
+.pc-grille-cap{font-size:.84rem;color:var(--encre2);margin-top:2px}
+.pc-appel-annonce{display:flex;gap:8px;align-items:flex-start}
+.pc-main{font-size:1.25rem;line-height:1;margin-right:.35em}
+.pc-q.pc-appel{border-style:dashed;border-color:var(--accent);background:var(--carte)}
+.pc-q[data-etat="attente"]{border-color:var(--tiede);border-style:solid}
+.pc-badge-appel{font:inherit;font-weight:700;font-size:.85rem;min-height:40px;padding:6px 12px;border-radius:999px;cursor:pointer;
+  border:2px solid var(--tiede);background:var(--carte);color:var(--encre);animation:pc-pulse 1.6s ease-in-out infinite}
+@keyframes pc-pulse{50%{box-shadow:0 0 0 5px var(--accent-doux)}}
+.pc-methode{margin:6px 0 0;font-size:.92rem;color:var(--encre2);border-left:3px solid var(--trait);padding-left:8px}
+.pc-aide-btn{color:var(--encre2)}
+.pc-autonomie{margin:10px 0 0}
+.pc-voile{position:fixed;inset:0;z-index:30;background:rgba(20,20,22,.5);display:grid;place-items:center;padding:16px}
+.pc-prof{width:min(100%,600px);max-height:90vh;overflow:auto;margin:0}
+.pc-prof-liste .pc-q{margin-top:10px}
+.pc-attendus{margin:0 0 10px;padding-left:1.2em;font-size:.92rem}
+.pc-cotes .pc-option{flex:1 1 9em}
+.pc-prof-pied{justify-content:flex-end;margin-top:10px}
+/* une partie qui emprunte la paillasse : la simulation a gauche, les questions a droite, qui restent en vue */
+.plan.pc-avec-paillasse{grid-template-columns:minmax(0,1.8fr) minmax(280px,1fr)}
+.pc-paillasse .plan{grid-template-columns:1fr}
+.pc-paillasse > .carte,.pc-paillasse .plan > .carte{background:var(--carte2);box-shadow:none;margin-bottom:12px}
+.pc-avec-paillasse > .pc-questions{position:sticky;top:92px;max-height:calc(100vh - 104px);overflow:auto}
+@media (max-width:820px){.plan.pc-avec-paillasse{grid-template-columns:minmax(0,1fr)}.pc-avec-paillasse > .pc-questions{position:static;max-height:none}}
+/* une colonne bornee ne grandit pas a la taille de son contenu : ce qui est large defile dans son cadre */
+.pc-avec-paillasse > *,.pc-paillasse,.pc-paillasse > *{min-width:0}
+.pc-paillasse .releve-zone{grid-template-columns:minmax(0,1fr)}
+.pc-paillasse .releve-zone > div,.pc-paillasse table.releve{overflow-x:auto}
+/* les documents d'un sujet : fiches, consignes, annexe */
+.pc-docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.pc-docs section{border:1px solid var(--trait);border-radius:var(--r);background:var(--carte2);padding:10px 12px}
+.pc-docs h3{font-size:.95rem;margin:0 0 6px}
+.pc-docs p{margin:0 0 6px;font-size:.93rem}
+.pc-docs table{width:100%}
+.pc-docs td{font-size:.88rem;vertical-align:top}
+.pc-docs .pc-annexe{border-style:dashed}
+.pc-paillasse .num{display:none}
+/* sur un telephone, la paillasse perd une epaisseur de marge, et un afficheur trop long passe a la ligne au lieu de deborder */
+@media (max-width:620px){
+  .pc-avec-paillasse > .pc-scene{padding:10px}
+  .pc-paillasse > .carte,.pc-paillasse .plan > .carte{padding:12px}
+  .afficheur .val{white-space:normal;overflow-wrap:anywhere}
+}
 
 </style>
 <script>
@@ -888,69 +946,148 @@ var Sim = (function () {
      tri ou une manipulation (« essais » pour en decider autrement). On peut toujours reessayer pour avancer ; au troisieme echec,
      « Continuer » la laisse fausse. La page dit juste ou pas encore, puis la methode : jamais la
      valeur attendue.
+     PERSONNE NE RESTE BLOQUE (14 octobre 2026, remarque du professeur a l'essai) : « Continuer »
+     apparait aussi au troisieme appui sur « Verifier » quand la manipulation n'est pas faite, et
+     le livrable s'ouvre a tout moment, depuis le chemin ou le bouton de chaque phase. Le fichier se
+     produit inacheve : ce qui reste y compte comme non reussi.
      Rien n'est enregistre ni envoye : le fichier se fabrique dans le navigateur (Blob).
      CROCHETS DE LA SCENE : q.apres(ctx, true, reponse) quand une question devient juste ;
      q.fini(ctx, juste, reponse) quand elle se ferme, juste ou passee ; pour un nombre, la valeur lue
      suit en quatrieme argument. recit et consigne d'une phase peuvent etre des fonctions de ctx, pour
-     varier avec ctx.niveau(). « large: true » sur une phase donne plus de place a la scene. */
+     varier avec ctx.niveau(). « large: true » sur une phase donne plus de place a la scene.
+
+     L'ENTRAINEMENT AU CCF (14 octobre 2026, pour les simulations de premiere et de terminale) :
+     « ccf: { problematique } » donne le cadrage de l'epreuve, releve sur un vrai CCF du lycee (le
+     vigneron, M. Meunier) : quatre parties cotees separement, APP, ANA, REA, VAL ; COM sur l'appel 1
+     et la conclusion ; deux appels professeur ; bonus d'autonomie de +0,25 ; note sur 10. Les phases
+     s'appellent « Partie n », la derniere, si elle est COM, « Conclusion ».
+     - type « appel » : { type: "appel", numero: 1, competence: "COM", lib, attendus: [...] }. L'eleve
+       appelle et CONTINUE ; le professeur valide quand il passe, par son code, sur la tablette meme
+       (le bandeau du haut l'y mene depuis n'importe quelle partie) : NA, ECA ou A. Dans le fichier,
+       un bloc EXERCICE : 0, 1 ou 2 points sur 2. Un appel lance mais non evalue ne compte pas ; un
+       appel jamais lance compte 0. Les appels se posent dans un tableau de questions, pas une fonction.
+     - L'aide : apres un premier echec, « Demander de l'aide » montre la methode. Elle ne retire rien a
+       la question, mais le bonus d'autonomie s'en va, comme en epreuve. Le fichier le dit.
+     - « competence » sur une question la sort du bloc de sa partie : une conclusion cotee COM dans la
+       partie 4, par exemple.
+     LE MODE LIBRE ET LA PAILLASSE : « libre: "#libre" » garde la simulation telle qu'elle etait, et
+     pose au-dessus deux boutons, explorer ou s'entrainer (#ccf dans l'adresse ouvre l'entrainement).
+     « paillasse: [selecteurs] » liste les morceaux de la simulation qu'une partie emprunte : la partie
+     qui porte « paillasse: true » (ou une liste) les recoit dans sa scene, et ils retournent a leur
+     place ensuite. Une seule scene, deplacee, jamais recopiee : son etat et ses releves la suivent.
+     « surOuvrir(ctx) » sur une partie s'appelle a chaque fois qu'on l'affiche. */
   var COMPETENCES = {
     APP: "S'approprier", ANA: "Analyser", REA: "Réaliser", VAL: "Valider", COM: "Communiquer"
   };
+  /* les capacites de la grille de l'epreuve, telles que les sujets du lycee les impriment */
+  var CAPACITES = {
+    APP: "Rechercher, extraire et organiser l'information.",
+    ANA: "Émettre une conjecture, une hypothèse. Proposer une méthode de résolution, un protocole expérimental.",
+    REA: "Choisir une méthode de résolution, un protocole expérimental. Exécuter une méthode de résolution, expérimenter, simuler, calculer.",
+    VAL: "Contrôler la vraisemblance d'une conjecture, d'une hypothèse. Interpréter, critiquer, argumenter.",
+    COM: "Rendre compte d'une démarche, d'un résultat, à l'oral ou à l'écrit."
+  };
+  var ORDRE_COMP = ["APP", "ANA", "REA", "VAL", "COM"];
+  var COTES = { NA: "non acquis", ECA: "en cours d'acquisition", A: "acquis" };
+  var POINTS_COTE = { NA: 0, ECA: 1, A: 2 };
+  /* Le code du professeur pour valider un appel : seule son empreinte est dans la page. Pour le
+     changer : node -e "..." avec la fonction empreinte ci-dessous sur « labo|<code> », et remplacer
+     le nombre. Il ne protege rien de serieux : il evite qu'un eleve se valide en un geste. */
+  var CODE_PROF = 2147056977;
+  function empreinte(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h; }
   function texteSeul(html) {
     var d = document.createElement("div"); d.innerHTML = html || "";
     return (d.textContent || "").replace(/\s+/g, " ").trim();
   }
+  function deux(n) { return (n < 10 ? "0" : "") + n; }
+  function heure(d) { return deux(d.getHours()) + "h" + deux(d.getMinutes()); }
   function parcours(parent, o) {
+    var ccf = !!o.ccf;
     var niveaux = o.niveaux || ["CAP", "Seconde"];
     var etat = { niveau: niveaux.length === 1 ? niveaux[0] : null, debut: null, courante: -1, ouverte: -1,
-      fiches: [], construites: [], exporte: false };
+      fiches: [], construites: [], exporte: false, aides: 0 };
     var donnees = {};                                    // partage entre les phases d'un parcours
-    var racine = el("div", { classe: "pc" });
-    $(parent).appendChild(racine);
+    var appels = [];                                     // les fiches des appels lances ou a lancer
+    var nPh = o.phases.length;
+    var racine = el("div", { classe: "pc" + (ccf ? " pc-ccf" : "") });
+    var P = $(parent);
+
+    /* ---- deux facons d'utiliser la page : la simulation libre, ou le parcours ---- */
+    var libre = o.libre ? $(o.libre) : null, barreModes = null, bLibre = null, bParcours = null;
+    if (libre) {
+      bLibre = el("button", { type: "button", classe: "pc-mode", "aria-pressed": "true" },
+        [el("b", { texte: "Explorer la simulation" }), el("span", { texte: o.libreTexte || "librement, sans note ni fichier" })]);
+      bParcours = el("button", { type: "button", classe: "pc-mode", "aria-pressed": "false" },
+        [el("b", { texte: ccf ? "Entraînement au CCF" : "Le parcours" }), el("span", { texte: o.modeTexte || "une heure, et un fichier pour le professeur" })]);
+      barreModes = el("div", { classe: "pc-modes", role: "group", "aria-label": "Deux façons d'utiliser la page" }, [bLibre, bParcours]);
+      P.appendChild(barreModes);
+      bLibre.addEventListener("click", function () { mode(false); });
+      bParcours.addEventListener("click", function () { mode(true); });
+    }
+    P.appendChild(racine);
+    function mode(p) {
+      if (!libre) return;
+      bLibre.setAttribute("aria-pressed", p ? "false" : "true");
+      bParcours.setAttribute("aria-pressed", p ? "true" : "false");
+      libre.hidden = p; racine.hidden = !p;
+      if (!p) poserPaillasse(null, null);
+    }
+
+    /* ---- la paillasse : les morceaux de la simulation qu'une partie emprunte ---- */
+    var pail = (o.paillasse || []).map(function (s) {
+      var n = $(s);
+      if (!n) throw new Error("paillasse : " + s + " introuvable");
+      var m = document.createComment(" paillasse " + s + " ");
+      n.parentNode.insertBefore(m, n);
+      return { sel: s, n: n, m: m };
+    });
+    function poserPaillasse(cible, liste) {
+      pail.forEach(function (p) {
+        var veut = cible && (liste === true || (liste && liste.indexOf(p.sel) >= 0));
+        if (veut) cible.appendChild(p.n);
+        else if (p.n.previousSibling !== p.m) p.m.parentNode.insertBefore(p.n, p.m.nextSibling);
+      });
+    }
+
+    function nomPhase(i) {
+      if (!ccf) return "Phase " + (i + 1);
+      return o.phases[i].competence === "COM" && i === nPh - 1 ? "Conclusion" : "Partie " + (i + 1);
+    }
 
     /* ---- la tete : chemin des phases, etoiles, temps ---- */
     var tete = el("div", { classe: "pc-tete" });
-    var chemin = el("ol", { classe: "pc-chemin", "aria-label": "Les phases du projet" });
+    var chemin = el("ol", { classe: "pc-chemin", "aria-label": ccf ? "Les parties du sujet" : "Les phases du projet" });
     var noeuds = o.phases.map(function (ph, i) {
       var b = el("button", { type: "button", classe: "pc-noeud", disabled: "disabled",
-        "aria-label": "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] },
-        [el("span", { classe: "pc-rond", texte: String(i + 1) }),
+        "aria-label": nomPhase(i) + " · " + COMPETENCES[ph.competence] },
+        [el("span", { classe: "pc-rond", texte: ccf && nomPhase(i) === "Conclusion" ? "✎" : String(i + 1) }),
          el("span", { classe: "pc-comp", texte: ph.competence }),
          el("span", { classe: "pc-etoiles", "aria-hidden": "true" })]);
       b.addEventListener("click", function () { montrer(i); });
       chemin.appendChild(el("li", null, [b]));
       return b;
     });
-    var drapeau = el("button", { type: "button", classe: "pc-noeud pc-drapeau", disabled: "disabled", "aria-label": "Le livrable" },
-      [el("span", { classe: "pc-rond", html: "&#9873;" }), el("span", { classe: "pc-comp", texte: "Livrable" }), el("span", { classe: "pc-etoiles" })]);
-    drapeau.addEventListener("click", function () { montrer(o.phases.length); });
+    var drapeau = el("button", { type: "button", classe: "pc-noeud pc-drapeau", disabled: "disabled", "aria-label": ccf ? "La copie" : "Le livrable" },
+      [el("span", { classe: "pc-rond", html: "&#9873;" }), el("span", { classe: "pc-comp", texte: ccf ? "Copie" : "Livrable" }), el("span", { classe: "pc-etoiles" })]);
+    drapeau.addEventListener("click", function () { montrer(nPh); });
     chemin.appendChild(el("li", null, [drapeau]));
     var info = el("div", { classe: "pc-info" });
     var score = el("span", { classe: "pc-score" });
     var temps = el("span", { classe: "pc-temps" });
     var niv = el("span", { classe: "pc-niveau" });
-    info.appendChild(niv); info.appendChild(score); info.appendChild(temps);
+    var badge = el("button", { type: "button", classe: "pc-badge-appel", hidden: "hidden" });
+    badge.addEventListener("click", function () { ouvrirProf(null); });
+    info.appendChild(badge); info.appendChild(niv); info.appendChild(score); info.appendChild(temps);
     tete.appendChild(chemin); tete.appendChild(info);
     racine.appendChild(tete);
 
-    /* ---- l'ecran de la commande ---- */
+    /* ---- l'ecran de la commande, ou du sujet ---- */
     var accueil = el("section", { classe: "pc-ecran pc-accueil" });
     var c = o.commande || {};
-    var carteCmd = el("div", { classe: "carte pc-commande" }, [
-      el("div", { classe: "pc-surtitre", texte: "La commande" }),
-      c.client ? el("p", { classe: "pc-client", html: c.client }) : null,
-      el("div", { classe: "pc-texte", html: c.texte || "" }),
-      c.livrable ? el("p", { classe: "pc-livrable", html: "<b>Le livrable :</b> " + c.livrable }) : null
-    ]);
     var illus = el("div", { classe: "scene pc-illus" });
     if (c.illustration) c.illustration(illus);
-    var etapes = el("ol", { classe: "pc-plan" });
-    o.phases.forEach(function (ph, i) {
-      etapes.appendChild(el("li", null, [el("b", { texte: "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] + " — " }),
-        el("span", { html: ph.titre })]));
-    });
     var choixNiv = el("div", { classe: "pc-choix-niveau" });
-    var partir = el("button", { type: "button", classe: "bouton principal pc-partir", texte: "Accepter la mission" });
+    var partir = el("button", { type: "button", classe: "bouton principal pc-partir", texte: ccf ? "Commencer l'épreuve" : "Accepter la mission" });
     if (niveaux.length > 1) {
       choixNiv.appendChild(el("p", { classe: "pc-surtitre", texte: "Ma classe" }));
       var rang = el("div", { classe: "rangee" });
@@ -973,23 +1110,70 @@ var Sim = (function () {
       document.body.classList.add("pc-en-cours");
       ouvrir(0);
     });
-    accueil.appendChild(el("div", { classe: "plan pc-plan-accueil" }, [
-      el("div", null, [carteCmd, illus]),
-      el("div", { classe: "carte" }, [el("h2", { texte: "Le projet en cinq phases" }), etapes,
-        el("p", { classe: "consigne", html: "Une heure en tout. Chaque phase se débloque quand la précédente est finie ; " +
-          "on peut revenir voir les phases faites. À la fin, vous produisez un <b>fichier</b> à remettre au professeur." }),
-        choixNiv, partir])
-    ]));
+    if (ccf) {
+      var cc = o.ccf;
+      var sujet = el("div", { classe: "carte pc-commande" }, [
+        el("div", { classe: "pc-surtitre", texte: cc.surtitre || "Le sujet" }),
+        c.client ? el("p", { classe: "pc-client", html: c.client }) : null,
+        el("div", { classe: "pc-texte", html: c.texte || "" }),
+        el("p", { classe: "pc-problematique", html: "<b>Problématique</b> « " + cc.problematique + " »" })
+      ]);
+      var grille = el("ul", { classe: "pc-grille", "aria-label": "La grille de l'épreuve" });
+      ORDRE_COMP.forEach(function (k) {
+        var ou = [];
+        o.phases.forEach(function (ph, i) {
+          if (ph.competence === k) ou.push(nomPhase(i));
+          if (typeof ph.questions === "function") return;
+          (ph.questions || []).forEach(function (q) {
+            var kk = q.competence || ph.competence;
+            if (kk !== k) return;
+            var nom = q.type === "appel" ? "Appel " + q.numero : nomPhase(i);
+            if (ou.indexOf(nom) < 0) ou.push(nom);
+          });
+        });
+        grille.appendChild(el("li", null, [el("div", { classe: "pc-grille-ligne" }, [el("span", { html: "<b>" + k + "</b> " + COMPETENCES[k] }),
+          el("span", { classe: "pc-grille-ou", texte: ou.join(" · ") || "—" })]), el("div", { classe: "pc-grille-cap", texte: CAPACITES[k] })]));
+      });
+      var epreuve = el("div", { classe: "carte" }, [
+        el("h2", { texte: "Le format de l'épreuve" }),
+        el("p", { html: cc.format || "Au CCF, <b>45 minutes</b> sur une seule situation, notées <b>sur 10</b>. Ici, <b>une heure</b> : le temps de prendre la simulation en main." }),
+        grille,
+        el("p", { classe: "consigne", html: "<b>Chaque compétence est cotée à part</b> : non acquis, en cours d'acquisition, acquis. Rater une partie ne fait pas perdre les autres." }),
+        el("p", { classe: "pc-appel-annonce", html: "<span class=\"pc-main\" aria-hidden=\"true\">✋</span><span><b>Deux appels professeur</b>, à des moments précis du sujet, et notés. Vous appelez, puis vous continuez : le professeur vient valider sur la tablette.</span>" }),
+        el("p", { classe: "consigne", html: "<b>Bonus d'autonomie de +0,25</b> : il va à qui termine sans demander d'aide. Demander n'est pas interdit, et ne retire rien d'autre." }),
+        choixNiv, partir]);
+      accueil.appendChild(el("div", { classe: "plan pc-plan-accueil" }, [el("div", null, [sujet, illus]), epreuve]));
+    } else {
+      var carteCmd = el("div", { classe: "carte pc-commande" }, [
+        el("div", { classe: "pc-surtitre", texte: "La commande" }),
+        c.client ? el("p", { classe: "pc-client", html: c.client }) : null,
+        el("div", { classe: "pc-texte", html: c.texte || "" }),
+        c.livrable ? el("p", { classe: "pc-livrable", html: "<b>Le livrable :</b> " + c.livrable }) : null
+      ]);
+      var etapes = el("ol", { classe: "pc-plan" });
+      o.phases.forEach(function (ph, i) {
+        etapes.appendChild(el("li", null, [el("b", { texte: nomPhase(i) + " · " + COMPETENCES[ph.competence] + " — " }),
+          el("span", { html: ph.titre })]));
+      });
+      accueil.appendChild(el("div", { classe: "plan pc-plan-accueil" }, [
+        el("div", null, [carteCmd, illus]),
+        el("div", { classe: "carte" }, [el("h2", { texte: "Le projet en cinq phases" }), etapes,
+          el("p", { classe: "consigne", html: "Une heure en tout. Chaque phase se débloque quand la précédente est finie ; " +
+            "on peut revenir voir les phases faites. À la fin, vous produisez un <b>fichier</b> à remettre au professeur." }),
+          choixNiv, partir])
+      ]));
+    }
     racine.appendChild(accueil);
 
     /* ---- une phase ---- */
-    var ecrans = o.phases.map(function (ph, i) {
+    var ecrans = o.phases.map(function () {
       var s = el("section", { classe: "pc-ecran", hidden: "hidden" });
       racine.appendChild(s);
       return s;
     });
     var final = el("section", { classe: "pc-ecran", hidden: "hidden" });
     racine.appendChild(final);
+    var postes = [];                                       // l'emplacement de la paillasse, partie par partie
 
     function questionsDe(i) {
       var ph = o.phases[i];
@@ -997,7 +1181,7 @@ var Sim = (function () {
       return qs.filter(function (q) { return !q.niveau || q.niveau === etat.niveau; });
     }
 
-    var ctx = { donnees: donnees, niveau: function () { return etat.niveau; },
+    var ctx = { donnees: donnees, niveau: function () { return etat.niveau; }, ccf: ccf,
       fr: fr, lire: lire, mesure: mesure, gauss: gauss, svg: svg, el: el, borne: borne, animer: animer };
 
     /* un recit ou une consigne peut dependre du niveau : une fonction de ctx */
@@ -1008,29 +1192,35 @@ var Sim = (function () {
       etat.construites[i] = true;
       var ph = o.phases[i], s = ecrans[i];
       s.appendChild(el("div", { classe: "pc-phase-tete" }, [
-        el("div", { classe: "pc-surtitre", texte: "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] }),
+        el("div", { classe: "pc-surtitre", texte: nomPhase(i) + " · " + COMPETENCES[ph.competence] }),
         el("h2", { html: ph.titre }),
         ph.recit ? el("p", { classe: "pc-bulle", html: selon(ph.recit) }) : null
       ]));
       var zone = el("div", { classe: "carte pc-scene" });
       if (ph.consigne) zone.appendChild(el("p", { classe: "consigne", html: selon(ph.consigne) }));
-      var colQ = el("div", { classe: "carte pc-questions" }, [el("h2", { texte: "À trouver" })]);
-      s.appendChild(el("div", { classe: "plan" + (ph.large ? " pc-large" : "") }, [zone, colQ]));
+      var colQ = el("div", { classe: "carte pc-questions" }, [el("h2", { texte: ccf ? "Les questions" : "À trouver" })]);
+      s.appendChild(el("div", { classe: "plan" + (ph.large ? " pc-large" : "") + (ph.paillasse ? " pc-avec-paillasse" : "") }, [zone, colQ]));
       if (ph.scene) ph.scene(zone, ctx);
+      if (ph.paillasse) { postes[i] = el("div", { classe: "pc-paillasse" }); zone.appendChild(postes[i]); }
       var qs = questionsDe(i);
-      etat.fiches[i] = qs.map(function (q, j) { return poserQuestion(colQ, q, i, j); });
+      etat.fiches[i] = qs.map(function (q, j) { return q.type === "appel" ? poserAppel(colQ, q, i) : poserQuestion(colQ, q, i, j); });
       var bravo = el("p", { classe: "pc-bravo", hidden: "hidden", html: ph.bravo || "" });
       var suite = el("button", { type: "button", classe: "bouton principal pc-suite", disabled: "disabled",
-        texte: i + 1 < o.phases.length ? "Phase suivante" : "Le livrable" });
+        texte: i + 1 < nPh ? (ccf ? (nomPhase(i + 1) === "Conclusion" ? "La conclusion" : "Partie suivante") : "Phase suivante") : (ccf ? "La copie" : "Le livrable") });
       suite.addEventListener("click", function () { ouvrir(i + 1); });
-      s.appendChild(el("div", { classe: "pc-pied" }, [bravo, suite]));
+      var versFin = null;
+      if (i + 1 < nPh) {
+        versFin = el("button", { type: "button", classe: "bouton pc-vers-fin", texte: ccf ? "Aller à la copie" : "Aller au livrable" });
+        versFin.addEventListener("click", function () { montrer(nPh); });
+      }
+      s.appendChild(el("div", { classe: "pc-pied" }, [versFin, bravo, suite]));
       etat.fiches[i].pied = { bravo: bravo, suite: suite };
       majPhase(i);
     }
 
     /* une question : son interface, ses essais, sa note */
     function poserQuestion(parentQ, q, i, j) {
-      var f = { q: q, essais: 0, juste: false, fini: false, passe: false, reponse: "", note: false };
+      var f = { q: q, essais: 0, juste: false, fini: false, passe: false, reponse: "", note: false, aide: false };
       var maxNote = q.essais || ((q.type === "nombre" || q.type === "action" || q.type === "classer") ? 2 : 1);
       var bloc = el("div", { classe: "pc-q", "data-etat": "a-faire" });
       bloc.appendChild(el("p", { classe: "pc-q-lib", html: "<span class=\"pc-q-num\">" + (j + 1) + "</span>" + q.lib }));
@@ -1052,7 +1242,8 @@ var Sim = (function () {
       } else if (q.type === "choix" || q.type === "multi") {
         var multi = q.type === "multi", choisis = [];
         var rang = el("div", { classe: "pc-options" });
-        q.options.forEach(function (op, k) {
+        var options = typeof q.options === "function" ? q.options(ctx) : q.options;
+        options.forEach(function (op, k) {
           var b = el("button", { type: "button", classe: "pc-option", "aria-pressed": "false", html: op });
           b.addEventListener("click", function () {
             if (f.fini) return;
@@ -1063,7 +1254,7 @@ var Sim = (function () {
           rang.appendChild(b); controles.push(b);
         });
         champ.appendChild(rang);
-        lireReponse = function () { return choisis.slice().sort().map(function (k) { return texteSeul(q.options[k]); }).join(" + "); };
+        lireReponse = function () { return choisis.slice().sort().map(function (k) { return texteSeul(options[k]); }).join(" + "); };
         verifierOk = function () {
           if (!choisis.length) return null;
           var bon = typeof q.bonne === "function" ? q.bonne(ctx) : q.bonne;
@@ -1103,14 +1294,19 @@ var Sim = (function () {
       }
       var bVerif = el("button", { type: "button", classe: "bouton principal", texte: "Vérifier" });
       var bPasser = el("button", { type: "button", classe: "bouton", hidden: "hidden", texte: "Continuer sans trouver" });
+      /* en CCF, la methode se demande : c'est l'appel a l'aide de l'epreuve, et il coute le bonus d'autonomie */
+      var bAide = ccf && q.methode ? el("button", { type: "button", classe: "bouton pc-aide-btn", hidden: "hidden", texte: "Demander de l'aide" }) : null;
       var retour = el("div", { classe: "pc-retour", "aria-live": "polite" });
+      var methodeVue = el("p", { classe: "pc-methode", hidden: "hidden", html: q.methode || "" });
       bloc.appendChild(champ);
-      bloc.appendChild(el("div", { classe: "rangee" }, [bVerif, bPasser]));
+      bloc.appendChild(el("div", { classe: "rangee" }, [bVerif, bAide, bPasser]));
       bloc.appendChild(retour);
+      bloc.appendChild(methodeVue);
       parentQ.appendChild(bloc);
 
       function clore() {
         f.fini = true; bVerif.disabled = true; bPasser.hidden = true;
+        if (bAide) bAide.hidden = true;
         controles.forEach(function (x) { x.disabled = true; });
         majPhase(i); majTete();
         /* « fini » previent la scene a la cloture, juste ou passee ; « apres », seulement si juste */
@@ -1119,7 +1315,15 @@ var Sim = (function () {
       function verifier() {
         if (f.fini) return;
         var ok = verifierOk();
-        if (ok === null) { retour.className = "pc-retour"; retour.textContent = q.type === "nombre" ? "Écrivez un nombre." : (q.type === "action" ? "Faites d'abord la manipulation." : "Choisissez d'abord."); return; }
+        f.appuis = (f.appuis || 0) + 1;
+        if (ok === null) {
+          retour.className = "pc-retour";
+          retour.innerHTML = (q.type === "nombre" ? "Écrivez un nombre." : (q.type === "action" ? "Faites d'abord la manipulation." : "Choisissez d'abord.")) +
+            (!ccf && f.appuis >= 3 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : "");
+          if (bAide && !f.aide) bAide.hidden = false;
+          if (f.appuis >= 3) bPasser.hidden = false;          // personne ne reste bloque : on peut continuer
+          return;
+        }
         f.essais++;
         f.reponse = lireReponse();
         if (ok) {
@@ -1134,19 +1338,134 @@ var Sim = (function () {
         bloc.setAttribute("data-etat", "faux");
         retour.className = "pc-retour faux";
         var compte = q.type === "classer" && f.bienPlaces !== undefined ? " " + f.bienPlaces + " sur " + q.items.length + " bien placés." : "";
-        retour.innerHTML = "Pas encore." + compte + (f.essais >= 2 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : " Encore un essai.");
-        if (f.essais >= 3) bPasser.hidden = false;
+        if (ccf) {
+          retour.innerHTML = "Pas encore." + compte + " Encore un essai.";
+          if (bAide && !f.aide) bAide.hidden = false;
+        } else {
+          retour.innerHTML = "Pas encore." + compte + (f.essais >= 2 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : " Encore un essai.");
+        }
+        if (f.essais >= 3 || f.appuis >= 3) bPasser.hidden = false;
       }
       bVerif.addEventListener("click", verifier);
+      if (bAide) bAide.addEventListener("click", function () {
+        if (f.aide) return;
+        f.aide = true; etat.aides++;
+        bAide.hidden = true; methodeVue.hidden = false;
+      });
       bPasser.addEventListener("click", function () {
         f.passe = true; f.note = false;
+        if (!f.reponse) f.reponse = q.type === "action" ? "(manipulation non faite)" : "(sans réponse)";
         bloc.setAttribute("data-etat", "passe");
-        retour.className = "pc-retour"; retour.innerHTML = "On continue. <span class=\"methode\">" + (q.methode || "") + "</span>";
+        retour.className = "pc-retour"; retour.innerHTML = "On continue." + (ccf ? "" : " <span class=\"methode\">" + (q.methode || "") + "</span>");
+        if (ccf && q.methode) methodeVue.hidden = false;
         clore();
       });
       return f;
     }
     function decimalesDe(txt) { var m = String(txt).replace(",", ".").match(/\.(\d+)/); return m ? Math.min(m[1].length, 4) : 0; }
+
+    /* un appel professeur : l'eleve appelle et continue ; le professeur valide quand il passe */
+    function poserAppel(parentQ, q, i) {
+      var f = { q: q, appel: true, essais: 0, juste: false, fini: false, passe: false, reponse: "", note: false,
+        appele: null, cote: null, heureCote: null, phase: i };
+      var bloc = el("div", { classe: "pc-q pc-appel", "data-etat": "a-faire" });
+      bloc.appendChild(el("p", { classe: "pc-q-lib", html: "<span class=\"pc-main\" aria-hidden=\"true\">✋</span><b>Appel n° " + q.numero + "</b> · " + q.lib }));
+      var bAppel = el("button", { type: "button", classe: "bouton principal", texte: "J'appelle le professeur" });
+      var bProf = el("button", { type: "button", classe: "bouton", hidden: "hidden", texte: "Le professeur valide" });
+      var retour = el("div", { classe: "pc-retour", "aria-live": "polite" });
+      bloc.appendChild(el("div", { classe: "rangee" }, [bAppel, bProf]));
+      bloc.appendChild(retour);
+      parentQ.appendChild(bloc);
+      bAppel.addEventListener("click", function () {
+        if (f.appele) return;
+        f.appele = new Date(); f.fini = true; f.reponse = "appel lancé à " + heure(f.appele);
+        bAppel.disabled = true; bProf.hidden = false;
+        bloc.setAttribute("data-etat", "attente");
+        retour.className = "pc-retour";
+        retour.innerHTML = "Appel lancé : levez la main, le professeur vient valider sur cette tablette. <b>En attendant, continuez.</b>";
+        majPhase(i); majTete(); majAppels();
+      });
+      bProf.addEventListener("click", function () { ouvrirProf(f); });
+      f.afficher = function () {
+        if (!f.cote) return;
+        bloc.setAttribute("data-etat", f.cote === "NA" ? "faux" : "juste");
+        retour.className = "pc-retour " + (f.cote === "NA" ? "faux" : "juste");
+        retour.innerHTML = "Évalué par le professeur à " + heure(f.heureCote) + " : <b>" + COTES[f.cote] + "</b>.";
+        bProf.textContent = "Le professeur revient sur sa cote";
+      };
+      appels.push(f);
+      return f;
+    }
+    function attente() { return appels.filter(function (f) { return f.appele && !f.cote; }); }
+    function majAppels() {
+      var n = attente().length;
+      badge.hidden = !n;
+      badge.innerHTML = "<span aria-hidden=\"true\">✋</span> " + (n > 1 ? n + " appels en attente" : "Appel en attente");
+    }
+
+    /* la fenetre du professeur : son code, puis NA, ECA ou A pour chaque appel lance */
+    var voile = null, codeProf, codeDit, zoneCode, listeProf, cibleProf = null;
+    function ouvrirProf(cible) {
+      if (!voile) construireVoile();
+      cibleProf = cible;
+      voile.hidden = false; zoneCode.hidden = false; listeProf.hidden = true; listeProf.innerHTML = "";
+      codeProf.value = ""; codeDit.textContent = "";
+      setTimeout(function () { codeProf.focus(); }, 30);
+    }
+    function fermerProf() { if (voile) voile.hidden = true; }
+    function construireVoile() {
+      voile = el("div", { classe: "pc-voile", role: "dialog", "aria-modal": "true", "aria-label": "Réservé au professeur", hidden: "hidden" });
+      var boite = el("div", { classe: "carte pc-prof" });
+      var fermer = el("button", { type: "button", classe: "bouton", texte: "Fermer" });
+      fermer.addEventListener("click", fermerProf);
+      codeProf = el("input", { type: "password", inputmode: "numeric", autocomplete: "off", "aria-label": "Code du professeur" });
+      var bOuvrir = el("button", { type: "button", classe: "bouton principal", texte: "Ouvrir" });
+      codeDit = el("p", { classe: "pc-retour faux", "aria-live": "polite" });
+      zoneCode = el("div", null, [el("p", { classe: "consigne", texte: "Code du professeur :" }),
+        el("div", { classe: "pc-q-champ" }, [codeProf, bOuvrir]), codeDit]);
+      listeProf = el("div", { classe: "pc-prof-liste" });
+      boite.appendChild(el("div", { classe: "pc-surtitre", texte: "Réservé au professeur" }));
+      boite.appendChild(el("h2", { texte: "Évaluer un appel" }));
+      boite.appendChild(zoneCode); boite.appendChild(listeProf);
+      boite.appendChild(el("div", { classe: "rangee pc-prof-pied" }, [fermer]));
+      voile.appendChild(boite);
+      document.body.appendChild(voile);
+      function essayer() {
+        if (empreinte("labo|" + codeProf.value.trim()) !== CODE_PROF) { codeDit.textContent = "Ce n'est pas le code."; codeProf.select(); return; }
+        zoneCode.hidden = true; listeProf.hidden = false; remplirProf();
+      }
+      bOuvrir.addEventListener("click", essayer);
+      codeProf.addEventListener("keydown", function (e) { if (e.key === "Enter") essayer(); });
+      voile.addEventListener("click", function (e) { if (e.target === voile) fermerProf(); });
+    }
+    function remplirProf() {
+      listeProf.innerHTML = "";
+      var lances = appels.filter(function (f) { return f.appele; });
+      if (cibleProf) lances.sort(function (a, b) { return (a === cibleProf ? 0 : 1) - (b === cibleProf ? 0 : 1); });
+      if (!lances.length) { listeProf.appendChild(el("p", { texte: "Aucun appel lancé pour l'instant." })); return; }
+      lances.forEach(function (f) {
+        var q = f.q, k = q.competence || o.phases[f.phase].competence;
+        var carte = el("div", { classe: "pc-q pc-appel" });
+        carte.appendChild(el("p", { classe: "pc-q-lib", html: "<b>Appel n° " + q.numero + "</b> · " + k + " " + COMPETENCES[k] + " — " + q.lib }));
+        if (q.attendus && q.attendus.length) {
+          carte.appendChild(el("p", { classe: "pc-surtitre", texte: "Ce qu'on attend" }));
+          carte.appendChild(el("ul", { classe: "pc-attendus" }, q.attendus.map(function (a) { return el("li", { html: a }); })));
+        }
+        var rangee = el("div", { classe: "pc-options pc-cotes" });
+        ["NA", "ECA", "A"].forEach(function (x) {
+          var b = el("button", { type: "button", classe: "pc-option", "aria-pressed": f.cote === x ? "true" : "false", html: "<b>" + x + "</b> · " + COTES[x] });
+          b.addEventListener("click", function () {
+            f.cote = x; f.heureCote = new Date(); f.note = x === "A";
+            [].forEach.call(rangee.children, function (y) { y.setAttribute("aria-pressed", y === b ? "true" : "false"); });
+            f.afficher(); majPhase(f.phase); majTete(); majAppels();
+            if (finalFait && etat.courante === nPh) construireFinal();
+          });
+          rangee.appendChild(b);
+        });
+        carte.appendChild(rangee);
+        listeProf.appendChild(carte);
+      });
+    }
 
     function etoilesDe(i) {
       var fs = etat.fiches[i]; if (!fs || !fs.length) return 0;
@@ -1171,15 +1490,14 @@ var Sim = (function () {
         b.classList.toggle("pc-fait", e > 0);
         b.classList.toggle("pc-ici", etat.courante === i);
       });
-      var tout = o.phases.every(function (ph, i) { return etoilesDe(i) > 0; });
-      if (tout) drapeau.removeAttribute("disabled");
-      drapeau.classList.toggle("pc-ici", etat.courante === o.phases.length);
+      if (etat.debut) drapeau.removeAttribute("disabled");   // le livrable s'ouvre a tout moment
+      drapeau.classList.toggle("pc-ici", etat.courante === nPh);
       drapeau.classList.toggle("pc-fait", etat.exporte);
     }
     function totalEtoiles() { var s = 0; o.phases.forEach(function (ph, i) { s += etoilesDe(i); }); return s; }
     function minutes() { return etat.debut ? Math.floor((Date.now() - etat.debut) / 60000) : 0; }
     function majTete() {
-      score.textContent = "★ " + totalEtoiles() + " / " + (3 * o.phases.length);
+      score.textContent = "★ " + totalEtoiles() + " / " + (3 * nPh);
       temps.textContent = etat.debut ? minutes() + " min" : "";
     }
     setInterval(majTete, 15000);
@@ -1192,20 +1510,35 @@ var Sim = (function () {
       etat.courante = i;
       accueil.hidden = true;
       ecrans.forEach(function (s, k) { s.hidden = k !== i; });
-      final.hidden = i !== o.phases.length;
-      if (i < o.phases.length) construire(i); else construireFinal();
+      final.hidden = i !== nPh;
+      if (i < nPh) construire(i); else construireFinal();
+      if (pail.length) poserPaillasse(i < nPh ? postes[i] : null, i < nPh ? o.phases[i].paillasse : null);
       majChemin(); majTete();
+      if (i < nPh && o.phases[i].surOuvrir) o.phases[i].surOuvrir(ctx);
       if (o.surPhase) o.surPhase(i, ctx);
       racine.scrollIntoView({ block: "start", behavior: "smooth" });
     }
 
+    /* ---- l'autonomie, au sens de l'epreuve : ni aide demandee, ni question passee ---- */
+    function autonomie() {
+      var passees = 0, restent = 0;
+      etat.fiches.forEach(function (fs) { (fs || []).forEach(function (f) { if (f.appel) return; if (f.passe) passees++; if (!f.fini) restent++; }); });
+      o.phases.forEach(function (ph, i) { if (!etat.fiches[i]) restent += questionsDe(i).filter(function (q) { return q.type !== "appel"; }).length; });
+      var merite = !etat.aides && !passees && !restent;
+      var t = merite ? "bonus +0,25 mérité — aucune aide demandée, rien de passé"
+        : "pas de bonus — " + [etat.aides ? etat.aides + " aide" + (etat.aides > 1 ? "s" : "") + " demandée" + (etat.aides > 1 ? "s" : "") : "",
+          passees ? passees + " question" + (passees > 1 ? "s" : "") + " passée" + (passees > 1 ? "s" : "") : "",
+          restent ? restent + " question" + (restent > 1 ? "s" : "") + " sans réponse" : ""].filter(Boolean).join(", ");
+      return { merite: merite, texte: t };
+    }
+
     /* ---- le livrable : recapitulatif et fichier ---- */
-    var finalFait = false, recap, apercu;
+    var finalFait = false, recap, apercu, titreFin, bulleFin;
     function construireFinal() {
       if (!finalFait) {
         finalFait = true;
-        final.appendChild(el("div", { classe: "pc-phase-tete" }, [el("div", { classe: "pc-surtitre", texte: "Le livrable" }),
-          el("h2", { html: o.livrableTitre || "Le projet est fini" }), o.fin ? el("p", { classe: "pc-bulle", html: o.fin }) : null]));
+        titreFin = el("h2"); bulleFin = el("p", { classe: "pc-bulle" });
+        final.appendChild(el("div", { classe: "pc-phase-tete" }, [el("div", { classe: "pc-surtitre", texte: ccf ? "La copie" : "Le livrable" }), titreFin, bulleFin]));
         recap = el("div", { classe: "carte" });
         var remise = el("div", { classe: "carte pc-remise" });
         remise.appendChild(el("h2", { texte: "Mon fichier pour le professeur" }));
@@ -1246,18 +1579,51 @@ var Sim = (function () {
         }
         final.appendChild(el("div", { classe: "plan" }, [recap, el("div", null, [remise, simpl])]));
       }
-      recap.innerHTML = "";
-      recap.appendChild(el("h2", { texte: "Le bilan du projet" }));
-      var t = el("table", { classe: "releve pc-recap" });
-      t.appendChild(el("tr", null, [el("th", { texte: "Phase" }), el("th", { texte: "Compétence" }), el("th", { texte: "Réussi du premier coup" }), el("th", { texte: "Étoiles" })]));
+      /* le livrable se produit meme inacheve : ce qui reste compte comme non reussi */
+      var restent = 0;
       o.phases.forEach(function (ph, i) {
-        var fs = etat.fiches[i] || [];
-        var n = fs.filter(function (f) { return f.note; }).length, e = etoilesDe(i);
-        t.appendChild(el("tr", null, [el("td", { texte: String(i + 1) }), el("td", { texte: COMPETENCES[ph.competence] }),
-          el("td", { texte: n + " sur " + fs.length }), el("td", { texte: e ? "★★★".slice(0, e) + "☆☆☆".slice(0, 3 - e) : "—" })]));
+        var fs = etat.fiches[i];
+        restent += fs ? fs.filter(function (f) { return !f.fini; }).length : questionsDe(i).length;
       });
+      var enAttente = attente().length;
+      titreFin.innerHTML = restent ? (ccf ? "La copie n’est pas finie" : "Le projet n’est pas fini") : (o.livrableTitre || (ccf ? "La copie est finie" : "Le projet est fini"));
+      var mots = [];
+      if (restent) mots.push("Il reste <b>" + restent + " question" + (restent > 1 ? "s" : "") + "</b> sans réponse. Vous pouvez y revenir par le chemin, en haut, " +
+        "ou produire votre fichier tel quel : " + (restent > 1 ? "elles compteront" : "elle comptera") + " comme non réussie" + (restent > 1 ? "s" : "") + ".");
+      if (enAttente) mots.push("<b>" + (enAttente > 1 ? enAttente + " appels attendent" : "Un appel attend") + " encore le professeur</b> : faites-le valider avant de produire le fichier, sinon il ne comptera pas.");
+      if (!restent && !enAttente && o.fin) mots.push(o.fin);
+      bulleFin.innerHTML = mots.join(" ");
+      bulleFin.hidden = !bulleFin.innerHTML;
+      recap.innerHTML = "";
+      recap.appendChild(el("h2", { texte: ccf ? "Le bilan de l'épreuve" : "Le bilan du projet" }));
+      var t = el("table", { classe: "releve pc-recap" });
+      if (ccf) {
+        t.appendChild(el("tr", null, [el("th", { texte: "Compétence" }), el("th", { texte: "Réussi du premier coup" }), el("th", { texte: "Appel" })]));
+        ORDRE_COMP.forEach(function (k) {
+          var n = 0, m = 0, ap = [];
+          o.phases.forEach(function (ph, i) {
+            var fs = etat.fiches[i], qs = fs ? fs.map(function (f) { return f.q; }) : questionsDe(i);
+            qs.forEach(function (q, j) {
+              if ((q.competence || ph.competence) !== k) return;
+              var f = fs && fs[j];
+              if (q.type === "appel") ap.push("n° " + q.numero + " : " + (!f || !f.appele ? "pas fait" : !f.cote ? "en attente" : f.cote));
+              else { m++; if (f && f.note) n++; }
+            });
+          });
+          t.appendChild(el("tr", null, [el("td", { html: "<b>" + k + "</b> " + COMPETENCES[k] }), el("td", { texte: m ? n + " sur " + m : "—" }), el("td", { texte: ap.join(" · ") || "—" })]));
+        });
+      } else {
+        t.appendChild(el("tr", null, [el("th", { texte: "Phase" }), el("th", { texte: "Compétence" }), el("th", { texte: "Réussi du premier coup" }), el("th", { texte: "Étoiles" })]));
+        o.phases.forEach(function (ph, i) {
+          var fs = etat.fiches[i] || [];
+          var n = fs.filter(function (f) { return f.note; }).length, e = etoilesDe(i);
+          t.appendChild(el("tr", null, [el("td", { texte: String(i + 1) }), el("td", { texte: COMPETENCES[ph.competence] }),
+            el("td", { texte: n + " sur " + fs.length }), el("td", { texte: e ? "★★★".slice(0, e) + "☆☆☆".slice(0, 3 - e) : "—" })]));
+        });
+      }
       recap.appendChild(t);
-      recap.appendChild(el("p", { classe: "pc-score-final", html: "<b>★ " + totalEtoiles() + " / " + 3 * o.phases.length + "</b> · " + minutes() + " min" }));
+      if (ccf) recap.appendChild(el("p", { classe: "pc-autonomie", html: "<b>Autonomie</b> : " + autonomie().texte + "." }));
+      recap.appendChild(el("p", { classe: "pc-score-final", html: "<b>★ " + totalEtoiles() + " / " + 3 * nPh + "</b> · " + minutes() + " min" }));
       if (o.grades) {
         var g = o.grades.filter(function (x) { return totalEtoiles() >= x[0]; }).pop();
         if (g) recap.appendChild(el("p", { classe: "pc-grade", html: g[1] }));
@@ -1268,30 +1634,55 @@ var Sim = (function () {
         .replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "sans-identifiant";
     }
     function fabriquer(id) {
-      var d = new Date(), deux = function (n) { return (n < 10 ? "0" : "") + n; };
+      var d = new Date();
       var out = ["BILAN DE SÉQUENCE",
-        "Page       : Parcours " + (o.code ? o.code + " · " : "") + texteSeul(o.titre) + " · " + etat.niveau,
+        "Page       : " + (ccf ? "Entraînement au CCF " : "Parcours ") + (o.code ? o.code + " · " : "") + texteSeul(o.titre) + " · " + etat.niveau,
         "Identifiant: " + id,
         "Date       : " + deux(d.getDate()) + "/" + deux(d.getMonth() + 1) + "/" + d.getFullYear() + " à " + deux(d.getHours()) + "h" + deux(d.getMinutes()),
-        "Bilan      : " + totalEtoiles() + " étoiles sur " + 3 * o.phases.length + ", en " + minutes() + " min",
-        new Array(64).join("="), ""];
+        "Bilan      : " + totalEtoiles() + " étoiles sur " + 3 * nPh + ", en " + minutes() + " min"];
+      if (ccf) out.push("Autonomie  : " + autonomie().texte);
+      out.push(new Array(64).join("="), "");
       o.phases.forEach(function (ph, i) {
-        out.push("SÉRIE — [" + ph.competence + "] Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] + " : " + texteSeul(ph.titre), "");
         var fs = etat.fiches[i];
         var qs = fs ? fs.map(function (f) { return f.q; }) : questionsDe(i);
+        /* un bloc par competence : celle de la partie d'abord, puis celles que des questions portent */
+        var groupes = [], index = {};
         qs.forEach(function (q, j) {
-          var f = fs && fs[j];
-          var etatCase, rep;
-          if (!f || !f.fini) { etatCase = "non vérifié"; rep = "(non faite)"; }
-          else {
-            etatCase = f.note ? "juste" : "faux";
-            var det = f.passe ? "passée après " + f.essais + " essais" : (f.essais === 1 ? "juste au 1er essai" : "trouvée au " + f.essais + "e essai");
-            rep = (f.reponse || "(vide)") + " — " + det;
-          }
-          out.push("  " + (j + 1) + ". " + texteSeul(q.lib));
-          out.push("     réponse : " + rep + "   [" + etatCase + "]");
+          if (q.type === "appel") return;
+          var k = q.competence || ph.competence;
+          if (!(k in index)) { index[k] = groupes.length; groupes.push({ k: k, items: [] }); }
+          groupes[index[k]].items.push(j);
         });
-        out.push("");
+        groupes.sort(function (a, b) { return (a.k === ph.competence ? 0 : 1) - (b.k === ph.competence ? 0 : 1); });
+        groupes.forEach(function (g) {
+          out.push("SÉRIE — [" + g.k + "] " + nomPhase(i) + " · " + COMPETENCES[g.k] + " : " + texteSeul(ph.titre), "");
+          g.items.forEach(function (j, n) {
+            var q = qs[j], f = fs && fs[j];
+            var etatCase, rep;
+            if (!f || !f.fini) { etatCase = "non vérifié"; rep = "(non faite)"; }
+            else {
+              etatCase = f.note ? "juste" : "faux";
+              var det = f.passe ? (f.essais ? "passée après " + f.essais + " essai" + (f.essais > 1 ? "s" : "") : "passée sans réponse")
+                : (f.essais === 1 ? "juste au 1er essai" : "trouvée au " + f.essais + "e essai");
+              if (f.aide) det += ", avec aide";
+              rep = f.passe && !f.essais ? det : (f.reponse || "(vide)") + " — " + det;
+            }
+            out.push("  " + (n + 1) + ". " + texteSeul(q.lib));
+            out.push("     réponse : " + rep + "   [" + etatCase + "]");
+          });
+          out.push("");
+        });
+        /* les appels : un bloc EXERCICE chacun, 0, 1 ou 2 points sur 2 */
+        qs.forEach(function (q, j) {
+          if (q.type !== "appel") return;
+          var f = fs && fs[j], k = q.competence || ph.competence;
+          out.push("EXERCICE — [" + k + "] Appel n° " + q.numero + " · " + COMPETENCES[k] + " : " + texteSeul(q.lib));
+          if (!f || !f.appele) out.push("  réponse : appel non fait", "  verdict : appel non fait", "  points retrouvés : 0 sur 2");
+          else if (!f.cote) out.push("  réponse : appel lancé à " + heure(f.appele), "  verdict : non évalué par le professeur, ne compte pas");
+          else out.push("  réponse : appel lancé à " + heure(f.appele) + ", évalué à " + heure(f.heureCote),
+            "  verdict : " + f.cote + " — " + COTES[f.cote], "  points retrouvés : " + POINTS_COTE[f.cote] + " sur 2");
+          out.push("");
+        });
       });
       out.push(new Array(64).join("-"));
       out.push("Fichier produit dans le navigateur de l'élève.");
@@ -1303,9 +1694,12 @@ var Sim = (function () {
       if (etat.debut && !etat.exporte) { e.preventDefault(); e.returnValue = ""; }
     });
     majTete();
+    if (libre) mode(/^#(ccf|parcours)$/.test(location.hash));
     /* la porte d'essai : etat interne et fichier, pour les controles */
     return { etat: etat, donnees: donnees, ouvrir: ouvrir, fabriquer: fabriquer, fiches: function () { return etat.fiches; },
+      appels: appels, mode: mode, coter: function (f, x) { f.cote = x; f.heureCote = new Date(); f.note = x === "A"; f.afficher(); majPhase(f.phase); majAppels(); },
       choisirNiveau: function (n) { etat.niveau = n; niv.textContent = n; }, demarrer: function (n) {
+        if (libre) mode(true);
         etat.niveau = n || etat.niveau || niveaux[0]; niv.textContent = etat.niveau; etat.debut = Date.now();
         document.body.classList.add("pc-en-cours"); ouvrir(0); } };
   }
@@ -1342,8 +1736,16 @@ var Sim = (function () {
 .etiquette{font-size:.9rem;color:var(--encre2);margin:12px 0 10px}
 /* un releve sans graphe, ou dont le graphe est a cote : le tableau prend toute sa colonne */
 #p-releve .releve-zone,#a-releve .releve-zone{grid-template-columns:1fr}
+/* l'entrainement au CCF : une equation ne se coupe pas, la fiche de la pile se lit comme un texte */
+.eq{white-space:nowrap}
+.pc-docs .fiche-pile{border-collapse:collapse}
+.pc-docs .fiche-pile td{padding:4px 8px 4px 0;border-top:1px solid var(--trait)}
+.pc-docs .fiche-pile td:first-child{color:var(--encre2);width:34%}
 </style>
 
+<div id="ccf"></div>
+
+<div id="libre">
 <nav class="onglets" id="onglets">
   <button type="button" data-vue="vue-pile">La pile</button>
   <button type="button" data-vue="vue-accu">L'accumulateur</button>
@@ -1351,21 +1753,21 @@ var Sim = (function () {
 
 <!-- ================================================================ LA PILE -->
 <section class="vue" id="vue-pile">
-<div class="carte">
+<div class="carte" id="p-carteReglages">
   <h2><span class="num">1</span>Monte la pile</h2>
   <p class="consigne">Chaque lame plonge dans une solution de ses propres ions, à 0,1 mol/L. Changer un métal ou la jonction remet la pile à neuf.</p>
   <div class="commandes" id="p-reglages"></div>
 </div>
 
 <div class="plan">
-  <div class="carte">
+  <div class="carte" id="p-carteScene">
     <h2><span class="num">2</span>Le montage</h2>
     <div class="scene">
       <svg id="p-scene" viewBox="0 0 640 420" role="img" aria-label="Deux demi-piles reliées, un voltmètre à leurs bornes, un interrupteur, un ampèremètre et une résistance"></svg>
     </div>
     <p class="legende">Le voltmètre est branché aux bornes de la pile. L'interrupteur ferme le circuit sur l'ampèremètre et la résistance.</p>
   </div>
-  <div class="carte">
+  <div class="carte" id="p-carteMesure">
     <h2><span class="num">3</span>Les instruments</h2>
     <div class="commandes">
       <div class="rangee">
@@ -1384,7 +1786,7 @@ var Sim = (function () {
   </div>
 </div>
 
-<div class="carte">
+<div class="carte" id="p-carteReleve">
   <h2><span class="num">4</span>Le relevé</h2>
   <p class="consigne">Garde une ligne à chaque lecture. Les masses n'y figurent que si tu viens de peser les lames.</p>
   <div id="p-releve"></div>
@@ -1466,6 +1868,7 @@ var Sim = (function () {
   </details>
 </div>
 </section>
+</div>
 
 <script>
 (function () {
@@ -1529,15 +1932,15 @@ var Sim = (function () {
   /* ---------- reglages ---------- */
   var RP = document.getElementById("p-reglages");
   var optMetaux = Object.keys(METAUX).map(function (k) { return { val: k, texte: METAUX[k].nom.charAt(0).toUpperCase() + METAUX[k].nom.slice(1) }; });
-  Sim.choix(RP, { label: "Lame de gauche", valeur: "Zn", options: optMetaux, surChange: function (v) { P.g = v; razPile(); } });
-  Sim.choix(RP, { label: "Lame de droite", valeur: "Cu", options: optMetaux, surChange: function (v) { P.d = v; razPile(); } });
-  Sim.choix(RP, { label: "Jonction entre les solutions", valeur: "pont",
+  var chG = Sim.choix(RP, { label: "Lame de gauche", valeur: "Zn", options: optMetaux, surChange: function (v) { P.g = v; razPile(); } });
+  var chD = Sim.choix(RP, { label: "Lame de droite", valeur: "Cu", options: optMetaux, surChange: function (v) { P.d = v; razPile(); } });
+  var chJ = Sim.choix(RP, { label: "Jonction entre les solutions", valeur: "pont",
     options: Object.keys(JONCTIONS).map(function (k) { return { val: k, texte: JONCTIONS[k].texte }; }),
     surChange: function (v) { P.jonction = v; razPile(); } });
 
   var OP = document.getElementById("p-options");
   OP.className = "commandes";
-  Sim.choix(OP, { label: "Résistance de charge", valeur: 10,
+  var chR = Sim.choix(OP, { label: "Résistance de charge", valeur: 10,
     options: [10, 22, 47, 100, 220].map(function (v) { return { val: v, texte: v + " Ω" }; }),
     surChange: function (v) { P.R = v; dessinerPile(); } });
   Sim.choix(OP, { label: "Électrons dans le fil", valeur: false,
@@ -1922,6 +2325,261 @@ var Sim = (function () {
   razPile();
   repartir(1);
   if (location.hash === "#accumulateur") nav.montrer("vue-accu");
+
+  /* Porte des essais, et de l'entrainement au CCF : l'etat de la pile, sa tension et son courant
+     vrais, et le montage impose par le sujet (tout repart a neuf, fils du voltmetre remis droits). */
+  window.pileAccu = { pile: function () { return P; }, modele: function () { return pile(P); }, metaux: METAUX, jonctions: JONCTIONS,
+    regler: function (g, d, jonction, R) {
+      P.g = g; P.d = d; P.jonction = jonction; P.R = R; P.inverse = false;
+      chG.set(g, true); chD.set(d, true); chJ.set(jonction, true); chR.set(R, true);
+      razPile(); } };
+})();
+</script>
+
+<script>
+/* ═══════════ ENTRAINEMENT AU CCF · CCF-03 (14 octobre 2026) ═══════════
+   La pile de la simulation menee comme un sujet d'epreuve de terminale : « Stocker l'energie a l'aide
+   d'un systeme electrochimique » — realiser une pile et mesurer sa tension, les transformations aux
+   electrodes, Q = I × t. L'accumulateur reste au mode libre : le porteur (CCF-12) fait deja E = U × Q.
+   Tirage : la jonction de la pile (pont salin, 44 mA sur 10 ohms ; vase poreux, 61 mA) et la duree de
+   l'essai (2 ou 3 h) : deux voisins n'ont pas les memes nombres.
+   Le piege qui fait la partie 4 : au rythme ou le zinc s'use, la lame tiendrait 160 a 250 h ; la pile
+   s'arrete vers 12,3 h (pont) ou 8,9 h (vase), quand les ions Cu2+ de la solution sont epuises. Le
+   pont tient la journee de 10 h, le vase non. Le dessin exagere l'amincissement du zinc : la pesee
+   le dement. */
+(function () {
+  var PA = window.pileAccu, fr = Sim.fr, el = Sim.el;
+  var CONFIGS = [
+    { jonction: "pont", nomJ: "un pont salin", r: 15, N: 2 }, { jonction: "pont", nomJ: "un pont salin", r: 15, N: 3 },
+    { jonction: "vase", nomJ: "un vase poreux", r: 8, N: 2 }, { jonction: "vase", nomJ: "un vase poreux", r: 8, N: 3 }
+  ];
+  var R_RECEPTEUR = 10, SEUIL = 0.020, JOUR = 10, ZINC = 12.46, CFG = null;
+
+  function cfg(ctx) {
+    var d = ctx.donnees;
+    if (!d.cfg) { var c = CONFIGS[Math.floor(Math.random() * CONFIGS.length)]; d.cfg = { jonction: c.jonction, nomJ: c.nomJ, r: c.r, N: c.N }; }
+    CFG = d.cfg;
+    return d.cfg;
+  }
+  function P() { return PA.pile(); }
+  function pileMontee() { var p = P(); return ((p.g === "Zn" && p.d === "Cu") || (p.g === "Cu" && p.d === "Zn")) && CFG && p.jonction === CFG.jonction; }
+  function zincPerdu() { var p = P(); return p.g === "Zn" ? PA.metaux.Zn.m0 - p.mg : p.d === "Zn" ? PA.metaux.Zn.m0 - p.md : NaN; }
+  function hm(s) { s = Math.floor(s / 60); return Math.floor(s / 60) + " h " + (s % 60 < 10 ? "0" : "") + (s % 60) + " min"; }
+
+  /* Le temoin : l'instant ou l'intensite passe sous 20 mA, circuit ferme. Une pile remise a neuf l'efface. */
+  var W = { haut: false, tCross: null, dernier: 0 };
+  Sim.animer(function () {
+    var p = P();
+    if (p.t < W.dernier - 1) { W.haut = false; W.tCross = null; }
+    W.dernier = p.t;
+    if (!p.ferme || !pileMontee()) return;
+    var I = Math.abs(PA.modele().I);
+    if (I >= SEUIL) W.haut = true;
+    else if (W.haut && W.tCross === null) W.tCross = p.t;
+  });
+
+  /* ce que l'eleve a trouve, ou a defaut ce que la pile dit : la suite se calcule sur SES nombres */
+  function garde(cle, mesure) { return function (ctx, juste, rep, v) { ctx.donnees[cle] = juste && isFinite(v) ? v : mesure(ctx); }; }
+  function val(ctx, cle, mesure) { var x = ctx.donnees[cle]; return isFinite(x) ? x : mesure(ctx); }
+  var M = {
+    U0: function () { return 1.10; },
+    I: function (ctx) { return 1000 * 1.10 / (R_RECEPTEUR + cfg(ctx).r); },
+    t1: function (ctx) { var t = ctx.donnees.t1; return isFinite(t) && t > 0 ? t : cfg(ctx).N * 3600; },
+    Q: function (ctx) { return val(ctx, "I", M.I) / 1000 * M.t1(ctx); },
+    dm: function (ctx) { var x = ctx.donnees.dm1; return isFinite(x) && x > 0 ? x : M.I(ctx) / 1000 * M.t1(ctx) * 65.38 / (2 * 96485); },
+    tZinc: function (ctx) { return ZINC / (val(ctx, "dm", M.dm) / (M.t1(ctx) / 3600)); },
+    tReel: function () { return W.tCross === null ? NaN : W.tCross / 3600; }
+  };
+
+  function documents(zone, ctx) {
+    var c = cfg(ctx);
+    if (!ctx.donnees.regle) { ctx.donnees.regle = true; PA.regler("Zn", "Cu", "aucune", 47); }
+    zone.appendChild(el("div", { classe: "pc-docs" }, [
+      el("section", null, [el("h3", { texte: "Document 1 · La demande du musée" }),
+        el("p", { html: "Dans la salle du télégraphe, une pile zinc-cuivre fait fonctionner le <b>récepteur</b> pendant toute la visite. Le musée ouvre <b>de 9 h à 19 h</b>." }),
+        el("p", { html: "Le récepteur est une bobine de <b>10 Ω</b>. Sous <b>20 mA</b>, il ne réagit plus." })]),
+      el("section", null, [el("h3", { texte: "Document 2 · La pile du musée" }),
+        el("table", { classe: "fiche-pile" }, [
+          el("tr", null, [el("td", { texte: "Une électrode" }), el("td", { html: "une lame de <b>zinc</b> dans 100 mL de sulfate de zinc à 0,1 mol/L, incolore" })]),
+          el("tr", null, [el("td", { texte: "L'autre électrode" }), el("td", { html: "une lame de <b>cuivre</b> dans 100 mL de sulfate de cuivre à 0,1 mol/L, bleu" })]),
+          el("tr", null, [el("td", { texte: "Entre les solutions" }), el("td", { html: "<b>" + c.nomJ + "</b>" })]),
+          el("tr", null, [el("td", { texte: "Au labo" }), el("td", { html: "les lames sont en place ; la jonction est à poser ; une <b>résistance de 10 Ω</b> tient lieu de récepteur" })])])]),
+      el("section", null, [el("h3", { texte: "Document 3 · Sur les électrodes" }),
+        el("p", { html: "Sur la lame de zinc : <b class=\"eq\">Zn → Zn²⁺ + 2 e⁻</b>" }),
+        el("p", { html: "Sur la lame de cuivre : <b class=\"eq\">Cu²⁺ + 2 e⁻ → Cu</b>" }),
+        el("p", { html: "Les ions Cu²⁺ donnent à la solution sa couleur bleue." })]),
+      el("section", { classe: "pc-annexe" }, [el("h3", { texte: "Annexe · formulaire" }),
+        el("p", { html: "<b>Q = I × t</b> — Q en coulombs (C), I en ampères (A), t en secondes (s)<br>1 h = 3 600 s · 1 mA = 0,001 A" })])
+    ]));
+  }
+
+  var simplifie = [].map.call(document.querySelectorAll("#vue-pile details.modele li"), function (li) { return li.innerHTML; });
+
+  window.ccf03 = Sim.parcours("#ccf", {
+    code: "CCF-03",
+    titre: "La pile du télégraphe",
+    niveaux: ["Terminale"],
+    libre: "#libre",
+    paillasse: ["#p-carteReglages", "#p-carteScene", "#p-carteMesure", "#p-carteReleve"],
+    ccf: { problematique: "La pile zinc-cuivre peut-elle faire fonctionner le récepteur du télégraphe pendant toute une journée d'ouverture du musée ?" },
+    commande: {
+      client: "Musée des transmissions · la conservatrice",
+      texte: "<p>Pour la salle du télégraphe, le musée veut faire fonctionner un récepteur d'époque avec une <b>pile zinc-cuivre</b>, la pile Daniell, montée comme au XIX<sup>e</sup> siècle. Avant de la mettre en vitrine, la conservatrice vous la confie : un essai au labo doit dire si elle tiendra une journée.</p>"
+    },
+    simplifie: simplifie,
+    phases: [
+      {
+        competence: "APP", titre: "Le dossier de la pile",
+        recit: "Avant de monter quoi que ce soit, on lit. Trois documents et une annexe : tout ce qui sert est dedans.",
+        scene: documents,
+        questions: [
+          { type: "classer", lib: "D'après le document 3, que se passe-t-il sur chaque électrode ?",
+            items: ["la lame de cuivre", "<b class=\"eq\">Zn → Zn²⁺ + 2 e⁻</b>", "la lame de zinc", "<b class=\"eq\">Cu²⁺ + 2 e⁻ → Cu</b>"],
+            categories: ["une oxydation", "une réduction", "perd de la masse", "se couvre de métal"], bonnes: [3, 0, 2, 1],
+            methode: "Une oxydation est une perte d'électrons, une réduction un gain. Le métal qui passe en ions quitte sa lame ; les ions qui deviennent métal s'y déposent." },
+          { type: "choix", lib: "Quelle conversion d'énergie la pile réalise-t-elle ?",
+            options: ["de l'énergie chimique en énergie électrique", "de l'énergie électrique en énergie chimique", "de l'énergie thermique en énergie électrique", "de l'énergie électrique en énergie lumineuse"], bonne: 0,
+            methode: "La pile débite sans avoir été chargée : son énergie vient des réactions sur les électrodes. Un accumulateur en charge fait le chemin inverse." },
+          { type: "nombre", lib: "Pendant combien d'heures la pile doit-elle faire fonctionner le récepteur chaque jour ?", unite: "h", attendu: JOUR, tolerance: 0,
+            methode: "Le document 1 : de l'heure d'ouverture à l'heure de fermeture." }
+        ],
+        bravo: "Le dossier est lu : deux électrodes, une durée, un seuil."
+      },
+      {
+        competence: "ANA", titre: "Le protocole",
+        recit: function (ctx) { return "La pile du musée est remontée au labo, à l'identique. Avant d'y toucher, vous préparez l'essai : la tension à vide, le pôle +, puis <b>" + cfg(ctx).N + " heures</b> de débit sur la résistance de 10 Ω."; },
+        consigne: "La pile telle qu'elle est arrivée au labo : les lames sont en place, la jonction n'est pas posée. Les commandes viendront à la partie 3.",
+        paillasse: ["#p-carteScene"],
+        questions: [
+            { type: "choix", lib: "Sur une autre pile, fer-cuivre, le voltmètre affiche « −0,78 V » quand sa borne V est reliée à la lame de fer. Quel est le pôle + de cette pile ?",
+              options: ["la lame de cuivre", "la lame de fer", "aucune : une tension négative veut dire que la pile ne marche pas", "on ne peut pas le savoir sans fermer le circuit"], bonne: 0,
+              methode: "Un voltmètre affiche une valeur positive quand sa borne V est reliée au pôle +. Négative : c'est l'autre borne." },
+            { type: "classer", lib: "Dans quel ordre mener l'essai, une fois la tension à vide mesurée ?",
+              items: ["Ouvrir l'interrupteur", "Peser les deux lames", "Peser de nouveau les deux lames", "Fermer l'interrupteur et lire l'intensité", "Laisser débiter le temps prévu au chronomètre"],
+              categories: ["1er", "2e", "3e", "4e", "5e"], bonnes: [3, 0, 4, 1, 2],
+              methode: "Une masse perdue se mesure par deux pesées, l'une avant le débit, l'autre après, circuit ouvert." },
+            { type: "multi", lib: "Quelles lectures faut-il garder pour calculer la quantité d'électricité débitée pendant l'essai ?",
+              options: ["l'intensité, circuit fermé", "la durée affichée au chronomètre", "la tension à vide", "la masse des lames", "la valeur de la résistance"], bonne: [0, 1],
+              methode: "Q = I × t : il faut une intensité et une durée, et rien d'autre." },
+            { type: "appel", numero: 1, competence: "COM",
+              lib: "Présentez votre protocole au professeur, à l'oral, avant de toucher à la pile.",
+              attendus: ["le montage : zinc, cuivre, la jonction du document 2, la résistance de 10 Ω", "la tension à vide, circuit ouvert, et le signe de l'affichage pour trouver le pôle +",
+                "les deux pesées, avant et après le débit, et ce qu'elles mesurent", "Q = I × t, avec I en ampères et t en secondes", "un vocabulaire juste : oxydation, réduction, pôle +, pôle −"] }
+        ],
+        bravo: "Le protocole tient : une tension, un débit, deux pesées."
+      },
+      {
+        competence: "REA", titre: "La pile au labo",
+        recit: "La pile du musée est sur la paillasse, sa jonction à poser. Montez-la, mesurez-la, puis faites-la débiter.",
+        consigne: function (ctx) { return "Les lames, la jonction, la résistance, l'interrupteur, les fils du voltmètre, la balance et la vitesse du temps sont à vous. Au temps × 600, une heure passe en six secondes ; passez au temps × 60 à l'approche des " + cfg(ctx).N + " heures."; },
+        paillasse: ["#p-carteReglages", "#p-carteScene", "#p-carteMesure"], large: true,
+        questions: [
+          { type: "appel", numero: 2, competence: "REA",
+            lib: "Appelez avant de fermer le circuit : vous montez la pile et mesurez sa tension à vide devant le professeur.",
+            attendus: ["une lame de zinc, une lame de cuivre et la jonction du document 2", "la résistance de 10 Ω choisie", "la tension lue circuit ouvert, affichage positif, fils inversés si besoin",
+              "les deux lames pesées avant de fermer le circuit", "des gestes sûrs, sans tâtonner"] },
+          { type: "action", lib: "Montez la pile du musée et mesurez sa tension à vide : circuit ouvert, affichage positif, résistance de 10 Ω.",
+            aide: "La jonction et les lames sont dans la carte « Monte la pile » ; la résistance et les fils du voltmètre, dans celle des instruments.",
+            verifier: function () {
+              var p = P();
+              if (p.jonction === "aucune") return null;
+              var s = PA.modele(), lu = s.U * (p.inverse ? -1 : 1);
+              var ok = pileMontee() && p.R === R_RECEPTEUR && !p.ferme && lu > 0.5;
+              var nom = function (k) { return PA.metaux[k].nom; };
+              return { ok: ok, reponse: "lame de " + nom(p.g) + " à gauche, de " + nom(p.d) + " à droite, " + PA.jonctions[p.jonction].texte.toLowerCase() + ", R = " + p.R + " Ω, " +
+                (p.ferme ? "circuit fermé" : "circuit ouvert") + ", voltmètre à " + fr(lu, 2) + " V" };
+            },
+            methode: "Une lame de zinc et une lame de cuivre, la jonction du document 2, la résistance de 10 Ω, interrupteur ouvert ; si l'affichage est négatif, on inverse les fils du voltmètre." },
+          { type: "nombre", lib: "Relevez la tension à vide de la pile.", unite: "V",
+            attendu: M.U0, tolerance: 0, toleranceAbsolue: 0.006, fini: garde("U0", M.U0),
+            methode: "Circuit ouvert, le voltmètre aux bornes de la pile ; une tension de pile s'écrit positive, borne V sur le pôle +." },
+          { type: "nombre", lib: "Fermez l'interrupteur et relevez l'intensité du courant.", unite: "mA",
+            attendu: M.I, tolerance: 0.02, toleranceAbsolue: 0.3, fini: garde("I", M.I),
+            methode: "L'ampèremètre, circuit fermé, juste après la fermeture." },
+          { type: "action", lib: "Laissez la pile débiter le temps prévu, ouvrez l'interrupteur, puis pesez les lames.",
+            aide: "Le chronomètre ne compte que circuit fermé ; la balance pèse les deux lames d'un coup.",
+            verifier: function (ctx) {
+              var p = P(), N = cfg(ctx).N * 3600;
+              if (p.t < 60) return null;
+              var pese = p.pesee && Math.abs(p.pesee.t - p.t) < 1;
+              var ok = pileMontee() && p.R === R_RECEPTEUR && !p.ferme && pese && p.t >= N - 600 && p.t <= N + 1800;
+              return { ok: ok, reponse: "débit de " + hm(p.t) + ", " + (p.ferme ? "circuit encore fermé" : "circuit ouvert") + (pese ? ", lames pesées après" : ", lames non pesées après") };
+            },
+            fini: function (ctx) { var p = P(); if (p.t > 1800) { ctx.donnees.t1 = p.t; ctx.donnees.dm1 = zincPerdu(); } },
+            methode: "Interrupteur fermé jusqu'à la durée prévue au chronomètre, puis ouvert ; « Peser les lames » ensuite, circuit ouvert." },
+          { type: "nombre", lib: "Calculez la quantité d'électricité débitée pendant l'essai.", unite: "C",
+            attendu: M.Q, tolerance: 0.03, fini: garde("Q", M.Q),
+            methode: "Q = I × t, avec I en ampères (1 mA = 0,001 A) et t en secondes : la durée du chronomètre, 1 h = 3 600 s." },
+          { type: "nombre", lib: "Quelle masse la lame de zinc a-t-elle perdue pendant l'essai ?", unite: "g",
+            attendu: M.dm, tolerance: 0, toleranceAbsolue: 0.025, fini: garde("dm", M.dm),
+            methode: "La masse de la lame de zinc avant le débit, moins sa masse après." }
+        ],
+        bravo: "La pile est montée, mesurée, pesée. Reste à savoir combien de temps elle tiendra."
+      },
+      {
+        competence: "VAL", titre: "Ce qui arrête la pile",
+        recit: "La conservatrice raisonne simplement : « la pile s'arrêtera quand la lame de zinc sera usée ». Vous avez de quoi le calculer, puis de quoi le vérifier.",
+        consigne: "La pile reprend où vous l'avez laissée. Quand l'intensité commence à baisser, passez au temps × 60 pour ouvrir l'interrupteur à temps.",
+        paillasse: ["#p-carteScene", "#p-carteMesure", "#p-carteReleve"], large: true,
+        questions: [
+          { type: "nombre", lib: "La lame de zinc neuve pèse 12,46 g. Si la pile s'arrêtait quand elle est usée, combien d'heures tiendrait-elle, au rythme de votre essai ?", unite: "h",
+            attendu: M.tZinc, tolerance: 0.05, fini: garde("tZinc", M.tZinc),
+            methode: "La masse perdue en une heure : celle de l'essai divisée par sa durée en heures. Puis combien de fois elle tient dans la lame neuve." },
+          { type: "action", lib: "Vérifiez : refermez le circuit, laissez débiter jusqu'à ce que l'intensité passe sous 20 mA, puis ouvrez l'interrupteur.",
+            aide: "Le chronomètre reprend où il en était : il donne la durée de fonctionnement depuis le début.",
+            verifier: function () {
+              var p = P();
+              if (W.tCross === null) return null;
+              var ok = pileMontee() && p.R === R_RECEPTEUR && !p.ferme;
+              return { ok: ok, reponse: "intensité passée sous 20 mA à " + hm(W.tCross) + (p.ferme ? ", circuit encore fermé" : ", circuit ouvert à " + hm(p.t)) };
+            },
+            methode: "Interrupteur fermé, résistance de 10 Ω ; on surveille l'ampèremètre et on ouvre dès qu'il passe sous 20 mA." },
+          { type: "nombre", lib: "Pendant combien d'heures, en tout, la pile a-t-elle fourni au moins 20 mA ?", unite: "h",
+            attendu: function () { return M.tReel() + 0.15; }, tolerance: 0, toleranceAbsolue: 0.4, fini: garde("tReel", M.tReel),
+            methode: "Le chronomètre, lu à l'ouverture de l'interrupteur, en heures : 1 h 30 min, c'est 1,5 h." },
+          { type: "nombre", lib: "Pesez les lames : quelle masse la lame de zinc a-t-elle perdue depuis le début ?", unite: "g",
+            attendu: zincPerdu, tolerance: 0, toleranceAbsolue: 0.03,
+            methode: "La masse de la lame de zinc neuve moins sa masse maintenant ; le dessin exagère l'usure, la balance non." },
+          { type: "multi", lib: "La pile s'est arrêtée bien avant que le zinc soit usé. Pourquoi ?",
+            options: ["les ions Cu²⁺ ont été consommés sur la lame de cuivre : <span class=\"eq\">Cu²⁺ + 2 e⁻ → Cu</span>", "la solution de sulfate de cuivre s'est décolorée : il n'y reste presque plus d'ions Cu²⁺",
+              "la lame de zinc est usée", "le dépôt de cuivre empêche le courant de passer", "la jonction s'est bouchée"], bonne: [0, 1],
+            methode: "Chaque demi-équation consomme quelque chose : regardez ce qui manque, sur la balance et dans les béchers." },
+          { type: "choix", lib: "Pour qu'une pile pareille fasse fonctionner plus longtemps le même récepteur, que faut-il changer ?",
+            options: ["davantage de solution de sulfate de cuivre, donc plus d'ions Cu²⁺", "une lame de zinc plus épaisse", "une jonction qui laisse passer plus de courant", "une lame de cuivre plus grande"], bonne: 0,
+            methode: "Ce qui s'épuise en premier fixe la durée : c'est lui qu'il faut augmenter." }
+        ],
+        bravo: "Le calcul disait des jours, la pile a tenu des heures : vous savez pourquoi."
+      },
+      {
+        competence: "COM", titre: "La réponse à la conservatrice",
+        recit: "La conservatrice lira trois lignes, pas plus. Elles doivent répondre à sa question, avec une durée et ce qui la limite.",
+        questions: function (ctx) {
+          var t = val(ctx, "tReel", M.tReel);
+          if (!isFinite(t)) t = 1910 / (val(ctx, "I", M.I) / 1000) / 3600;   // pile passee sans etre videe : la duree que donne son intensite
+          var h = Math.round(t), oui = t >= JOUR, tz = Math.round(val(ctx, "tZinc", M.tZinc));
+          var vraie = oui ? "Oui : la pile fait fonctionner le récepteur environ " + h + " h, plus que les 10 h d'une journée d'ouverture."
+            : "Non : la pile ne fait fonctionner le récepteur qu'environ " + h + " h, moins que les 10 h d'une journée d'ouverture.";
+          var fausse = oui ? "Non : la pile ne tient qu'environ " + h + " h, elle ne fera pas la journée."
+            : "Oui : la pile tient environ " + h + " h, elle fera la journée.";
+          var suite = oui ? "Le soir, la solution de sulfate de cuivre est presque épuisée : il faudra la changer chaque jour."
+            : "Pour tenir la journée, il faut davantage de solution de sulfate de cuivre, ou la changer en cours de journée.";
+          return [
+            { type: "multi", essais: 2, lib: "Gardez les phrases qui répondent juste à la conservatrice.",
+              options: [vraie, "La pile fournit 1,10 V au récepteur pendant toute la journée.", "Ce n'est pas la lame de zinc qui limite la pile : elle est presque intacte. Ce sont les ions cuivre de la solution qui s'épuisent.",
+                fausse, "D'après l'usure du zinc, la pile tiendrait environ " + tz + " h : il n'y a rien à craindre.", suite],
+              bonne: [0, 2, 5],
+              methode: "Une réponse dit oui ou non, avec une durée mesurée et ce qui la limite. 1,10 V est la tension à vide : en débit, le voltmètre lit moins." },
+            { type: "choix", lib: "Il manque une limite à signaler à la conservatrice. Laquelle ?",
+              options: ["au labo, des lames oxydées ou des solutions impures donnent souvent moins de 1,10 V : il faut refaire l'essai sur la vraie pile du musée", "la pile se recharge la nuit, circuit ouvert",
+                "le récepteur consomme moins le matin", "la balance du labo use les lames"], bonne: 0,
+              methode: "Une mesure vaut pour la pile mesurée : qu'est-ce qui distingue une pile réelle de celle de l'essai ?" }
+          ];
+        },
+        bravo: "La conservatrice a sa réponse, sa durée, et ce qu'il faudra changer."
+      }
+    ],
+    fin: "La copie est prête : produisez le fichier, il part dans vos téléchargements."
+  });
 })();
 </script>
 <footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation, et détaillé dans la fiche professeur du TP SIM-05.</footer>

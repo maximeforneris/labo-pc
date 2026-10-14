@@ -222,6 +222,7 @@ details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-siz
 .pc-pied{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:flex-end;margin:4px 0 20px}
 .pc-bravo{margin:0;flex:1 1 280px;color:var(--juste);font-weight:650}
 .pc-suite{min-height:48px;font-size:1rem;padding:10px 18px}
+.pc-vers-fin{min-height:44px;margin-right:auto;color:var(--encre2)}
 .pc-apercu{width:100%;margin-top:10px;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;border:1px solid var(--trait);
   border-radius:var(--r);background:var(--carte2);color:var(--encre);padding:8px}
 .pc-recap td,.pc-recap th{text-align:left}
@@ -242,6 +243,63 @@ details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-siz
 .pc-en-cours .tete .chapeau{display:none}
 .pc-en-cours .tete h1{font-size:1.3rem;margin:2px 0 0}
 @media print{.pc-tete,.pc-remise,.pc-q .rangee{display:none}}
+/* Entrainement au CCF (premiere, terminale) : deux modes, la paillasse empruntee, les appels professeur */
+.pc [hidden],.pc-voile[hidden],.pc-modes [hidden]{display:none!important}
+.pc-modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px}
+.pc-mode{font:inherit;text-align:left;display:flex;flex-direction:column;gap:2px;padding:12px 14px;min-height:56px;cursor:pointer;
+  border-radius:var(--r);border:1.5px solid var(--trait);background:var(--carte);color:var(--encre)}
+.pc-mode b{font-size:1rem}
+.pc-mode span{font-size:.85rem;color:var(--encre2)}
+.pc-mode[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-doux)}
+.pc-en-cours .pc-modes{display:none}
+@media (max-width:480px){.pc-modes{grid-template-columns:1fr}}
+.pc-problematique{margin:12px 0 0;padding:10px 12px;border-left:4px solid var(--accent);background:var(--carte2);border-radius:0 var(--r) var(--r) 0}
+.pc-grille{list-style:none;margin:10px 0;padding:0;border-top:1px solid var(--trait2)}
+.pc-grille li{padding:7px 0;border-bottom:1px solid var(--trait2)}
+.pc-grille-ligne{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.pc-grille-ou{font-size:.85rem;font-weight:650;color:var(--accent);text-align:right}
+.pc-grille-cap{font-size:.84rem;color:var(--encre2);margin-top:2px}
+.pc-appel-annonce{display:flex;gap:8px;align-items:flex-start}
+.pc-main{font-size:1.25rem;line-height:1;margin-right:.35em}
+.pc-q.pc-appel{border-style:dashed;border-color:var(--accent);background:var(--carte)}
+.pc-q[data-etat="attente"]{border-color:var(--tiede);border-style:solid}
+.pc-badge-appel{font:inherit;font-weight:700;font-size:.85rem;min-height:40px;padding:6px 12px;border-radius:999px;cursor:pointer;
+  border:2px solid var(--tiede);background:var(--carte);color:var(--encre);animation:pc-pulse 1.6s ease-in-out infinite}
+@keyframes pc-pulse{50%{box-shadow:0 0 0 5px var(--accent-doux)}}
+.pc-methode{margin:6px 0 0;font-size:.92rem;color:var(--encre2);border-left:3px solid var(--trait);padding-left:8px}
+.pc-aide-btn{color:var(--encre2)}
+.pc-autonomie{margin:10px 0 0}
+.pc-voile{position:fixed;inset:0;z-index:30;background:rgba(20,20,22,.5);display:grid;place-items:center;padding:16px}
+.pc-prof{width:min(100%,600px);max-height:90vh;overflow:auto;margin:0}
+.pc-prof-liste .pc-q{margin-top:10px}
+.pc-attendus{margin:0 0 10px;padding-left:1.2em;font-size:.92rem}
+.pc-cotes .pc-option{flex:1 1 9em}
+.pc-prof-pied{justify-content:flex-end;margin-top:10px}
+/* une partie qui emprunte la paillasse : la simulation a gauche, les questions a droite, qui restent en vue */
+.plan.pc-avec-paillasse{grid-template-columns:minmax(0,1.8fr) minmax(280px,1fr)}
+.pc-paillasse .plan{grid-template-columns:1fr}
+.pc-paillasse > .carte,.pc-paillasse .plan > .carte{background:var(--carte2);box-shadow:none;margin-bottom:12px}
+.pc-avec-paillasse > .pc-questions{position:sticky;top:92px;max-height:calc(100vh - 104px);overflow:auto}
+@media (max-width:820px){.plan.pc-avec-paillasse{grid-template-columns:minmax(0,1fr)}.pc-avec-paillasse > .pc-questions{position:static;max-height:none}}
+/* une colonne bornee ne grandit pas a la taille de son contenu : ce qui est large defile dans son cadre */
+.pc-avec-paillasse > *,.pc-paillasse,.pc-paillasse > *{min-width:0}
+.pc-paillasse .releve-zone{grid-template-columns:minmax(0,1fr)}
+.pc-paillasse .releve-zone > div,.pc-paillasse table.releve{overflow-x:auto}
+/* les documents d'un sujet : fiches, consignes, annexe */
+.pc-docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.pc-docs section{border:1px solid var(--trait);border-radius:var(--r);background:var(--carte2);padding:10px 12px}
+.pc-docs h3{font-size:.95rem;margin:0 0 6px}
+.pc-docs p{margin:0 0 6px;font-size:.93rem}
+.pc-docs table{width:100%}
+.pc-docs td{font-size:.88rem;vertical-align:top}
+.pc-docs .pc-annexe{border-style:dashed}
+.pc-paillasse .num{display:none}
+/* sur un telephone, la paillasse perd une epaisseur de marge, et un afficheur trop long passe a la ligne au lieu de deborder */
+@media (max-width:620px){
+  .pc-avec-paillasse > .pc-scene{padding:10px}
+  .pc-paillasse > .carte,.pc-paillasse .plan > .carte{padding:12px}
+  .afficheur .val{white-space:normal;overflow-wrap:anywhere}
+}
 
 </style>
 <script>
@@ -888,69 +946,148 @@ var Sim = (function () {
      tri ou une manipulation (« essais » pour en decider autrement). On peut toujours reessayer pour avancer ; au troisieme echec,
      « Continuer » la laisse fausse. La page dit juste ou pas encore, puis la methode : jamais la
      valeur attendue.
+     PERSONNE NE RESTE BLOQUE (14 octobre 2026, remarque du professeur a l'essai) : « Continuer »
+     apparait aussi au troisieme appui sur « Verifier » quand la manipulation n'est pas faite, et
+     le livrable s'ouvre a tout moment, depuis le chemin ou le bouton de chaque phase. Le fichier se
+     produit inacheve : ce qui reste y compte comme non reussi.
      Rien n'est enregistre ni envoye : le fichier se fabrique dans le navigateur (Blob).
      CROCHETS DE LA SCENE : q.apres(ctx, true, reponse) quand une question devient juste ;
      q.fini(ctx, juste, reponse) quand elle se ferme, juste ou passee ; pour un nombre, la valeur lue
      suit en quatrieme argument. recit et consigne d'une phase peuvent etre des fonctions de ctx, pour
-     varier avec ctx.niveau(). « large: true » sur une phase donne plus de place a la scene. */
+     varier avec ctx.niveau(). « large: true » sur une phase donne plus de place a la scene.
+
+     L'ENTRAINEMENT AU CCF (14 octobre 2026, pour les simulations de premiere et de terminale) :
+     « ccf: { problematique } » donne le cadrage de l'epreuve, releve sur un vrai CCF du lycee (le
+     vigneron, M. Meunier) : quatre parties cotees separement, APP, ANA, REA, VAL ; COM sur l'appel 1
+     et la conclusion ; deux appels professeur ; bonus d'autonomie de +0,25 ; note sur 10. Les phases
+     s'appellent « Partie n », la derniere, si elle est COM, « Conclusion ».
+     - type « appel » : { type: "appel", numero: 1, competence: "COM", lib, attendus: [...] }. L'eleve
+       appelle et CONTINUE ; le professeur valide quand il passe, par son code, sur la tablette meme
+       (le bandeau du haut l'y mene depuis n'importe quelle partie) : NA, ECA ou A. Dans le fichier,
+       un bloc EXERCICE : 0, 1 ou 2 points sur 2. Un appel lance mais non evalue ne compte pas ; un
+       appel jamais lance compte 0. Les appels se posent dans un tableau de questions, pas une fonction.
+     - L'aide : apres un premier echec, « Demander de l'aide » montre la methode. Elle ne retire rien a
+       la question, mais le bonus d'autonomie s'en va, comme en epreuve. Le fichier le dit.
+     - « competence » sur une question la sort du bloc de sa partie : une conclusion cotee COM dans la
+       partie 4, par exemple.
+     LE MODE LIBRE ET LA PAILLASSE : « libre: "#libre" » garde la simulation telle qu'elle etait, et
+     pose au-dessus deux boutons, explorer ou s'entrainer (#ccf dans l'adresse ouvre l'entrainement).
+     « paillasse: [selecteurs] » liste les morceaux de la simulation qu'une partie emprunte : la partie
+     qui porte « paillasse: true » (ou une liste) les recoit dans sa scene, et ils retournent a leur
+     place ensuite. Une seule scene, deplacee, jamais recopiee : son etat et ses releves la suivent.
+     « surOuvrir(ctx) » sur une partie s'appelle a chaque fois qu'on l'affiche. */
   var COMPETENCES = {
     APP: "S'approprier", ANA: "Analyser", REA: "Réaliser", VAL: "Valider", COM: "Communiquer"
   };
+  /* les capacites de la grille de l'epreuve, telles que les sujets du lycee les impriment */
+  var CAPACITES = {
+    APP: "Rechercher, extraire et organiser l'information.",
+    ANA: "Émettre une conjecture, une hypothèse. Proposer une méthode de résolution, un protocole expérimental.",
+    REA: "Choisir une méthode de résolution, un protocole expérimental. Exécuter une méthode de résolution, expérimenter, simuler, calculer.",
+    VAL: "Contrôler la vraisemblance d'une conjecture, d'une hypothèse. Interpréter, critiquer, argumenter.",
+    COM: "Rendre compte d'une démarche, d'un résultat, à l'oral ou à l'écrit."
+  };
+  var ORDRE_COMP = ["APP", "ANA", "REA", "VAL", "COM"];
+  var COTES = { NA: "non acquis", ECA: "en cours d'acquisition", A: "acquis" };
+  var POINTS_COTE = { NA: 0, ECA: 1, A: 2 };
+  /* Le code du professeur pour valider un appel : seule son empreinte est dans la page. Pour le
+     changer : node -e "..." avec la fonction empreinte ci-dessous sur « labo|<code> », et remplacer
+     le nombre. Il ne protege rien de serieux : il evite qu'un eleve se valide en un geste. */
+  var CODE_PROF = 2147056977;
+  function empreinte(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h; }
   function texteSeul(html) {
     var d = document.createElement("div"); d.innerHTML = html || "";
     return (d.textContent || "").replace(/\s+/g, " ").trim();
   }
+  function deux(n) { return (n < 10 ? "0" : "") + n; }
+  function heure(d) { return deux(d.getHours()) + "h" + deux(d.getMinutes()); }
   function parcours(parent, o) {
+    var ccf = !!o.ccf;
     var niveaux = o.niveaux || ["CAP", "Seconde"];
     var etat = { niveau: niveaux.length === 1 ? niveaux[0] : null, debut: null, courante: -1, ouverte: -1,
-      fiches: [], construites: [], exporte: false };
+      fiches: [], construites: [], exporte: false, aides: 0 };
     var donnees = {};                                    // partage entre les phases d'un parcours
-    var racine = el("div", { classe: "pc" });
-    $(parent).appendChild(racine);
+    var appels = [];                                     // les fiches des appels lances ou a lancer
+    var nPh = o.phases.length;
+    var racine = el("div", { classe: "pc" + (ccf ? " pc-ccf" : "") });
+    var P = $(parent);
+
+    /* ---- deux facons d'utiliser la page : la simulation libre, ou le parcours ---- */
+    var libre = o.libre ? $(o.libre) : null, barreModes = null, bLibre = null, bParcours = null;
+    if (libre) {
+      bLibre = el("button", { type: "button", classe: "pc-mode", "aria-pressed": "true" },
+        [el("b", { texte: "Explorer la simulation" }), el("span", { texte: o.libreTexte || "librement, sans note ni fichier" })]);
+      bParcours = el("button", { type: "button", classe: "pc-mode", "aria-pressed": "false" },
+        [el("b", { texte: ccf ? "Entraînement au CCF" : "Le parcours" }), el("span", { texte: o.modeTexte || "une heure, et un fichier pour le professeur" })]);
+      barreModes = el("div", { classe: "pc-modes", role: "group", "aria-label": "Deux façons d'utiliser la page" }, [bLibre, bParcours]);
+      P.appendChild(barreModes);
+      bLibre.addEventListener("click", function () { mode(false); });
+      bParcours.addEventListener("click", function () { mode(true); });
+    }
+    P.appendChild(racine);
+    function mode(p) {
+      if (!libre) return;
+      bLibre.setAttribute("aria-pressed", p ? "false" : "true");
+      bParcours.setAttribute("aria-pressed", p ? "true" : "false");
+      libre.hidden = p; racine.hidden = !p;
+      if (!p) poserPaillasse(null, null);
+    }
+
+    /* ---- la paillasse : les morceaux de la simulation qu'une partie emprunte ---- */
+    var pail = (o.paillasse || []).map(function (s) {
+      var n = $(s);
+      if (!n) throw new Error("paillasse : " + s + " introuvable");
+      var m = document.createComment(" paillasse " + s + " ");
+      n.parentNode.insertBefore(m, n);
+      return { sel: s, n: n, m: m };
+    });
+    function poserPaillasse(cible, liste) {
+      pail.forEach(function (p) {
+        var veut = cible && (liste === true || (liste && liste.indexOf(p.sel) >= 0));
+        if (veut) cible.appendChild(p.n);
+        else if (p.n.previousSibling !== p.m) p.m.parentNode.insertBefore(p.n, p.m.nextSibling);
+      });
+    }
+
+    function nomPhase(i) {
+      if (!ccf) return "Phase " + (i + 1);
+      return o.phases[i].competence === "COM" && i === nPh - 1 ? "Conclusion" : "Partie " + (i + 1);
+    }
 
     /* ---- la tete : chemin des phases, etoiles, temps ---- */
     var tete = el("div", { classe: "pc-tete" });
-    var chemin = el("ol", { classe: "pc-chemin", "aria-label": "Les phases du projet" });
+    var chemin = el("ol", { classe: "pc-chemin", "aria-label": ccf ? "Les parties du sujet" : "Les phases du projet" });
     var noeuds = o.phases.map(function (ph, i) {
       var b = el("button", { type: "button", classe: "pc-noeud", disabled: "disabled",
-        "aria-label": "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] },
-        [el("span", { classe: "pc-rond", texte: String(i + 1) }),
+        "aria-label": nomPhase(i) + " · " + COMPETENCES[ph.competence] },
+        [el("span", { classe: "pc-rond", texte: ccf && nomPhase(i) === "Conclusion" ? "✎" : String(i + 1) }),
          el("span", { classe: "pc-comp", texte: ph.competence }),
          el("span", { classe: "pc-etoiles", "aria-hidden": "true" })]);
       b.addEventListener("click", function () { montrer(i); });
       chemin.appendChild(el("li", null, [b]));
       return b;
     });
-    var drapeau = el("button", { type: "button", classe: "pc-noeud pc-drapeau", disabled: "disabled", "aria-label": "Le livrable" },
-      [el("span", { classe: "pc-rond", html: "&#9873;" }), el("span", { classe: "pc-comp", texte: "Livrable" }), el("span", { classe: "pc-etoiles" })]);
-    drapeau.addEventListener("click", function () { montrer(o.phases.length); });
+    var drapeau = el("button", { type: "button", classe: "pc-noeud pc-drapeau", disabled: "disabled", "aria-label": ccf ? "La copie" : "Le livrable" },
+      [el("span", { classe: "pc-rond", html: "&#9873;" }), el("span", { classe: "pc-comp", texte: ccf ? "Copie" : "Livrable" }), el("span", { classe: "pc-etoiles" })]);
+    drapeau.addEventListener("click", function () { montrer(nPh); });
     chemin.appendChild(el("li", null, [drapeau]));
     var info = el("div", { classe: "pc-info" });
     var score = el("span", { classe: "pc-score" });
     var temps = el("span", { classe: "pc-temps" });
     var niv = el("span", { classe: "pc-niveau" });
-    info.appendChild(niv); info.appendChild(score); info.appendChild(temps);
+    var badge = el("button", { type: "button", classe: "pc-badge-appel", hidden: "hidden" });
+    badge.addEventListener("click", function () { ouvrirProf(null); });
+    info.appendChild(badge); info.appendChild(niv); info.appendChild(score); info.appendChild(temps);
     tete.appendChild(chemin); tete.appendChild(info);
     racine.appendChild(tete);
 
-    /* ---- l'ecran de la commande ---- */
+    /* ---- l'ecran de la commande, ou du sujet ---- */
     var accueil = el("section", { classe: "pc-ecran pc-accueil" });
     var c = o.commande || {};
-    var carteCmd = el("div", { classe: "carte pc-commande" }, [
-      el("div", { classe: "pc-surtitre", texte: "La commande" }),
-      c.client ? el("p", { classe: "pc-client", html: c.client }) : null,
-      el("div", { classe: "pc-texte", html: c.texte || "" }),
-      c.livrable ? el("p", { classe: "pc-livrable", html: "<b>Le livrable :</b> " + c.livrable }) : null
-    ]);
     var illus = el("div", { classe: "scene pc-illus" });
     if (c.illustration) c.illustration(illus);
-    var etapes = el("ol", { classe: "pc-plan" });
-    o.phases.forEach(function (ph, i) {
-      etapes.appendChild(el("li", null, [el("b", { texte: "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] + " — " }),
-        el("span", { html: ph.titre })]));
-    });
     var choixNiv = el("div", { classe: "pc-choix-niveau" });
-    var partir = el("button", { type: "button", classe: "bouton principal pc-partir", texte: "Accepter la mission" });
+    var partir = el("button", { type: "button", classe: "bouton principal pc-partir", texte: ccf ? "Commencer l'épreuve" : "Accepter la mission" });
     if (niveaux.length > 1) {
       choixNiv.appendChild(el("p", { classe: "pc-surtitre", texte: "Ma classe" }));
       var rang = el("div", { classe: "rangee" });
@@ -973,23 +1110,70 @@ var Sim = (function () {
       document.body.classList.add("pc-en-cours");
       ouvrir(0);
     });
-    accueil.appendChild(el("div", { classe: "plan pc-plan-accueil" }, [
-      el("div", null, [carteCmd, illus]),
-      el("div", { classe: "carte" }, [el("h2", { texte: "Le projet en cinq phases" }), etapes,
-        el("p", { classe: "consigne", html: "Une heure en tout. Chaque phase se débloque quand la précédente est finie ; " +
-          "on peut revenir voir les phases faites. À la fin, vous produisez un <b>fichier</b> à remettre au professeur." }),
-        choixNiv, partir])
-    ]));
+    if (ccf) {
+      var cc = o.ccf;
+      var sujet = el("div", { classe: "carte pc-commande" }, [
+        el("div", { classe: "pc-surtitre", texte: cc.surtitre || "Le sujet" }),
+        c.client ? el("p", { classe: "pc-client", html: c.client }) : null,
+        el("div", { classe: "pc-texte", html: c.texte || "" }),
+        el("p", { classe: "pc-problematique", html: "<b>Problématique</b> « " + cc.problematique + " »" })
+      ]);
+      var grille = el("ul", { classe: "pc-grille", "aria-label": "La grille de l'épreuve" });
+      ORDRE_COMP.forEach(function (k) {
+        var ou = [];
+        o.phases.forEach(function (ph, i) {
+          if (ph.competence === k) ou.push(nomPhase(i));
+          if (typeof ph.questions === "function") return;
+          (ph.questions || []).forEach(function (q) {
+            var kk = q.competence || ph.competence;
+            if (kk !== k) return;
+            var nom = q.type === "appel" ? "Appel " + q.numero : nomPhase(i);
+            if (ou.indexOf(nom) < 0) ou.push(nom);
+          });
+        });
+        grille.appendChild(el("li", null, [el("div", { classe: "pc-grille-ligne" }, [el("span", { html: "<b>" + k + "</b> " + COMPETENCES[k] }),
+          el("span", { classe: "pc-grille-ou", texte: ou.join(" · ") || "—" })]), el("div", { classe: "pc-grille-cap", texte: CAPACITES[k] })]));
+      });
+      var epreuve = el("div", { classe: "carte" }, [
+        el("h2", { texte: "Le format de l'épreuve" }),
+        el("p", { html: cc.format || "Au CCF, <b>45 minutes</b> sur une seule situation, notées <b>sur 10</b>. Ici, <b>une heure</b> : le temps de prendre la simulation en main." }),
+        grille,
+        el("p", { classe: "consigne", html: "<b>Chaque compétence est cotée à part</b> : non acquis, en cours d'acquisition, acquis. Rater une partie ne fait pas perdre les autres." }),
+        el("p", { classe: "pc-appel-annonce", html: "<span class=\"pc-main\" aria-hidden=\"true\">✋</span><span><b>Deux appels professeur</b>, à des moments précis du sujet, et notés. Vous appelez, puis vous continuez : le professeur vient valider sur la tablette.</span>" }),
+        el("p", { classe: "consigne", html: "<b>Bonus d'autonomie de +0,25</b> : il va à qui termine sans demander d'aide. Demander n'est pas interdit, et ne retire rien d'autre." }),
+        choixNiv, partir]);
+      accueil.appendChild(el("div", { classe: "plan pc-plan-accueil" }, [el("div", null, [sujet, illus]), epreuve]));
+    } else {
+      var carteCmd = el("div", { classe: "carte pc-commande" }, [
+        el("div", { classe: "pc-surtitre", texte: "La commande" }),
+        c.client ? el("p", { classe: "pc-client", html: c.client }) : null,
+        el("div", { classe: "pc-texte", html: c.texte || "" }),
+        c.livrable ? el("p", { classe: "pc-livrable", html: "<b>Le livrable :</b> " + c.livrable }) : null
+      ]);
+      var etapes = el("ol", { classe: "pc-plan" });
+      o.phases.forEach(function (ph, i) {
+        etapes.appendChild(el("li", null, [el("b", { texte: nomPhase(i) + " · " + COMPETENCES[ph.competence] + " — " }),
+          el("span", { html: ph.titre })]));
+      });
+      accueil.appendChild(el("div", { classe: "plan pc-plan-accueil" }, [
+        el("div", null, [carteCmd, illus]),
+        el("div", { classe: "carte" }, [el("h2", { texte: "Le projet en cinq phases" }), etapes,
+          el("p", { classe: "consigne", html: "Une heure en tout. Chaque phase se débloque quand la précédente est finie ; " +
+            "on peut revenir voir les phases faites. À la fin, vous produisez un <b>fichier</b> à remettre au professeur." }),
+          choixNiv, partir])
+      ]));
+    }
     racine.appendChild(accueil);
 
     /* ---- une phase ---- */
-    var ecrans = o.phases.map(function (ph, i) {
+    var ecrans = o.phases.map(function () {
       var s = el("section", { classe: "pc-ecran", hidden: "hidden" });
       racine.appendChild(s);
       return s;
     });
     var final = el("section", { classe: "pc-ecran", hidden: "hidden" });
     racine.appendChild(final);
+    var postes = [];                                       // l'emplacement de la paillasse, partie par partie
 
     function questionsDe(i) {
       var ph = o.phases[i];
@@ -997,7 +1181,7 @@ var Sim = (function () {
       return qs.filter(function (q) { return !q.niveau || q.niveau === etat.niveau; });
     }
 
-    var ctx = { donnees: donnees, niveau: function () { return etat.niveau; },
+    var ctx = { donnees: donnees, niveau: function () { return etat.niveau; }, ccf: ccf,
       fr: fr, lire: lire, mesure: mesure, gauss: gauss, svg: svg, el: el, borne: borne, animer: animer };
 
     /* un recit ou une consigne peut dependre du niveau : une fonction de ctx */
@@ -1008,29 +1192,35 @@ var Sim = (function () {
       etat.construites[i] = true;
       var ph = o.phases[i], s = ecrans[i];
       s.appendChild(el("div", { classe: "pc-phase-tete" }, [
-        el("div", { classe: "pc-surtitre", texte: "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] }),
+        el("div", { classe: "pc-surtitre", texte: nomPhase(i) + " · " + COMPETENCES[ph.competence] }),
         el("h2", { html: ph.titre }),
         ph.recit ? el("p", { classe: "pc-bulle", html: selon(ph.recit) }) : null
       ]));
       var zone = el("div", { classe: "carte pc-scene" });
       if (ph.consigne) zone.appendChild(el("p", { classe: "consigne", html: selon(ph.consigne) }));
-      var colQ = el("div", { classe: "carte pc-questions" }, [el("h2", { texte: "À trouver" })]);
-      s.appendChild(el("div", { classe: "plan" + (ph.large ? " pc-large" : "") }, [zone, colQ]));
+      var colQ = el("div", { classe: "carte pc-questions" }, [el("h2", { texte: ccf ? "Les questions" : "À trouver" })]);
+      s.appendChild(el("div", { classe: "plan" + (ph.large ? " pc-large" : "") + (ph.paillasse ? " pc-avec-paillasse" : "") }, [zone, colQ]));
       if (ph.scene) ph.scene(zone, ctx);
+      if (ph.paillasse) { postes[i] = el("div", { classe: "pc-paillasse" }); zone.appendChild(postes[i]); }
       var qs = questionsDe(i);
-      etat.fiches[i] = qs.map(function (q, j) { return poserQuestion(colQ, q, i, j); });
+      etat.fiches[i] = qs.map(function (q, j) { return q.type === "appel" ? poserAppel(colQ, q, i) : poserQuestion(colQ, q, i, j); });
       var bravo = el("p", { classe: "pc-bravo", hidden: "hidden", html: ph.bravo || "" });
       var suite = el("button", { type: "button", classe: "bouton principal pc-suite", disabled: "disabled",
-        texte: i + 1 < o.phases.length ? "Phase suivante" : "Le livrable" });
+        texte: i + 1 < nPh ? (ccf ? (nomPhase(i + 1) === "Conclusion" ? "La conclusion" : "Partie suivante") : "Phase suivante") : (ccf ? "La copie" : "Le livrable") });
       suite.addEventListener("click", function () { ouvrir(i + 1); });
-      s.appendChild(el("div", { classe: "pc-pied" }, [bravo, suite]));
+      var versFin = null;
+      if (i + 1 < nPh) {
+        versFin = el("button", { type: "button", classe: "bouton pc-vers-fin", texte: ccf ? "Aller à la copie" : "Aller au livrable" });
+        versFin.addEventListener("click", function () { montrer(nPh); });
+      }
+      s.appendChild(el("div", { classe: "pc-pied" }, [versFin, bravo, suite]));
       etat.fiches[i].pied = { bravo: bravo, suite: suite };
       majPhase(i);
     }
 
     /* une question : son interface, ses essais, sa note */
     function poserQuestion(parentQ, q, i, j) {
-      var f = { q: q, essais: 0, juste: false, fini: false, passe: false, reponse: "", note: false };
+      var f = { q: q, essais: 0, juste: false, fini: false, passe: false, reponse: "", note: false, aide: false };
       var maxNote = q.essais || ((q.type === "nombre" || q.type === "action" || q.type === "classer") ? 2 : 1);
       var bloc = el("div", { classe: "pc-q", "data-etat": "a-faire" });
       bloc.appendChild(el("p", { classe: "pc-q-lib", html: "<span class=\"pc-q-num\">" + (j + 1) + "</span>" + q.lib }));
@@ -1052,7 +1242,8 @@ var Sim = (function () {
       } else if (q.type === "choix" || q.type === "multi") {
         var multi = q.type === "multi", choisis = [];
         var rang = el("div", { classe: "pc-options" });
-        q.options.forEach(function (op, k) {
+        var options = typeof q.options === "function" ? q.options(ctx) : q.options;
+        options.forEach(function (op, k) {
           var b = el("button", { type: "button", classe: "pc-option", "aria-pressed": "false", html: op });
           b.addEventListener("click", function () {
             if (f.fini) return;
@@ -1063,7 +1254,7 @@ var Sim = (function () {
           rang.appendChild(b); controles.push(b);
         });
         champ.appendChild(rang);
-        lireReponse = function () { return choisis.slice().sort().map(function (k) { return texteSeul(q.options[k]); }).join(" + "); };
+        lireReponse = function () { return choisis.slice().sort().map(function (k) { return texteSeul(options[k]); }).join(" + "); };
         verifierOk = function () {
           if (!choisis.length) return null;
           var bon = typeof q.bonne === "function" ? q.bonne(ctx) : q.bonne;
@@ -1103,14 +1294,19 @@ var Sim = (function () {
       }
       var bVerif = el("button", { type: "button", classe: "bouton principal", texte: "Vérifier" });
       var bPasser = el("button", { type: "button", classe: "bouton", hidden: "hidden", texte: "Continuer sans trouver" });
+      /* en CCF, la methode se demande : c'est l'appel a l'aide de l'epreuve, et il coute le bonus d'autonomie */
+      var bAide = ccf && q.methode ? el("button", { type: "button", classe: "bouton pc-aide-btn", hidden: "hidden", texte: "Demander de l'aide" }) : null;
       var retour = el("div", { classe: "pc-retour", "aria-live": "polite" });
+      var methodeVue = el("p", { classe: "pc-methode", hidden: "hidden", html: q.methode || "" });
       bloc.appendChild(champ);
-      bloc.appendChild(el("div", { classe: "rangee" }, [bVerif, bPasser]));
+      bloc.appendChild(el("div", { classe: "rangee" }, [bVerif, bAide, bPasser]));
       bloc.appendChild(retour);
+      bloc.appendChild(methodeVue);
       parentQ.appendChild(bloc);
 
       function clore() {
         f.fini = true; bVerif.disabled = true; bPasser.hidden = true;
+        if (bAide) bAide.hidden = true;
         controles.forEach(function (x) { x.disabled = true; });
         majPhase(i); majTete();
         /* « fini » previent la scene a la cloture, juste ou passee ; « apres », seulement si juste */
@@ -1119,7 +1315,15 @@ var Sim = (function () {
       function verifier() {
         if (f.fini) return;
         var ok = verifierOk();
-        if (ok === null) { retour.className = "pc-retour"; retour.textContent = q.type === "nombre" ? "Écrivez un nombre." : (q.type === "action" ? "Faites d'abord la manipulation." : "Choisissez d'abord."); return; }
+        f.appuis = (f.appuis || 0) + 1;
+        if (ok === null) {
+          retour.className = "pc-retour";
+          retour.innerHTML = (q.type === "nombre" ? "Écrivez un nombre." : (q.type === "action" ? "Faites d'abord la manipulation." : "Choisissez d'abord.")) +
+            (!ccf && f.appuis >= 3 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : "");
+          if (bAide && !f.aide) bAide.hidden = false;
+          if (f.appuis >= 3) bPasser.hidden = false;          // personne ne reste bloque : on peut continuer
+          return;
+        }
         f.essais++;
         f.reponse = lireReponse();
         if (ok) {
@@ -1134,19 +1338,134 @@ var Sim = (function () {
         bloc.setAttribute("data-etat", "faux");
         retour.className = "pc-retour faux";
         var compte = q.type === "classer" && f.bienPlaces !== undefined ? " " + f.bienPlaces + " sur " + q.items.length + " bien placés." : "";
-        retour.innerHTML = "Pas encore." + compte + (f.essais >= 2 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : " Encore un essai.");
-        if (f.essais >= 3) bPasser.hidden = false;
+        if (ccf) {
+          retour.innerHTML = "Pas encore." + compte + " Encore un essai.";
+          if (bAide && !f.aide) bAide.hidden = false;
+        } else {
+          retour.innerHTML = "Pas encore." + compte + (f.essais >= 2 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : " Encore un essai.");
+        }
+        if (f.essais >= 3 || f.appuis >= 3) bPasser.hidden = false;
       }
       bVerif.addEventListener("click", verifier);
+      if (bAide) bAide.addEventListener("click", function () {
+        if (f.aide) return;
+        f.aide = true; etat.aides++;
+        bAide.hidden = true; methodeVue.hidden = false;
+      });
       bPasser.addEventListener("click", function () {
         f.passe = true; f.note = false;
+        if (!f.reponse) f.reponse = q.type === "action" ? "(manipulation non faite)" : "(sans réponse)";
         bloc.setAttribute("data-etat", "passe");
-        retour.className = "pc-retour"; retour.innerHTML = "On continue. <span class=\"methode\">" + (q.methode || "") + "</span>";
+        retour.className = "pc-retour"; retour.innerHTML = "On continue." + (ccf ? "" : " <span class=\"methode\">" + (q.methode || "") + "</span>");
+        if (ccf && q.methode) methodeVue.hidden = false;
         clore();
       });
       return f;
     }
     function decimalesDe(txt) { var m = String(txt).replace(",", ".").match(/\.(\d+)/); return m ? Math.min(m[1].length, 4) : 0; }
+
+    /* un appel professeur : l'eleve appelle et continue ; le professeur valide quand il passe */
+    function poserAppel(parentQ, q, i) {
+      var f = { q: q, appel: true, essais: 0, juste: false, fini: false, passe: false, reponse: "", note: false,
+        appele: null, cote: null, heureCote: null, phase: i };
+      var bloc = el("div", { classe: "pc-q pc-appel", "data-etat": "a-faire" });
+      bloc.appendChild(el("p", { classe: "pc-q-lib", html: "<span class=\"pc-main\" aria-hidden=\"true\">✋</span><b>Appel n° " + q.numero + "</b> · " + q.lib }));
+      var bAppel = el("button", { type: "button", classe: "bouton principal", texte: "J'appelle le professeur" });
+      var bProf = el("button", { type: "button", classe: "bouton", hidden: "hidden", texte: "Le professeur valide" });
+      var retour = el("div", { classe: "pc-retour", "aria-live": "polite" });
+      bloc.appendChild(el("div", { classe: "rangee" }, [bAppel, bProf]));
+      bloc.appendChild(retour);
+      parentQ.appendChild(bloc);
+      bAppel.addEventListener("click", function () {
+        if (f.appele) return;
+        f.appele = new Date(); f.fini = true; f.reponse = "appel lancé à " + heure(f.appele);
+        bAppel.disabled = true; bProf.hidden = false;
+        bloc.setAttribute("data-etat", "attente");
+        retour.className = "pc-retour";
+        retour.innerHTML = "Appel lancé : levez la main, le professeur vient valider sur cette tablette. <b>En attendant, continuez.</b>";
+        majPhase(i); majTete(); majAppels();
+      });
+      bProf.addEventListener("click", function () { ouvrirProf(f); });
+      f.afficher = function () {
+        if (!f.cote) return;
+        bloc.setAttribute("data-etat", f.cote === "NA" ? "faux" : "juste");
+        retour.className = "pc-retour " + (f.cote === "NA" ? "faux" : "juste");
+        retour.innerHTML = "Évalué par le professeur à " + heure(f.heureCote) + " : <b>" + COTES[f.cote] + "</b>.";
+        bProf.textContent = "Le professeur revient sur sa cote";
+      };
+      appels.push(f);
+      return f;
+    }
+    function attente() { return appels.filter(function (f) { return f.appele && !f.cote; }); }
+    function majAppels() {
+      var n = attente().length;
+      badge.hidden = !n;
+      badge.innerHTML = "<span aria-hidden=\"true\">✋</span> " + (n > 1 ? n + " appels en attente" : "Appel en attente");
+    }
+
+    /* la fenetre du professeur : son code, puis NA, ECA ou A pour chaque appel lance */
+    var voile = null, codeProf, codeDit, zoneCode, listeProf, cibleProf = null;
+    function ouvrirProf(cible) {
+      if (!voile) construireVoile();
+      cibleProf = cible;
+      voile.hidden = false; zoneCode.hidden = false; listeProf.hidden = true; listeProf.innerHTML = "";
+      codeProf.value = ""; codeDit.textContent = "";
+      setTimeout(function () { codeProf.focus(); }, 30);
+    }
+    function fermerProf() { if (voile) voile.hidden = true; }
+    function construireVoile() {
+      voile = el("div", { classe: "pc-voile", role: "dialog", "aria-modal": "true", "aria-label": "Réservé au professeur", hidden: "hidden" });
+      var boite = el("div", { classe: "carte pc-prof" });
+      var fermer = el("button", { type: "button", classe: "bouton", texte: "Fermer" });
+      fermer.addEventListener("click", fermerProf);
+      codeProf = el("input", { type: "password", inputmode: "numeric", autocomplete: "off", "aria-label": "Code du professeur" });
+      var bOuvrir = el("button", { type: "button", classe: "bouton principal", texte: "Ouvrir" });
+      codeDit = el("p", { classe: "pc-retour faux", "aria-live": "polite" });
+      zoneCode = el("div", null, [el("p", { classe: "consigne", texte: "Code du professeur :" }),
+        el("div", { classe: "pc-q-champ" }, [codeProf, bOuvrir]), codeDit]);
+      listeProf = el("div", { classe: "pc-prof-liste" });
+      boite.appendChild(el("div", { classe: "pc-surtitre", texte: "Réservé au professeur" }));
+      boite.appendChild(el("h2", { texte: "Évaluer un appel" }));
+      boite.appendChild(zoneCode); boite.appendChild(listeProf);
+      boite.appendChild(el("div", { classe: "rangee pc-prof-pied" }, [fermer]));
+      voile.appendChild(boite);
+      document.body.appendChild(voile);
+      function essayer() {
+        if (empreinte("labo|" + codeProf.value.trim()) !== CODE_PROF) { codeDit.textContent = "Ce n'est pas le code."; codeProf.select(); return; }
+        zoneCode.hidden = true; listeProf.hidden = false; remplirProf();
+      }
+      bOuvrir.addEventListener("click", essayer);
+      codeProf.addEventListener("keydown", function (e) { if (e.key === "Enter") essayer(); });
+      voile.addEventListener("click", function (e) { if (e.target === voile) fermerProf(); });
+    }
+    function remplirProf() {
+      listeProf.innerHTML = "";
+      var lances = appels.filter(function (f) { return f.appele; });
+      if (cibleProf) lances.sort(function (a, b) { return (a === cibleProf ? 0 : 1) - (b === cibleProf ? 0 : 1); });
+      if (!lances.length) { listeProf.appendChild(el("p", { texte: "Aucun appel lancé pour l'instant." })); return; }
+      lances.forEach(function (f) {
+        var q = f.q, k = q.competence || o.phases[f.phase].competence;
+        var carte = el("div", { classe: "pc-q pc-appel" });
+        carte.appendChild(el("p", { classe: "pc-q-lib", html: "<b>Appel n° " + q.numero + "</b> · " + k + " " + COMPETENCES[k] + " — " + q.lib }));
+        if (q.attendus && q.attendus.length) {
+          carte.appendChild(el("p", { classe: "pc-surtitre", texte: "Ce qu'on attend" }));
+          carte.appendChild(el("ul", { classe: "pc-attendus" }, q.attendus.map(function (a) { return el("li", { html: a }); })));
+        }
+        var rangee = el("div", { classe: "pc-options pc-cotes" });
+        ["NA", "ECA", "A"].forEach(function (x) {
+          var b = el("button", { type: "button", classe: "pc-option", "aria-pressed": f.cote === x ? "true" : "false", html: "<b>" + x + "</b> · " + COTES[x] });
+          b.addEventListener("click", function () {
+            f.cote = x; f.heureCote = new Date(); f.note = x === "A";
+            [].forEach.call(rangee.children, function (y) { y.setAttribute("aria-pressed", y === b ? "true" : "false"); });
+            f.afficher(); majPhase(f.phase); majTete(); majAppels();
+            if (finalFait && etat.courante === nPh) construireFinal();
+          });
+          rangee.appendChild(b);
+        });
+        carte.appendChild(rangee);
+        listeProf.appendChild(carte);
+      });
+    }
 
     function etoilesDe(i) {
       var fs = etat.fiches[i]; if (!fs || !fs.length) return 0;
@@ -1171,15 +1490,14 @@ var Sim = (function () {
         b.classList.toggle("pc-fait", e > 0);
         b.classList.toggle("pc-ici", etat.courante === i);
       });
-      var tout = o.phases.every(function (ph, i) { return etoilesDe(i) > 0; });
-      if (tout) drapeau.removeAttribute("disabled");
-      drapeau.classList.toggle("pc-ici", etat.courante === o.phases.length);
+      if (etat.debut) drapeau.removeAttribute("disabled");   // le livrable s'ouvre a tout moment
+      drapeau.classList.toggle("pc-ici", etat.courante === nPh);
       drapeau.classList.toggle("pc-fait", etat.exporte);
     }
     function totalEtoiles() { var s = 0; o.phases.forEach(function (ph, i) { s += etoilesDe(i); }); return s; }
     function minutes() { return etat.debut ? Math.floor((Date.now() - etat.debut) / 60000) : 0; }
     function majTete() {
-      score.textContent = "★ " + totalEtoiles() + " / " + (3 * o.phases.length);
+      score.textContent = "★ " + totalEtoiles() + " / " + (3 * nPh);
       temps.textContent = etat.debut ? minutes() + " min" : "";
     }
     setInterval(majTete, 15000);
@@ -1192,20 +1510,35 @@ var Sim = (function () {
       etat.courante = i;
       accueil.hidden = true;
       ecrans.forEach(function (s, k) { s.hidden = k !== i; });
-      final.hidden = i !== o.phases.length;
-      if (i < o.phases.length) construire(i); else construireFinal();
+      final.hidden = i !== nPh;
+      if (i < nPh) construire(i); else construireFinal();
+      if (pail.length) poserPaillasse(i < nPh ? postes[i] : null, i < nPh ? o.phases[i].paillasse : null);
       majChemin(); majTete();
+      if (i < nPh && o.phases[i].surOuvrir) o.phases[i].surOuvrir(ctx);
       if (o.surPhase) o.surPhase(i, ctx);
       racine.scrollIntoView({ block: "start", behavior: "smooth" });
     }
 
+    /* ---- l'autonomie, au sens de l'epreuve : ni aide demandee, ni question passee ---- */
+    function autonomie() {
+      var passees = 0, restent = 0;
+      etat.fiches.forEach(function (fs) { (fs || []).forEach(function (f) { if (f.appel) return; if (f.passe) passees++; if (!f.fini) restent++; }); });
+      o.phases.forEach(function (ph, i) { if (!etat.fiches[i]) restent += questionsDe(i).filter(function (q) { return q.type !== "appel"; }).length; });
+      var merite = !etat.aides && !passees && !restent;
+      var t = merite ? "bonus +0,25 mérité — aucune aide demandée, rien de passé"
+        : "pas de bonus — " + [etat.aides ? etat.aides + " aide" + (etat.aides > 1 ? "s" : "") + " demandée" + (etat.aides > 1 ? "s" : "") : "",
+          passees ? passees + " question" + (passees > 1 ? "s" : "") + " passée" + (passees > 1 ? "s" : "") : "",
+          restent ? restent + " question" + (restent > 1 ? "s" : "") + " sans réponse" : ""].filter(Boolean).join(", ");
+      return { merite: merite, texte: t };
+    }
+
     /* ---- le livrable : recapitulatif et fichier ---- */
-    var finalFait = false, recap, apercu;
+    var finalFait = false, recap, apercu, titreFin, bulleFin;
     function construireFinal() {
       if (!finalFait) {
         finalFait = true;
-        final.appendChild(el("div", { classe: "pc-phase-tete" }, [el("div", { classe: "pc-surtitre", texte: "Le livrable" }),
-          el("h2", { html: o.livrableTitre || "Le projet est fini" }), o.fin ? el("p", { classe: "pc-bulle", html: o.fin }) : null]));
+        titreFin = el("h2"); bulleFin = el("p", { classe: "pc-bulle" });
+        final.appendChild(el("div", { classe: "pc-phase-tete" }, [el("div", { classe: "pc-surtitre", texte: ccf ? "La copie" : "Le livrable" }), titreFin, bulleFin]));
         recap = el("div", { classe: "carte" });
         var remise = el("div", { classe: "carte pc-remise" });
         remise.appendChild(el("h2", { texte: "Mon fichier pour le professeur" }));
@@ -1246,18 +1579,51 @@ var Sim = (function () {
         }
         final.appendChild(el("div", { classe: "plan" }, [recap, el("div", null, [remise, simpl])]));
       }
-      recap.innerHTML = "";
-      recap.appendChild(el("h2", { texte: "Le bilan du projet" }));
-      var t = el("table", { classe: "releve pc-recap" });
-      t.appendChild(el("tr", null, [el("th", { texte: "Phase" }), el("th", { texte: "Compétence" }), el("th", { texte: "Réussi du premier coup" }), el("th", { texte: "Étoiles" })]));
+      /* le livrable se produit meme inacheve : ce qui reste compte comme non reussi */
+      var restent = 0;
       o.phases.forEach(function (ph, i) {
-        var fs = etat.fiches[i] || [];
-        var n = fs.filter(function (f) { return f.note; }).length, e = etoilesDe(i);
-        t.appendChild(el("tr", null, [el("td", { texte: String(i + 1) }), el("td", { texte: COMPETENCES[ph.competence] }),
-          el("td", { texte: n + " sur " + fs.length }), el("td", { texte: e ? "★★★".slice(0, e) + "☆☆☆".slice(0, 3 - e) : "—" })]));
+        var fs = etat.fiches[i];
+        restent += fs ? fs.filter(function (f) { return !f.fini; }).length : questionsDe(i).length;
       });
+      var enAttente = attente().length;
+      titreFin.innerHTML = restent ? (ccf ? "La copie n’est pas finie" : "Le projet n’est pas fini") : (o.livrableTitre || (ccf ? "La copie est finie" : "Le projet est fini"));
+      var mots = [];
+      if (restent) mots.push("Il reste <b>" + restent + " question" + (restent > 1 ? "s" : "") + "</b> sans réponse. Vous pouvez y revenir par le chemin, en haut, " +
+        "ou produire votre fichier tel quel : " + (restent > 1 ? "elles compteront" : "elle comptera") + " comme non réussie" + (restent > 1 ? "s" : "") + ".");
+      if (enAttente) mots.push("<b>" + (enAttente > 1 ? enAttente + " appels attendent" : "Un appel attend") + " encore le professeur</b> : faites-le valider avant de produire le fichier, sinon il ne comptera pas.");
+      if (!restent && !enAttente && o.fin) mots.push(o.fin);
+      bulleFin.innerHTML = mots.join(" ");
+      bulleFin.hidden = !bulleFin.innerHTML;
+      recap.innerHTML = "";
+      recap.appendChild(el("h2", { texte: ccf ? "Le bilan de l'épreuve" : "Le bilan du projet" }));
+      var t = el("table", { classe: "releve pc-recap" });
+      if (ccf) {
+        t.appendChild(el("tr", null, [el("th", { texte: "Compétence" }), el("th", { texte: "Réussi du premier coup" }), el("th", { texte: "Appel" })]));
+        ORDRE_COMP.forEach(function (k) {
+          var n = 0, m = 0, ap = [];
+          o.phases.forEach(function (ph, i) {
+            var fs = etat.fiches[i], qs = fs ? fs.map(function (f) { return f.q; }) : questionsDe(i);
+            qs.forEach(function (q, j) {
+              if ((q.competence || ph.competence) !== k) return;
+              var f = fs && fs[j];
+              if (q.type === "appel") ap.push("n° " + q.numero + " : " + (!f || !f.appele ? "pas fait" : !f.cote ? "en attente" : f.cote));
+              else { m++; if (f && f.note) n++; }
+            });
+          });
+          t.appendChild(el("tr", null, [el("td", { html: "<b>" + k + "</b> " + COMPETENCES[k] }), el("td", { texte: m ? n + " sur " + m : "—" }), el("td", { texte: ap.join(" · ") || "—" })]));
+        });
+      } else {
+        t.appendChild(el("tr", null, [el("th", { texte: "Phase" }), el("th", { texte: "Compétence" }), el("th", { texte: "Réussi du premier coup" }), el("th", { texte: "Étoiles" })]));
+        o.phases.forEach(function (ph, i) {
+          var fs = etat.fiches[i] || [];
+          var n = fs.filter(function (f) { return f.note; }).length, e = etoilesDe(i);
+          t.appendChild(el("tr", null, [el("td", { texte: String(i + 1) }), el("td", { texte: COMPETENCES[ph.competence] }),
+            el("td", { texte: n + " sur " + fs.length }), el("td", { texte: e ? "★★★".slice(0, e) + "☆☆☆".slice(0, 3 - e) : "—" })]));
+        });
+      }
       recap.appendChild(t);
-      recap.appendChild(el("p", { classe: "pc-score-final", html: "<b>★ " + totalEtoiles() + " / " + 3 * o.phases.length + "</b> · " + minutes() + " min" }));
+      if (ccf) recap.appendChild(el("p", { classe: "pc-autonomie", html: "<b>Autonomie</b> : " + autonomie().texte + "." }));
+      recap.appendChild(el("p", { classe: "pc-score-final", html: "<b>★ " + totalEtoiles() + " / " + 3 * nPh + "</b> · " + minutes() + " min" }));
       if (o.grades) {
         var g = o.grades.filter(function (x) { return totalEtoiles() >= x[0]; }).pop();
         if (g) recap.appendChild(el("p", { classe: "pc-grade", html: g[1] }));
@@ -1268,30 +1634,55 @@ var Sim = (function () {
         .replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "sans-identifiant";
     }
     function fabriquer(id) {
-      var d = new Date(), deux = function (n) { return (n < 10 ? "0" : "") + n; };
+      var d = new Date();
       var out = ["BILAN DE SÉQUENCE",
-        "Page       : Parcours " + (o.code ? o.code + " · " : "") + texteSeul(o.titre) + " · " + etat.niveau,
+        "Page       : " + (ccf ? "Entraînement au CCF " : "Parcours ") + (o.code ? o.code + " · " : "") + texteSeul(o.titre) + " · " + etat.niveau,
         "Identifiant: " + id,
         "Date       : " + deux(d.getDate()) + "/" + deux(d.getMonth() + 1) + "/" + d.getFullYear() + " à " + deux(d.getHours()) + "h" + deux(d.getMinutes()),
-        "Bilan      : " + totalEtoiles() + " étoiles sur " + 3 * o.phases.length + ", en " + minutes() + " min",
-        new Array(64).join("="), ""];
+        "Bilan      : " + totalEtoiles() + " étoiles sur " + 3 * nPh + ", en " + minutes() + " min"];
+      if (ccf) out.push("Autonomie  : " + autonomie().texte);
+      out.push(new Array(64).join("="), "");
       o.phases.forEach(function (ph, i) {
-        out.push("SÉRIE — [" + ph.competence + "] Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] + " : " + texteSeul(ph.titre), "");
         var fs = etat.fiches[i];
         var qs = fs ? fs.map(function (f) { return f.q; }) : questionsDe(i);
+        /* un bloc par competence : celle de la partie d'abord, puis celles que des questions portent */
+        var groupes = [], index = {};
         qs.forEach(function (q, j) {
-          var f = fs && fs[j];
-          var etatCase, rep;
-          if (!f || !f.fini) { etatCase = "non vérifié"; rep = "(non faite)"; }
-          else {
-            etatCase = f.note ? "juste" : "faux";
-            var det = f.passe ? "passée après " + f.essais + " essais" : (f.essais === 1 ? "juste au 1er essai" : "trouvée au " + f.essais + "e essai");
-            rep = (f.reponse || "(vide)") + " — " + det;
-          }
-          out.push("  " + (j + 1) + ". " + texteSeul(q.lib));
-          out.push("     réponse : " + rep + "   [" + etatCase + "]");
+          if (q.type === "appel") return;
+          var k = q.competence || ph.competence;
+          if (!(k in index)) { index[k] = groupes.length; groupes.push({ k: k, items: [] }); }
+          groupes[index[k]].items.push(j);
         });
-        out.push("");
+        groupes.sort(function (a, b) { return (a.k === ph.competence ? 0 : 1) - (b.k === ph.competence ? 0 : 1); });
+        groupes.forEach(function (g) {
+          out.push("SÉRIE — [" + g.k + "] " + nomPhase(i) + " · " + COMPETENCES[g.k] + " : " + texteSeul(ph.titre), "");
+          g.items.forEach(function (j, n) {
+            var q = qs[j], f = fs && fs[j];
+            var etatCase, rep;
+            if (!f || !f.fini) { etatCase = "non vérifié"; rep = "(non faite)"; }
+            else {
+              etatCase = f.note ? "juste" : "faux";
+              var det = f.passe ? (f.essais ? "passée après " + f.essais + " essai" + (f.essais > 1 ? "s" : "") : "passée sans réponse")
+                : (f.essais === 1 ? "juste au 1er essai" : "trouvée au " + f.essais + "e essai");
+              if (f.aide) det += ", avec aide";
+              rep = f.passe && !f.essais ? det : (f.reponse || "(vide)") + " — " + det;
+            }
+            out.push("  " + (n + 1) + ". " + texteSeul(q.lib));
+            out.push("     réponse : " + rep + "   [" + etatCase + "]");
+          });
+          out.push("");
+        });
+        /* les appels : un bloc EXERCICE chacun, 0, 1 ou 2 points sur 2 */
+        qs.forEach(function (q, j) {
+          if (q.type !== "appel") return;
+          var f = fs && fs[j], k = q.competence || ph.competence;
+          out.push("EXERCICE — [" + k + "] Appel n° " + q.numero + " · " + COMPETENCES[k] + " : " + texteSeul(q.lib));
+          if (!f || !f.appele) out.push("  réponse : appel non fait", "  verdict : appel non fait", "  points retrouvés : 0 sur 2");
+          else if (!f.cote) out.push("  réponse : appel lancé à " + heure(f.appele), "  verdict : non évalué par le professeur, ne compte pas");
+          else out.push("  réponse : appel lancé à " + heure(f.appele) + ", évalué à " + heure(f.heureCote),
+            "  verdict : " + f.cote + " — " + COTES[f.cote], "  points retrouvés : " + POINTS_COTE[f.cote] + " sur 2");
+          out.push("");
+        });
       });
       out.push(new Array(64).join("-"));
       out.push("Fichier produit dans le navigateur de l'élève.");
@@ -1303,9 +1694,12 @@ var Sim = (function () {
       if (etat.debut && !etat.exporte) { e.preventDefault(); e.returnValue = ""; }
     });
     majTete();
+    if (libre) mode(/^#(ccf|parcours)$/.test(location.hash));
     /* la porte d'essai : etat interne et fichier, pour les controles */
     return { etat: etat, donnees: donnees, ouvrir: ouvrir, fabriquer: fabriquer, fiches: function () { return etat.fiches; },
+      appels: appels, mode: mode, coter: function (f, x) { f.cote = x; f.heureCote = new Date(); f.note = x === "A"; f.afficher(); majPhase(f.phase); majAppels(); },
       choisirNiveau: function (n) { etat.niveau = n; niv.textContent = n; }, demarrer: function (n) {
+        if (libre) mode(true);
         etat.niveau = n || etat.niveau || niveaux[0]; niv.textContent = etat.niveau; etat.debut = Date.now();
         document.body.classList.add("pc-en-cours"); ouvrir(0); } };
   }
@@ -1364,8 +1758,17 @@ var Sim = (function () {
 #zoom{background:var(--scene);border:1px solid var(--trait2);border-radius:var(--r)}
 #zoom svg{display:block;width:100%;height:auto}
 .releve-zone > div{overflow-x:auto}
+.pc-paillasse .case,.pc-paillasse #zoom{display:none!important}
+.pc-paillasse .releve-zone{grid-template-columns:1fr}
+/* pendant une epreuve commencee, les defis du mode libre se taisent : ils jugeraient les memes valeurs que les questions */
+body.pc-en-cours #defis{display:none!important}
+.pc-donnees{margin:0 0 12px;font-size:.9rem}
+.pc-courbe .graphe{margin-top:6px}
 </style>
 
+<div id="ccf"></div>
+
+<div id="libre">
 <nav class="onglets" id="experiences" aria-label="Expériences">
   <button type="button" data-vue="vueInd">Indicateur coloré</button>
   <button type="button" data-vue="vuePh">Suivi au pH-mètre</button>
@@ -1380,14 +1783,14 @@ var Sim = (function () {
 </div>
 
 <div class="plan">
-  <div class="carte">
+  <div class="carte" id="carteScene">
     <h2><span class="num">2</span>La paillasse</h2>
     <div class="scene">
       <svg id="scene" viewBox="0 0 640 600" role="img" aria-label="La paillasse de titrage : la burette ou la seringue, le bécher, les instruments"></svg>
     </div>
     <p class="legende" id="legende"></p>
   </div>
-  <div class="carte">
+  <div class="carte" id="carteMesure">
     <h2><span class="num">3</span>Prépare, verse, mesure</h2>
     <div class="commandes">
       <div class="sous-titre">Préparer</div>
@@ -1425,7 +1828,7 @@ var Sim = (function () {
   </div>
 </div>
 
-<div class="carte">
+<div class="carte" id="carteReleve">
   <h2><span class="num">4</span>Le relevé</h2>
   <p class="consigne" id="consigneReleve"></p>
   <div id="vueInd" class="vue"></div>
@@ -1450,6 +1853,7 @@ var Sim = (function () {
       <li>Le bidon compte la soude du rinçage, ce qui passe dans le bécher de récupération, les béchers titrés et la soude restée dans la burette ou la seringue. Pas l'eau qui rince la verrerie.</li>
     </ul>
   </details>
+</div>
 </div>
 
 <script>
@@ -1537,10 +1941,10 @@ var Sim = (function () {
     Object.keys(etats).forEach(function (k) { var e = etats[k]; if (e.pret && e.vb > 0) e.bidon += contenu(e); preparerBecher(e); });
     poserDefis(); dessinerFond(); message(t);
   }
-  Sim.choix(R, { label: "Le flacon", valeur: reg.flacon,
+  var cFlac = Sim.choix(R, { label: "Le flacon", valeur: reg.flacon,
     options: Object.keys(FLACONS).map(function (k) { return { val: k, texte: FLACONS[k].texte }; }),
     surChange: function (v) { reg.flacon = v; rePreparer("Nouveau flacon : un bécher neuf est prêt. " + (FLACONS[v].fort ? "Le détartrant a été dilué vingt fois." : "Le vinaigre a été dilué dix fois.")); } });
-  Sim.choix(R, { label: "L'indicateur coloré", valeur: reg.indic,
+  var cIndic = Sim.choix(R, { label: "L'indicateur coloré", valeur: reg.indic,
     options: Object.keys(INDIC).map(function (k) { return { val: k, texte: INDIC[k].texte }; }),
     surChange: function (v) { reg.indic = v; rePreparer(v === "aucun" ? "Bécher neuf, sans indicateur." : "Bécher neuf, avec quelques gouttes de " + INDIC[v].court + "."); } });
   var cPrelev = Sim.choix(R, { label: "Prélever les 10 mL de vinaigre dilué", valeur: reg.prelev,
@@ -2236,7 +2640,304 @@ var Sim = (function () {
 
   /* Porte des essais : la page se pilote sans doigt, dans un navigateur qui ne dessine pas. */
   window.titrage = { etat: E, exp: function () { return exp; }, reglage: reg, ve: function () { return veVrai(E()); }, compo: function () { return compo(E()); },
-    ouvrir: function (a) { E().angle = a; }, goutte: uneGoutte, pousser: function (v) { pousserSeringue(E(), v); }, dessiner: dessiner, lire: function () { lireInstruments(E()); return E().lu; } };
+    ouvrir: function (a) { E().angle = a; }, goutte: uneGoutte, pousser: function (v) { pousserSeringue(E(), v); }, dessiner: dessiner, lire: function () { lireInstruments(E()); return E().lu; },
+    /* l'entrainement au CCF impose l'experience, le flacon, son degre et l'indicateur : un becher neuf est prepare */
+    experience: function (id) { og.montrer(id); },
+    regler: function (o) {
+      if (o.degre) FLACONS.inconnu.degre = o.degre;
+      if (o.flacon) { reg.flacon = o.flacon; cFlac.set(o.flacon, true); }
+      if (o.indic) { reg.indic = o.indic; cIndic.set(o.indic, true); }
+      if (o.prelev) { reg.prelev = o.prelev; cPrelev.set(o.prelev, true); }
+      rePreparer(o.message || "");
+    },
+    releves: function () { return { ind: relInd.lignes(), ser: relSer.lignes(), ph: relPh.lignes(), cond: relCond.lignes() }; } };
+})();
+</script>
+
+<script>
+/* ═══════════ ENTRAINEMENT AU CCF · CCF-10 (14 octobre 2026) ═══════════
+   La meme simulation menee comme un sujet d'epreuve, premiere (tous les groupements du labo) ou
+   terminale : « Caracteriser quantitativement une solution aqueuse » — determiner une quantite de
+   matiere par un titrage, l'equivalence reperee par un indicateur colore ou par le saut de la
+   courbe de titrage. Une seule experience : l'indicateur colore, a la burette, la vraie paillasse.
+   Le degre du vinaigre livre est tire au sort : deux voisins n'ont pas les memes nombres.
+   Le piege qui fait la partie 4 : la veille, un titrage a l'helianthine a conclu « 2° » ; refait,
+   il donne bien le meme volume, mais l'helianthine vire vers pH 4, au quart du titrage, bien avant
+   le saut de pH. Le vinaigre n'y est pour rien : c'est l'indicateur qui ne convenait pas. */
+(function () {
+  var T = window.titrage, fr = Sim.fr, el = Sim.el;
+  var DEGRES = [7.0, 7.8, 8.0, 9.0], ANNONCE = 8, CB = 0.100, VA = 10.0, M_AC = 60, DIL = 10;
+  var KW = 1e-14, KA = Math.pow(10, -4.76);
+
+  function cfg(ctx) {
+    var d = ctx.donnees;
+    if (!d.cfg) {
+      var deg = DEGRES[Math.floor(Math.random() * DEGRES.length)], ca = deg * 10 / M_AC / DIL;
+      d.cfg = { deg: deg, ve: ca * VA / CB, veille: Math.ceil(vJaune(ca, VA, 0.15, CB) * 20) / 20 };   // la premiere lecture apres le virage
+    }
+    return d.cfg;
+  }
+  /* la chimie de la simulation, pour juger les volumes : pH du becher, puis le virage de l'helianthine */
+  function ph(ca0, va, vb, vind, cb) {
+    var vt = va + vb + vind, ca = ca0 * va / vt, cna = cb * vb / vt, lo = -14, hi = 0;
+    for (var i = 0; i < 60; i++) { var m = (lo + hi) / 2, h = Math.pow(10, m), an = ca * KA / (KA + h); if (h + cna - KW / h - an > 0) hi = m; else lo = m; }
+    return -(lo + hi) / 2;
+  }
+  function vJaune(ca0, va, vind, cb) {                       // l'helianthine est jaune des que pH >= 3,7 + log 4
+    var a = 0, b = ca0 * va / cb;
+    for (var i = 0; i < 40; i++) { var m = (a + b) / 2; if (ph(ca0, va, m, vind, cb) >= 3.7 + Math.log10(4)) b = m; else a = m; }
+    return (a + b) / 2;
+  }
+
+  /* chaque mesure gardee, avec ce que la paillasse savait a cet instant : volume vraiment verse, niveau vrai */
+  var snaps = [], derniere = null;
+  document.getElementById("garder").addEventListener("click", function () {
+    if (T.exp() !== "ind") return;
+    var ls = T.releves().ind, l = ls[ls.length - 1];
+    if (!l || l === derniere) return;
+    derniere = l;
+    var e = T.etat();
+    snaps.push({ ligne: l, indic: T.reglage.indic, essai: l.essai, lu: l.lu, coul: l.coul, vb: e.vb, lev: e.lev, ve: T.ve(),
+      ca: e.ca, va: e.va, vind: e.vind, cb: e.cb, rincee: e.rincee });
+  });
+  /* un titrage qui vaut : une lecture de depart et une de fin, coherentes avec ce qui a coule, et un arret au bon moment */
+  function titrage(indic, couleurs, arret) {
+    var ls = T.releves().ind, S = snaps.filter(function (s) { return ls.indexOf(s.ligne) >= 0 && s.indic === indic; }), bon = null;
+    S.forEach(function (V, i) {
+      if (couleurs.indexOf(V.coul) < 0 || !arret(V)) return;
+      for (var j = 0; j < i; j++) {                         // la premiere lecture coherente du meme becher : celle du depart
+        var D = S[j];
+        if (D.essai === V.essai && Math.abs((V.lu - D.lu) - (V.vb - D.vb)) <= 0.1) { bon = { V: V, D: D, verse: V.vb - D.vb }; return; }
+      }
+      if (Math.abs(V.lev - V.vb) <= 0.06 && Math.abs(V.lu - V.vb) <= 0.1) bon = { V: V, D: null, verse: V.vb };   // parti du zero, sans le garder
+    });
+    return bon;
+  }
+  function phenol() { return titrage("phenol", ["rose pâle", "rose"], function (V) { return V.rincee && Math.abs(V.vb - V.ve) <= 0.15; }); }
+  function helian() { return titrage("helian", ["jaune"], function (V) { return V.vb <= vJaune(V.ca, V.va, V.vind, V.cb) + 0.4; }); }
+  function repAction(indic) {
+    var ls = T.releves().ind, S = snaps.filter(function (s) { return ls.indexOf(s.ligne) >= 0 && s.indic === indic; });
+    if (!S.length) return null;
+    return S.map(function (s) { return fr(s.lu, 2) + " mL (" + s.coul + ")"; }).join(", ");
+  }
+
+  function garde(cle, mesure) { return function (ctx, juste, rep, v) { ctx.donnees[cle] = juste && isFinite(v) ? v : mesure(ctx); }; }
+  function val(ctx, cle, mesure) { var x = ctx.donnees[cle]; return isFinite(x) ? x : mesure(ctx); }
+  var M = {
+    ve8: function () { return ANNONCE * 10 / M_AC / DIL * VA / CB; },
+    VE: function (ctx) { var t = phenol(); return t ? t.verse : cfg(ctx).ve; },
+    Ca: function (ctx) { return CB * val(ctx, "VE", M.VE) / VA; },
+    Cm: function (ctx) { return val(ctx, "Ca", M.Ca) * DIL * M_AC; },
+    deg: function (ctx) { return val(ctx, "Cm", M.Cm) / 10; },
+    VH: function (ctx) { var t = helian(); return t ? t.verse : cfg(ctx).veille; }
+  };
+
+  /* le poste du sujet : l'indicateur colore, le vinaigre livre, la pipette ; on ne prepare un becher neuf que si l'indicateur change */
+  function poste(ctx, indic) {
+    var c = cfg(ctx), r = T.reglage;
+    if (T.exp() !== "ind") T.experience("vueInd");
+    if (r.flacon !== "inconnu" || r.indic !== indic || r.prelev !== "pipette" || ctx.donnees.degrePose !== c.deg) {
+      ctx.donnees.degrePose = c.deg;
+      T.regler({ flacon: "inconnu", degre: c.deg, indic: indic, prelev: "pipette",
+        message: indic === "helian" ? "Bécher neuf : 10,0 mL du vinaigre livré, dilué, et quelques gouttes d'hélianthine. La burette reste comme vous l'avez laissée." :
+          "Bécher prêt : 10,0 mL du vinaigre livré, dilué dix fois, et trois gouttes de phénolphtaléine." });
+    }
+    var z = document.getElementById("especes");
+    if (z.checked) { z.checked = false; z.dispatchEvent(new Event("change")); }
+  }
+  function ligne(t, v) { return el("tr", null, [el("td", { texte: t }), el("td", { html: v })]); }
+
+  function documents(zone, ctx) {
+    var c = cfg(ctx);
+    if (!ctx.donnees.regle) { ctx.donnees.regle = true; poste(ctx, "phenol"); }
+    zone.appendChild(el("div", { classe: "pc-docs" }, [
+      el("section", null, [el("h3", { texte: "Document 1 · La livraison" }),
+        el("p", { html: "Un bidon de vinaigre blanc pour détartrer, livré sans étiquette. Le bon de livraison annonce <b>8°</b>." }),
+        el("p", { html: "La règle du service : une livraison est acceptée si son degré est <b>à 5 % près</b> de celui annoncé." })]),
+      el("section", null, [el("h3", { texte: "Document 2 · Le titrage de la veille" }),
+        el("p", { html: "Un technicien a titré le vinaigre dilué avec l'indicateur qui restait, l'<b>hélianthine</b> : virage au jaune à <b>" + fr(c.veille, 2) + " mL</b> de soude." }),
+        el("p", { html: "Sa conclusion : « environ 2°, c'est de l'eau vinaigrée : à renvoyer au fournisseur ! »" })]),
+      el("section", null, [el("h3", { texte: "Document 3 · Le poste de titrage" }),
+        el("table", { classe: "releve" }, [
+          ligne("Vinaigre", "dilué <b>dix fois</b> ; <b>V<sub>a</sub> = 10,0 mL</b> prélevés à la pipette jaugée"),
+          ligne("Soude", "dans une burette de 25 mL, <b>C<sub>b</sub> = 0,100 mol/L</b>"),
+          ligne("Indicateur", "<b>phénolphtaléine</b>, incolore puis rose"),
+          ligne("Acide éthanoïque", "M = <b>60 g/mol</b>")])]),
+      el("section", { classe: "pc-annexe" }, [el("h3", { texte: "Annexe · formulaire" }),
+        el("p", { html: "À l'équivalence : <b>C<sub>a</sub> × V<sub>a</sub> = C<sub>b</sub> × V<sub>E</sub></b><br>" +
+          "Le degré d'un vinaigre : la masse d'acide éthanoïque, en grammes, dans <b>100 g</b> de vinaigre<br>1 L de vinaigre a une masse de 1 000 g" })])
+    ]));
+  }
+  function rappel(html) {
+    return function (zone, ctx) {
+      zone.appendChild(el("div", { classe: "pc-docs pc-donnees" }, [el("section", { classe: "pc-annexe" }, [el("h3", { texte: "Rappel des données" }), el("p", { html: html(cfg(ctx)) })])]));
+    };
+  }
+  /* la courbe de reference : un vinaigre a 8°, titre au pH-metre, et les zones de virage des trois indicateurs */
+  function courbe(zone, ctx) {
+    rappel(function (c) { return "Le titrage de la veille, à l'hélianthine : virage au jaune à " + fr(c.veille, 2) + " mL. V<sub>a</sub> = 10,0 mL, C<sub>b</sub> = 0,100 mol/L."; })(zone, ctx);
+    var sec = el("section", { classe: "pc-courbe" }, [el("h3", { texte: "Document 4 · Une courbe de titrage de vinaigre" }),
+      el("p", { html: "Un vinaigre blanc à 8°, dilué dix fois, titré au pH-mètre par la même soude. Les bandes : la <b>zone de virage</b> de chaque indicateur, là où il change de couleur." })]);
+    zone.appendChild(el("div", { classe: "pc-docs pc-donnees" }, [sec]));
+    var g = Sim.graphe(sec, { xmin: 0, xmax: 20, ymin: 0, ymax: 14, pasX: 2, pasY: 2, titreX: "V (mL)", titreY: "pH", largeur: 560, hauteur: 330 });
+    var cx = g.ctx, ca8 = ANNONCE * 10 / M_AC / DIL;
+    [["hélianthine", 3.1, 4.4, "rgba(214,48,40,.22)"], ["bleu de bromothymol", 6.0, 7.6, "rgba(40,92,206,.20)"], ["phénolphtaléine", 8.2, 10.0, "rgba(214,64,138,.22)"]].forEach(function (b) {
+      cx.fillStyle = b[3]; cx.fillRect(g.X(0), g.Y(b[2]), g.X(20) - g.X(0), g.Y(b[1]) - g.Y(b[2]));
+      g.texte(19.6, (b[1] + b[2]) / 2, b[0], { align: "right" });
+    });
+    g.courbe(function (v) { return ph(ca8, VA, v, 0, CB); }, { pas: 1600, couleur: "--encre" });
+  }
+
+  var simplifie = [].map.call(document.querySelectorAll("#libre details.modele li"), function (li) { return li.innerHTML; });
+
+  window.ccf10 = Sim.parcours("#ccf", {
+    code: "CCF-10",
+    titre: "Le vinaigre livré sans étiquette",
+    niveaux: ["Première", "Terminale"],
+    libre: "#libre",
+    paillasse: ["#carteScene", "#carteMesure", "#carteReleve"],
+    ccf: { problematique: "Le vinaigre livré est-il bien à 8°, à 5 % près, comme l'annonce le fournisseur ?" },
+    commande: {
+      client: "Service d'entretien du lycée · le responsable",
+      texte: "<p>Le service achète son vinaigre blanc en bidons, pour détartrer. Le dernier est arrivé <b>sans étiquette</b>, et le titrage fait la veille le donne à 2° : « à renvoyer ». " +
+        "Avant d'écrire au fournisseur, le responsable vous demande un titrage dont on soit sûr, et de comprendre celui de la veille.</p>"
+    },
+    simplifie: simplifie,
+    phases: [
+      {
+        competence: "APP", titre: "Le dossier de la livraison",
+        recit: "Avant de toucher la burette, on lit. Trois documents et une annexe : tout ce qui sert est dedans, et pas plus.",
+        scene: documents,
+        questions: [
+          { type: "classer", lib: "Dans les documents, que donne chaque indication ?",
+            items: ["<b>8°</b>", "<b>0,100 mol/L</b>", "<b>60 g/mol</b>", "<b>10,0 mL</b>"],
+            categories: ["une concentration en quantité de matière", "un volume", "une masse molaire", "une masse d'acide pour 100 g de vinaigre"], bonnes: [3, 0, 2, 1],
+            methode: "L'unité dit la grandeur : mol/L pour une concentration, g/mol pour une masse molaire, mL pour un volume ; le degré est défini dans l'annexe." },
+          { type: "nombre", lib: "Quelle masse d'acide éthanoïque contient un litre de vinaigre à 8° ?", unite: "g",
+            attendu: 80, tolerance: 0.01,
+            methode: "8° : 8 g d'acide pour 100 g de vinaigre. Un litre de vinaigre, c'est 1 000 g." },
+          { type: "choix", lib: "Entre quels degrés la livraison est-elle acceptée ?",
+            options: ["de 7,6° à 8,4°", "de 7,95° à 8,05°", "de 7° à 9°", "de 3° à 13°"], bonne: 0,
+            methode: "5 % de 8°, en degrés, de part et d'autre de 8°." }
+        ],
+        bravo: "Le dossier est lu : un degré annoncé, une plage, un titrage qui le contredit."
+      },
+      {
+        competence: "ANA", titre: "Le protocole",
+        recit: "Si le vinaigre est bien à 8°, on sait à peu près où tombera l'équivalence. Autant le prévoir : on versera vite d'abord, puis goutte à goutte.",
+        consigne: "La paillasse, telle qu'elle est. Les commandes viendront à la partie 3.",
+        paillasse: ["#carteScene"],
+        surOuvrir: function (ctx) { poste(ctx, "phenol"); },
+        questions: [
+          { type: "nombre", lib: "Si le vinaigre est bien à 8°, quel volume de soude faudra-t-il verser à l'équivalence ?", unite: "mL",
+            attendu: M.ve8, tolerance: 0.02,
+            methode: "80 g d'acide par litre, M = 60 g/mol : la concentration du vinaigre ; dix fois moins après dilution ; puis V<sub>E</sub> = C<sub>a</sub> × V<sub>a</sub> ÷ C<sub>b</sub>." },
+          { type: "classer", lib: "Dans quel ordre préparer la burette ?",
+            items: ["Ajuster le zéro, au-dessus de la récupération", "Rincer la burette à la soude", "Mettre le bécher sous la burette, l'agitateur en marche",
+              "Remplir la burette au-dessus du zéro", "Chasser la bulle d'air sous le robinet"],
+            categories: ["1er", "2e", "3e", "4e", "5e"], bonnes: [3, 0, 4, 1, 2],
+            methode: "On rince avant de remplir ; la bulle part avant de faire le zéro ; le bécher ne passe sous la burette qu'une fois le zéro fait." },
+          { type: "choix", lib: "Comment verser la soude ?",
+            options: ["en filet jusqu'à un ou deux millilitres avant le volume prévu, puis goutte à goutte, en agitant", "goutte à goutte dès le début",
+              "en filet jusqu'au changement de couleur", "en filet jusqu'au volume prévu exactement, puis s'arrêter"], bonne: 0,
+            methode: "Le volume prévu n'est qu'une prévision : la fin se fait goutte à goutte, pour ne pas dépasser le premier rose." },
+          { type: "appel", numero: 1, competence: "COM",
+            lib: "Présentez votre protocole au professeur, à l'oral, avant de toucher la burette.",
+            attendus: ["la prévision : une treizaine de millilitres si le vinaigre est à 8°", "la préparation : rinçage à la soude, remplissage, bulle chassée, zéro",
+              "le versement : en filet puis goutte à goutte, l'agitateur en marche", "l'arrêt au premier rose qui tient, la lecture au bas du ménisque, l'œil au niveau du trait",
+              "la suite du calcul : C<sub>a</sub> × V<sub>a</sub> = C<sub>b</sub> × V<sub>E</sub>, puis la masse d'acide par litre et le degré"] }
+        ],
+        bravo: "Le protocole tient : une prévision, une burette bien préparée, un arrêt au bon moment."
+      },
+      {
+        competence: "REA", titre: "Le titrage à la phénolphtaléine",
+        recit: "Le bécher est prêt : 10,0 mL du vinaigre livré, dilué, et la phénolphtaléine. À vous de titrer, puis de calculer avec vos lectures.",
+        consigne: "La clé du robinet se tourne au doigt ; « Une goutte » verse une goutte. L'œil de la loupe se monte ou se descend au doigt. La lecture s'écrit avant « Garder cette mesure » : au départ, puis au premier rose qui tient.",
+        scene: rappel(function () { return "V<sub>a</sub> = 10,0 mL de vinaigre dilué dix fois · C<sub>b</sub> = 0,100 mol/L · M = 60 g/mol · 1 L de vinaigre = 1 000 g · C<sub>a</sub> × V<sub>a</sub> = C<sub>b</sub> × V<sub>E</sub>"; }),
+        paillasse: ["#carteScene", "#carteMesure", "#carteReleve"], large: true,
+        surOuvrir: function (ctx) { poste(ctx, "phenol"); },
+        questions: [
+          { type: "appel", numero: 2, competence: "REA",
+            lib: "Appelez avant de préparer la burette : vous la préparez et commencez le titrage devant le professeur.",
+            attendus: ["la burette rincée à la soude, au-dessus de la récupération", "la bulle chassée d'un grand coup de robinet, le zéro ajusté goutte à goutte",
+              "le bécher sous la burette, l'agitateur en marche, la clé tournée sans à-coup", "le goutte à goutte près de l'équivalence, l'arrêt au premier rose qui tient",
+              "la lecture dans la loupe, l'œil au niveau du trait"] },
+          { type: "action", lib: "Faites le titrage : gardez la lecture de départ, puis celle du premier rose qui tient après agitation.",
+            aide: "La lecture se fait au bas du ménisque : dans la loupe, un trait vu de trop haut ou de trop bas devient une ellipse.",
+            verifier: function () { var r = repAction("phenol"); return r === null ? null : { ok: !!phenol(), reponse: "lectures gardées : " + r }; },
+            methode: "Rincer, remplir, chasser la bulle, faire le zéro ; le bécher sous la burette, l'agitateur en marche ; garder la lecture de départ ; verser, finir goutte à goutte ; garder la lecture au premier rose qui tient, l'œil au niveau du trait." },
+          { type: "nombre", lib: "Quel volume de soude avez-vous versé jusqu'à l'équivalence ?", unite: "mL", dec: 2,
+            attendu: M.VE, tolerance: 0, toleranceAbsolue: 0.1, fini: garde("VE", M.VE),
+            methode: "V<sub>E</sub> = la lecture au virage moins la lecture de départ." },
+          { type: "nombre", lib: "Calculez la concentration de l'acide dans le bécher, C<sub>a</sub>.", unite: "mol/L",
+            attendu: M.Ca, tolerance: 0.02, fini: garde("Ca", M.Ca),
+            methode: "C<sub>a</sub> = C<sub>b</sub> × V<sub>E</sub> ÷ V<sub>a</sub>, les deux volumes dans la même unité." },
+          { type: "nombre", lib: "Calculez la concentration en masse d'acide du vinaigre livré, avant dilution.", unite: "g/L",
+            attendu: M.Cm, tolerance: 0.02, fini: garde("Cm", M.Cm),
+            methode: "Le vinaigre a été dilué dix fois : sa concentration est dix fois celle du bécher. Puis la concentration en masse : C<sub>m</sub> = C × M." },
+          { type: "nombre", lib: "Déduisez le degré du vinaigre livré.", unite: "°", dec: 1,
+            attendu: M.deg, tolerance: 0.02, fini: garde("deg", M.deg),
+            methode: "Les grammes d'acide d'un litre, c'est-à-dire de 1 000 g de vinaigre ; le degré les compte pour 100 g." }
+        ],
+        bravo: "Le titrage est fait et calculé. Reste celui de la veille, qui dit tout autre chose."
+      },
+      {
+        competence: "VAL", titre: "Le titrage de la veille",
+        recit: "Le technicien de la veille n'est pas un débutant. Avant de dire qu'il s'est trompé, on refait son titrage, à l'hélianthine, et on regarde où cet indicateur change de couleur.",
+        consigne: "Un bécher neuf est sous la burette, avec de l'hélianthine. La burette est restée comme vous l'avez laissée : gardez d'abord sa lecture de départ.",
+        scene: courbe,
+        paillasse: ["#carteScene", "#carteMesure", "#carteReleve"], large: true,
+        surOuvrir: function (ctx) { poste(ctx, "helian"); },
+        questions: [
+          { type: "action", lib: "Refaites le titrage de la veille : gardez la lecture de départ, puis celle du virage au jaune qui tient.",
+            aide: "L'hélianthine passe du rouge à l'orange, puis au jaune.",
+            verifier: function () { var r = repAction("helian"); return r === null ? null : { ok: !!helian(), reponse: "lectures gardées : " + r }; },
+            methode: "Lecture de départ gardée ; versez lentement, en agitant ; arrêtez-vous au premier jaune qui tient, sans aller au-delà, et gardez la lecture." },
+          { type: "nombre", lib: "Quel volume de soude avez-vous versé jusqu'au virage au jaune ?", unite: "mL", dec: 2,
+            attendu: M.VH, tolerance: 0, toleranceAbsolue: 0.1, fini: garde("VH", M.VH),
+            methode: "La lecture au virage moins la lecture de départ." },
+          { type: "choix", lib: "Le technicien de la veille a-t-il mal lu sa burette ?",
+            options: ["non : on retrouve son volume, à une ou deux gouttes près ; c'est l'indicateur qu'il faut regarder", "oui : il a lu la burette de travers",
+              "oui : son vinaigre était plus dilué que le vôtre", "on ne peut pas le savoir sans son bécher"], bonne: 0,
+            methode: "Comparez votre volume au virage de l'hélianthine à celui du document 2." },
+          { type: "choix", lib: "Sur la courbe du document 4, où est la zone de virage de l'hélianthine ?",
+            options: ["bien avant le saut de pH : elle vire quand le quart de l'acide environ a réagi", "dans le saut de pH, comme la phénolphtaléine",
+              "après le saut de pH, quand la soude est en excès", "elle n'est pas sur la courbe"], bonne: 0,
+            methode: "L'équivalence est au milieu du saut de pH, là où la courbe monte presque à la verticale. Où est la bande rouge ?" },
+          { type: "choix", lib: "Quel indicateur repère l'équivalence de ce titrage ?",
+            options: ["la phénolphtaléine : sa zone de virage est dans le saut de pH", "l'hélianthine : elle vire la première",
+              "n'importe lequel : un indicateur vire toujours à l'équivalence", "aucun : seul un pH-mètre la repère"], bonne: 0,
+            methode: "Un indicateur repère l'équivalence s'il change de couleur pendant le saut de pH." }
+        ],
+        bravo: "Deux titrages qui ne disent pas la même chose, et vous savez pourquoi."
+      },
+      {
+        competence: "COM", titre: "La réponse au responsable",
+        recit: "Le responsable lira trois lignes, pas plus. Elles doivent répondre à sa question, avec un nombre et son unité.",
+        questions: function (ctx) {
+          var D = val(ctx, "deg", M.deg), d = fr(D, 1), oui = D >= 7.6 - 1e-9 && D <= 8.4 + 1e-9;
+          var vraie = oui ? "Oui : le vinaigre est à environ " + d + "°, dans la plage de 7,6 à 8,4° : la livraison est conforme."
+            : "Non : le vinaigre est à environ " + d + "°, hors de la plage de 7,6 à 8,4° : la livraison n'est pas conforme.";
+          var fausse = oui ? "Non : le vinaigre n'est pas à 8°, la livraison est à renvoyer."
+            : "Oui : le vinaigre est bien à 8° à 5 % près, la livraison est conforme.";
+          return [
+            { type: "multi", essais: 2, lib: "Gardez les phrases qui répondent juste au responsable.",
+              options: [vraie, "Le titrage de la veille s'arrêtait au virage de l'hélianthine, bien avant l'équivalence : ses 2° ne valent rien.", fausse,
+                "Le vinaigre contient environ " + d + " mol/L d'acide.", "L'hélianthine et la phénolphtaléine donnent le même résultat, à une goutte près.",
+                "À l'équivalence, l'acide du bécher et la soude versée ont réagi exactement : C<sub>a</sub> × V<sub>a</sub> = C<sub>b</sub> × V<sub>E</sub>."],
+              bonne: [0, 1, 5],
+              methode: "Une réponse dit oui ou non, avec le degré trouvé. Un degré n'est pas une concentration en mol/L." },
+            { type: "choix", lib: "Avant d'envoyer votre réponse, que faudrait-il encore faire ?",
+              options: ["refaire un second titrage à la phénolphtaléine, pour confirmer le premier", "refaire le titrage à l'hélianthine, pour départager",
+                "diluer le vinaigre deux fois moins, pour aller plus vite", "rien : un titrage suffit toujours"], bonne: 0,
+              methode: "Une mesure seule peut cacher un geste raté : un dosage se confirme par un second titrage qui donne le même volume, à une goutte près." }
+          ];
+        },
+        bravo: "Le responsable a sa réponse, son nombre, et la raison de l'erreur de la veille."
+      }
+    ],
+    fin: "La copie est prête : produisez le fichier, il part dans vos téléchargements."
+  });
 })();
 </script>
 <footer class="pied">Simulation hors ligne, sans compte et sans enregistrement. Modèle simplifié : ce qu'il néglige est écrit sous la simulation, et détaillé dans la fiche professeur du TP SIM-16.</footer>
