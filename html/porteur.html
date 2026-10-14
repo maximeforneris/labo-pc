@@ -152,6 +152,96 @@ details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-siz
 .molette-titre{font-size:11px;font-weight:650;fill:var(--encre)}
 .molette-val{font-size:11.5px;font-weight:650;fill:var(--accent);font-family:ui-monospace,Consolas,monospace}
 
+/* Parcours : une simulation menee comme un projet, cinq phases et un livrable (CAP, seconde) */
+.pc-tete{position:sticky;top:0;z-index:5;background:var(--fond);padding:8px 0 10px;margin:-6px 0 12px;
+  border-bottom:1px solid var(--trait2);display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.pc-chemin{list-style:none;margin:0;padding:0;display:flex;align-items:flex-start;gap:0;flex:1 1 420px;min-width:0}
+.pc-chemin li{flex:1 1 0;display:flex;justify-content:center;position:relative}
+.pc-chemin li+li::before{content:"";position:absolute;top:21px;right:calc(50% + 22px);left:calc(-50% + 22px);height:2px;background:var(--trait)}
+.pc-noeud{font:inherit;background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:2px;
+  color:var(--encre2);cursor:pointer;min-width:44px;min-height:44px}
+.pc-noeud:disabled{cursor:default;opacity:.55}
+.pc-rond{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:750;font-size:1.05rem;
+  border:2px solid var(--trait);background:var(--carte);color:var(--encre2);transition:transform .2s,background .2s}
+.pc-comp{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.pc-etoiles{font-size:.78rem;color:var(--tiede);min-height:1.1em;letter-spacing:1px}
+.pc-noeud.pc-fait .pc-rond{background:var(--accent);border-color:var(--accent);color:#fff}
+.pc-noeud.pc-ici .pc-rond{border-color:var(--encre);box-shadow:0 0 0 4px var(--accent-doux);transform:scale(1.06);color:var(--encre)}
+.pc-noeud.pc-fait.pc-ici .pc-rond{color:#fff}
+.pc-noeud.pc-ici .pc-comp{color:var(--encre)}
+.pc-drapeau .pc-rond{font-size:1.15rem}
+.pc-info{display:flex;gap:12px;align-items:center;font-size:.9rem;font-weight:650;color:var(--encre2)}
+.pc-score{color:var(--tiede);font-variant-numeric:tabular-nums}
+.pc-niveau:empty,.pc-temps:empty{display:none}
+.pc-niveau{border:1px solid var(--trait);border-radius:999px;padding:2px 10px;font-size:.8rem}
+.pc-ecran[hidden]{display:none}
+.pc-surtitre{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.pc-phase-tete{margin:4px 0 14px}
+.pc-phase-tete h2{font-size:clamp(1.25rem,3.4vw,1.6rem);font-weight:750}
+.pc-bulle{position:relative;margin:10px 0 0;padding:10px 14px;background:var(--carte);border:1px solid var(--trait2);
+  border-radius:var(--r);border-left:4px solid var(--accent);max-width:70ch;color:var(--encre)}
+.pc-commande .pc-client{font-weight:700;margin:0 0 6px}
+.pc-texte p{margin:0 0 8px}
+.pc-livrable{margin:8px 0 0;padding-top:8px;border-top:1px dashed var(--trait)}
+.pc-illus:empty{display:none}
+.pc-plan{margin:0 0 12px;padding-left:1.2em}
+.pc-plan li{margin:4px 0}
+.pc-choix-niveau{margin:6px 0 14px}
+.pc-partir{min-height:48px;font-size:1rem;padding:10px 18px}
+.pc-questions h2{font-size:1rem}
+.pc-q{border:1px solid var(--trait);border-radius:var(--r);padding:12px;margin-bottom:12px;background:var(--carte2);transition:border-color .2s,background .2s}
+.pc-q[data-etat="juste"]{border-color:var(--juste);background:var(--juste-doux)}
+.pc-q[data-etat="faux"]{border-color:var(--faux)}
+.pc-q[data-etat="passe"]{border-style:dashed;opacity:.85}
+.pc-q-lib{margin:0 0 8px;font-weight:600}
+.pc-q-num{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--encre);color:var(--carte);
+  font-size:.8rem;margin-right:.5em;vertical-align:.1em}
+.pc-q[data-etat="juste"] .pc-q-num{background:var(--juste)}
+.pc-q-champ{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.pc-q-champ input,.pc-remise input{font:inherit;font-size:1.05rem;width:9em;min-height:44px;padding:7px 10px;border-radius:var(--r);
+  border:1px solid var(--trait);background:var(--carte);color:var(--encre)}
+.pc-remise input{width:min(100%,18em)}
+.pc-unite{font-weight:600;color:var(--encre2)}
+.pc-options{display:flex;flex-wrap:wrap;gap:6px}
+.pc-option{font:inherit;font-size:.92rem;font-weight:600;min-height:44px;padding:8px 12px;border-radius:var(--r);
+  border:1px solid var(--trait);background:var(--carte);color:var(--encre);cursor:pointer;text-align:left}
+.pc-option[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.pc-option:disabled{cursor:default}
+.pc-classer{display:flex;flex-direction:column;gap:8px;width:100%}
+.pc-classer-ligne{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--trait2);padding-bottom:6px}
+.pc-classer-item{font-weight:600}
+.pc-aide{margin:0;font-size:.9rem;color:var(--encre2)}
+.pc-retour{margin-top:8px;font-weight:650;min-height:1.4em}
+.pc-retour.juste{color:var(--juste)}
+.pc-retour.faux{color:var(--faux)}
+.pc-retour .methode{font-weight:400;color:var(--encre2)}
+.pc-q-bravo{font-weight:400;color:var(--encre)}
+.pc-q .bouton{min-height:44px}
+.pc-pied{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:flex-end;margin:4px 0 20px}
+.pc-bravo{margin:0;flex:1 1 280px;color:var(--juste);font-weight:650}
+.pc-suite{min-height:48px;font-size:1rem;padding:10px 18px}
+.pc-apercu{width:100%;margin-top:10px;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;border:1px solid var(--trait);
+  border-radius:var(--r);background:var(--carte2);color:var(--encre);padding:8px}
+.pc-recap td,.pc-recap th{text-align:left}
+.pc-score-final{font-size:1.2rem;margin:12px 0 4px;color:var(--tiede)}
+.pc-grade{margin:0;font-weight:650}
+.pc-objet{cursor:grab;touch-action:none}
+.pc-objet:active{cursor:grabbing}
+.pc-cible{fill:var(--accent);fill-opacity:.07;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:5 4}
+@media (max-width:620px){
+  .pc-rond{width:36px;height:36px;font-size:.95rem}
+  .pc-chemin li+li::before{top:18px;right:calc(50% + 19px);left:calc(-50% + 19px)}
+  .pc-comp{font-size:.62rem;letter-spacing:.04em}
+}
+.plan.pc-large{grid-template-columns:minmax(0,2.2fr) minmax(260px,1fr)}
+@media (max-width:820px){.plan.pc-large{grid-template-columns:1fr}}
+/* Pendant le parcours, la page laisse la place a la scene : le chapeau se replie */
+.pc-en-cours .tete{padding-bottom:6px;margin-bottom:6px}
+.pc-en-cours .tete .chapeau{display:none}
+.pc-en-cours .tete h1{font-size:1.3rem;margin:2px 0 0}
+@media print{.pc-tete,.pc-remise,.pc-q .rangee{display:none}}
+
 </style>
 <script>
 /* Simulations des TP · briques communes, inlinees dans l'en-tete de chaque page.
@@ -509,10 +599,20 @@ var Sim = (function () {
       el("label", null, [pastilles[0], el("span", { texte: "Courbe 1, à gauche" }), selects[0]]),
       el("label", null, [pastilles[1], el("span", { texte: "Courbe 2, à droite" }), selects[1]])
     ]));
+    /* Le canevas se dessine a la largeur reelle de son cadre : sur un telephone, les graduations
+       restent lisibles au lieu d'etre reduites de moitie. */
     var larg = 640, haut = 300, cv = el("canvas", { width: larg, height: haut, role: "img", "aria-label": "courbe de l'acquisition" });
-    zone.appendChild(el("div", { classe: "graphe" }, [cv]));
-    var ctx = cv.getContext("2d"), dpr = Math.max(1, window.devicePixelRatio || 1);
-    cv.width = larg * dpr; cv.height = haut * dpr; ctx.scale(dpr, dpr);
+    var cadre = el("div", { classe: "graphe" }, [cv]);
+    zone.appendChild(cadre);
+    var ctx = cv.getContext("2d"), dpr = 1;
+    function dimensionner() {
+      var w = cadre.clientWidth ? Math.round(Math.min(760, Math.max(280, cadre.clientWidth - 2))) : 640, h = Math.round(w < 480 ? w * 0.72 : Math.min(320, w * 0.47)), d = Math.max(1, window.devicePixelRatio || 1);
+      if (w === larg && h === haut && d === dpr && cv.width === Math.round(w * d)) return;
+      larg = w; haut = h; dpr = d; cv.width = Math.round(w * d); cv.height = Math.round(h * d); ctx.setTransform(d, 0, 0, d, 0, 0);
+    }
+    /* redessiner quand le cadre change de taille, y compris quand son onglet devient visible */
+    if (window.ResizeObserver) new ResizeObserver(function () { if (cadre.clientWidth && Math.round(Math.min(760, Math.max(280, cadre.clientWidth - 2))) !== larg) dessinerCourbe(); }).observe(cadre);
+    else window.addEventListener("resize", function () { dessinerCourbe(); });
 
     /* Les voies du tableau */
     var puces = el("div", { classe: "boutons" });
@@ -556,17 +656,19 @@ var Sim = (function () {
       lignes.forEach(function (l) { var y = l[cle]; if (typeof y === "number" && isFinite(y)) { a = Math.min(a, y); b = Math.max(b, y); } });
       if (!isFinite(a)) return null;
       if (b - a < 1e-9) { var d = Math.max(Math.abs(a) * 0.05, 0.5); a -= d; b += d; }
+      var marge = (b - a) * 0.04; a -= marge; b += marge;
       var pas = pasJoli(b - a, 5); return { min: Math.floor(a / pas) * pas, max: Math.ceil(b / pas) * pas, pas: pas };
     }
     function decimales(pas) { return Math.max(0, -Math.floor(Math.log10(pas) + 1e-9)); }
     function dessinerCourbe() {
-      var mg = 58, md = trace[1] ? 58 : 16, mh = 26, mb = 40, w = larg - mg - md, h = haut - mh - mb;
+      dimensionner();
+      var mg = 52, md = trace[1] ? 52 : 14, mh = 26, mb = 38, w = larg - mg - md, h = haut - mh - mb;
       ctx.clearRect(0, 0, larg, haut); ctx.fillStyle = css("--carte"); ctx.fillRect(0, 0, larg, haut);
       ctx.font = "12px system-ui, Segoe UI, Arial, sans-serif";
       var xs = lignes.map(function (l) { return l[TP.cle]; }).filter(function (x) { return typeof x === "number"; });
       var x0 = xs.length ? Math.min.apply(null, xs) : 0, x1 = xs.length ? Math.max.apply(null, xs) : 1;
       if (x1 - x0 < 1e-9) x1 = x0 + 1;
-      var px = pasJoli(x1 - x0, 8); x0 = Math.floor(x0 / px) * px; x1 = Math.ceil(x1 / px) * px;
+      var px = pasJoli(x1 - x0, larg < 480 ? 5 : 8); x0 = Math.floor(x0 / px) * px; x1 = Math.ceil(x1 / px) * px;
       var X = function (x) { return mg + (x - x0) / (x1 - x0) * w; };
       ctx.strokeStyle = css("--trait2"); ctx.lineWidth = 1; ctx.fillStyle = css("--encre2"); ctx.textAlign = "center"; ctx.textBaseline = "top";
       for (var x = x0; x <= x1 + 1e-9; x += px) { ctx.beginPath(); ctx.moveTo(X(x), mh); ctx.lineTo(X(x), mh + h); ctx.stroke(); ctx.fillText(fr(x, decimales(px)), X(x), mh + h + 5); }
@@ -633,7 +735,7 @@ var Sim = (function () {
     }
     function versTexte(sep, decimale) {
       var cs = colonnes(), lignesTxt = [cs.map(function (c) { return c.titre + (c.unite ? " (" + c.unite + ")" : ""); }).join(sep)];
-      lignes.forEach(function (l) { lignesTxt.push(cs.map(function (c) { var x = l[c.cle]; return typeof x === "number" ? x.toFixed(c.dec === undefined ? 2 : c.dec).replace(".", decimale) : (x || ""); }).join(sep)); });
+      lignes.forEach(function (l) { lignesTxt.push(cs.map(function (c) { var x = l[c.cle]; return typeof x === "number" ? (isFinite(x) ? x.toFixed(c.dec === undefined ? 2 : c.dec).replace(".", decimale) : "") : (x || ""); }).join(sep)); });
       return lignesTxt.join("\r\n");
     }
     function dire(t) { retour.textContent = t; setTimeout(function () { if (retour.textContent === t) retour.textContent = ""; }, 4000); }
@@ -772,6 +874,441 @@ var Sim = (function () {
     return { pause: function () { actif = false; }, reprise: function () { actif = true; avant = null; }, actif: function () { return actif; } };
   }
 
+  /* ═══════════ PARCOURS · une simulation menee comme un projet ═══════════
+     Demande du 13 octobre 2026, pour le CAP et la seconde : un parcours ludique d'une heure sur
+     tablette plutot qu'un amas de donnees, et qui finit par un fichier texte corrige tout seul.
+     Cinq phases, une par competence de la grille nationale (APP, ANA, REA, VAL, COM), comme les
+     phases d'un projet : la commande, le plan, la realisation, le controle, le livrable.
+     LE FICHIER : le format des bilans du kit web (« BILAN DE SEQUENCE », un bloc SERIE par phase,
+     chaque question une case juste ou faux), que _commun/notation/NOTER-LES-BILANS.html note tout
+     seul. Le titre de chaque bloc porte sa competence entre crochets, [APP]... : l'outil l'y lit et
+     rattache le bloc sans reglage.
+     LA NOTE D'UNE QUESTION : juste si elle l'est au premier essai, ou au deuxieme pour un nombre, un
+     tri ou une manipulation (« essais » pour en decider autrement). On peut toujours reessayer pour avancer ; au troisieme echec,
+     « Continuer » la laisse fausse. La page dit juste ou pas encore, puis la methode : jamais la
+     valeur attendue.
+     Rien n'est enregistre ni envoye : le fichier se fabrique dans le navigateur (Blob).
+     CROCHETS DE LA SCENE : q.apres(ctx, true, reponse) quand une question devient juste ;
+     q.fini(ctx, juste, reponse) quand elle se ferme, juste ou passee ; pour un nombre, la valeur lue
+     suit en quatrieme argument. recit et consigne d'une phase peuvent etre des fonctions de ctx, pour
+     varier avec ctx.niveau(). « large: true » sur une phase donne plus de place a la scene. */
+  var COMPETENCES = {
+    APP: "S'approprier", ANA: "Analyser", REA: "Réaliser", VAL: "Valider", COM: "Communiquer"
+  };
+  function texteSeul(html) {
+    var d = document.createElement("div"); d.innerHTML = html || "";
+    return (d.textContent || "").replace(/\s+/g, " ").trim();
+  }
+  function parcours(parent, o) {
+    var niveaux = o.niveaux || ["CAP", "Seconde"];
+    var etat = { niveau: niveaux.length === 1 ? niveaux[0] : null, debut: null, courante: -1, ouverte: -1,
+      fiches: [], construites: [], exporte: false };
+    var donnees = {};                                    // partage entre les phases d'un parcours
+    var racine = el("div", { classe: "pc" });
+    $(parent).appendChild(racine);
+
+    /* ---- la tete : chemin des phases, etoiles, temps ---- */
+    var tete = el("div", { classe: "pc-tete" });
+    var chemin = el("ol", { classe: "pc-chemin", "aria-label": "Les phases du projet" });
+    var noeuds = o.phases.map(function (ph, i) {
+      var b = el("button", { type: "button", classe: "pc-noeud", disabled: "disabled",
+        "aria-label": "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] },
+        [el("span", { classe: "pc-rond", texte: String(i + 1) }),
+         el("span", { classe: "pc-comp", texte: ph.competence }),
+         el("span", { classe: "pc-etoiles", "aria-hidden": "true" })]);
+      b.addEventListener("click", function () { montrer(i); });
+      chemin.appendChild(el("li", null, [b]));
+      return b;
+    });
+    var drapeau = el("button", { type: "button", classe: "pc-noeud pc-drapeau", disabled: "disabled", "aria-label": "Le livrable" },
+      [el("span", { classe: "pc-rond", html: "&#9873;" }), el("span", { classe: "pc-comp", texte: "Livrable" }), el("span", { classe: "pc-etoiles" })]);
+    drapeau.addEventListener("click", function () { montrer(o.phases.length); });
+    chemin.appendChild(el("li", null, [drapeau]));
+    var info = el("div", { classe: "pc-info" });
+    var score = el("span", { classe: "pc-score" });
+    var temps = el("span", { classe: "pc-temps" });
+    var niv = el("span", { classe: "pc-niveau" });
+    info.appendChild(niv); info.appendChild(score); info.appendChild(temps);
+    tete.appendChild(chemin); tete.appendChild(info);
+    racine.appendChild(tete);
+
+    /* ---- l'ecran de la commande ---- */
+    var accueil = el("section", { classe: "pc-ecran pc-accueil" });
+    var c = o.commande || {};
+    var carteCmd = el("div", { classe: "carte pc-commande" }, [
+      el("div", { classe: "pc-surtitre", texte: "La commande" }),
+      c.client ? el("p", { classe: "pc-client", html: c.client }) : null,
+      el("div", { classe: "pc-texte", html: c.texte || "" }),
+      c.livrable ? el("p", { classe: "pc-livrable", html: "<b>Le livrable :</b> " + c.livrable }) : null
+    ]);
+    var illus = el("div", { classe: "scene pc-illus" });
+    if (c.illustration) c.illustration(illus);
+    var etapes = el("ol", { classe: "pc-plan" });
+    o.phases.forEach(function (ph, i) {
+      etapes.appendChild(el("li", null, [el("b", { texte: "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] + " — " }),
+        el("span", { html: ph.titre })]));
+    });
+    var choixNiv = el("div", { classe: "pc-choix-niveau" });
+    var partir = el("button", { type: "button", classe: "bouton principal pc-partir", texte: "Accepter la mission" });
+    if (niveaux.length > 1) {
+      choixNiv.appendChild(el("p", { classe: "pc-surtitre", texte: "Ma classe" }));
+      var rang = el("div", { classe: "rangee" });
+      niveaux.forEach(function (n) {
+        var b = el("button", { type: "button", classe: "bouton", "aria-pressed": "false", texte: n });
+        b.addEventListener("click", function () {
+          etat.niveau = n;
+          [].forEach.call(rang.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+          partir.disabled = false;
+        });
+        rang.appendChild(b);
+      });
+      choixNiv.appendChild(rang);
+      partir.disabled = true;
+    }
+    partir.addEventListener("click", function () {
+      if (!etat.niveau) return;
+      etat.debut = Date.now();
+      niv.textContent = etat.niveau;
+      document.body.classList.add("pc-en-cours");
+      ouvrir(0);
+    });
+    accueil.appendChild(el("div", { classe: "plan pc-plan-accueil" }, [
+      el("div", null, [carteCmd, illus]),
+      el("div", { classe: "carte" }, [el("h2", { texte: "Le projet en cinq phases" }), etapes,
+        el("p", { classe: "consigne", html: "Une heure en tout. Chaque phase se débloque quand la précédente est finie ; " +
+          "on peut revenir voir les phases faites. À la fin, vous produisez un <b>fichier</b> à remettre au professeur." }),
+        choixNiv, partir])
+    ]));
+    racine.appendChild(accueil);
+
+    /* ---- une phase ---- */
+    var ecrans = o.phases.map(function (ph, i) {
+      var s = el("section", { classe: "pc-ecran", hidden: "hidden" });
+      racine.appendChild(s);
+      return s;
+    });
+    var final = el("section", { classe: "pc-ecran", hidden: "hidden" });
+    racine.appendChild(final);
+
+    function questionsDe(i) {
+      var ph = o.phases[i];
+      var qs = typeof ph.questions === "function" ? ph.questions(ctx) : (ph.questions || []);
+      return qs.filter(function (q) { return !q.niveau || q.niveau === etat.niveau; });
+    }
+
+    var ctx = { donnees: donnees, niveau: function () { return etat.niveau; },
+      fr: fr, lire: lire, mesure: mesure, gauss: gauss, svg: svg, el: el, borne: borne, animer: animer };
+
+    /* un recit ou une consigne peut dependre du niveau : une fonction de ctx */
+    function selon(x) { return typeof x === "function" ? x(ctx) : x; }
+
+    function construire(i) {
+      if (etat.construites[i]) return;
+      etat.construites[i] = true;
+      var ph = o.phases[i], s = ecrans[i];
+      s.appendChild(el("div", { classe: "pc-phase-tete" }, [
+        el("div", { classe: "pc-surtitre", texte: "Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] }),
+        el("h2", { html: ph.titre }),
+        ph.recit ? el("p", { classe: "pc-bulle", html: selon(ph.recit) }) : null
+      ]));
+      var zone = el("div", { classe: "carte pc-scene" });
+      if (ph.consigne) zone.appendChild(el("p", { classe: "consigne", html: selon(ph.consigne) }));
+      var colQ = el("div", { classe: "carte pc-questions" }, [el("h2", { texte: "À trouver" })]);
+      s.appendChild(el("div", { classe: "plan" + (ph.large ? " pc-large" : "") }, [zone, colQ]));
+      if (ph.scene) ph.scene(zone, ctx);
+      var qs = questionsDe(i);
+      etat.fiches[i] = qs.map(function (q, j) { return poserQuestion(colQ, q, i, j); });
+      var bravo = el("p", { classe: "pc-bravo", hidden: "hidden", html: ph.bravo || "" });
+      var suite = el("button", { type: "button", classe: "bouton principal pc-suite", disabled: "disabled",
+        texte: i + 1 < o.phases.length ? "Phase suivante" : "Le livrable" });
+      suite.addEventListener("click", function () { ouvrir(i + 1); });
+      s.appendChild(el("div", { classe: "pc-pied" }, [bravo, suite]));
+      etat.fiches[i].pied = { bravo: bravo, suite: suite };
+      majPhase(i);
+    }
+
+    /* une question : son interface, ses essais, sa note */
+    function poserQuestion(parentQ, q, i, j) {
+      var f = { q: q, essais: 0, juste: false, fini: false, passe: false, reponse: "", note: false };
+      var maxNote = q.essais || ((q.type === "nombre" || q.type === "action" || q.type === "classer") ? 2 : 1);
+      var bloc = el("div", { classe: "pc-q", "data-etat": "a-faire" });
+      bloc.appendChild(el("p", { classe: "pc-q-lib", html: "<span class=\"pc-q-num\">" + (j + 1) + "</span>" + q.lib }));
+      var champ = el("div", { classe: "pc-q-champ" });
+      var lireReponse, verifierOk, controles = [];
+      if (q.type === "nombre") {
+        var inp = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", "aria-label": texteSeul(q.lib) });
+        champ.appendChild(inp); if (q.unite) champ.appendChild(el("span", { classe: "pc-unite", html: q.unite }));
+        controles.push(inp);
+        inp.addEventListener("keydown", function (e) { if (e.key === "Enter") verifier(); });
+        lireReponse = function () { var v = lire(inp.value); return isFinite(v) ? fr(v, q.dec === undefined ? decimalesDe(inp.value) : q.dec) + (q.unite ? " " + texteSeul(q.unite) : "") : ""; };
+        verifierOk = function () {
+          var v = lire(inp.value); if (!isFinite(v)) return null;
+          f.valeur = v;
+          var a = typeof q.attendu === "function" ? q.attendu(ctx) : q.attendu;
+          var tol = q.tolerance === undefined ? 0.05 : q.tolerance;
+          return Math.abs(v - a) <= Math.abs(a) * tol + (q.toleranceAbsolue || 0);
+        };
+      } else if (q.type === "choix" || q.type === "multi") {
+        var multi = q.type === "multi", choisis = [];
+        var rang = el("div", { classe: "pc-options" });
+        q.options.forEach(function (op, k) {
+          var b = el("button", { type: "button", classe: "pc-option", "aria-pressed": "false", html: op });
+          b.addEventListener("click", function () {
+            if (f.fini) return;
+            if (multi) { var p = choisis.indexOf(k); if (p < 0) choisis.push(k); else choisis.splice(p, 1); }
+            else choisis = [k];
+            [].forEach.call(rang.children, function (x, m) { x.setAttribute("aria-pressed", choisis.indexOf(m) >= 0 ? "true" : "false"); });
+          });
+          rang.appendChild(b); controles.push(b);
+        });
+        champ.appendChild(rang);
+        lireReponse = function () { return choisis.slice().sort().map(function (k) { return texteSeul(q.options[k]); }).join(" + "); };
+        verifierOk = function () {
+          if (!choisis.length) return null;
+          var bon = typeof q.bonne === "function" ? q.bonne(ctx) : q.bonne;
+          bon = [].concat(bon).slice().sort().join(",");
+          return choisis.slice().sort().join(",") === bon;
+        };
+      } else if (q.type === "classer") {
+        var places = q.items.map(function () { return -1; });
+        var grille = el("div", { classe: "pc-classer" });
+        q.items.forEach(function (it, k) {
+          var ligne = el("div", { classe: "pc-classer-ligne" }, [el("span", { classe: "pc-classer-item", html: it })]);
+          var cats = el("div", { classe: "pc-options" });
+          q.categories.forEach(function (cat, m) {
+            var b = el("button", { type: "button", classe: "pc-option", "aria-pressed": "false", html: cat });
+            b.addEventListener("click", function () {
+              if (f.fini) return;
+              places[k] = m;
+              [].forEach.call(cats.children, function (x, n) { x.setAttribute("aria-pressed", n === m ? "true" : "false"); });
+            });
+            cats.appendChild(b); controles.push(b);
+          });
+          ligne.appendChild(cats); grille.appendChild(ligne);
+        });
+        champ.appendChild(grille);
+        lireReponse = function () { return q.items.map(function (it, k) { return texteSeul(it) + " → " + (places[k] < 0 ? "?" : texteSeul(q.categories[places[k]])); }).join(" ; "); };
+        verifierOk = function () {
+          if (places.indexOf(-1) >= 0) return null;
+          var bonnes = typeof q.bonnes === "function" ? q.bonnes(ctx) : q.bonnes;   // selon le tirage, au besoin
+          var n = 0; places.forEach(function (p, k) { if (p === bonnes[k]) n++; });
+          f.bienPlaces = n;
+          return n === q.items.length;
+        };
+      } else {                                              // « action » : la scene est la reponse
+        if (q.aide) champ.appendChild(el("p", { classe: "pc-aide", html: q.aide }));
+        lireReponse = function () { var r = q.verifier(ctx); return r && r.reponse ? r.reponse : ""; };
+        verifierOk = function () { var r = q.verifier(ctx); return r ? !!r.ok : null; };
+      }
+      var bVerif = el("button", { type: "button", classe: "bouton principal", texte: "Vérifier" });
+      var bPasser = el("button", { type: "button", classe: "bouton", hidden: "hidden", texte: "Continuer sans trouver" });
+      var retour = el("div", { classe: "pc-retour", "aria-live": "polite" });
+      bloc.appendChild(champ);
+      bloc.appendChild(el("div", { classe: "rangee" }, [bVerif, bPasser]));
+      bloc.appendChild(retour);
+      parentQ.appendChild(bloc);
+
+      function clore() {
+        f.fini = true; bVerif.disabled = true; bPasser.hidden = true;
+        controles.forEach(function (x) { x.disabled = true; });
+        majPhase(i); majTete();
+        /* « fini » previent la scene a la cloture, juste ou passee ; « apres », seulement si juste */
+        if (q.fini) q.fini(ctx, f.juste, f.reponse, f.valeur);
+      }
+      function verifier() {
+        if (f.fini) return;
+        var ok = verifierOk();
+        if (ok === null) { retour.className = "pc-retour"; retour.textContent = q.type === "nombre" ? "Écrivez un nombre." : (q.type === "action" ? "Faites d'abord la manipulation." : "Choisissez d'abord."); return; }
+        f.essais++;
+        f.reponse = lireReponse();
+        if (ok) {
+          f.juste = true; f.note = f.essais <= maxNote;
+          bloc.setAttribute("data-etat", "juste");
+          retour.className = "pc-retour juste";
+          retour.innerHTML = "Juste." + (q.bravo ? " <span class=\"pc-q-bravo\">" + q.bravo + "</span>" : "");
+          if (q.apres) q.apres(ctx, true, f.reponse, f.valeur);
+          clore();
+          return;
+        }
+        bloc.setAttribute("data-etat", "faux");
+        retour.className = "pc-retour faux";
+        var compte = q.type === "classer" && f.bienPlaces !== undefined ? " " + f.bienPlaces + " sur " + q.items.length + " bien placés." : "";
+        retour.innerHTML = "Pas encore." + compte + (f.essais >= 2 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : " Encore un essai.");
+        if (f.essais >= 3) bPasser.hidden = false;
+      }
+      bVerif.addEventListener("click", verifier);
+      bPasser.addEventListener("click", function () {
+        f.passe = true; f.note = false;
+        bloc.setAttribute("data-etat", "passe");
+        retour.className = "pc-retour"; retour.innerHTML = "On continue. <span class=\"methode\">" + (q.methode || "") + "</span>";
+        clore();
+      });
+      return f;
+    }
+    function decimalesDe(txt) { var m = String(txt).replace(",", ".").match(/\.(\d+)/); return m ? Math.min(m[1].length, 4) : 0; }
+
+    function etoilesDe(i) {
+      var fs = etat.fiches[i]; if (!fs || !fs.length) return 0;
+      if (fs.some(function (f) { return !f.fini; })) return 0;
+      var n = fs.filter(function (f) { return f.note; }).length;
+      return n === fs.length ? 3 : n >= fs.length * 0.6 ? 2 : 1;
+    }
+    function majPhase(i) {
+      var fs = etat.fiches[i]; if (!fs || !fs.pied) return;
+      var finie = fs.every(function (f) { return f.fini; });
+      fs.pied.suite.disabled = !finie;
+      fs.pied.bravo.hidden = !finie || !o.phases[i].bravo;
+      if (finie && etat.ouverte === i) etat.ouverte = i + 1;
+      majChemin();
+    }
+    function majChemin() {
+      noeuds.forEach(function (b, i) {
+        var dispo = etat.debut && i <= Math.max(etat.ouverte, etat.courante);
+        if (dispo) b.removeAttribute("disabled"); else b.setAttribute("disabled", "disabled");
+        var e = etoilesDe(i);
+        b.querySelector(".pc-etoiles").textContent = e ? "★★★".slice(0, e) + "☆☆☆".slice(0, 3 - e) : "";
+        b.classList.toggle("pc-fait", e > 0);
+        b.classList.toggle("pc-ici", etat.courante === i);
+      });
+      var tout = o.phases.every(function (ph, i) { return etoilesDe(i) > 0; });
+      if (tout) drapeau.removeAttribute("disabled");
+      drapeau.classList.toggle("pc-ici", etat.courante === o.phases.length);
+      drapeau.classList.toggle("pc-fait", etat.exporte);
+    }
+    function totalEtoiles() { var s = 0; o.phases.forEach(function (ph, i) { s += etoilesDe(i); }); return s; }
+    function minutes() { return etat.debut ? Math.floor((Date.now() - etat.debut) / 60000) : 0; }
+    function majTete() {
+      score.textContent = "★ " + totalEtoiles() + " / " + (3 * o.phases.length);
+      temps.textContent = etat.debut ? minutes() + " min" : "";
+    }
+    setInterval(majTete, 15000);
+
+    function ouvrir(i) {
+      if (i > etat.ouverte) etat.ouverte = i;
+      montrer(i);
+    }
+    function montrer(i) {
+      etat.courante = i;
+      accueil.hidden = true;
+      ecrans.forEach(function (s, k) { s.hidden = k !== i; });
+      final.hidden = i !== o.phases.length;
+      if (i < o.phases.length) construire(i); else construireFinal();
+      majChemin(); majTete();
+      if (o.surPhase) o.surPhase(i, ctx);
+      racine.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+
+    /* ---- le livrable : recapitulatif et fichier ---- */
+    var finalFait = false, recap, apercu;
+    function construireFinal() {
+      if (!finalFait) {
+        finalFait = true;
+        final.appendChild(el("div", { classe: "pc-phase-tete" }, [el("div", { classe: "pc-surtitre", texte: "Le livrable" }),
+          el("h2", { html: o.livrableTitre || "Le projet est fini" }), o.fin ? el("p", { classe: "pc-bulle", html: o.fin }) : null]));
+        recap = el("div", { classe: "carte" });
+        var remise = el("div", { classe: "carte pc-remise" });
+        remise.appendChild(el("h2", { texte: "Mon fichier pour le professeur" }));
+        remise.appendChild(el("p", { classe: "consigne", html: "Tapez l’<b>identifiant donné en classe</b>, puis produisez le fichier. " +
+          "Il se fabrique <b>dans cette page</b> : rien n’est envoyé, rien n’est enregistré. Il part dans vos téléchargements, et c’est vous qui le remettez." }));
+        var ident = el("input", { type: "text", autocomplete: "off", "aria-label": "Identifiant", placeholder: "identifiant donné en classe" });
+        var bProd = el("button", { type: "button", classe: "bouton principal", texte: "Produire mon fichier" });
+        var bVoir = el("button", { type: "button", classe: "bouton", texte: "Afficher le texte" });
+        var dit = el("p", { classe: "pc-retour", "aria-live": "polite" });
+        apercu = el("textarea", { classe: "pc-apercu", readonly: "readonly", rows: "10", hidden: "hidden", "aria-label": "Le texte du fichier" });
+        remise.appendChild(el("div", { classe: "pc-q-champ" }, [ident]));
+        remise.appendChild(el("div", { classe: "rangee" }, [bProd, bVoir]));
+        remise.appendChild(dit); remise.appendChild(apercu);
+        bProd.addEventListener("click", function () {
+          var id = ident.value.trim();
+          if (!id) { dit.className = "pc-retour faux"; dit.textContent = "Tapez d’abord l’identifiant donné en classe."; return; }
+          var txt = fabriquer(id);
+          var nom = "bilan-" + nettoie(id) + "-" + nettoie(o.code || "parcours") + ".txt";
+          try {
+            var url = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
+            var a = el("a", { href: url, download: nom }); document.body.appendChild(a); a.click();
+            setTimeout(function () { URL.revokeObjectURL(url); a.parentNode.removeChild(a); }, 1500);
+            etat.exporte = true; majChemin();
+            dit.className = "pc-retour juste";
+            dit.textContent = "Fichier produit : " + nom + ". S’il n’apparaît pas, « Afficher le texte » permet de le copier.";
+          } catch (e) {
+            dit.className = "pc-retour faux"; dit.textContent = "Le téléchargement est bloqué ici : affichez le texte et copiez-le.";
+          }
+        });
+        bVoir.addEventListener("click", function () {
+          var id = ident.value.trim() || "(identifiant à taper)";
+          apercu.value = fabriquer(id); apercu.hidden = false; apercu.focus(); apercu.select();
+        });
+        var simpl = null;
+        if (o.simplifie && o.simplifie.length) {
+          simpl = el("details", { classe: "modele carte" }, [el("summary", { texte: "Ce que la simulation simplifie" }),
+            el("ul", null, o.simplifie.map(function (t) { return el("li", { html: t }); }))]);
+        }
+        final.appendChild(el("div", { classe: "plan" }, [recap, el("div", null, [remise, simpl])]));
+      }
+      recap.innerHTML = "";
+      recap.appendChild(el("h2", { texte: "Le bilan du projet" }));
+      var t = el("table", { classe: "releve pc-recap" });
+      t.appendChild(el("tr", null, [el("th", { texte: "Phase" }), el("th", { texte: "Compétence" }), el("th", { texte: "Réussi du premier coup" }), el("th", { texte: "Étoiles" })]));
+      o.phases.forEach(function (ph, i) {
+        var fs = etat.fiches[i] || [];
+        var n = fs.filter(function (f) { return f.note; }).length, e = etoilesDe(i);
+        t.appendChild(el("tr", null, [el("td", { texte: String(i + 1) }), el("td", { texte: COMPETENCES[ph.competence] }),
+          el("td", { texte: n + " sur " + fs.length }), el("td", { texte: e ? "★★★".slice(0, e) + "☆☆☆".slice(0, 3 - e) : "—" })]));
+      });
+      recap.appendChild(t);
+      recap.appendChild(el("p", { classe: "pc-score-final", html: "<b>★ " + totalEtoiles() + " / " + 3 * o.phases.length + "</b> · " + minutes() + " min" }));
+      if (o.grades) {
+        var g = o.grades.filter(function (x) { return totalEtoiles() >= x[0]; }).pop();
+        if (g) recap.appendChild(el("p", { classe: "pc-grade", html: g[1] }));
+      }
+    }
+    function nettoie(s) {
+      return (s.normalize ? s.normalize("NFD").replace(/[̀-ͯ]/g, "") : s)
+        .replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "sans-identifiant";
+    }
+    function fabriquer(id) {
+      var d = new Date(), deux = function (n) { return (n < 10 ? "0" : "") + n; };
+      var out = ["BILAN DE SÉQUENCE",
+        "Page       : Parcours " + (o.code ? o.code + " · " : "") + texteSeul(o.titre) + " · " + etat.niveau,
+        "Identifiant: " + id,
+        "Date       : " + deux(d.getDate()) + "/" + deux(d.getMonth() + 1) + "/" + d.getFullYear() + " à " + deux(d.getHours()) + "h" + deux(d.getMinutes()),
+        "Bilan      : " + totalEtoiles() + " étoiles sur " + 3 * o.phases.length + ", en " + minutes() + " min",
+        new Array(64).join("="), ""];
+      o.phases.forEach(function (ph, i) {
+        out.push("SÉRIE — [" + ph.competence + "] Phase " + (i + 1) + " · " + COMPETENCES[ph.competence] + " : " + texteSeul(ph.titre), "");
+        var fs = etat.fiches[i];
+        var qs = fs ? fs.map(function (f) { return f.q; }) : questionsDe(i);
+        qs.forEach(function (q, j) {
+          var f = fs && fs[j];
+          var etatCase, rep;
+          if (!f || !f.fini) { etatCase = "non vérifié"; rep = "(non faite)"; }
+          else {
+            etatCase = f.note ? "juste" : "faux";
+            var det = f.passe ? "passée après " + f.essais + " essais" : (f.essais === 1 ? "juste au 1er essai" : "trouvée au " + f.essais + "e essai");
+            rep = (f.reponse || "(vide)") + " — " + det;
+          }
+          out.push("  " + (j + 1) + ". " + texteSeul(q.lib));
+          out.push("     réponse : " + rep + "   [" + etatCase + "]");
+        });
+        out.push("");
+      });
+      out.push(new Array(64).join("-"));
+      out.push("Fichier produit dans le navigateur de l'élève.");
+      out.push("Rien n'a été envoyé, rien n'a été enregistré ailleurs.");
+      return out.join("\r\n");
+    }
+
+    window.addEventListener("beforeunload", function (e) {
+      if (etat.debut && !etat.exporte) { e.preventDefault(); e.returnValue = ""; }
+    });
+    majTete();
+    /* la porte d'essai : etat interne et fichier, pour les controles */
+    return { etat: etat, donnees: donnees, ouvrir: ouvrir, fabriquer: fabriquer, fiches: function () { return etat.fiches; },
+      choisirNiveau: function (n) { etat.niveau = n; niv.textContent = n; }, demarrer: function (n) {
+        etat.niveau = n || etat.niveau || niveaux[0]; niv.textContent = etat.niveau; etat.debut = Date.now();
+        document.body.classList.add("pc-en-cours"); ouvrir(0); } };
+  }
+
   /* Petit utilitaire SVG. */
   var NS = "http://www.w3.org/2000/svg";
   function svg(tag, attrs, parent) {
@@ -783,7 +1320,7 @@ var Sim = (function () {
 
   return { fr: fr, lire: lire, el: el, $: $, borne: borne, mesure: mesure, gauss: gauss, onglets: onglets, curseur: curseur, choix: choix,
     afficheur: afficheur, graphe: graphe, releve: releve, enregistreur: enregistreur, centrale: centrale, molette: molette,
-    defi: defi, animer: animer, avancer: avancer, svg: svg };
+    defi: defi, animer: animer, avancer: avancer, svg: svg, parcours: parcours };
 })();
 
 </script>
