@@ -222,6 +222,7 @@ details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-siz
 .pc-pied{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:flex-end;margin:4px 0 20px}
 .pc-bravo{margin:0;flex:1 1 280px;color:var(--juste);font-weight:650}
 .pc-suite{min-height:48px;font-size:1rem;padding:10px 18px}
+.pc-vers-fin{min-height:44px;margin-right:auto;color:var(--encre2)}
 .pc-apercu{width:100%;margin-top:10px;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;border:1px solid var(--trait);
   border-radius:var(--r);background:var(--carte2);color:var(--encre);padding:8px}
 .pc-recap td,.pc-recap th{text-align:left}
@@ -888,6 +889,10 @@ var Sim = (function () {
      tri ou une manipulation (« essais » pour en decider autrement). On peut toujours reessayer pour avancer ; au troisieme echec,
      « Continuer » la laisse fausse. La page dit juste ou pas encore, puis la methode : jamais la
      valeur attendue.
+     PERSONNE NE RESTE BLOQUE (14 octobre 2026, remarque du professeur a l'essai) : « Continuer »
+     apparait aussi au troisieme appui sur « Verifier » quand la manipulation n'est pas faite, et
+     le livrable s'ouvre a tout moment, depuis le chemin ou le bouton de chaque phase. Le fichier se
+     produit inacheve : ce qui reste y compte comme non reussi.
      Rien n'est enregistre ni envoye : le fichier se fabrique dans le navigateur (Blob).
      CROCHETS DE LA SCENE : q.apres(ctx, true, reponse) quand une question devient juste ;
      q.fini(ctx, juste, reponse) quand elle se ferme, juste ou passee ; pour un nombre, la valeur lue
@@ -1023,7 +1028,12 @@ var Sim = (function () {
       var suite = el("button", { type: "button", classe: "bouton principal pc-suite", disabled: "disabled",
         texte: i + 1 < o.phases.length ? "Phase suivante" : "Le livrable" });
       suite.addEventListener("click", function () { ouvrir(i + 1); });
-      s.appendChild(el("div", { classe: "pc-pied" }, [bravo, suite]));
+      var versFin = null;
+      if (i + 1 < o.phases.length) {
+        versFin = el("button", { type: "button", classe: "bouton pc-vers-fin", texte: "Aller au livrable" });
+        versFin.addEventListener("click", function () { montrer(o.phases.length); });
+      }
+      s.appendChild(el("div", { classe: "pc-pied" }, [versFin, bravo, suite]));
       etat.fiches[i].pied = { bravo: bravo, suite: suite };
       majPhase(i);
     }
@@ -1119,7 +1129,14 @@ var Sim = (function () {
       function verifier() {
         if (f.fini) return;
         var ok = verifierOk();
-        if (ok === null) { retour.className = "pc-retour"; retour.textContent = q.type === "nombre" ? "Écrivez un nombre." : (q.type === "action" ? "Faites d'abord la manipulation." : "Choisissez d'abord."); return; }
+        f.appuis = (f.appuis || 0) + 1;
+        if (ok === null) {
+          retour.className = "pc-retour";
+          retour.innerHTML = (q.type === "nombre" ? "Écrivez un nombre." : (q.type === "action" ? "Faites d'abord la manipulation." : "Choisissez d'abord.")) +
+            (f.appuis >= 3 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : "");
+          if (f.appuis >= 3) bPasser.hidden = false;          // personne ne reste bloque : on peut continuer
+          return;
+        }
         f.essais++;
         f.reponse = lireReponse();
         if (ok) {
@@ -1135,11 +1152,12 @@ var Sim = (function () {
         retour.className = "pc-retour faux";
         var compte = q.type === "classer" && f.bienPlaces !== undefined ? " " + f.bienPlaces + " sur " + q.items.length + " bien placés." : "";
         retour.innerHTML = "Pas encore." + compte + (f.essais >= 2 && q.methode ? " <span class=\"methode\">" + q.methode + "</span>" : " Encore un essai.");
-        if (f.essais >= 3) bPasser.hidden = false;
+        if (f.essais >= 3 || f.appuis >= 3) bPasser.hidden = false;
       }
       bVerif.addEventListener("click", verifier);
       bPasser.addEventListener("click", function () {
         f.passe = true; f.note = false;
+        if (!f.reponse) f.reponse = q.type === "action" ? "(manipulation non faite)" : "(sans réponse)";
         bloc.setAttribute("data-etat", "passe");
         retour.className = "pc-retour"; retour.innerHTML = "On continue. <span class=\"methode\">" + (q.methode || "") + "</span>";
         clore();
@@ -1171,8 +1189,7 @@ var Sim = (function () {
         b.classList.toggle("pc-fait", e > 0);
         b.classList.toggle("pc-ici", etat.courante === i);
       });
-      var tout = o.phases.every(function (ph, i) { return etoilesDe(i) > 0; });
-      if (tout) drapeau.removeAttribute("disabled");
+      if (etat.debut) drapeau.removeAttribute("disabled");   // le livrable s'ouvre a tout moment
       drapeau.classList.toggle("pc-ici", etat.courante === o.phases.length);
       drapeau.classList.toggle("pc-fait", etat.exporte);
     }
@@ -1200,12 +1217,12 @@ var Sim = (function () {
     }
 
     /* ---- le livrable : recapitulatif et fichier ---- */
-    var finalFait = false, recap, apercu;
+    var finalFait = false, recap, apercu, titreFin, bulleFin;
     function construireFinal() {
       if (!finalFait) {
         finalFait = true;
-        final.appendChild(el("div", { classe: "pc-phase-tete" }, [el("div", { classe: "pc-surtitre", texte: "Le livrable" }),
-          el("h2", { html: o.livrableTitre || "Le projet est fini" }), o.fin ? el("p", { classe: "pc-bulle", html: o.fin }) : null]));
+        titreFin = el("h2"); bulleFin = el("p", { classe: "pc-bulle" });
+        final.appendChild(el("div", { classe: "pc-phase-tete" }, [el("div", { classe: "pc-surtitre", texte: "Le livrable" }), titreFin, bulleFin]));
         recap = el("div", { classe: "carte" });
         var remise = el("div", { classe: "carte pc-remise" });
         remise.appendChild(el("h2", { texte: "Mon fichier pour le professeur" }));
@@ -1246,6 +1263,18 @@ var Sim = (function () {
         }
         final.appendChild(el("div", { classe: "plan" }, [recap, el("div", null, [remise, simpl])]));
       }
+      /* le livrable se produit meme inacheve : ce qui reste compte comme non reussi */
+      var restent = 0;
+      o.phases.forEach(function (ph, i) {
+        var fs = etat.fiches[i];
+        restent += fs ? fs.filter(function (f) { return !f.fini; }).length : questionsDe(i).length;
+      });
+      titreFin.innerHTML = restent ? "Le projet n’est pas fini" : (o.livrableTitre || "Le projet est fini");
+      bulleFin.innerHTML = restent
+        ? "Il reste <b>" + restent + " question" + (restent > 1 ? "s" : "") + "</b> sans réponse. Vous pouvez y revenir par le chemin, en haut, " +
+          "ou produire votre fichier tel quel : " + (restent > 1 ? "elles compteront" : "elle comptera") + " comme non réussie" + (restent > 1 ? "s" : "") + "."
+        : (o.fin || "");
+      bulleFin.hidden = !bulleFin.innerHTML;
       recap.innerHTML = "";
       recap.appendChild(el("h2", { texte: "Le bilan du projet" }));
       var t = el("table", { classe: "releve pc-recap" });
@@ -1285,8 +1314,9 @@ var Sim = (function () {
           if (!f || !f.fini) { etatCase = "non vérifié"; rep = "(non faite)"; }
           else {
             etatCase = f.note ? "juste" : "faux";
-            var det = f.passe ? "passée après " + f.essais + " essais" : (f.essais === 1 ? "juste au 1er essai" : "trouvée au " + f.essais + "e essai");
-            rep = (f.reponse || "(vide)") + " — " + det;
+            var det = f.passe ? (f.essais ? "passée après " + f.essais + " essai" + (f.essais > 1 ? "s" : "") : "passée sans réponse")
+              : (f.essais === 1 ? "juste au 1er essai" : "trouvée au " + f.essais + "e essai");
+            rep = f.passe && !f.essais ? det : (f.reponse || "(vide)") + " — " + det;
           }
           out.push("  " + (j + 1) + ". " + texteSeul(q.lib));
           out.push("     réponse : " + rep + "   [" + etatCase + "]");
