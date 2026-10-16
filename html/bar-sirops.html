@@ -1870,11 +1870,14 @@ var Sim = (function () {
           f.valeur = v;
           var a = typeof q.attendu === "function" ? q.attendu(ctx) : q.attendu;
           if (!isFinite(a)) return "attente";               // elle repose sur une mesure, ou une reponse, d'une autre partie
-          var tol = q.tolerance === undefined ? 0.05 : q.tolerance;
+          // tolerance et toleranceAbsolue peuvent dependre du niveau : fonctions de ctx (16 octobre 2026,
+          // le bar a sirops plus tolerant en CAP qu'en seconde)
+          var tol = typeof q.tolerance === "function" ? q.tolerance(ctx) : q.tolerance === undefined ? 0.05 : q.tolerance;
+          var tolAbs = typeof q.toleranceAbsolue === "function" ? q.toleranceAbsolue(ctx) : (q.toleranceAbsolue || 0);
           // sansSigne : une lecture d'appareil, ou le signe ne dit que le sens du branchement
           // (-0,25 A lu quand le courant entre par COM est une lecture juste)
           if (q.sansSigne) { v = Math.abs(v); a = Math.abs(a); }
-          return Math.abs(v - a) <= Math.abs(a) * tol + (q.toleranceAbsolue || 0);
+          return Math.abs(v - a) <= Math.abs(a) * tol + tolAbs;
         };
       } else if (q.type === "choix" || q.type === "multi") {
         var multi = q.type === "multi", choisis = [];
@@ -2779,10 +2782,15 @@ var Sim = (function () {
   function sceneSirop(zone, ctx) {
     var sc = el("div", { classe: "scene" }); zone.appendChild(sc);
     var s = svg("svg", { viewBox: "0 0 640 470", role: "img", "aria-label": "La balance, le sucre, la spatule et la fiole jaugée de 100 mL" }, sc);
-    var msg = el("p", { classe: "message-scene", "aria-live": "polite", texte: "Posez la coupelle sur la balance, tarez, puis prenez le sucre à la spatule." });
+    var msg = el("p", { classe: "message-scene", "aria-live": "polite", texte: "Posez la coupelle sur la balance, tarez, puis prenez le sucre à la spatule. « Une pincée de plus » et « Une pincée de moins » finissent la pesée." });
     var bVider = el("button", { type: "button", classe: "bouton", texte: "Vider la fiole et tout recommencer" });
+    /* ajouter ou retirer une pincee d'un bouton (16 octobre 2026, essai de l'utilisateur en CAP : « trop complique
+       de peser le sucre, il faudrait pouvoir en enlever ») ; le retrait existait, mais en glissant la spatule vers
+       le becher « exces », et rien ne le disait */
+    var bPlus = el("button", { type: "button", classe: "bouton", texte: "Une pincée de plus" });
+    var bMoins = el("button", { type: "button", classe: "bouton", texte: "Une pincée de moins" });
     zone.appendChild(msg);
-    zone.appendChild(el("div", { classe: "rangee rangee-bas" }, [bVider]));
+    zone.appendChild(el("div", { classe: "rangee rangee-bas" }, [bPlus, bMoins, bVider]));
     svg("path", { d: "M0 460H640", "class": "trait" }, s);
     // la balance de labo
     svg("rect", { x: 10, y: 330, width: 222, height: 122, rx: 10, "class": "objet" }, s);
@@ -2968,6 +2976,21 @@ var Sim = (function () {
       labo.coupelle.sucre += v; sp.charge -= v;
       return true;
     }
+    function pincee(signe) {
+      var co = labo.coupelle;
+      if (co.ou !== "plateau") { message(msg, "Posez d'abord la coupelle sur le plateau de la balance."); return false; }
+      if (signe > 0) {
+        var v = 0.15 + 0.35 * u();
+        co.sucre += v; labo.spat.ou = "coupelle";
+        message(msg, "Une pincée de sucre dans la coupelle.");
+        return true;
+      }
+      if (co.sucre < 0.01) { message(msg, "La coupelle est vide : il n'y a rien à retirer."); return false; }
+      var r = Math.min(co.sucre, 0.15 + 0.35 * u());
+      co.sucre -= r; labo.exces += r;
+      message(msg, "Une pincée retirée, jetée dans le bécher « excès » : on ne remet jamais dans le pot ce qui est passé dans la coupelle.");
+      return true;
+    }
     function eau(v) {                                     // la pissette verse v mL dans la fiole
       var f = labo.fiole;
       if (labo.pis.ou !== "fiole") return false;
@@ -2991,6 +3014,8 @@ var Sim = (function () {
     }
     surTouche(bTare, function () { tarer(); dessiner(); });
     bVider.addEventListener("click", function () { vider(); dessiner(); });
+    bPlus.addEventListener("click", function () { pincee(1); dessiner(); });
+    bMoins.addEventListener("click", function () { pincee(-1); dessiner(); });
     prise(s, gC, {
       bouge: function (q) { glisse.c = { x: q.x, y: q.y }; dessiner(); },
       lacher: function (q) {
@@ -3094,13 +3119,17 @@ var Sim = (function () {
     // la feuille blanche derriere l'echelle : elle reste blanche en mode sombre, c'est un fond de mesure
     svg("rect", { x: 200, y: 30, width: 430, height: 370, rx: 4, fill: "var(--blanc)", stroke: "var(--papier-trait)" }, s);
     svg("text", { x: 300, y: 52, "class": "etiq-p-forte", texte: "Échelle de teintes · sucre en g/L" }, s);
-    svg("text", { x: 300, y: 372, "class": "etiq-p", style: "font-size:10.5px", texte: "Posez un tube à droite du tube" }, s);
-    svg("text", { x: 300, y: 386, "class": "etiq-p", style: "font-size:10.5px", texte: "de l'échelle qui a la même teinte." }, s);
+    svg("text", { x: 300, y: 372, "class": "etiq-p", style: "font-size:10.5px", texte: "Glissez un tube sur celui de l'échelle qui a" }, s);
+    svg("text", { x: 300, y: 386, "class": "etiq-p", style: "font-size:10.5px", texte: "la même teinte : il se range juste à sa droite." }, s);
     svg("text", { x: 238, y: 84, "text-anchor": "middle", "class": "etiq-p", style: "font-size:11px", texte: "R : recette" }, s);
     svg("text", { x: 238, y: 70, "text-anchor": "middle", "class": "etiq-p", style: "font-size:11px", texte: "J : Jules" }, s);
     var gEch = svg("g", null, s);
+    /* une place par tube de l'echelle, centree sur lui : on vise le tube qui a la meme teinte, et
+       le tube pose se range a sa droite. Decalees vers la droite, ces places faisaient d'un tube
+       lache sur celui de 80 g/L un tube range a cote de 60 g/L (16 octobre 2026). */
+    function placeSous(x) { var k = -1; ECHELLE.forEach(function (C, i) { if (Math.abs(x - E4.x(i)) < 31) k = i; }); return k; }
     var cibles = ECHELLE.map(function (C, i) {
-      var z = svg("rect", { x: E4.x(i) + 8, y: E4.haut - 10, width: 36, height: 250, "class": "zone cible" }, s);
+      var z = svg("rect", { x: E4.x(i) - 31, y: E4.haut - 10, width: 62, height: 260, "class": "zone cible" }, s);
       return z;
     });
     // le verre, la bouteille, la carafe
@@ -3153,12 +3182,20 @@ var Sim = (function () {
       ["R", "J"].forEach(function (nm) {
         var g = tubes[nm]; g.innerHTML = "";
         var p = posTube(nm), CC = nm === "R" ? cVerre() : C_JULES, rempli = nm === "J" || n > 0;
-        svg("rect", { x: p.x - 18, y: dessus && !p.porte ? 280 : E4.haut - 6, width: 36, height: dessus && !p.porte ? 60 : 180, "class": "zone" }, g);
-        if (gl[nm]) dessinerTube(g, gl[nm].x, CC, gl[nm].y - 60, rempli, nm, false);
-        else if (p.porte) dessinerTube(g, p.x, CC, E4.haut + 10, rempli, nm, false);
-        else dessinerTube(g, p.x, CC, E4.haut + 14, rempli, nm, dessus);
+        svg("rect", { x: p.x - 18, y: dessus ? 280 : E4.haut - 6, width: 36, height: dessus ? 60 : 180, "class": "zone" }, g);
+        if (gl[nm]) { dessinerTube(g, gl[nm].x, CC, gl[nm].y - 60, rempli, nm, false); return; }
+        // le tube en main, par un toucher : il attend sa place
+        if (enMain === nm) svg("rect", { x: p.x - 15, y: dessus ? 285 : E4.haut + 4, width: 30, height: dessus ? 30 : E4.bas - E4.haut, rx: 8,
+          fill: "none", stroke: "var(--accent)", "stroke-width": 2.5, "stroke-dasharray": "5 3" }, g);
+        // par le dessus, les tubes de la porte aussi : on les compare a la rangee de l'echelle
+        dessinerTube(g, p.x, CC, E4.haut + (p.porte ? 10 : 14), rempli, nm, dessus);
+        // un tube pose : une accolade le lie au tube de l'echelle qu'on lui a choisi
+        if (!p.porte) {
+          var x0 = p.x - 26 - 9, x1 = p.x + 9, y = dessus ? 314 : E4.bas + 4;
+          svg("path", { d: "M" + x0 + " " + y + "v4H" + x1 + "v-4", fill: "none", stroke: "var(--encre-papier)", "stroke-width": 1.5 }, g);
+        }
       });
-      svg("rect", { x: 204, y: E4.haut - 4, width: 68, height: E4.bas - E4.haut + 40, rx: 4, fill: "none", stroke: "var(--papier-trait)", "stroke-dasharray": "4 3" }, gEch);
+      svg("rect", { x: 204, y: E4.haut - 4, width: 68, height: 250, rx: 4, fill: "none", stroke: "var(--papier-trait)", "stroke-dasharray": "4 3" }, gEch);
     }
     function dose(quoi) {
       var v = labo.verre;
@@ -3170,7 +3207,11 @@ var Sim = (function () {
     function placer(nm, C) {
       if (nm === "R" && labo.verre.sirop + labo.verre.eau === 0) { message(msg, "Le verre est vide : préparez-le d'abord."); labo.tubes.R = null; return false; }
       labo.tubes[nm] = C;
-      if (C !== null) message(msg, "Tube « " + (nm === "R" ? "recette" : "Jules") + " » posé à côté du tube de " + C + " g/L.");
+      // une seule place a cote de chaque tube de l'echelle : l'autre tube, s'il y etait, retourne a la porte
+      var autre = nm === "R" ? "J" : "R", rendu = C !== null && labo.tubes[autre] === C;
+      if (rendu) labo.tubes[autre] = null;
+      if (C !== null) message(msg, "Tube « " + (nm === "R" ? "recette" : "Jules") + " » posé à côté du tube de " + C + " g/L."
+        + (rendu ? " Le tube « " + (autre === "R" ? "recette" : "Jules") + " » qui y était revient à sa place, à gauche." : ""));
       return true;
     }
     bVider.addEventListener("click", function () { labo.verre = { sirop: 0, eau: 0 }; labo.tubes.R = null; message(msg, "Verre vidé et rincé."); dessiner(); });
@@ -3188,10 +3229,10 @@ var Sim = (function () {
         bouge: function (q) { gl[nm] = { x: q.x, y: q.y }; dessiner(); },
         lacher: function (q) {
           gl[nm] = null;
-          var k = -1; ECHELLE.forEach(function (C, i) { if (Math.abs(q.x - (E4.x(i) + 26)) < 31 && q.y > 50 && q.y < 380) k = i; });
+          var k = q.y > 50 && q.y < 380 ? placeSous(q.x) : -1;
           placer(nm, k >= 0 ? ECHELLE[k] : null); enMain = null; dessiner();
         },
-        toucher: function () { enMain = enMain === nm ? null : nm; message(msg, enMain ? "Tube en main : touchez la place à droite du tube de l'échelle qui lui ressemble." : ""); }
+        toucher: function () { enMain = enMain === nm ? null : nm; message(msg, enMain ? "Tube en main : touchez le tube de l'échelle qui lui ressemble." : ""); dessiner(); }
       });
     });
     cibles.forEach(function (z, i) { z.addEventListener("click", function () { if (enMain) { placer(enMain, ECHELLE[i]); enMain = null; dessiner(); } }); });
@@ -3313,19 +3354,22 @@ var Sim = (function () {
         questions: [
           { type: "action", lib: "Pesez <b>25 g de sucre</b> dans la coupelle.",
             aide: "Pesée faite sur la scène, puis vérifiez.",
-            verifier: function () {
+            verifier: function (ctx) {
               var m = labo.fiole.sucre > 0 ? labo.fiole.sucre : labo.coupelle.sucre;
               if (m < 0.01) return null;
-              var ok = Math.abs(m - 25) <= 0.25, err = [], fiole = labo.fiole.sucre > 0;
+              /* en CAP, 25 g a 1 g pres (16 octobre 2026, « que la question 1 de REA soit plus tolerante ») ;
+                 en seconde, toujours a 0,25 g. La concentration se calcule ensuite sur la vraie pesee */
+              var cap = !ctx || !ctx.niveau || ctx.niveau() === "CAP", tol = cap ? 1 : 0.25, a = cap ? "à 1 g près" : "à 0,25 g près";
+              var ok = Math.abs(m - 25) <= tol, err = [], fiole = labo.fiole.sucre > 0;
               /* refusee, la pesee dit ce qui ne va pas (14 octobre 2026) : 25 g est dans la consigne */
               if (!ok) {
-                if (m > 25) err.push(fiole ? "trop de sucre dans la fiole : il en faut 25 g, videz la fiole et recommencez la pesée" : "trop de sucre : la balance doit montrer 25 g, retirez-en à la spatule vers le bécher « excès »");
-                else err.push(fiole ? "pas assez de sucre dans la fiole : il en faut 25 g" : "pas assez de sucre : la balance doit montrer 25 g, ajoutez-en à la spatule");
+                if (m > 25) err.push(fiole ? "trop de sucre dans la fiole : il en faut 25 g " + a + ", videz la fiole et recommencez la pesée" : "trop de sucre : la balance doit montrer 25 g " + a + ", retirez-en avec « Une pincée de moins »");
+                else err.push(fiole ? "pas assez de sucre dans la fiole : il en faut 25 g " + a : "pas assez de sucre : la balance doit montrer 25 g " + a + ", ajoutez-en avec « Une pincée de plus »");
                 if (Math.abs(labo.bal.tare - labo.coupelle.masse) > 0.02) err.push("la balance n'a pas été tarée avec la coupelle vide dessus : elle ne montre pas le sucre seul");
               }
               return { ok: ok, corriger: err, reponse: "balance : " + fr(labo.bal.montre, 2) + " g, sucre réellement pesé : " + fr(m, 2) + " g" };
             },
-            methode: "La coupelle d'abord sur le plateau, puis TARE : la balance ne compte plus que le sucre. Finissez en tapotant la spatule.",
+            methode: "La coupelle d'abord sur le plateau, puis TARE : la balance ne compte plus que le sucre. Le gros à la spatule, puis « Une pincée de plus » ou « Une pincée de moins » pour finir.",
             apres: function (ctx) { var m = labo.fiole.sucre > 0 ? labo.fiole.sucre : labo.coupelle.sucre; ctx.donnees.pesee = fr(m, 2) + " g"; } },
           { type: "action", lib: "Préparez le sirop : sucre dissous, fiole <b>complétée au trait</b>, puis agitée.",
             aide: "La fiole prête, puis vérifiez.",
@@ -3350,7 +3394,11 @@ var Sim = (function () {
             },
             methode: "De l'eau jusqu'aux trois quarts, agiter jusqu'au dernier cristal ; compléter goutte à goutte, le bas du ménisque sur le trait, le trait vu comme une seule ligne ; agiter encore." },
           { type: "nombre", lib: "Calculez la concentration massique de <b>votre</b> sirop, à partir de votre pesée.", unite: "g/L",
-            attendu: function () { var m = labo.fiole.sucre > 0 ? labo.fiole.sucre : labo.coupelle.sucre; return m / (V_FIOLE / 1000); }, tolerance: 0.01, toleranceAbsolue: 0.5,
+            /* en CAP, 5 % (16 octobre 2026, « pour la question 3 aussi, plus tolerante ») : la pesee est acceptee
+               a 1 g pres, et l'eleve qui calcule avec 25 g au lieu de sa pesee exacte n'a pas tort de methode ;
+               en seconde, 1 % */
+            attendu: function () { var m = labo.fiole.sucre > 0 ? labo.fiole.sucre : labo.coupelle.sucre; return m / (V_FIOLE / 1000); },
+            tolerance: function (ctx) { return !ctx || !ctx.niveau || ctx.niveau() === "CAP" ? 0.05 : 0.01; }, toleranceAbsolue: 0.5,
             methode: "Cm = m ÷ V : la masse que vous avez pesée, en grammes, divisée par 0,100 L.",
             apres: function (ctx, ok, rep) { ctx.donnees.cm = rep.replace(/\s*g\/L$/, ""); } }
         ],
@@ -3367,7 +3415,7 @@ var Sim = (function () {
               if (!v.sirop && !v.eau) return null;
               /* le meme message quel que soit le verre : il dit ce qui manque, sans juger la recette */
               if (!v.sirop) return { attente: "Le verre n'a pas encore de sirop : glissez la bouteille au-dessus du verre." };
-              if (labo.tubes.R === null) return { attente: "Le tube « recette » n'est pas encore posé : glissez-le à droite du tube de l'échelle qui a la même teinte." };
+              if (labo.tubes.R === null) return { attente: "Le tube « recette » n'est pas encore posé : glissez-le sur le tube de l'échelle qui a la même teinte." };
               var recette = v.eau === 7 * v.sirop, err = [];
               if (!recette) err.push((v.eau < 7 * v.sirop ? "pas assez d'eau" : "trop d'eau") + " : la recette, c'est 1 dose de sirop pour 7 doses d'eau ; videz le verre et recommencez");
               else if (labo.tubes.R !== 80) err.push("le tube « recette » n'est pas à côté du tube de même teinte" + (labo.vue === "dessus" ? "" : " : regardez les tubes par le dessus"));

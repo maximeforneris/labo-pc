@@ -1870,11 +1870,14 @@ var Sim = (function () {
           f.valeur = v;
           var a = typeof q.attendu === "function" ? q.attendu(ctx) : q.attendu;
           if (!isFinite(a)) return "attente";               // elle repose sur une mesure, ou une reponse, d'une autre partie
-          var tol = q.tolerance === undefined ? 0.05 : q.tolerance;
+          // tolerance et toleranceAbsolue peuvent dependre du niveau : fonctions de ctx (16 octobre 2026,
+          // le bar a sirops plus tolerant en CAP qu'en seconde)
+          var tol = typeof q.tolerance === "function" ? q.tolerance(ctx) : q.tolerance === undefined ? 0.05 : q.tolerance;
+          var tolAbs = typeof q.toleranceAbsolue === "function" ? q.toleranceAbsolue(ctx) : (q.toleranceAbsolue || 0);
           // sansSigne : une lecture d'appareil, ou le signe ne dit que le sens du branchement
           // (-0,25 A lu quand le courant entre par COM est une lecture juste)
           if (q.sansSigne) { v = Math.abs(v); a = Math.abs(a); }
-          return Math.abs(v - a) <= Math.abs(a) * tol + (q.toleranceAbsolue || 0);
+          return Math.abs(v - a) <= Math.abs(a) * tol + tolAbs;
         };
       } else if (q.type === "choix" || q.type === "multi") {
         var multi = q.type === "multi", choisis = [];
@@ -2594,6 +2597,9 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
   function piece(cle) { return PIECES.filter(function (p) { return p.cle === cle; })[0]; }
   function iVrai(cle) { return U0 / piece(cle).R; }
   function iTotal() { return PIECES.reduce(function (s, p) { return s + U0 / p.R; }, 0); }
+  /* le montage 1, en serie, les deux lampes vissees : la tension lue aux bornes de la cuisine (au centieme) */
+  var U_CUISINE_SERIE = Math.round(U0 * piece("cuisine").R / (piece("sejour").R + piece("cuisine").R + R_BLOC + 3 * R_FIL) * 100) / 100;
+  var mesures = {};   // les lectures justes de l'eleve, que les intitules des parties suivantes rappellent
 
   /* Methode des noeuds. elems : [{a, b, g}] ; sources : generateurs de Norton [{p, n, E, r}].
      Une conductance minuscule vers la masse tient les noeuds en l'air a 0 V. */
@@ -2703,8 +2709,8 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
     });
     // murs, avec les portes
     svg("rect", { x: 200, y: 8, width: 432, height: 392, class: "ap-mur" }, g);
-    svg("path", { d: "M416 8v52M416 104v148M416 296v104M200 204h52M296 204h216M556 204h76", class: "ap-mur", "stroke-width": 4 }, g);
-    svg("path", { d: "M416 60a44 44 0 0 1 -44 44M416 252a44 44 0 0 1 44 44M252 204a44 44 0 0 0 44 44M512 204a44 44 0 0 1 44 -44", class: "ap-fin", "stroke-dasharray": "3 4" }, g);
+    svg("path", { d: "M416 8v52M416 104v148M416 296v104M200 204h140M384 204h196M624 204h8", class: "ap-mur", "stroke-width": 4 }, g);
+    svg("path", { d: "M416 60a44 44 0 0 1 -44 44M416 252a44 44 0 0 1 44 44M340 204a44 44 0 0 0 44 44M580 204a44 44 0 0 1 44 -44", class: "ap-fin", "stroke-dasharray": "3 4" }, g);
     PIECES.forEach(function (p) {
       svg("rect", { x: p.cx - 50, y: p.cy + 40, width: 100, height: 24, rx: 4, class: "ap-objet2" }, g);
       svg("path", { d: "M" + (p.cx - 6) + " " + (p.cy + 40) + "L" + (p.ta.x + 6) + " " + (p.ta.y - 3) + "M" + (p.cx + 6) + " " + (p.cy + 40) + "L" + (p.tb.x - 6) + " " + (p.tb.y - 3), class: "ap-fin" }, g);
@@ -3501,7 +3507,7 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
     }
     function maj() {
       if (tube) tube.etat(st.intact, st.h);
-      fusTxt.textContent = st.type === null ? "porte-fusible vide" : "F " + fr(st.type, st.type < 1 ? 1 : 0) + " A";
+      fusTxt.textContent = st.type === null ? "aucun fusible" : "F " + fr(st.type, st.type < 1 ? 1 : 0) + " A";
       FUSIBLES.forEach(function (In) { boite[In].style.opacity = st.type === In ? 0.3 : 1; });
       var a = st.allume ? 0 : -38;
       levier.setAttribute("d", "M154 " + YP + "l" + (38 * Math.cos(a * Math.PI / 180)).toFixed(1) + " " + (38 * Math.sin(a * Math.PI / 180)).toFixed(1));
@@ -3683,11 +3689,14 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
           { type: "choix", lib: "Quel montage garde la cuisine allumée quand la lampe du séjour est dévissée ?",
             options: ["Le montage 1, en série", "Le montage 2, en dérivation", "Les deux", "Aucun des deux"], bonne: 1,
             methode: "Dévissez la lampe du séjour sur chaque montage et regardez la cuisine : en série, le courant n'a qu'un seul chemin." },
+          { type: "nombre", niveau: "Seconde", lib: "Dans le montage 1, <b>en série</b>, un voltmètre aux bornes de la lampe de la cuisine lit <b>" + fr(U_CUISINE_SERIE, 2) + " V</b>. Le bloc donne <b>12 V</b>. Quelle tension reçoit la lampe du <b>séjour</b> ?", unite: "V",
+            attendu: U0 - U_CUISINE_SERIE, tolerance: 0.03, toleranceAbsolue: 0.03,
+            methode: "Loi des mailles : sur la boucle bloc → séjour → cuisine → bloc, la tension du générateur est la somme des tensions des deux lampes, U<sub>bloc</sub> = U<sub>séjour</sub> + U<sub>cuisine</sub>." },
           { type: "classer", lib: "Sur le plan du bas, l'ampèremètre peut se placer en 1, 2, 3 ou 4. À chaque place, mesure-t-il le courant du générateur, de la cuisine, du séjour, ou court-circuite-t-il une lampe ?",
             items: ["Place 1", "Place 2", "Place 3", "Place 4"],
             categories: ["Générateur", "Cuisine", "Séjour", "Court-circuit"], bonnes: [1, 3, 0, 2],
             methode: "L'ampèremètre se branche en série, dans le fil dont on veut le courant. Branché aux deux bornes d'une lampe, il la court-circuite." },
-          { type: "classer", lib: "Quelle borne du multimètre pour chaque mesure ? La plus précise qui supporte le courant.",
+          { type: "classer", lib: "Quelle borne du multimètre pour chaque mesure ? La plus précise qui supporte le courant. Les plaques : séjour <b>0,5 A</b>, cuisine <b>0,25 A</b>, chambre <b>0,1 A</b>, salle de bain <b>0,5 A</b> ; la borne mA supporte <b>200 mA</b> au plus.",
             items: ["Le courant du générateur, les quatre lampes allumées", "Le courant de la lampe de la chambre", "Le courant de la lampe du séjour"],
             categories: ["Borne 10 A", "Borne mA"], bonnes: [0, 1, 0],
             methode: "Estimez chaque courant avec les plaques des lampes ; pour le générateur, additionnez les quatre. Au-delà de 200 mA, la borne mA fondrait son fusible : on prend la borne 10 A." }
@@ -3702,20 +3711,20 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
             aide: "Faites le câblage sur la maquette, puis vérifiez.",
             verifier: cablageJuste,
             methode: "Chaque lampe a une borne reliée au + du tableau et l'autre au − : regardez le plan à suivre, sous l'appartement." },
-          { type: "nombre", niveau: "CAP", lib: "Mesurez l'intensité du courant dans la lampe de la <b>cuisine</b>.", unite: "A",
+          { type: "nombre", niveau: "CAP", lib: "Mesurez l'intensité du courant dans la lampe de la <b>cuisine</b>. Sa plaque : 12 V · 0,25 A.", unite: "A",
             attendu: function () { return iVrai("cuisine") * 0.986; }, tolerance: 0.04, toleranceAbsolue: 0.01, sansSigne: true,
             methode: "Débranchez un cordon de la cuisine et refermez le circuit par le multimètre : bornes 10 A et COM, sélecteur sur A. Un signe moins : le courant entre par COM.",
             apres: function (ctx, ok, rep) { ctx.donnees.iCuisine = rep; } },
-          { type: "action", niveau: "Seconde", lib: "Mesurez le courant de la lampe de la <b>chambre</b> au calibre le plus précis, la borne mA. Laissez le multimètre branché, puis vérifiez.",
+          { type: "action", niveau: "Seconde", lib: "Mesurez le courant de la lampe de la <b>chambre</b> au calibre le plus précis, la borne mA. Sa plaque : 12 V · 0,1 A ; la borne mA supporte 200 mA au plus. Laissez le multimètre branché, puis vérifiez.",
             aide: "La lecture du multimètre sera notée dans votre fichier.",
             verifier: mesureChambre,
             methode: "La chambre demande environ 0,1 A, moins de 200 mA : borne mA et COM, sélecteur sur mA, le multimètre en série dans un fil de la chambre seule.",
             apres: function (ctx, ok, rep) { ctx.donnees.iChambre = rep.replace(/^lu /, "").replace(/ au calibre.*$/, ""); } },
-          { type: "nombre", lib: "Mesurez l'intensité du courant <b>débité par le générateur</b>, les quatre lampes allumées.", unite: "A",
+          { type: "nombre", lib: "Mesurez l'intensité du courant <b>débité par le générateur</b>, les quatre lampes allumées. Les plaques : 0,5 A, 0,25 A, 0,1 A et 0,5 A.", unite: "A",
             attendu: function () { return iTotal() * 0.986; }, tolerance: 0.04, toleranceAbsolue: 0.02, sansSigne: true,
             methode: "Tout le courant passe dans le fil qui part de la borne + du tableau : c'est là que l'ampèremètre se met, en série.",
-            apres: function (ctx, ok, rep) { ctx.donnees.iTotal = rep; } },
-          { type: "nombre", lib: "Mesurez la <b>tension</b> aux bornes de la lampe de la chambre.", unite: "V",
+            apres: function (ctx, ok, rep) { ctx.donnees.iTotal = rep; if (ok) mesures.iTotal = String(rep).replace(/\s*a\s*$/i, ""); } },
+          { type: "nombre", lib: "Mesurez la <b>tension</b> aux bornes de la lampe de la chambre. Le bloc annonce 12 V.", unite: "V",
             attendu: 11.84, tolerance: 0.03, toleranceAbsolue: 0.05, sansSigne: true,
             methode: "Le voltmètre se branche aux deux bornes de la lampe, en dérivation : bornes V et COM, sélecteur sur V.",
             apres: function (ctx, ok, rep) { ctx.donnees.uChambre = rep; } }
@@ -3725,8 +3734,11 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
         recit: "La famille veut brancher un radiateur dans la salle de bain : sur la maquette, un radiateur de 12 V · 3 A. Or les fils de la maquette supportent <b>2,5 A au plus</b> : au-delà, ils chauffent. Le fusible doit laisser l'appartement allumé, et couper avant que les fils ne chauffent.",
         consigne: "Posez un fusible de la boîte, basculez l'interrupteur général, puis branchez le radiateur en le touchant. Le carnet note chaque essai.",
         scene: sceneProtection,
-        questions: [
-          { type: "nombre", lib: "Avec les quatre lampes <b>et</b> le radiateur, quelle intensité traverse le fusible ?", unite: "A",
+        /* une fonction : l'intitule rappelle la mesure de la phase 3, et se refait tant qu'on n'a rien repondu ici */
+        questions: function () { return [
+          { type: "nombre", lib: "Avec les quatre lampes <b>et</b> le radiateur (12 V · <b>3 A</b>), quelle intensité traverse le fusible ? " +
+                (mesures.iTotal ? "Votre mesure du générateur : <b>" + mesures.iTotal + " A</b>." : "Reprenez votre mesure du générateur (phase 3)."),
+            unite: "A",
             attendu: function () { return iTotal() + I_RADIATEUR; }, tolerance: 0.04, toleranceAbsolue: 0.05,
             methode: "Le fusible est dans le fil principal : il voit la somme des courants de tout ce qui est branché. Votre mesure du générateur, plus les 3 A du radiateur.",
             apres: function (ctx, ok, rep) { ctx.donnees.iRadiateur = rep; } },
@@ -3739,7 +3751,7 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
             options: ["Les fils portent plus de 4 A alors qu'ils sont prévus pour 2,5 A : ils chauffent", "Le radiateur chauffe moins bien",
               "Les lampes brillent trop fort", "Le bloc donne alors plus de 12 V"], bonne: 0,
             methode: "Un fusible protège les fils : son calibre doit rester sous le courant qu'ils supportent." }
-        ],
+        ]; },
         bravo: "La famille : « Un fusible de 2 A au tableau. Et le radiateur aura sa ligne à lui. »" },
       { competence: "COM", titre: "La fiche pour la famille",
         recit: "Dernière étape : la fiche de l'installation, que la famille gardera avec la maquette. Un schéma juste, et trois phrases que tout le monde comprend.",

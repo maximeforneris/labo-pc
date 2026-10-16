@@ -1869,11 +1869,14 @@ var Sim = (function () {
           f.valeur = v;
           var a = typeof q.attendu === "function" ? q.attendu(ctx) : q.attendu;
           if (!isFinite(a)) return "attente";               // elle repose sur une mesure, ou une reponse, d'une autre partie
-          var tol = q.tolerance === undefined ? 0.05 : q.tolerance;
+          // tolerance et toleranceAbsolue peuvent dependre du niveau : fonctions de ctx (16 octobre 2026,
+          // le bar a sirops plus tolerant en CAP qu'en seconde)
+          var tol = typeof q.tolerance === "function" ? q.tolerance(ctx) : q.tolerance === undefined ? 0.05 : q.tolerance;
+          var tolAbs = typeof q.toleranceAbsolue === "function" ? q.toleranceAbsolue(ctx) : (q.toleranceAbsolue || 0);
           // sansSigne : une lecture d'appareil, ou le signe ne dit que le sens du branchement
           // (-0,25 A lu quand le courant entre par COM est une lecture juste)
           if (q.sansSigne) { v = Math.abs(v); a = Math.abs(a); }
-          return Math.abs(v - a) <= Math.abs(a) * tol + (q.toleranceAbsolue || 0);
+          return Math.abs(v - a) <= Math.abs(a) * tol + tolAbs;
         };
       } else if (q.type === "choix" || q.type === "multi") {
         var multi = q.type === "multi", choisis = [];
