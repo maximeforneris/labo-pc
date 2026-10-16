@@ -1871,6 +1871,9 @@ var Sim = (function () {
           var a = typeof q.attendu === "function" ? q.attendu(ctx) : q.attendu;
           if (!isFinite(a)) return "attente";               // elle repose sur une mesure, ou une reponse, d'une autre partie
           var tol = q.tolerance === undefined ? 0.05 : q.tolerance;
+          // sansSigne : une lecture d'appareil, ou le signe ne dit que le sens du branchement
+          // (-0,25 A lu quand le courant entre par COM est une lecture juste)
+          if (q.sansSigne) { v = Math.abs(v); a = Math.abs(a); }
           return Math.abs(v - a) <= Math.abs(a) * tol + (q.toleranceAbsolue || 0);
         };
       } else if (q.type === "choix" || q.type === "multi") {
@@ -3315,13 +3318,13 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
       });
     }
     if (!cab.fus.intact) r.push("le fusible du tableau a fondu : enlevez la cause, puis touchez « Remplacer le fusible »");
-    if (!r.length) PIECES.forEach(function (p) { if (!(cab.u[p.cle] > 11)) r.push("la lampe " + p.du + " ne s'allume pas normalement : suivez le plan à suivre"); });
+    if (!r.length) PIECES.forEach(function (p) { if (!(Math.abs(cab.u[p.cle]) > 11)) r.push("la lampe " + p.du + " ne s'allume pas normalement : suivez le plan à suivre"); });
     return r;
   }
   function cablageJuste() {
     if (!cab) return null;
     if (!cab.fils.length) return null;
-    var ok = cab.fus.intact && PIECES.every(function (p) { return cab.u[p.cle] > 11; });
+    var ok = cab.fus.intact && PIECES.every(function (p) { return Math.abs(cab.u[p.cle]) > 11; });   /* une lampe n'a pas de sens : une borne au +, l'autre au -, dans un ordre ou dans l'autre */
     var n = PIECES.filter(function (p) { return Math.pow(cab.u[p.cle] / U0, 2) >= 0.8; }).length;
     return { ok: ok, corriger: ok ? [] : erreursCablage(),
       reponse: (cab.fus.intact ? n + " lampe" + (n > 1 ? "s" : "") + " sur 4 allumée" + (n > 1 ? "s" : "") + " normalement" : "fusible fondu") + ", " + cab.fils.length + " cordons" };
@@ -3350,14 +3353,14 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
       if (melange) r.push("le multimètre mesure aussi le courant de " + noms(melange.autres) + " : il doit être dans un fil de la chambre seule");
       else if (!seul) r.push(ailleurs ? "le multimètre est dans le fil de " + noms(ailleurs.autres) + ", pas dans celui de la chambre" : "le multimètre n'est pas dans un fil de la lampe de la chambre");
     }
-    if (!(cab.u.chambre > 10)) r.push("la lampe de la chambre n'est pas allumée normalement : revoyez son câblage");
+    if (!(Math.abs(cab.u.chambre) > 10)) r.push("la lampe de la chambre n'est pas allumée normalement : revoyez son câblage");
     if (!r.length) r.push("le multimètre ne mesure pas le courant de la chambre seule : il doit remplacer un cordon de la chambre");
     return r;
   }
   function mesureChambre() {
     if (!cab) return null;
     if (cab.sel === "mA" && cab.fma.intact && Math.abs(cab.imA) > 0.002) {
-      var ok = Math.abs(Math.abs(cab.imA) - iVrai("chambre")) < 0.06 * iVrai("chambre") && cab.u.chambre > 10;
+      var ok = Math.abs(Math.abs(cab.imA) - iVrai("chambre")) < 0.06 * iVrai("chambre") && Math.abs(cab.u.chambre) > 10;
       return { ok: ok, corriger: ok ? [] : erreursMesure("MmA"), reponse: "lu " + cab.lecture + " mA au calibre mA" };
     }
     if (cab.sel === "A" && Math.abs(cab.i10) > 0.002) return { ok: false, reponse: "lu " + cab.lecture + " A au calibre 10 A",
@@ -3564,9 +3567,9 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
       [e.lampes === "tient", "le fusible F 2 A fond avec les quatre lampes seules : il doit les laisser allumées"],
       [/fond/.test(e.radiateur), "le fusible F 2 A ne fond pas quand on branche le radiateur : il doit couper"]] } : { attente: manque };
     if (prot.type === 0.5) return e.lampes ? { ok: false, reponse: "fusible 0,5 A posé · " + rep,
-      corriger: ["le fusible F 0,5 A fond avec les quatre lampes seules : il doit les laisser allumées"] } : { attente: manque };
+      corriger: ["le fusible F 0,5 A fond avec les quatre lampes seules : il doit les laisser allumées ; posez le fusible que vous retenez"] } : { attente: manque };
     return e.radiateur ? { ok: false, reponse: "fusible 5 A posé · " + rep,
-      corriger: ["le fusible F 5 A ne fond pas quand on branche le radiateur : il doit couper avant que les fils chauffent"] } : { attente: manque };
+      corriger: ["le fusible F 5 A ne fond pas quand on branche le radiateur : il doit couper avant que les fils chauffent ; posez le fusible que vous retenez"] } : { attente: manque };
   }
 
   /* ── Phase 5 · la fiche pour la famille ──────────────────────────────────────────────── */
@@ -3700,7 +3703,7 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
             verifier: cablageJuste,
             methode: "Chaque lampe a une borne reliée au + du tableau et l'autre au − : regardez le plan à suivre, sous l'appartement." },
           { type: "nombre", niveau: "CAP", lib: "Mesurez l'intensité du courant dans la lampe de la <b>cuisine</b>.", unite: "A",
-            attendu: function () { return iVrai("cuisine") * 0.986; }, tolerance: 0.04, toleranceAbsolue: 0.01,
+            attendu: function () { return iVrai("cuisine") * 0.986; }, tolerance: 0.04, toleranceAbsolue: 0.01, sansSigne: true,
             methode: "Débranchez un cordon de la cuisine et refermez le circuit par le multimètre : bornes 10 A et COM, sélecteur sur A. Un signe moins : le courant entre par COM.",
             apres: function (ctx, ok, rep) { ctx.donnees.iCuisine = rep; } },
           { type: "action", niveau: "Seconde", lib: "Mesurez le courant de la lampe de la <b>chambre</b> au calibre le plus précis, la borne mA. Laissez le multimètre branché, puis vérifiez.",
@@ -3709,11 +3712,11 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
             methode: "La chambre demande environ 0,1 A, moins de 200 mA : borne mA et COM, sélecteur sur mA, le multimètre en série dans un fil de la chambre seule.",
             apres: function (ctx, ok, rep) { ctx.donnees.iChambre = rep.replace(/^lu /, "").replace(/ au calibre.*$/, ""); } },
           { type: "nombre", lib: "Mesurez l'intensité du courant <b>débité par le générateur</b>, les quatre lampes allumées.", unite: "A",
-            attendu: function () { return iTotal() * 0.986; }, tolerance: 0.04, toleranceAbsolue: 0.02,
+            attendu: function () { return iTotal() * 0.986; }, tolerance: 0.04, toleranceAbsolue: 0.02, sansSigne: true,
             methode: "Tout le courant passe dans le fil qui part de la borne + du tableau : c'est là que l'ampèremètre se met, en série.",
             apres: function (ctx, ok, rep) { ctx.donnees.iTotal = rep; } },
           { type: "nombre", lib: "Mesurez la <b>tension</b> aux bornes de la lampe de la chambre.", unite: "V",
-            attendu: 11.84, tolerance: 0.03, toleranceAbsolue: 0.05,
+            attendu: 11.84, tolerance: 0.03, toleranceAbsolue: 0.05, sansSigne: true,
             methode: "Le voltmètre se branche aux deux bornes de la lampe, en dérivation : bornes V et COM, sélecteur sur V.",
             apres: function (ctx, ok, rep) { ctx.donnees.uChambre = rep; } }
         ],
@@ -3727,8 +3730,8 @@ table.ap-carnet td,table.ap-carnet th{text-align:left}
             attendu: function () { return iTotal() + I_RADIATEUR; }, tolerance: 0.04, toleranceAbsolue: 0.05,
             methode: "Le fusible est dans le fil principal : il voit la somme des courants de tout ce qui est branché. Votre mesure du générateur, plus les 3 A du radiateur.",
             apres: function (ctx, ok, rep) { ctx.donnees.iRadiateur = rep; } },
-          { type: "action", lib: "Trouvez le fusible qui <b>tient</b> avec les quatre lampes et qui <b>fond</b> quand on branche le radiateur. Faites les deux essais avec lui.",
-            aide: "Le carnet d'essais doit montrer les deux essais du fusible posé.",
+          { type: "action", lib: "Trouvez le fusible qui <b>tient</b> avec les quatre lampes et qui <b>fond</b> quand on branche le radiateur. Faites les deux essais avec lui, et <b>laissez-le posé</b> pour vérifier.",
+            aide: "La page vérifie le fusible posé au tableau : le carnet doit montrer ses deux essais.",
             verifier: fusibleJuste,
             methode: "Le calibre du fusible doit dépasser le courant normal, les lampes seules, et rester sous ce que supportent les fils, 2,5 A.",
             apres: function (ctx, ok) { if (ok) ctx.donnees.fusible = "F 2 A"; } },

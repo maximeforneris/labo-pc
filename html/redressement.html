@@ -1871,6 +1871,9 @@ var Sim = (function () {
           var a = typeof q.attendu === "function" ? q.attendu(ctx) : q.attendu;
           if (!isFinite(a)) return "attente";               // elle repose sur une mesure, ou une reponse, d'une autre partie
           var tol = q.tolerance === undefined ? 0.05 : q.tolerance;
+          // sansSigne : une lecture d'appareil, ou le signe ne dit que le sens du branchement
+          // (-0,25 A lu quand le courant entre par COM est une lecture juste)
+          if (q.sansSigne) { v = Math.abs(v); a = Math.abs(a); }
           return Math.abs(v - a) <= Math.abs(a) * tol + (q.toleranceAbsolue || 0);
         };
       } else if (q.type === "choix" || q.type === "multi") {
