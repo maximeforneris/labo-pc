@@ -1,0 +1,146 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PAILLASSE — charte du site du labo de physique-chimie, écrite le
+   19 octobre 2026. Le labo était le seul site publié sans charte : il portait
+   le kit nu, dont l'accent bleu est celui de la 2de CIEL.
+
+   La paillasse, donc : le stratifié clair, la verrerie, et l'étiquette qu'on
+   colle sur un flacon. L'accent est le VERT BOUTEILLE, la seule famille libre
+   — jaune au CAP, bleu en 2de, rouge au CTRM, sarcelle au BTS, brun en
+   domotique, graphite chez le professeur.
+
+   Trois signes, et ils tiennent à toute largeur, téléphone compris :
+     · une RÈGLE GRADUÉE sous l'en-tête — mesurer est le geste du lieu ;
+     · les cartes en ÉTIQUETTES DE FLACON, bande de couleur à gauche ;
+     · le CODE DU TP en pastille, comme l'étiquette d'un bac du chariot.
+
+   La bande dit la famille : ce qui se fait à l'écran (parcours, entraînements,
+   simulations), les feuilles des TP sur simulation, les TP du labo réel.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@font-face{font-family:'Red Hat Text';font-style:normal;font-weight:400;font-display:swap;src:url(polices/red-hat-text-400-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Red Hat Text';font-style:normal;font-weight:400;font-display:swap;src:url(polices/red-hat-text-400-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Red Hat Text';font-style:normal;font-weight:500;font-display:swap;src:url(polices/red-hat-text-500-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Red Hat Text';font-style:normal;font-weight:500;font-display:swap;src:url(polices/red-hat-text-500-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Red Hat Text';font-style:normal;font-weight:700;font-display:swap;src:url(polices/red-hat-text-700-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Red Hat Text';font-style:normal;font-weight:700;font-display:swap;src:url(polices/red-hat-text-700-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Share Tech Mono';font-style:normal;font-weight:400;font-display:swap;src:url(polices/share-tech-mono-400-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+:root{
+  --fond:#eceae4;          /* le stratifié de la paillasse */
+  --carte:#ffffff;         /* la feuille qu'on y pose */
+  --carte2:#f5f3ee;
+  --encre:#16201b;
+  --encre2:#5b6660;
+  --trait:#c3c7c0;
+  --trait2:#dcdfd9;
+  --froid:#1f6b4a;         /* le vert bouteille — l'accent du site */
+  --teinte:#1f6b4a;
+  --tiede:#8a6a12;         /* la terre : les TP du labo réel */
+  --chaud:#a8432c;
+  --vert:#1f6b4a;
+  --violet:#4a4f7a;
+  --ardoise:#3f5a6b;       /* les feuilles des TP sur simulation */
+  --ombre:0 1px 0 rgba(22,32,27,.10);
+  --r:2px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fond:#111614; --carte:#182020; --carte2:#1e2725;
+    --encre:#e9efe9; --encre2:#9aa8a1;
+    --trait:#35403c; --trait2:#28312e;
+    --froid:#53b98a; --teinte:#53b98a; --vert:#53b98a;
+    --chaud:#e07f66; --tiede:#d5a94a; --ardoise:#7fa3b8;
+    --ombre:0 1px 0 rgba(0,0,0,.55);
+  }
+}
+
+/* ─── les polices, reposées sélecteur par sélecteur ─────────────────────
+   Red Hat Text pour lire, Share Tech Mono pour tout ce qui se relève : un
+   code, une unité, un nombre. La paire est propre au labo — la 2de emploie
+   Red Hat Text avec JetBrains Mono, le professeur Share Tech Mono avec
+   Titillium Web. */
+body{font-family:"Red Hat Text","Helvetica Neue",Arial,sans-serif}
+h1,h2,h3,h4,.gro{font-family:"Red Hat Text","Helvetica Neue",Arial,sans-serif;letter-spacing:-.01em}
+.mono,code{font-family:"Share Tech Mono",ui-monospace,monospace}
+header.tete .num{font-family:"Share Tech Mono",monospace}
+.sur{font-family:"Share Tech Mono",monospace;letter-spacing:.14em}
+.k-savoirs{font-family:"Share Tech Mono",monospace}
+.tag{font-family:"Share Tech Mono",monospace}
+.contenu{font-family:"Share Tech Mono",monospace}
+nav.somm a{font-family:"Red Hat Text",sans-serif}
+.formule>p:first-child{font-family:"Share Tech Mono",monospace}
+.formule li strong:first-child{font-family:"Share Tech Mono",monospace}
+.etapes li::before{font-family:"Share Tech Mono",monospace}
+figcaption{font-family:"Red Hat Text",sans-serif}
+.s-nom,.s-pet,.s-lab,.s-tit{font-family:"Share Tech Mono",monospace}
+.replis>.chapeau,.titre-appro{font-family:"Red Hat Text",sans-serif}
+.etiq{font-family:"Share Tech Mono",monospace}
+th{font-family:"Red Hat Text",sans-serif}
+.quiz>.chapeau{font-family:"Red Hat Text",sans-serif}
+.qq button,.score{font-family:"Red Hat Text",sans-serif}
+.outil .k,.chaine,.champ .v{font-family:"Share Tech Mono",monospace}
+input[type=number],select,.bt{font-family:"Red Hat Text",sans-serif}
+.entete-c,.res .gros b{font-family:"Share Tech Mono",monospace}
+.exo>.k{font-family:"Share Tech Mono",monospace}
+.exo input[type=text],.exo textarea{font-family:"Red Hat Text",sans-serif}
+.exo .unite{font-family:"Share Tech Mono",monospace}
+.exo .btn{font-family:"Red Hat Text",sans-serif}
+.chercher input{font-family:"Red Hat Text",sans-serif}
+.resultats a{font-family:"Red Hat Text",sans-serif}
+.resultats .ou,.raccourcis a{font-family:"Share Tech Mono",monospace}
+.espace>.compte{font-family:"Share Tech Mono",monospace}
+.frise .n{font-family:"Share Tech Mono",monospace}
+.frise .t{font-family:"Red Hat Text",sans-serif}
+.frise .meta{font-family:"Share Tech Mono",monospace}
+.outils-grille .t{font-family:"Red Hat Text",sans-serif}
+.outils-grille .ou,.filtres select{font-family:"Share Tech Mono",monospace}
+.exo-ligne a{font-family:"Red Hat Text",sans-serif}
+.exo-ligne .ou{font-family:"Share Tech Mono",monospace}
+.grille-f .k,.porte .k{font-family:"Share Tech Mono",monospace}
+
+/* ─── l'en-tête : le filet de paillasse, puis la règle ──────────────────
+   La règle est dessinée, pas écrite : une graduation tous les dix pixels,
+   une plus longue tous les cinquante. Elle ne dit rien ; elle situe. */
+header.tete{border-top:3px solid var(--froid);padding-top:20px}
+header.tete .sur{color:var(--froid)}
+header.tete h1 span{color:var(--froid)}
+header.tete::after{
+  content:"";display:block;height:13px;margin:18px 0 0;
+  background:
+    repeating-linear-gradient(90deg,var(--trait) 0 1px,transparent 1px 50px) bottom/100% 13px no-repeat,
+    repeating-linear-gradient(90deg,var(--trait2) 0 1px,transparent 1px 10px) bottom/100% 7px no-repeat;
+  border-bottom:1px solid var(--trait);
+}
+
+/* ─── les cartes : des étiquettes de flacon ─────────────────────────────
+   Une bande à gauche, la famille par sa couleur, et le code en pastille.
+   La famille se lit sur l'adresse : la chaîne ne pose aucune classe pour
+   cela, et il n'y a rien à ajouter au générateur. */
+.grille-f a,.porte{
+  border:1px solid var(--trait);border-left:5px solid var(--trait);
+  border-radius:var(--r);background:var(--carte);
+}
+.grille-f a:hover,.porte:hover{border-color:var(--encre);border-left-color:var(--froid)}
+.grille-f a[href*="html/"],.porte[href*="html/"]{border-left-color:var(--froid)}
+.grille-f a[href*="simulations/"],.porte[href*="simulations/"]{border-left-color:var(--ardoise)}
+.grille-f a[href*="terminale/"],.grille-f a[href*="seconde/"],.grille-f a[href*="cap/"],
+.porte[href*="terminale/"],.porte[href*="seconde/"],.porte[href*="cap/"]{border-left-color:var(--tiede)}
+.porte.vedette{border-left-width:5px;border-color:var(--froid)}
+
+/* le code du TP, en pastille : CT-09, CAP-01, PAR-04 se lisent de loin */
+.grille-f a .k,.porte .k{
+  display:inline-block;padding:2px 7px;margin-bottom:7px;
+  border:1px solid var(--trait);border-radius:var(--r);
+  color:var(--encre2);background:var(--carte2);
+  font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+}
+.grille-f a:hover .k,.porte:hover .k{border-color:var(--froid);color:var(--froid)}
+
+/* ─── le reste de la maison ─────────────────────────────────────────── */
+.chapeau-f{color:var(--froid);letter-spacing:.1em}
+.espace>h2{border-bottom:2px solid var(--froid);padding-bottom:6px}
+.doc-barre{border-bottom:2px solid var(--froid)}
+.frise .n{color:var(--froid)}
+.recap{border-color:var(--froid);color:var(--froid)}
+.cle{border-left-color:var(--froid)}
+.jauge-lecture i{background:var(--froid)}
