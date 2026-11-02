@@ -204,6 +204,11 @@ details.modele ul{margin:8px 0 0;padding-left:1.2em;color:var(--encre2);font-siz
 .pc-bandeau-mode{margin:10px 0;padding:10px 12px;border-left:4px solid var(--accent);background:var(--accent-doux);border-radius:var(--r)}
 .pc-note .pc-bandeau-mode{border-left-color:var(--encre)}
 .pc-confirmer{margin-top:10px;padding:10px 12px;border:1px solid var(--encre);border-radius:var(--r)}
+/* le travail garde : la question a l'ouverture, et le mot apres la reprise */
+.pc-reprise{margin:0 0 14px;padding:12px 14px;border:2px solid var(--accent);border-radius:var(--r);background:var(--accent-doux)}
+.pc-reprise p{margin:0 0 10px}
+.pc-reprise .pc-zero.pc-confirme{color:var(--faux);border-color:var(--faux);font-weight:700}
+.pc-repris{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0;padding:8px 12px;border-left:4px solid var(--accent);background:var(--accent-doux);border-radius:var(--r)}
 .pc-q-lib{margin:0 0 8px;font-weight:600}
 .pc-q-num{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--encre);color:var(--carte);
   font-size:.8rem;margin-right:.5em;vertical-align:.1em}
@@ -493,6 +498,7 @@ section h2{font-size:1.1rem;margin-top:8px}
 </style>
 <script>
 window.SIM_MODE = "td";
+window.SIM_PAGE = "index";
 
 </script>
 </head>
@@ -514,7 +520,7 @@ window.SIM_MODE = "td";
 <section><h2>Chimie</h2><div class="grille"><a class="carte-sim" href="phet/ph-scale_fr.html?screens=1,2&amp;yotta=false"><span class="code">SIM-15</span><span class="nom">pH et dilution</span><span class="quoi">diluer dix fois, le pH monte d'une unité</span><span class="origine">PhET · hors ligne</span></a><a class="carte-sim" href="titrage.html"><span class="code">SIM-16</span><span class="nom">Le titrage acide-base</span><span class="quoi">indicateur coloré, pH-mètre, conductimètre ou seringue : doser le vinaigre et le détartrant</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="combustion.html"><span class="code">1re</span><span class="nom">La chaudière qui fume</span><span class="quoi">combustion des hydrocarbures : réglage de l'air à l'analyseur, suie, eau de chaux, CO, E = m × PCI, masse de CO₂</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="solution.html"><span class="code">1re</span><span class="nom">Préparer un liquide de refroidissement</span><span class="quoi">masse molaire, n = m ÷ M, C = n ÷ V ; dilution à la pipette et à la fiole jaugées, réfractomètre, enceinte froide</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="corrosion.html"><span class="code">Tle</span><span class="nom">Le garde-corps qui rouille</span><span class="quoi">clous dans huit milieux, série des métaux au voltmètre, anode sacrificielle d'une coque ou d'un chauffe-eau</span><span class="origine">hors ligne</span></a></div></section>
 <section><h2>Énergie et développement durable</h2><div class="grille"><a class="carte-sim" href="bouilloire.html"><span class="code">SIM-17</span><span class="nom">Chauffer de l'eau</span><span class="quoi">rendement, ébullition, refroidissement, avec un enregistreur automatique</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="porteur.html"><span class="code">Tle CTRM · S2</span><span class="nom">Porteur diesel ou électrique</span><span class="quoi">banc à rouleaux et tournée : PCI du gazole, E = U × Q, rendement, autonomie</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="photovoltaique-eolienne.html"><span class="code">SIM-18</span><span class="nom">Panneau solaire et éolienne</span><span class="quoi">éclairement, angle, vent et puissance produite</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="isolant.html"><span class="code">SIM-19</span><span class="nom">Choisir un isolant</span><span class="quoi">quatre boîtes, quatre isolants, le refroidissement</span><span class="origine">hors ligne</span></a><a class="carte-sim" href="veranda.html"><span class="code">Tle</span><span class="nom">La véranda en été</span><span class="quoi">rayonnement thermique au banc, verre et film, caméra thermique, effet de serre de la Terre</span><span class="origine">hors ligne</span></a></div></section>
 </div>
-<footer class="pied">Les simulations sont des fichiers autonomes : ni compte, ni enregistrement, ni requête. Les simulations PhET sont de l'université du Colorado (PhET Interactive Simulations, University of Colorado Boulder, licence CC BY-NC 4.0), copiées le 27 septembre 2026 depuis phet.colorado.edu ; leur version en ligne y reste la référence.</footer>
+<footer class="pied">Les simulations sont des fichiers autonomes : ni compte, ni requête. L'avancement d'un parcours reste sur l'appareil. Les simulations PhET sont de l'université du Colorado (PhET Interactive Simulations, University of Colorado Boulder, licence CC BY-NC 4.0), copiées le 27 septembre 2026 depuis phet.colorado.edu ; leur version en ligne y reste la référence.</footer>
 </div>
 <script>if (window.Sim && Sim.calculatrice) Sim.calculatrice();</script>
 </body>
