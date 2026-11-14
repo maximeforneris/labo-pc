@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atelier de câblage</title>
-<meta name="description" content="Câbler de l’appareillage réel, domestique et industriel, sur une platine : bornes repérées, couleurs et sections des conducteurs, mise sous tension, VAT, multimètre, pince ampèremétrique et wattmètre-prise. 35 appareils, 22 missions vérifiées, du CAP au bac pro MELEC, sans matériel.">
+<meta name="description" content="Câbler de l’appareillage réel, domestique et industriel, sur une platine : bornes repérées, couleurs et sections des conducteurs, mise sous tension, VAT, multimètre, pince ampèremétrique et wattmètre-prise ; une fiche de documentation par appareil, des moteurs triphasé et monophasé, des relais thermiques à régler. 36 appareils, 28 missions vérifiées, du CAP au bac pro MELEC, sans matériel.">
 <meta name="etiquette" content="Outil · Électrotechnique">
-<meta name="porte-compte" content="35 appareils, 22 missions">
+<meta name="porte-compte" content="36 appareils, 28 missions">
 <meta name="stockage" content="atelier-cablage-v1 : la platine en cours, les missions réussies et les réglages d’affichage">
 <!-- Atelier de câblage : écrit le 11 novembre 2026, sur le modèle de l'atelier schéma électrique.
      Sources dans _commun/tp/simulations/cablage/src/, assemblées par cablage/assembler.py.
@@ -182,7 +182,7 @@ select.btn{padding-right:28px;max-width:100%}
   .libsec,.libgrid{display:contents}
   .lib .lab,.libnote{display:none}
   .item{flex:none;touch-action:pan-x;padding:5px}
-  .win.float{left:8px!important;right:8px!important;top:auto!important;bottom:8px!important;width:auto!important;max-height:70vh}
+  .win.float{left:8px!important;right:8px!important;top:auto!important;bottom:8px!important;width:auto!important;max-height:70vh!important}
   .win-grip{display:none}
   .bar-sp{display:none}
 }
@@ -265,6 +265,22 @@ ul.verif em{display:block;font-style:normal;color:var(--muted);font-size:.84rem;
 .ck-ligne input{accent-color:var(--accent);width:17px;height:17px;margin:0}
 .pan-watt{border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
 .pince-pl{pointer-events:none}
+
+/* le guidage de la consigne, les indices de la vérification, la documentation (12 novembre 2026) */
+.guidage{margin:8px 14px 0;align-self:flex-start}
+.consigne h4.pas{margin:10px 0 2px;font-size:.9rem;color:var(--accent)}
+ul.verif details.indice{margin-top:3px;font-size:.84rem;color:var(--muted)}
+ul.verif details.indice summary{cursor:pointer;color:var(--accent);font-weight:700;font-size:.8rem}
+.doc{padding:2px 14px 14px;font-size:.9rem;line-height:1.45}
+.doc h3{margin:6px 0 4px;font-size:1.02rem}
+.doc h4{margin:12px 0 4px;font-size:.84rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.doc p{margin:4px 0}
+.doc-figbox{background:#E6E8E4;border-radius:10px;padding:6px;margin:8px 0;display:flex;justify-content:center}
+.doc-fig{width:100%;max-width:340px;height:auto;max-height:230px}
+.doc-tab{width:100%;border-collapse:collapse;font-size:.86rem}
+.doc-tab th,.doc-tab td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left;vertical-align:top}
+.doc-tab th{color:var(--muted);font-weight:700;width:38%}
+.doc-tab tr:first-child th{width:auto}
 </style>
 </head>
 <body>
@@ -300,13 +316,13 @@ ul.verif em{display:block;font-style:normal;color:var(--muted);font-size:.84rem;
         <details class="pop" id="popCol">
           <summary class="btn" title="Couleur du conducteur"><span class="colnow" id="colNow"></span><span id="colLab"></span></summary>
           <div class="pop-body"><span class="flab">Couleur du conducteur</span><div class="swatches" id="swCol"></div>
-            <p class="note">Bleu clair : le neutre. Vert-jaune : la terre. Les autres pour les phases, les retours et la commande.</p></div>
+            <p class="note">Bleu clair : le neutre. Vert-jaune : la terre. Blanc : le commun de la commande, le 0 V du transformateur. Les autres pour les phases, les retours et la commande (rouge).</p></div>
         </details>
         <select class="btn" id="sec" aria-label="Section du conducteur"></select>
         <button class="btn power" id="power"></button>
       </div>
       <div class="misbar"><b id="misTitre"></b>
-        <button class="btn sm" data-open="consigne">Consigne</button><button class="btn sm" data-open="schema">Schéma</button>
+        <button class="btn sm" data-open="consigne">Consigne</button><button class="btn sm" data-open="schema">Schéma</button><button class="btn sm" data-open="doc">Documentation</button>
         <button class="btn sm tog" id="b-range" aria-pressed="false" title="Reprendre les conducteurs en tracé orthogonal, comme en goulotte"><svg viewBox="0 0 24 24"><path d="M4 6h7v12h9"/><path d="M4 12h4v8"/></svg>Ranger les conducteurs</button>
         <button class="btn sm primary" id="btnVerif"><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>Vérifier mon câblage</button>
         <span class="bar-sp"></span>
@@ -411,10 +427,21 @@ function manetteResi9(g,x,y0,on){E('rect',{x:x-14,y:y0,width:28,height:32,rx:4,f
 /* une impédance : module et facteur de puissance */
 const zpf=(m,pf)=>[m*pf,m*Math.sqrt(Math.max(0,1-pf*pf))];
 const zR=r=>[r,0];
-/* la bobine d'un contacteur : 24 V ou 230 V, 7 VA en maintien */
+/* la bobine d'un contacteur : 7 VA en maintien. Cinq tensions de bobine en alternatif 50 Hz
+   (12 novembre 2026, « les tensions de bobine de contacteur, dépannage possible ») ; sa résistance en
+   continu croît comme le carré de sa tension : 15 Ω en 24 V, 1 400 Ω en 230 V (ordres de grandeur). */
 const zBob=vn=>zpf(vn*vn/7,0.3);
-const rBob=vn=>vn>100?1400:15;
-const BOB=[24,230];
+const rBob=vn=>Math.round(15*Math.pow(vn/24,2));
+const BOB=[24,48,110,230,400];
+/* le relais thermique : une référence par plage de réglage, une molette dans la plage */
+const PLAGES_RT={'0,63-1':[0.63,1,0.01],'1-1,6':[1,1.6,0.05],'1,6-2,5':[1.6,2.5,0.05],'2,5-4':[2.5,4,0.1],'4-6':[4,6,0.1],'5,5-8':[5.5,8,0.1],'7-10':[7,10,0.1]};
+const fmtRT=v=>nf(v,v<1||Math.round(v*100)%10?2:Math.round(v*10)%10?1:0);
+function gradRT(pl){const[a,b,st]=PLAGES_RT[pl]||PLAGES_RT['1-1,6'],L=[];
+  for(let v=a;v<=b+1e-9;v=Math.round((v+st)*1000)/1000){const q=Math.round(v*100)/100;if(!L.includes(q))L.push(q);}
+  return L;}
+function calerIr(d,parPlage){if(!PLAGES_RT[d.p.cal])d.p.cal='1-1,6';let ir=+d.p.Ir;
+  if(!parPlage){const[a,b]=PLAGES_RT[d.p.cal];if(!(ir>=a-1e-9&&ir<=b+1e-9)){const k=Object.keys(PLAGES_RT).find(k=>ir>=PLAGES_RT[k][0]-1e-9&&ir<=PLAGES_RT[k][1]+1e-9);if(k)d.p.cal=k;}}
+  const G=gradRT(d.p.cal);let best=G[0];for(const g of G)if(Math.abs(g-ir)<Math.abs(best-ir))best=g;d.p.Ir=best;}
 
 const TYPES={
   /* ---------- alimentation et protection ---------- */
@@ -489,7 +516,7 @@ const TYPES={
     info:d=>d.s.fondu?'cartouche fondue':d.s.ferme?'fermé':'porte-fusible ouvert (sectionné)'},
   tr:{nom:'Transformateur de commande',cat:'indc',pre:'T',w:150,h:120,
     bornes:[{n:'P0',l:'0',x:25,y:0,d:'t'},{n:'P230',l:'230',x:70,y:0,d:'t'},{n:'P400',l:'400',x:115,y:0,d:'t'},
-            {n:'S0',l:'0',x:45,y:120,d:'b'},{n:'S24',l:'24',x:105,y:120,d:'b'}],
+            {n:'S0',l:'0',x:45,y:120,d:'b',f:'C0'},{n:'S24',l:'24',x:105,y:120,d:'b'}],
     init:d=>{d.s={emf:[0,0],hs:false,chauffe:0};},
     loads:d=>[{a:'P0',b:'P230',z:zpf(14000,0.2),rdc:30},{a:'P0',b:'P400',z:zpf(42000,0.2),rdc:52},{a:'S0',b:'S24',z:[1e9,0],rdc:0.6}],
     sources:d=>!d.s.hs&&cabs(d.s.emf)>1?{S0:d.id+':0',S24:d.id+':24'}:{},
@@ -618,42 +645,72 @@ const TYPES={
       {n:'13',x:132,y:0,d:'t'},{n:'21',x:157,y:0,d:'t'},{n:'53',x:182,y:0,d:'t'},{n:'61',x:207,y:0,d:'t'},
       {n:'p2',l:'2',x:20,y:140,d:'b'},{n:'p4',l:'4',x:45,y:140,d:'b'},{n:'p6',l:'6',x:70,y:140,d:'b'},{n:'A2',x:102,y:140,d:'b'},
       {n:'14',x:132,y:140,d:'b'},{n:'22',x:157,y:140,d:'b'},{n:'54',x:182,y:140,d:'b'},{n:'62',x:207,y:140,d:'b'}],
-    params:[{k:'bob',lab:'Bobine',opts:BOB,u:'V ~',def:24}],
-    init:d=>{d.s={c:false,hs:false,def:null,pomp:false};},
+    params:[{k:'bob',lab:'Bobine (tension de commande)',opts:BOB,u:'V ~ 50 Hz',def:24}],
+    init:d=>{d.s={c:false,hs:false,def:null,pomp:false,broute:false,surv:false,chb:0};},
     links(d){const c=d.s.c||d.s.man,L=[];if(c)L.push(['p1','p2'],['p3','p4'],['p5','p6'],['53','54']);
       if(c&&d.s.def!=='13-14')L.push(['13','14']);if(!c)L.push(['21','22'],['61','62']);return L;},
     loads:d=>[{a:'A1',b:'A2',z:zBob(+d.p.bob),rdc:rBob(+d.p.bob),coil:1}],
-    upd(d,c){const u=c.u(d,'A1','A2'),vn=+d.p.bob;let ch=false;
-      if(u>1.3*vn&&!d.s.hs){d.s.hs=true;d.s.cause='bobine '+vn+' V alimentée en '+Math.round(u)+' V';ch=true;}
-      const on=!d.s.hs&&!d.s.pomp&&(d.s.c?u>=0.6*vn:u>=0.8*vn);if(on!==d.s.c){d.s.c=on;ch=true;}return ch;},
+    /* la bobine colle à 80 % de sa tension et tient jusqu'à 50 % ; au-delà de 160 %, elle grille net.
+       Entre 40 et 80 %, elle appelle sans coller : elle broute, et son courant d'appel la fait chauffer
+       jusqu'à griller ; au-delà de 115 %, elle colle mais chauffe, plus lentement. */
+    upd(d,c){const u=c.u(d,'A1','A2'),vn=+d.p.bob;let ch=false;d.s.ub=u;
+      if(u>1.6*vn&&!d.s.hs){d.s.hs=true;d.s.c=false;d.s.broute=false;d.s.cause='bobine de '+vn+' V alimentée en '+Math.round(u)+' V';ch=true;
+        if(!c.essai)evenement(d.nm+' : sa bobine de '+vn+' V a grillé net, alimentée en '+Math.round(u)+' V','trip');}
+      const on=!d.s.hs&&!d.s.pomp&&(d.s.c?u>=0.5*vn:u>=0.8*vn);if(on!==d.s.c){d.s.c=on;ch=true;}
+      const br=!d.s.hs&&!d.s.pomp&&!on&&u>=0.4*vn;if(br!==!!d.s.broute){d.s.broute=br;ch=true;}
+      d.s.surv=!!(on&&u>1.15*vn);return ch;},
+    tick(d,dt){if(d.s.hs||!(d.s.broute||d.s.surv)){if(d.s.chb)d.s.chb=Math.max(0,d.s.chb-dt/60);return;}
+      d.s.chb=(d.s.chb||0)+dt/(d.s.broute?12:45);if(d.s.chb<1)return;
+      const vn=+d.p.bob,u=Math.round(d.s.ub||0);
+      d.s.cause=d.s.broute?'bobine de '+vn+' V sous '+u+' V : elle a brouté sans coller, puis chauffé':'bobine de '+vn+' V sous '+u+' V : elle a chauffé';
+      d.s.hs=true;d.s.c=false;d.s.broute=false;d.s.surv=false;evenement(d.nm+' : la bobine a grillé ('+d.s.cause+')','trip');return true;},
     draw(g,d){corps(g,220,140,DV.ind,DV.indb,8);E('line',{x1:88,y1:10,x2:88,y2:130,stroke:'#AEB4B9'},g);E('line',{x1:118,y1:10,x2:118,y2:130,stroke:'#AEB4B9'},g);
-      nomDev(g,d,44,48);lab(g,44,64,'puissance',{class:'dv s'});lab(g,102,48,'bobine',{class:'dv s'});lab(g,102,62,d.p.bob+' V',{class:'dv s b'});
+      nomDev(g,d,44,48);lab(g,44,64,'puissance',{class:'dv s'});lab(g,103,34,'bobine',{class:'dv s'});
+      /* l'étiquette de la bobine, comme sur la vraie : sa tension et sa fréquence */
+      E('rect',{x:90,y:40,width:26,height:30,rx:3,fill:'#FFFFFF',stroke:'#8D959C'},g);
+      lab(g,103,54,d.p.bob+' V',{class:'dv s b',style:'font-size:8.5px'});lab(g,103,65,'~ 50 Hz',{class:'dv s',style:'font-size:7.5px'});
       lab(g,170,48,'auxiliaires',{class:'dv s'});
       E('rect',{x:150,y:62,width:40,height:38,rx:5,fill:'#30363C'},g);
       E('rect',{x:156,y:d.s.c||d.s.man?84:66,width:28,height:12,rx:3,fill:d.s.c?'#2E9B47':d.s.man?'#E9C46A':'#C9CED2'},g);zone(g,'man',146,58,48,46);
       lab(g,170,114,d.s.man?'enfoncé à la main':d.s.c?'fermé':'ouvert',{class:'dv s'});
-      E('circle',{cx:102,cy:84,r:8,fill:d.s.hs?'#C62828':d.s.c?'#F2C94C':'#B6BCC1'},g);
-      if(d.s.hs)lab(g,102,108,'HS',{class:'dv s b',fill:'#C62828'});if(d.s.pomp)lab(g,102,108,'pompe',{class:'dv s b',fill:'#C62828'});},
+      if(d.s.broute){E('path',{d:'M 92 79 l 4 -4 l 4 8 l 4 -8 l 4 8 l 4 -8 l 4 4',fill:'none',stroke:'#EF8A16','stroke-width':1.8},g);}
+      E('circle',{cx:103,cy:94,r:7,fill:d.s.hs?'#C62828':d.s.broute?'#EF8A16':d.s.c?'#F2C94C':'#B6BCC1'},g);
+      if(d.s.hs)lab(g,103,114,'HS',{class:'dv s b',fill:'#C62828'});else if(d.s.pomp)lab(g,103,114,'pompe',{class:'dv s b',fill:'#C62828'});
+      else if(d.s.broute)lab(g,103,114,'broute',{class:'dv s b',fill:'#B85C00'});},
     act(d,a,ph){if(a!=='man'||ph!=='down')return;if(sousTensionReseau()){toast('Enfoncer l’équipage mobile à la main se fait hors tension, pour un essai à l’ohmmètre.','warn');return;}d.s.man=!d.s.man;return true;},
-    actions:d=>[].concat(d.s.hs?[['Remplacer le contacteur',d=>{d.s.hs=false;}]]:[],d.s.pomp?[['Réinitialiser',d=>{d.s.pomp=false;}]]:[]),
-    info:d=>(d.s.hs?'bobine grillée ('+(d.s.cause||'')+') · ':'')+(d.s.pomp?'pompage : la bobine se coupe elle-même · ':'')+(d.s.man?'équipage mobile enfoncé à la main : contacts basculés pour l’essai à l’ohmmètre':d.s.c?'enclenché':'au repos')},
-  rt:{nom:'Relais thermique',cat:'indp',pre:'F',w:160,h:120,
+    actions:d=>[].concat(d.s.hs?[['Remplacer le contacteur',d=>{d.s.hs=false;d.s.chb=0;}]]:[],d.s.pomp?[['Réinitialiser',d=>{d.s.pomp=false;}]]:[]),
+    info:d=>(d.s.hs?'bobine grillée ('+(d.s.cause||'')+') · ':'')+(d.s.pomp?'pompage : la bobine se coupe elle-même · ':'')+
+      (d.s.broute?'la bobine broute : elle vibre sans coller, '+fv(d.s.ub||0)+' à ses bornes pour une bobine de '+d.p.bob+' V · ':'')+
+      (d.s.surv?'la bobine chauffe : '+fv(d.s.ub||0)+' pour '+d.p.bob+' V · ':'')+
+      (d.s.man?'équipage mobile enfoncé à la main : contacts basculés pour l’essai à l’ohmmètre':d.s.c?'enclenché':'au repos')},
+  rt:{nom:'Relais thermique',cat:'indp',pre:'F',w:160,h:136,
     bornes:[{n:'r1',l:'1',x:20,y:0,d:'t'},{n:'r3',l:'3',x:45,y:0,d:'t'},{n:'r5',l:'5',x:70,y:0,d:'t'},{n:'95',x:112,y:0,d:'t'},{n:'97',x:140,y:0,d:'t'},
-      {n:'r2',l:'2',x:20,y:120,d:'b'},{n:'r4',l:'4',x:45,y:120,d:'b'},{n:'r6',l:'6',x:70,y:120,d:'b'},{n:'96',x:112,y:120,d:'b'},{n:'98',x:140,y:120,d:'b'}],
-    params:[{k:'Ir',lab:'Réglage Ir',opts:[1,1.6,2.5,3.5,5,8],u:'A',def:1.6}],
+      {n:'r2',l:'2',x:20,y:136,d:'b'},{n:'r4',l:'4',x:45,y:136,d:'b'},{n:'r6',l:'6',x:70,y:136,d:'b'},{n:'96',x:112,y:136,d:'b'},{n:'98',x:140,y:136,d:'b'}],
+    /* demandé le 12 novembre 2026 : « relais thermique à régler (choisir plage et intensité) » */
+    params:[{k:'cal',lab:'Plage de réglage (la référence du relais)',opts:Object.keys(PLAGES_RT),noms:Object.fromEntries(Object.keys(PLAGES_RT).map(k=>[k,k.replace('-',' à ')+' A'])),def:'1-1,6',apres:d=>calerIr(d,true)},
+      {k:'Ir',lab:'Réglage Ir (la molette)',opts:d=>gradRT(d.p.cal),fmt:fmtRT,u:'A',def:1}],
+    norm:d=>calerIr(d,false),
     init:d=>{d.s={trip:false,th:0};},
     links:d=>[['r1','r2'],['r3','r4'],['r5','r6']].concat(d.s.trip?[['97','98']]:[['95','96']]),
     prot:d=>({th:+d.p.Ir}),
-    draw(g,d){corps(g,160,120,DV.ind,DV.indb,8);nomDev(g,d,45,48);lab(g,45,62,'relais thermique',{class:'dv s'});
-      E('circle',{cx:45,cy:88,r:13,fill:'#F3F3EF',stroke:'#6B737A'},g);lab(g,45,92,nf(+d.p.Ir,1)+' A',{class:'dv s b'});
+    draw(g,d){corps(g,160,136,DV.ind,DV.indb,8);nomDev(g,d,45,34);lab(g,45,47,'relais thermique',{class:'dv s'});
+      const[a,b]=PLAGES_RT[d.p.cal]||[1,1.6],cx=45,cy=74,R=14;
+      E('circle',{cx,cy,r:R+4,fill:'#F3F3EF',stroke:'#6B737A'},g);
+      for(let i=0;i<=6;i++){const an=(-135+45*i)*Math.PI/180;E('line',{x1:cx+(R+0.5)*Math.sin(an),y1:cy-(R+0.5)*Math.cos(an),x2:cx+(R+4)*Math.sin(an),y2:cy-(R+4)*Math.cos(an),stroke:'#30363C','stroke-width':1.1},g);}
+      E('circle',{cx,cy,r:10,fill:'#2F6FB0',stroke:'#1F4E7E'},g);
+      E('line',{x1:cx,y1:cy+4,x2:cx,y2:cy-12,stroke:'#FFFFFF','stroke-width':2.6,'stroke-linecap':'round',transform:`rotate(${(-135+270*clamp((+d.p.Ir-a)/(b-a),0,1)).toFixed(1)} ${cx} ${cy})`},g);
+      lab(g,cx-17,cy+22,fmtRT(a),{class:'dv s','text-anchor':'end',style:'font-size:8px'});lab(g,cx+17,cy+22,fmtRT(b),{class:'dv s','text-anchor':'start',style:'font-size:8px'});
+      lab(g,cx,cy+33,'Ir '+fmtRT(+d.p.Ir)+' A',{class:'dv s b'});
       E('rect',{x:98,y:40,width:26,height:22,rx:5,fill:'#2F6FB0'},g);lab(g,111,55,'R',{class:'dv s inv b'});zone(g,'reset',94,36,34,30);
-      E('rect',{x:98,y:72,width:26,height:22,rx:5,fill:'#C62828'},g);lab(g,111,87,'T',{class:'dv s inv b'});zone(g,'test',94,68,34,30);
+      E('rect',{x:98,y:76,width:26,height:22,rx:5,fill:'#C62828'},g);lab(g,111,91,'T',{class:'dv s inv b'});zone(g,'test',94,72,34,30);
       E('rect',{x:132,y:52,width:16,height:30,rx:3,fill:d.s.trip?'#E9C46A':'#C9CED2',stroke:'#6B737A'},g);
       if(d.s.trip)lab(g,140,72,'!',{class:'dv b'});},
     act(d,a,ph){if(ph!=='down')return;if(a==='reset'&&d.s.trip){d.s.trip=false;d.s.th=Math.min(d.s.th,0.6);return true;}
       if(a==='test'&&!d.s.trip){d.s.trip=true;d.s.cause='bouton test';return true;}},
-    info:d=>d.s.trip?'déclenché ('+(d.s.cause||'surcharge')+') : réarmer par R':'au repos · échauffement '+Math.round(100*clamp(d.s.th,0,1))+' %'},
-  mot:{nom:'Moteur asynchrone triphasé',cat:'indp',pre:'M',w:250,h:170,classe1:true,
+    info:d=>(d.s.trip?'déclenché ('+(d.s.cause||'surcharge')+') : réarmer par R':'au repos · échauffement '+Math.round(100*clamp(d.s.th,0,1))+' %')+
+      ' · plage '+d.p.cal.replace('-',' à ')+' A, réglé à '+fmtRT(+d.p.Ir)+' A'+
+      (d.r&&d.r.ip&&Math.max(...d.r.ip)>0.01?' · courant par pôle : '+d.r.ip.map(fa).join(' / '):'')},
+  mot:{nom:'Moteur asynchrone triphasé',cat:'indp',pre:'M',w:250,h:170,classe1:true,In:d=>d.p.pl==='400/690'?2:3.5,
     bornes:[{n:'W2',x:40,y:42,d:'t'},{n:'U2',x:80,y:42,d:'t'},{n:'V2',x:120,y:42,d:'t'},
       {n:'U1',x:40,y:96,d:'b'},{n:'V1',x:80,y:96,d:'b'},{n:'W1',x:120,y:96,d:'b'},{n:'PE',x:150,y:150,d:'b',f:'PE'}],
     params:[{k:'pl',lab:'Plaque',opts:['230/400','400/690'],u:'V',def:'230/400'},
@@ -828,6 +885,79 @@ Object.assign(TYPES,{
       E('circle',{cx:45,cy:38,r:d.s.p?18:21,fill:'#202428',stroke:'#C9CED2','stroke-width':2},g);lab(g,45,42,'à-coups',{class:'dv s inv b'});nomDev(g,d,45,-5);zone(g,'btn',12,10,66,58);},
     act(d,a,ph){if(a!=='btn')return;const p=ph==='down';if(p===d.s.p)return;d.s.p=p;if(!p)d.s.trans=true;return true;},
     info:d=>d.s.p?'appuyé : 13-14 fermé, 21-22 ouvert':'relâché : 13-14 ouvert, 21-22 fermé'}});
+/* ================= le moteur asynchrone monophasé à condensateur permanent =================
+   Demandé le 12 novembre 2026 (« moteur monophasé câblage »). Deux enroulements : le principal
+   (U1-U2) sur le réseau, et l'auxiliaire (Z1-Z2), en série avec le condensateur (C1-C2). Le
+   condensateur décale le courant de l'auxiliaire d'un quart de période environ : le champ tourne et
+   le moteur démarre. Le sens suit le sens de l'auxiliaire par rapport au principal. Sans
+   condensateur, ou avec un condensateur desséché, les deux courants sont presque en phase : il ronfle
+   sans démarrer, et le relais thermique finit par couper. Lancé, il tourne encore sur son seul
+   enroulement principal, comme un vrai, mais ne redémarrerait pas.
+   Le couple de démarrage se lit sur Im × Ia × sin(décalage), comparé à sa valeur nominale.
+   Plaque : 230 V, 0,37 kW, 2,5 A, condensateur 16 µF 450 V ; ordres de grandeur, à relire.
+
+   La plaque à bornes : en haut Z1 U2 Z2, en bas C2 U1 C1. Le réseau arrive sur U1 (phase) et U2
+   (neutre). Barrettes du sens 1 : U1-C1, C2-Z1, Z2-U2 ; du sens 2 : U1-C2, C1-Z2, Z1-U2. Sans
+   barrettes, les six bornes sont libres : c'est ainsi qu'on inverse le sens par contacteurs. */
+const ZM_MONO=zpf(92,0.6),ZA_MONO=zpf(110,0.6),C_MONO=16;
+const zCap=uF=>[0.5,-1/(2*Math.PI*50*Math.max(uF,0.01)*1e-6)];
+const TAU0_MONO=(()=>{const Im=cdiv([VPH,0],ZM_MONO),Ia=cdiv([VPH,0],cadd(ZA_MONO,zCap(C_MONO)));return Im[0]*Ia[1]-Im[1]*Ia[0];})();
+const estMot=d=>d.t==='mot'||d.t==='mono';
+function etatMot(d,S,ch){return d.t==='mono'?etatMono(d,S,ch):etatMoteur(d,S,ch);}
+function etatMono(d,S,ch){
+  const W=ch.filter(c=>c.d===d),m=W.find(c=>c.l.ph==='m'),a=W.find(c=>c.l.ph==='a');
+  const r={tourne:false,dir:0,etat:d.s.hs?'grillé':'à l’arrêt',iL:0,surch:false,k:0};if(!m)return r;
+  const Vm=csub(S.V(m.ka),S.V(m.kb)),um=cabs(Vm),Im=cdiv(Vm,m.z),Ia=a?cdiv(csub(S.V(a.ka),S.V(a.kb)),a.z):C0;
+  /* le courant pris au réseau, quel que soit le câblage de la plaque : la puissance apparente des
+     deux enroulements et du condensateur, rapportée à la tension du principal */
+  let Sr=0,Si=0;for(const c of W){const v=csub(S.V(c.ka),S.V(c.kb)),i=cdiv(v,c.z);Sr+=v[0]*i[0]+v[1]*i[1];Si+=v[1]*i[0]-v[0]*i[1];}
+  const iw=um>1?Math.hypot(Sr,Si)/um:0;
+  if(um<0.3*VPH){r.k=1;r.iL=iw;return r;}
+  const ratio=(Im[0]*Ia[1]-Im[1]*Ia[0])/TAU0_MONO,lance=Math.abs(d.s.n||0)>700;
+  const f={0:0.7,50:0.8,100:1,130:1.3}[d.p.ch]||1;
+  if(um>1.25*VPH){r.etat='tension trop forte : '+fv(um)+' sur un moteur de 230 V';r.surch=true;
+    r.tourne=Math.abs(ratio)>=0.3||lance;r.dir=Math.abs(ratio)>=0.3?Math.sign(ratio):Math.sign(d.s.n||1);r.k=1.7;r.iL=iw*1.7;return r;}
+  if(!lance&&(Math.abs(ratio)<0.3||um<0.75*VPH)){
+    r.etat=um<0.75*VPH?'tension trop faible : il ne démarre pas':'ronfle sans démarrer : le champ ne tourne pas (condensateur, enroulement auxiliaire ?)';
+    r.surch=true;r.k=4.5;r.iL=iw*4.5;return r;}
+  r.dir=Math.abs(ratio)>=0.3?Math.sign(ratio):Math.sign(d.s.n);
+  if(d.s.bloque){r.etat='rotor bloqué';r.surch=true;r.k=4.5;r.iL=iw*4.5;return r;}
+  r.tourne=true;r.etat=Math.abs(ratio)<0.3?'tourne sur son seul enroulement principal : il ne redémarrerait pas':'tourne normalement';
+  r.k=f;r.iL=iw*f;return r;}
+Object.assign(TYPES,{
+  mono:{nom:'Moteur asynchrone monophasé à condensateur',cat:'indp',pre:'M',w:250,h:170,classe1:true,In:()=>2.5,
+    bornes:[{n:'Z1',x:40,y:42,d:'t'},{n:'U2',x:80,y:42,d:'t'},{n:'Z2',x:120,y:42,d:'t'},
+      {n:'C2',x:40,y:96,d:'b'},{n:'U1',x:80,y:96,d:'b'},{n:'C1',x:120,y:96,d:'b'},{n:'PE',x:150,y:150,d:'b',f:'PE'}],
+    params:[{k:'cpl',lab:'Barrettes',opts:['S1','S2','aucune'],noms:{S1:'sens 1 : U1-C1, C2-Z1, Z2-U2',S2:'sens 2 : U1-C2, C1-Z2, Z1-U2',aucune:'aucune (six bornes libres)'},def:'S1'},
+      {k:'ch',lab:'Charge',opts:[0,50,100,130],u:'%',def:100}],
+    init:d=>{d.s={bloque:false,hs:false,n:0,ang:0,chauffe:0,C:C_MONO};},
+    links(d){const c=d.p.cpl;return c==='S1'?[['U1','C1'],['C2','Z1'],['Z2','U2']]:c==='S2'?[['U1','C2'],['C1','Z2'],['Z1','U2']]:[];},
+    /* le condensateur n'a pas de résistance en continu : l'ohmmètre ne le voit pas, le capacimètre si */
+    loads(d){const L=[{a:'C1',b:'C2',z:zCap(d.s.C),cap:d.s.C}];if(d.s.hs)return L;
+      return L.concat([{a:'U1',b:'U2',z:ZM_MONO,rdc:9,ph:'m'},{a:'Z1',b:'Z2',z:ZA_MONO,rdc:14,ph:'a'}]);},
+    draw(g,d){const r=d.r||{};
+      E('rect',{x:160,y:20,width:84,height:120,rx:14,fill:'#5A7D6A',stroke:'#34503F','stroke-width':1.6},g);
+      for(let i=0;i<5;i++)E('line',{x1:166,y1:36+i*22,x2:238,y2:36+i*22,stroke:'#46664F','stroke-width':3},g);
+      E('rect',{x:244,y:72,width:6,height:16,fill:'#9AA0A6'},g);
+      const fan=E('g',{class:'fan',transform:`translate(202 80) rotate(${(d.s.ang||0).toFixed(1)})`},g);
+      E('circle',{cx:0,cy:0,r:26,fill:'#E9ECEE',stroke:'#34503F'},fan);
+      for(let i=0;i<3;i++)E('path',{d:'M0 0 L-6 -22 Q0 -26 6 -22 Z',fill:'#8C9196',transform:`rotate(${i*120})`},fan);
+      E('circle',{cx:0,cy:0,r:4,fill:'#30363C'},fan);
+      /* le condensateur, dans son boîtier sur la carcasse : sa plaque ne change pas quand il se dessèche */
+      E('rect',{x:170,y:112,width:64,height:18,rx:9,fill:'#23272A',stroke:'#0F1113'},g);
+      T(g,202,124.5,'16 µF 450 V',{'text-anchor':'middle',class:'dv',style:'font-size:8px;font-weight:700;fill:#E8EAEC'});
+      if(r.dir&&r.tourne)T(g,202,152,r.dir>0?'↻ sens 1':'↺ sens 2',{'text-anchor':'middle',class:'dv b'});
+      E('rect',{x:16,y:22,width:128,height:96,rx:8,fill:'#2F3438',stroke:'#1A1E21'},g);
+      const cpl=d.p.cpl,bar=(x1,y1,x2,y2)=>E('line',{x1,y1,x2,y2,stroke:'#C9A227','stroke-width':7,'stroke-linecap':'round'},g);
+      if(cpl==='S1'){bar(80,96,120,96);bar(40,96,40,42);bar(120,42,80,42);}
+      if(cpl==='S2'){bar(80,96,40,96);bar(120,96,120,42);bar(40,42,80,42);}
+      nomDev(g,d,30,14);lab(g,64,14,'M 1~ · 230 V · 0,37 kW · 2,5 A',{class:'dv s','text-anchor':'start'});
+      if(d.s.hs)lab(g,80,138,'MOTEUR GRILLÉ',{class:'dv s b',fill:'#C62828'});
+      else if(r.etat)lab(g,80,138,r.etat.length>34?r.etat.slice(0,r.etat.indexOf(' :')>0?r.etat.indexOf(' :'):34):r.etat,{class:'dv s'});},
+    actions:d=>[[d.s.bloque?'Débloquer le rotor':'Bloquer le rotor',d=>{d.s.bloque=!d.s.bloque;}],
+      ['Remplacer le condensateur (16 µF)',d=>{if(!peutCabler())return;d.s.C=C_MONO;toast('Condensateur neuf posé : 16 µF, 450 V.','info');}]]
+      .concat(d.s.hs?[['Remplacer le moteur',d=>{d.s.hs=false;d.s.chauffe=0;}]]:[]),
+    info:d=>d.s.hs?'grillé':d.r&&d.r.tourne?'tourne · '+Math.round(Math.abs(d.s.n))+' tr/min · '+(d.r.dir>0?'sens 1':'sens 2')+(d.r.etat!=='tourne normalement'?' · '+d.r.etat:''):(d.r&&d.r.etat)||'à l’arrêt'}});
 /* ================= l'état, la sauvegarde, l'historique =================
    st : la platine (appareils, conducteurs). Un conducteur relie deux bornes « idAppareil.borne ».
    d.s : l'état de l'appareil (positions, déclenchements) ; d.r : les grandeurs du dernier calcul,
@@ -842,7 +972,7 @@ function devNm(nm){return st.devs.find(d=>d.nm===nm);}
 function autoNom(t){const pre=TYPES[t].pre;if(pre==='Réseau')return st.devs.some(d=>d.nm==='Réseau')?'Réseau 2':'Réseau';
   let i=1;while(st.devs.some(d=>d.nm===pre+i))i++;return pre+i;}
 function ajoute(t,x,y,p,nm){const ty=TYPES[t],d={id:'a'+(st.nid++),t,x:Math.round(x),y:Math.round(y),p:{},nm:nm||autoNom(t)};
-  for(const q of ty.params||[])d.p[q.k]=q.def;Object.assign(d.p,p||{});if(ty.init)ty.init(d);else d.s={};st.devs.push(d);return d;}
+  for(const q of ty.params||[])d.p[q.k]=q.def;Object.assign(d.p,p||{});if(ty.norm)ty.norm(d);if(ty.init)ty.init(d);else d.s={};st.devs.push(d);return d;}
 function fil(a,b,col,sec,ext){const w=Object.assign({id:'w'+(st.nid++),a,b,col:col||'marron',sec:sec||1.5},ext||{});st.wires.push(w);return w;}
 function bornePos(k){const i=k.lastIndexOf('.');const d=devId(k.slice(0,i));if(!d)return null;const b=TYPES[d.t].bornes.find(x=>x.n===k.slice(i+1));
   return b?{x:d.x+b.x,y:d.y+b.y,d:b.d,dev:d,b}:null;}
@@ -850,7 +980,7 @@ function nomBorne(k){const p=bornePos(k);if(!p)return k;const l=p.b.l!=null?p.b.
 function snapshot(){return JSON.stringify(st,(k,v)=>k==='r'||k==='route'?undefined:v);}
 function restore(s){const o=JSON.parse(s);st={devs:[],wires:[],nid:o.nid||1,mis:o.mis||null};
   for(const d of o.devs||[]){const ty=TYPES[d.t];if(!ty)continue;const p={};for(const q of ty.params||[])p[q.k]=q.def;
-    d.p=Object.assign(p,d.p||{});if(!d.s){if(ty.init)ty.init(d);else d.s={};}st.devs.push(d);}
+    d.p=Object.assign(p,d.p||{});if(ty.norm)ty.norm(d);if(!d.s){if(ty.init)ty.init(d);else d.s={};}st.devs.push(d);}
   st.wires=(o.wires||[]).filter(w=>bornePos(w.a)&&bornePos(w.b));}
 function pushHist(){hist.push(snapshot());if(hist.length>80)hist.shift();}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({s:snapshot(),o:opts,p:prog}));}catch(e){}}
@@ -983,8 +1113,8 @@ function etatMoteur(d,S,ch){
 let SIMB=null;
 /* l'intensité de chaque récepteur, pour savoir ce que voit une protection */
 function courants(B,S,ch){const m=new Map(),add=(id,i)=>m.set(id,(m.get(id)||0)+i);
-  for(const c of ch){if(c.d.t==='mot')continue;const i=cabs(cdiv(csub(S.V(c.ka),S.V(c.kb)),c.z));add(c.d.id,i);}
-  for(const d of st.devs)if(d.t==='mot')add(d.id,etatMoteur(d,S,ch).iL);
+  for(const c of ch){if(estMot(c.d))continue;const i=cabs(cdiv(csub(S.V(c.ka),S.V(c.kb)),c.z));add(c.d.id,i);}
+  for(const d of st.devs)if(estMot(d))add(d.id,etatMot(d,S,ch).iL);
   return m;}
 
 function ctxDe(S){return{V:(d,b)=>S.V(nk(d,b)),u:(d,a,b)=>cabs(csub(S.V(nk(d,a)),S.V(nk(d,b)))),essai:ESSAI};}
@@ -1016,13 +1146,17 @@ function finalise(B,S,ch){
     if(d.t==='dcl'){r.on=!d.s.hs&&r.u>150;if(r.u>290&&!d.s.hs&&!ESSAI){d.s.hs=true;evenement(d.nm+' : lampe grillée, '+fv(r.u)+' à ses bornes','trip');again=true;}}
     if(d.t==='vy')r.on=!d.s.hs&&r.u>0.6*+d.p.v;
     if(d.t==='pc')r.u=SIM.u(d,'L','N');
-    if(d.t==='mot')Object.assign(r,etatMoteur(d,S,ch));if(TYPES[d.t].post)TYPES[d.t].post(d);}
+    if(estMot(d))Object.assign(r,etatMot(d,S,ch));if(TYPES[d.t].post)TYPES[d.t].post(d);}
+  /* le courant de chaque pôle des relais thermiques : un relais différentiel compare ses trois pôles */
+  if(sousTensionReseau())for(const d of st.devs)if(d.t==='rt')d.r.ip=courantsPoles(d);
   const f=fuite(B,S,ch);SIM.fuite=f.I;SIM.corps=f.corps;
   /* ce que voit chaque protection : on l'ouvre, on regarde ce qui s'éteint */
   if(sousTensionReseau()){const I0=courants(B,S,ch);
     for(const d of st.devs){const p=protDe(d);if(!p||estSource(d)||!fermeDe(d))continue;
       const B2=construit(new Set([d.id])),S2=resout(B2,ch),I2=courants(B2,S2,ch);let I=0;
       for(const[id,i]of I0){const j=I2.get(id)||0;if(i>j)I+=i-j;}SIM.Iprot.set(d.id,I);}}
+  /* un relais thermique lit le courant de ses pôles, pas celui de la bobine qu'il fait retomber */
+  for(const d of st.devs)if(d.t==='rt'&&d.r.ip)SIM.Iprot.set(d.id,Math.max(...d.r.ip));
   /* les dangers : une masse sous tension, un corps traversé */
   for(const d of st.devs){if(!TYPES[d.t].classe1)continue;const v=cabs(S.V(nk(d,'PE')));
     if(v>50)SIM.dangers.push(d.nm+' : la masse est à '+fv(v)+' par rapport à la terre');}
@@ -1038,10 +1172,15 @@ function tick(dt){
       if(x>8){declenche(d,'surintensité de '+fa(I));ch=true;}else if(d.s.th>=1){declenche(d,'surcharge : '+fa(I)+' pour un calibre de '+p.mt+' A');ch=true;}}
     if(p.fus!=null&&fermeDe(d)){const x=I/p.fus;d.s.th=Math.max(0,(d.s.th||0)+dt*(x>1.6?(x*x-1)/30:-0.05));
       if(d.s.th>=1){declenche(d,'surcharge : '+fa(I));ch=true;}}
-    if(p.th!=null&&!d.s.trip){const x=I/p.th;d.s.th=Math.max(0,(d.s.th||0)+dt*(x>1.05?(x*x-1.05)/120:-(d.s.th||0)/90));
-      if(d.s.th>=1){d.s.trip=true;d.s.cause='surcharge : '+fa(I)+' pour un réglage de '+nf(p.th,1)+' A';evenement(d.nm+' a déclenché : '+d.s.cause,'trip');ch=true;}}}
-  for(const d of st.devs){if(d.t!=='mot')continue;const r=d.r||{};
-    const cible=r.tourne&&!d.s.bloque?r.dir*(1450-0.3*(+d.p.ch))*(r.etat&&r.etat.startsWith('démarrage')?0.8:1):0;
+    /* le relais thermique est différentiel : si ses pôles ne portent pas le même courant (une phase
+       manque, ou, en monophasé, le courant ne traverse pas les trois pôles), il chauffe comme sous
+       une surcharge de 60 % et déclenche en une minute et demie environ (à relire) */
+    if(p.th!=null&&!d.s.trip){const ip=d.r&&d.r.ip,mx=ip?Math.max(...ip):0,mn=ip?Math.min(...ip):0,deseq=mx>0.3*p.th&&mn<0.6*mx;
+      const x=I/p.th*(deseq?1.6:1);d.s.th=Math.max(0,(d.s.th||0)+dt*(x>1.05?(x*x-1.05)/120:-(d.s.th||0)/90));
+      if(d.s.th>=1){d.s.trip=true;d.s.cause=deseq&&I<=1.15*p.th?'déséquilibre entre ses pôles, '+fa(mn)+' contre '+fa(mx)+' : une phase manque, ou le courant ne traverse pas les trois pôles':'surcharge : '+fa(I)+' pour un réglage de '+fmtRT(p.th)+' A';
+        evenement(d.nm+' a déclenché : '+d.s.cause,'trip');ch=true;}}}
+  for(const d of st.devs){if(!estMot(d))continue;const r=d.r||{};
+    const cible=r.tourne&&!d.s.bloque?r.dir*((d.t==='mono'?1400:1450)-0.3*(+d.p.ch))*(r.etat&&r.etat.startsWith('démarrage')?0.8:1):0;
     d.s.n+=(cible-d.s.n)*Math.min(1,dt*2.5);d.s.ang=((d.s.ang||0)+d.s.n*6*dt*0.05)%360;
     if(r.surch&&!d.s.hs){d.s.chauffe=(d.s.chauffe||0)+dt/30;if(d.s.chauffe>=1&&!ESSAI){d.s.hs=true;evenement(d.nm+' a grillé : '+r.etat,'trip');ch=true;}}
     else d.s.chauffe=Math.max(0,(d.s.chauffe||0)-dt/120);}
@@ -1071,7 +1210,7 @@ const RHO_CU=0.0178;
 function courantsFils(ids){const out=new Map();if(!SIM.ok||!SIM.B)return out;const B=SIM.B,S=SIM.S,ch=SIM.ch;
   const inj=new Map(),add=(k,v)=>inj.set(k,cadd(inj.get(k)||C0,v));
   for(const c of ch){let i=cdiv(csub(S.V(c.ka),S.V(c.kb)),c.z);
-    if(c.d.t==='mot'){const k=c.d.r&&c.d.r.k!=null?c.d.r.k:1;i=[i[0]*k,i[1]*k];}
+    if(estMot(c.d)){const k=c.d.r&&c.d.r.k!=null?c.d.r.k:1;i=[i[0]*k,i[1]*k];}
     add(c.ka,[-i[0],-i[1]]);add(c.kb,i);}
   const src=new Set(['@TERRE']);
   for(const d of st.devs){const ty=TYPES[d.t];if(ty.sources)for(const b in ty.sources(d))src.add(nk(d,b));}
@@ -1103,6 +1242,13 @@ function courantPince(ids){if(!ids.length)return 0;const I=courantsFils(ids);let
   for(const id of ids){const w=st.wires.find(x=>x.id===id);if(!w)continue;const A=bornePos(w.a),P=bornePos(w.b),v=A&&P?[P.x-A.x,P.y-A.y]:[0,1];
     if(!ref)ref=v;const sg=v[0]*ref[0]+v[1]*ref[1]>=0?1:-1,i=I.get(id)||C0;tot=cadd(tot,[sg*i[0],sg*i[1]]);}
   return cabs(tot);}
+/* le courant qui traverse chaque pôle d'un relais thermique (12 novembre 2026) : la somme des courants
+   des conducteurs qui arrivent sur l'une de ses deux bornes ; le pôle n'a pas d'autre liaison */
+function courantsPoles(d){const paires=[['r1','r2'],['r3','r4'],['r5','r6']],ks=new Set();for(const[a,b]of paires){ks.add(nk(d,a));ks.add(nk(d,b));}
+  const ws=st.wires.filter(w=>ks.has(w.a)||ks.has(w.b)),I=courantsFils(ws.map(w=>w.id));
+  return paires.map(([a,b])=>{let best=0;for(const k of[nk(d,a),nk(d,b)]){let s=C0,n=0;
+    for(const w of ws){const i=I.get(w.id);if(!i)continue;if(w.b===k){s=cadd(s,i);n++;}if(w.a===k){s=csub(s,i);n++;}}
+    if(n)best=Math.max(best,cabs(s));}return best;});}
 /* ================= le dessin de la platine =================
    Trois calques : les appareils, puis les conducteurs, puis les bornes (vis), pour que chaque
    raccordement reste visible. La vue (VUE) se règle par le zoom et le glisser du fond. */
@@ -1159,7 +1305,7 @@ function render(){
   dessinInstruments(gU);
   statut();
 }
-function animeMoteurs(){for(const d of st.devs)if(d.t==='mot'){const f=document.getElementById('fan-'+d.id);if(f)f.setAttribute('transform',`translate(202 80) rotate(${(d.s.ang||0).toFixed(1)})`);}}
+function animeMoteurs(){for(const d of st.devs)if(estMot(d)){const f=document.getElementById('fan-'+d.id);if(f)f.setAttribute('transform',`translate(202 80) rotate(${(d.s.ang||0).toFixed(1)})`);}}
 function statut(){const s=$('status');if(!s)return;const on=sousTensionReseau();
   let h=`<span class="pill ${on?'live':'off'}">${on?'Sous tension':'Hors tension'}</span>`;
   if(on&&SIM.fuite>0.001)h+=`<span class="pill info">Courant de fuite : ${fa(SIM.fuite)}</span>`;
@@ -1311,7 +1457,7 @@ const AIDE={
   gomme:'Touchez un conducteur ou un appareil pour l’ôter. Hors tension seulement.',
   vat:'Sous tension : touchez deux bornes. Le VAT indique la tension entre elles. C’est aussi lui qui vérifie l’absence de tension avant d’intervenir.',
   ohm:'Hors tension : touchez deux bornes. L’ohmmètre indique la résistance entre elles : 0 Ω pour un conducteur sain, OL pour un circuit ouvert.',
-  multi:'Choisissez la grandeur au commutateur, puis touchez deux bornes : la pointe rouge, puis la noire.',
+  multi:'Choisissez la grandeur au commutateur (tension, résistance, continuité, capacité), puis touchez deux bornes : la pointe rouge, puis la noire.',
   pince:'Touchez un conducteur : la pince se referme autour de lui et lit le courant qui le parcourt.'};
 function renderPanel(){const box=$('propsBox');if(!box)return;box.textContent='';
   if((outil==='vat'||outil==='ohm')&&(mesure||attente)){panneauMesure(box);journal(box);return;}
@@ -1333,15 +1479,17 @@ function panneauDev(box,d){const ty=TYPES[d.t];
   const f=H('div','field');f.innerHTML='<label>Repère</label>';const inp=H('input');inp.type='text';inp.value=d.nm;inp.maxLength=12;
   inp.onchange=()=>{const v=inp.value.trim();if(v&&!st.devs.some(x=>x!==d&&x.nm===v)){pushHist();d.nm=v;commit();}else inp.value=d.nm;};f.appendChild(inp);box.appendChild(f);
   for(const q of ty.params||[]){const f2=H('div','field');f2.innerHTML=`<label>${esc(q.lab)}</label>`;const s=H('select');
-    for(const o of q.opts){const op=H('option');op.value=o;op.textContent=(q.noms&&q.noms[o])||(typeof o==='number'?nf(o,o%1?1:0):o)+(q.u?' '+q.u:'');s.appendChild(op);}
+    const os=typeof q.opts==='function'?q.opts(d):q.opts;
+    for(const o of os){const op=H('option');op.value=o;op.textContent=(q.noms&&q.noms[o])||(q.fmt?q.fmt(o):typeof o==='number'?nf(o,o%1?1:0):o)+(q.u?' '+q.u:'');s.appendChild(op);}
     s.value=String(d.p[q.k]!=null?d.p[q.k]:q.def);s.onchange=()=>{if(q.cab!==false&&['cpl','pl','bob','v','P'].includes(q.k)&&!peutCabler()){s.value=String(d.p[q.k]);return;}
-      pushHist();d.p[q.k]=typeof q.opts[0]==='number'?+s.value:s.value;commit();};
+      pushHist();d.p[q.k]=typeof os[0]==='number'?+s.value:s.value;if(q.apres)q.apres(d);commit();};
     f2.appendChild(s);box.appendChild(f2);}
   const acts=(ty.actions?ty.actions(d):[]).slice();
   if(d.t==='pc'&&d.p.app!=='rien'&&d.p.app!=='lampe')acts.push(['Toucher la carcasse de l’appareil',d=>{d.s.touch=true;d.s.tt=0;}]);
   const mc=missionCourante();if(mc&&mc.panne&&!estSource(d)&&!['bor','bpe','bn','wago3','wago5'].includes(d.t))
     acts.push(['Remplacer par un appareil neuf',d=>{if(!peutCabler())return;const ty=TYPES[d.t];if(ty.init)ty.init(d);toast(d.nm+' a été remplacé par un appareil neuf.','info');}]);
-  const row=H('div','row');for(const[l,fn]of acts){const b=H('button','btn sm',esc(l));b.onclick=()=>{pushHist();fn(d);commit();};row.appendChild(b);}
+  const row=H('div','row');{const b=H('button','btn sm','Documentation');b.title='La fiche de l’appareil : bornes, réglages, fonctionnement, contrôle';b.onclick=()=>ouvrirDoc(d.t);row.appendChild(b);}
+  for(const[l,fn]of acts){const b=H('button','btn sm',esc(l));b.onclick=()=>{pushHist();fn(d);commit();};row.appendChild(b);}
   if(!d.lk){const b=H('button','btn sm danger','Ôter l’appareil');b.onclick=()=>supprimeDev(d);row.appendChild(b);}
   box.appendChild(row);
   const p=protDe(d);if(p&&!estSource(d)&&sousTensionReseau()){const I=SIM.Iprot.get(d.id)||0,c=calibre(p);
@@ -1386,7 +1534,7 @@ function txI(g,x,y,s,taille,coul,ancre,graisse){return T(g,x,y,s,{'text-anchor':
 function auto(v,lims){for(const[l,dec]of lims)if(v<l)return v.toFixed(dec);return 'OL';}
 
 /* ---------- le multimètre ---------- */
-const MM=[['off','OFF',-115],['Vac','V~',-62],['Vdc','V⎓',-22],['ohm','Ω',22],['bip','•)))',62]];
+const MM=[['off','OFF',-115],['Vac','V~',-62],['Vdc','V⎓',-22],['ohm','Ω',22],['bip','•)))',62],['cap','⊣⊢',102]];
 function lectureMulti(){const m=opts.mm||'Vac',r={mode:m,aff:'',unit:'',ind:'',note:'',bip:false};
   if(m==='off'){r.note='Le multimètre est éteint : tournez le commutateur sur la grandeur à mesurer.';return r;}
   const pl=mesure&&mesure.kind==='multi',ou=pl?nomBorne(mesure.a)+' (pointe rouge) ↔ '+nomBorne(mesure.b)+' (pointe noire)':'';
@@ -1395,6 +1543,15 @@ function lectureMulti(){const m=opts.mm||'Vac',r={mode:m,aff:'',unit:'',ind:'',n
     if(m==='Vdc'){r.aff='0.000';r.note=pl?ou+'. Le calibre continu (V⎓) lit la moyenne de la tension : sur une tension alternative, elle est nulle. Passez sur V~.':'Posez la pointe rouge, puis la noire, sur deux bornes.';return r;}
     r.aff=auto(u,[[6,3],[60,2],[600,1],[1000,0]]);
     r.note=!pl?'Posez la pointe rouge (douille VΩ), puis la noire (COM), sur deux bornes.':ou+' : '+(u<2?'pas de tension entre ces deux points.':u<50?'très basse tension.':'tension dangereuse.');return r;}
+  /* le capacimètre (12 novembre 2026, pour le condensateur du moteur monophasé) : hors tension, et sur un
+     condensateur isolé ; un enroulement ou un conducteur entre les pointes fausse la lecture */
+  if(m==='cap'){r.unit='µF';r.ind='';
+    if(!pl){r.aff='0.00';r.note='Hors tension : posez les deux pointes sur les bornes du condensateur, isolé du reste du circuit.';return r;}
+    if(sousTensionReseau()){r.aff='- - - -';r.unit='';r.note='Sous tension, un condensateur ne se mesure pas : consignez d’abord.';return r;}
+    const R=mesureOhm(mesure.a,mesure.b);
+    if(isFinite(R)&&R<1e6){r.aff='- - - -';r.unit='';r.note=ou+' : un enroulement ou un conducteur relie ces deux points, la lecture ne veut rien dire. Isolez le condensateur : ôtez les barrettes ou l’un de ses conducteurs.';return r;}
+    const C=mesureCap(mesure.a,mesure.b);r.aff=C<0.005?'0.00':C<100?C.toFixed(2):C.toFixed(1);
+    r.note=ou+' : '+(C<0.005?'aucun condensateur entre ces deux points.':'un condensateur de '+nf(C,C<10?2:1)+' µF.');return r;}
   r.unit='Ω';r.ind=m==='bip'?'•)))':'';
   if(!pl){r.aff='OL';r.unit='MΩ';r.note='Hors tension : posez les deux pointes sur deux bornes.';return r;}
   if(sousTensionReseau()){r.aff='- - - -';r.unit='';r.note='Sous tension, une résistance ne se mesure pas : la lecture ne veut rien dire. Consignez d’abord.';return r;}
@@ -1407,7 +1564,7 @@ function lectureMulti(){const m=opts.mm||'Vac',r={mode:m,aff:'',unit:'',ind:'',n
   r.note=ou+' : '+(!isFinite(R)||R>=6e6?'circuit ouvert, aucune continuité.':R<0.5?'continuité : les deux points sont reliés.':'un récepteur ou une bobine se trouve entre les deux points.')+(m==='bip'?(r.bip?' Le multimètre bipe.':' Pas de bip.'):'');
   return r;}
 function panneauMulti(box){const r=lectureMulti(),m=opts.mm||'Vac';
-  const h=H('div','pan-tete');h.innerHTML='<h2>Multimètre</h2><div class="sub">voltmètre, ohmmètre, continuité</div>';box.appendChild(h);
+  const h=H('div','pan-tete');h.innerHTML='<h2>Multimètre</h2><div class="sub">voltmètre, ohmmètre, continuité, capacimètre</div>';box.appendChild(h);
   const sv=E('svg',{viewBox:'0 0 220 352',class:'instr',role:'img','aria-label':'Multimètre'});
   E('rect',{x:0,y:0,width:220,height:336,rx:24,fill:'#F2B33D',stroke:'#A8780F','stroke-width':2},sv);
   E('rect',{x:12,y:12,width:196,height:312,rx:16,fill:'#3B4045'},sv);
@@ -1540,6 +1697,9 @@ function majVivant(){let ok=false;const set=(id,v)=>{const e=document.getElement
     const f=$('wFond');if(f)f.setAttribute('fill',r.on?LCD_ON:LCD_OFF);
     WMODES.forEach(([u],i)=>{const e=$('wM'+i);if(e){e.textContent=r.on?u.replace('cos φ','cos'):'';e.style.opacity=i===r.mode?'1':'.32';}});}}
   return ok;}
+/* la capacité entre deux bornes, hors tension : les condensateurs branchés directement entre elles */
+function mesureCap(ka,kb){const B=construit(),ra=B.uf.find(ka),rb=B.uf.find(kb);if(ra===rb)return 0;let C=0;
+  for(const c of chargesDe()){if(c.l.cap==null)continue;const a=B.uf.find(c.ka),b=B.uf.find(c.kb);if(a===ra&&b===rb||a===rb&&b===ra)C+=c.l.cap;}return C;}
 /* ================= les fenêtres =================
    La consigne, le schéma, la vérification : chacune flotte au-dessus de la platine (on la déplace
    par son titre, on l'élargit par son coin) ou se range dans la colonne de droite. Reprise de
@@ -1564,7 +1724,7 @@ function makeWin(id,title,o){o=o||{};
   w.head.addEventListener('pointerdown',e=>{toFront(w);if(e.target.closest('button')||winState(id).dock)return;
     const r=el.getBoundingClientRect();d={dx:e.clientX-r.left,dy:e.clientY-r.top};w.head.setPointerCapture(e.pointerId);});
   w.head.addEventListener('pointermove',e=>{if(!d)return;const r=el.getBoundingClientRect();
-    Object.assign(el.style,{left:clamp(e.clientX-d.dx,0,Math.max(0,innerWidth-r.width))+'px',top:clamp(e.clientY-d.dy,0,Math.max(0,innerHeight-48))+'px',right:'auto',bottom:'auto'});});
+    const top=clamp(e.clientY-d.dy,0,Math.max(0,innerHeight-48));Object.assign(el.style,{left:clamp(e.clientX-d.dx,0,Math.max(0,innerWidth-r.width))+'px',top:top+'px',right:'auto',bottom:'auto',maxHeight:`calc(100vh - ${top+12}px)`});});
   const endD=()=>{if(!d)return;d=null;const r=el.getBoundingClientRect(),s=winState(id);s.x=Math.round(r.left);s.y=Math.round(r.top);save();};
   w.head.addEventListener('pointerup',endD);w.head.addEventListener('pointercancel',endD);
   const grip=el.querySelector('.win-grip');let g=null;
@@ -1578,10 +1738,11 @@ function layoutWin(id){const w=WINS[id],s=winState(id),el=w.el,dock=$('dock');
   el.hidden=!s.open;el.classList.toggle('docked',!!s.dock);el.classList.toggle('float',!s.dock);el.classList.toggle('min',!!s.min);
   w.head.querySelector('[data-w="dock"]').title=s.dock?'Détacher la fenêtre':'Ranger dans la colonne de droite';
   w.head.querySelector('[data-w="min"]').title=s.min?'Déplier':'Réduire';
-  if(s.dock){if(el.parentNode!==dock)dock.appendChild(el);Object.assign(el.style,{left:'',top:'',right:'',bottom:'',width:'',zIndex:''});}
+  if(s.dock){if(el.parentNode!==dock)dock.appendChild(el);Object.assign(el.style,{left:'',top:'',right:'',bottom:'',width:'',zIndex:'',maxHeight:''});}
   else{if(el.parentNode!==document.body)document.body.appendChild(el);const width=Math.min(s.w||w.defW,innerWidth-16);el.style.width=width+'px';
-    if(s.x!=null&&s.y!=null)Object.assign(el.style,{left:clamp(s.x,0,Math.max(0,innerWidth-width))+'px',top:clamp(s.y,0,Math.max(0,innerHeight-48))+'px',right:'auto',bottom:'auto'});
-    else{const n=Object.keys(WINS).indexOf(id);Object.assign(el.style,{left:'',top:'',right:(16+24*n)+'px',bottom:(16+24*n)+'px'});}toFront(w);}
+    /* la fenêtre ne dépasse jamais le haut de l'écran : sa hauteur suit la place qui reste (12 novembre 2026) */
+    if(s.x!=null&&s.y!=null){const top=clamp(s.y,0,Math.max(0,innerHeight-48));Object.assign(el.style,{left:clamp(s.x,0,Math.max(0,innerWidth-width))+'px',top:top+'px',right:'auto',bottom:'auto',maxHeight:`calc(100vh - ${top+12}px)`});}
+    else{const n=Object.keys(WINS).indexOf(id);Object.assign(el.style,{left:'',top:'',right:(16+24*n)+'px',bottom:(16+24*n)+'px',maxHeight:`calc(100vh - ${32+24*n+12}px)`});}toFront(w);}
   applyLayout();}
 function openWin(id){const s=winState(id);s.open=true;s.min=false;layoutWin(id);save();const w=WINS[id];if(w.onOpen)w.onOpen();}
 function closeWin(id){const s=winState(id);s.open=false;layoutWin(id);save();}
@@ -1589,6 +1750,182 @@ addEventListener('resize',()=>{for(const id in WINS)if(winState(id).open&&!winSt
 function applyLayout(){const app=document.querySelector('.app'),docked=$('dock').querySelector('.win:not([hidden])');
   app.classList.toggle('no-lib',!opts.lib);$('panel').hidden=!opts.panel;app.classList.toggle('no-side',!opts.panel&&!docked);
   $('b-lib').setAttribute('aria-pressed',String(!!opts.lib));$('b-panel').setAttribute('aria-pressed',String(!!opts.panel));}
+/* ================= la documentation des appareils =================
+   Demandée le 12 novembre 2026 (« des TP moins guidés, mais avec de la doc sur chaque élément de
+   l'installation ») : une fiche par appareil, comme un dossier technique. Ce qu'il fait, ses bornes
+   et leur rôle, ses caractéristiques et ses réglages, comment il fonctionne, comment le contrôler,
+   ses pannes courantes. Elle dit comment un appareil se raccorde, jamais le câblage d'une mission.
+   Valeurs et usages de mémoire : à faire relire par le collègue d'électrotechnique. */
+const DOC={
+  res1:{role:'L’arrivée du réseau dans le logement, après le disjoncteur de branchement : la phase, le neutre et la terre de l’installation.',
+    bornes:{L:'la phase',N:'le neutre',PE:'la terre, reliée à la prise de terre du bâtiment'},
+    carac:[['Tension','230 V entre phase et neutre, 50 Hz'],['Régime de neutre','TT : le neutre est relié à la terre au poste, les masses à la prise de terre du bâtiment'],['Disjoncteur de branchement','différentiel 500 mA']],
+    marche:'Le bouton « Mettre sous tension » la ferme ; « Mettre hors tension » la consigne : on ne câble que hors tension.',
+    essai:'Au VAT : 230 V entre L et N, 230 V entre L et PE, presque rien entre N et PE.',
+    pannes:'Elle déclenche sur un court-circuit qu’aucun disjoncteur en aval n’a coupé, ou sur un défaut d’isolement s’il n’y a pas de différentiel 30 mA.'},
+  res3:{role:'L’arrivée triphasée de l’atelier : trois phases, le neutre et la terre.',
+    bornes:{L1:'phase 1',L2:'phase 2',L3:'phase 3',N:'le neutre',PE:'la terre'},
+    carac:[['Tensions','400 V entre deux phases, 230 V entre une phase et le neutre, 50 Hz'],['Ordre des phases','direct : L1, L2, L3. Il fixe le sens de rotation d’un moteur triphasé'],['Protection de tête','différentielle 500 mA']],
+    marche:'Comme l’arrivée monophasée : on câble hors tension, on met sous tension pour essayer.',
+    essai:'Au VAT : 400 V entre deux phases, 230 V entre une phase et le neutre ou la terre.',
+    pannes:'Deux phases reliées : court-circuit. Une phase à la terre : défaut d’isolement.'},
+  id:{role:'Il coupe quand une partie du courant part à la terre : un défaut d’isolement, ou une personne. Il ne protège pas des surintensités : les disjoncteurs en aval s’en chargent.',
+    bornes:{eN:'le neutre qui arrive (en haut, à gauche, comme sur le vrai)',e1:'la phase qui arrive',sN:'le neutre qui repart vers les disjoncteurs',s2:'la phase qui repart'},
+    carac:[['Calibre','40 A'],['Sensibilité','30 mA : il déclenche entre 15 et 30 mA de fuite'],['Modèle dessiné','Resi9 XP, interrupteur différentiel']],
+    marche:'Il compare le courant qui part par la phase à celui qui revient par le neutre. La différence, c’est ce qui part à la terre.',
+    essai:'Le bouton T crée une fuite d’essai : il doit déclencher. La pince sur phase et neutre ensemble, calibre mA, lit la fuite.',
+    pannes:'Des déclenchements sans défaut franc : le cumul de petites fuites. Un neutre relié à la terre en aval le fait aussi déclencher.'},
+  db:{role:'Il protège un circuit contre les surcharges et les courts-circuits. Il coupe la phase et le neutre.',
+    bornes:{eN:'le neutre qui arrive',e1:'la phase qui arrive',sN:'le neutre qui part vers le circuit',s2:'la phase qui part vers le circuit'},
+    carac:[['Calibres','2, 10, 16, 20, 32 A : le réglage « Calibre »'],['Courbe','C'],['Section des conducteurs du circuit','1,5 mm² jusqu’à 16 A ; 2,5 mm² à 20 A ; 4 mm² à 25 A ; 6 mm² au-delà (de mémoire, NF C 15-100)']],
+    marche:'Au-delà de son calibre, il chauffe et déclenche d’autant plus vite que la surcharge est forte. Un court-circuit le fait déclencher aussitôt.',
+    essai:'Au VAT, en sortie et fermé : 230 V entre 2 et N.',
+    pannes:'Il saute quand on ferme un interrupteur : un retour relié au neutre. Quand on branche un appareil : une surcharge ou un court-circuit dans l’appareil.'},
+  q3:{role:'Il protège une ligne triphasée : trois pôles, coupés ensemble.',
+    bornes:{a1:'phase L1, arrivée',a3:'phase L2, arrivée',a5:'phase L3, arrivée',b2:'phase L1, départ',b4:'phase L2, départ',b6:'phase L3, départ'},
+    carac:[['Calibres','2, 4, 6, 10, 16 A'],['Courbe','C'],['Modèle dessiné','Acti9 iC60N']],
+    marche:'Comme un disjoncteur monophasé : surcharge et court-circuit. Ses trois manettes sont liées.',
+    essai:'Au VAT, en sortie : 400 V entre deux phases.',
+    pannes:'Une surcharge prolongée d’un moteur, ou un court-circuit entre phases.'},
+  fu:{role:'Il protège le circuit de commande : une cartouche qui fond. Il se place en série sur le fil qui part de la borne 24 du transformateur, jamais sur le commun (0 V).',
+    bornes:{a:'l’arrivée : la borne 24 V du secondaire',b:'le départ vers le circuit de commande'},
+    carac:[['Cartouches','gG 1, 2, 4, 10 A : le réglage « Cartouche »'],['Pour une commande 24 V de 63 VA','2 A']],
+    marche:'La cartouche fond quand le courant dépasse longtemps son calibre, et tout de suite sur un court-circuit. Le porte-fusible s’ouvre pour sectionner.',
+    essai:'Hors tension, à l’ohmmètre : 0 Ω entre 1 et 2, cartouche bonne ; OL, cartouche fondue.',
+    pannes:'Cartouche fondue : trouver et réparer le court-circuit avant d’en remettre une.'},
+  tr:{role:'Il abaisse la tension du réseau à 24 V pour le circuit de commande : on touche les boutons sans danger.',
+    bornes:{P0:'primaire, borne commune 0',P230:'primaire, prise 230 V : entre 0 et 230, une phase et le neutre',P400:'primaire, prise 400 V : entre 0 et 400, deux phases',S0:'secondaire, 0 V : le commun de la commande, repéré en blanc',S24:'secondaire, 24 V : vers le fusible F2, puis la commande'},
+    carac:[['Primaire','0-230-400 V'],['Secondaire','24 V ~'],['Puissance','63 VA']],
+    marche:'On alimente le primaire sur la prise qui correspond au réseau : 230 V entre 0 et 230, ou 400 V entre 0 et 400. Le secondaire donne alors 24 V. Le fusible F2, sur la sortie 24, le protège d’un court-circuit de la commande ; le 0 V revient directement au transformateur.',
+    essai:'Au VAT : 24 V entre 0 et 24 du secondaire. Hors tension, à l’ohmmètre, chaque enroulement fait de quelques ohms à quelques dizaines d’ohms.',
+    pannes:'Du 230 V sur la prise 400 : 14 V au secondaire, les bobines ne collent pas. Du 400 V sur la prise 230 : 42 V, les bobines de 24 V grillent. Un court-circuit sans fusible le détruit.'},
+  int:{role:'Il ouvre ou ferme la phase d’un point lumineux.',bornes:{L:'la phase qui arrive','1':'le retour vers la lampe'},
+    carac:[['Courant','10 A']],marche:'Basculé, il relie L à 1.',essai:'Hors tension, à l’ohmmètre entre L et 1 : 0 Ω fermé, OL ouvert.',
+    pannes:'Placé sur le neutre, il éteint la lampe mais laisse la douille sous tension.'},
+  vv:{role:'Deux va-et-vient commandent une lampe depuis deux endroits.',bornes:{L:'le commun : la phase sur l’un, le retour vers la lampe sur l’autre','1':'une navette','2':'l’autre navette'},
+    carac:[['Courant','10 A']],marche:'Il relie L à 1 ou à 2, selon sa position. Les navettes relient 1 et 2 de l’un à 1 et 2 de l’autre : la lampe s’allume quand les deux choisissent la même.',
+    essai:'Hors tension, à l’ohmmètre : L-1, puis L-2 en basculant.',pannes:'Une navette coupée : la lampe ne s’allume que dans certaines positions.'},
+  da:{role:'Deux interrupteurs dans le même boîtier, avec une phase commune : deux lampes, une touche chacune.',bornes:{L:'la phase, commune aux deux touches','1':'le retour de la première lampe','2':'le retour de la seconde'},
+    carac:[['Courant','10 A']],marche:'La touche 1 relie L à 1, la touche 2 relie L à 2.',essai:'Hors tension, à l’ohmmètre : L-1, puis L-2.',pannes:'Un retour relié au neutre : le disjoncteur saute quand on appuie sur la touche.'},
+  perm:{role:'Il se place entre deux va-et-vient pour commander une lampe d’un troisième endroit, ou plus.',bornes:{'1':'navette, côté du premier va-et-vient','2':'navette, côté du premier va-et-vient','3':'navette, côté du second','4':'navette, côté du second'},
+    carac:[['Courant','10 A']],marche:'Il croise les navettes : 1-3 et 2-4, puis 1-4 et 2-3.',essai:'Hors tension, à l’ohmmètre : les deux liaisons, dans chaque position.',pannes:'Navettes d’un même côté sur 1 et 3 au lieu de 1 et 2 : il ne commande plus rien.'},
+  bp:{role:'Un contact qui ne se ferme que tant qu’on appuie : il donne une impulsion.',bornes:{'1':'une borne du contact','2':'l’autre'},
+    carac:[['Contact','à fermeture']],marche:'Appuyé, il relie 1 à 2 ; relâché, il les sépare.',essai:'Hors tension, à l’ohmmètre : 0 Ω appuyé, OL relâché.',pannes:'Un poussoir qui reste collé : le télérupteur ou la minuterie ne retombe plus.'},
+  tl:{role:'Un relais bistable : chaque impulsion sur sa bobine change l’état de son contact. Des poussoirs en parallèle commandent ainsi un éclairage de plusieurs endroits.',
+    bornes:{A1:'la bobine, une borne : la phase envoyée par les poussoirs',A2:'la bobine, l’autre borne : le neutre',['1']:'le contact, arrivée de la phase',['2']:'le contact, départ vers les lampes'},
+    carac:[['Bobine','230 V ~ le plus souvent ; existe en 24, 48, 110 et 400 V : le réglage « Bobine »'],['Contact','1-2, 16 A']],
+    marche:'Une impulsion de quelques dixièmes de seconde suffit : le contact change d’état et y reste. Le levier le manœuvre à la main.',
+    essai:'Au VAT, poussoir enfoncé : entre A1 et A2, la tension de la bobine. Hors tension, à l’ohmmètre : la bobine a une résistance, le contact 0 Ω ou OL.',
+    pannes:'Une bobine alimentée bien au-dessus de sa tension grille au premier appui ; bien en dessous, elle ne bouge pas. Un appareil neuf identique grillera de même : c’est la tension de bobine qu’il faut choisir.'},
+  min:{role:'Un appui sur un poussoir allume l’éclairage pour une durée réglée, puis il s’éteint seul.',
+    bornes:{L:'l’alimentation : la phase',N:'l’alimentation : le neutre',['3']:'l’entrée des poussoirs : la phase qu’ils envoient',S:'la sortie ⊗, vers les lampes'},
+    carac:[['Durée','30 s à 3 min : le réglage « Durée »'],['Sélecteur','auto ou ∞ (marche forcée)']],
+    marche:'Alimentée par L et N, elle ferme sa sortie ⊗ quand sa borne 3 reçoit la phase, et compte la durée à partir du relâchement.',
+    essai:'Au VAT : 230 V entre L et N ; poussoir enfoncé, 230 V entre 3 et N ; pendant la durée, 230 V entre ⊗ et N.',
+    pannes:'Lampes branchées sur la phase directe : elles ne s’éteignent jamais. Poussoirs sur ⊗ : rien ne s’allume.'},
+  dcl:{role:'Le point de raccordement d’un luminaire, et sa lampe. Le luminaire a une masse métallique : il se raccorde à la terre.',
+    bornes:{L:'le retour, qui vient de l’interrupteur',N:'le neutre',PE:'la terre'},carac:[['Lampe','60 ou 100 W : le réglage « Lampe »'],['Douille','le culot doit être côté neutre']],
+    marche:'La lampe s’allume quand L reçoit la phase.',essai:'Lampe éteinte, au VAT : aucune borne ne doit être sous tension, c’est l’interrupteur qui coupe la phase.',
+    pannes:'Phase et neutre inversés : la douille reste sous tension lampe éteinte. Une lampe sous 400 V grille.'},
+  pc:{role:'Une prise de courant 2P+T 16 A : phase, neutre et terre. On y branche des appareils depuis son panneau, et un wattmètre-prise.',
+    bornes:{L:'la phase',N:'le neutre',PE:'la terre : la broche de la prise'},carac:[['Courant','16 A'],['Circuit','20 A en 2,5 mm² (de mémoire, NF C 15-100)'],['Appareils à brancher','lampe, bouilloire, radiateur, réfrigérateur, sèche-serviettes qui fuit, lave-linge en défaut']],
+    marche:'L’appareil branché tire son courant de L et N. Sa carcasse est reliée à la terre par la broche : un défaut d’isolement part à la terre et fait déclencher le différentiel.',
+    essai:'Au VAT : 230 V entre L et N, et entre L et PE. Le wattmètre-prise lit la puissance, la tension, l’intensité, le cos φ et l’énergie.',
+    pannes:'Sans terre, un appareil en défaut garde sa carcasse sous tension. Neutre et terre inversés : le différentiel saute dès qu’un appareil consomme.'},
+  km:{role:'Un interrupteur commandé à distance : sa bobine ferme ses pôles de puissance et fait basculer ses contacts auxiliaires.',
+    bornes:{p1:'pôle 1 : arrivée',p3:'pôle 2 : arrivée',p5:'pôle 3 : arrivée',p2:'pôle 1 : départ',p4:'pôle 2 : départ',p6:'pôle 3 : départ',A1:'la bobine : l’arrivée de la commande',A2:'la bobine : le retour au commun',
+      ['13']:'contact auxiliaire à fermeture (l’auto-maintien)',['14']:'contact auxiliaire à fermeture',['21']:'contact auxiliaire à ouverture (le verrouillage)',['22']:'contact auxiliaire à ouverture',
+      ['53']:'contact auxiliaire à fermeture (la signalisation)',['54']:'contact auxiliaire à fermeture',['61']:'contact auxiliaire à ouverture',['62']:'contact auxiliaire à ouverture'},
+    carac:[['Bobine','24, 48, 110, 230 ou 400 V ~ 50 Hz : écrite sur son étiquette, le réglage « Bobine »'],['Seuils de la bobine','elle colle à 80 % de sa tension, tient jusqu’à 50 % environ'],['Consommation','7 VA en maintien, bien plus à l’appel'],['Pôles','trois, à fermeture']],
+    marche:'Sa bobine attire l’équipage mobile : les pôles et les contacts à fermeture (13-14, 53-54) se ferment, ceux à ouverture (21-22, 61-62) s’ouvrent. Hors tension, on peut enfoncer l’équipage à la main pour un essai à l’ohmmètre.',
+    essai:'Au VAT, quand on demande la marche : entre A1 et A2, la tension de la commande, qui doit être celle de l’étiquette. Hors tension, à l’ohmmètre : la bobine fait 15 Ω environ en 24 V, 1,4 kΩ en 230 V.',
+    pannes:'Bobine sous-alimentée (48 V sur une commande 24 V) : elle broute sans coller, chauffe, et grille. Sur-alimentée (24 V sur 230 V) : elle grille net. Contact auxiliaire usé : l’auto-maintien ne tient plus. Bobine coupée par son propre contact à ouverture : elle pompe.'},
+  rt:{role:'Il protège le moteur des surcharges : ses trois pôles laissent passer le courant du moteur, et son contact coupe la bobine du contacteur quand le moteur chauffe trop.',
+    bornes:{r1:'pôle 1 : arrivée (du contacteur)',r3:'pôle 2 : arrivée',r5:'pôle 3 : arrivée',r2:'pôle 1 : départ (vers le moteur)',r4:'pôle 2 : départ',r6:'pôle 3 : départ',
+      ['95']:'contact à ouverture, dans la commande : il coupe la bobine du contacteur',['96']:'contact à ouverture',['97']:'contact à fermeture : le voyant de défaut',['98']:'contact à fermeture'},
+    carac:[['Plages','une référence par plage : 0,63 à 1 · 1 à 1,6 · 1,6 à 2,5 · 2,5 à 4 · 4 à 6 · 5,5 à 8 · 7 à 10 A'],['Réglage','la molette, dans la plage choisie : l’intensité nominale de la plaque du moteur'],['Classe','10 : à 7,2 fois son réglage, il déclenche en moins de 10 s'],['Différentiel','il compare ses trois pôles : sensible à la perte d’une phase']],
+    marche:'Le courant chauffe trois bilames ; au-delà du réglage, ils se courbent et font basculer le contact : 95-96 s’ouvre, 97-98 se ferme. Parce qu’il est différentiel, un pôle qui porte moins de courant que les autres le fait déclencher : en monophasé, on fait passer le courant par les trois pôles en série (2 vers 3, 4 vers 5).',
+    essai:'Le bouton T simule un déclenchement : le moteur doit s’arrêter et le voyant de défaut s’allumer. R réarme. Le panneau donne le courant de chaque pôle ; la pince le lit sur chaque phase du moteur, à comparer au réglage.',
+    pannes:'Réglé trop bas, ou sur une plage trop basse : il déclenche en marche normale. Trop haut : il laisse griller le moteur. En monophasé sur un seul pôle : il déclenche sur déséquilibre.'},
+  mot:{role:'Le moteur des machines de l’atelier : trois enroulements, alimentés par les trois phases. Sa carcasse se raccorde à la terre.',
+    bornes:{W2:'fin de l’enroulement W (en haut, décalée)',U2:'fin de l’enroulement U',V2:'fin de l’enroulement V',U1:'début de l’enroulement U : phase L1',V1:'début de l’enroulement V : phase L2',W1:'début de l’enroulement W : phase L3',PE:'la terre, à la carcasse'},
+    carac:[['Plaque 230/400 V','1,5 kW, 3,5 A sous 400 V : couplage étoile sur un réseau 400 V'],['Plaque 400/690 V','1,5 kW, 2,0 A sous 400 V : couplage triangle sur 400 V, démarrage étoile-triangle possible'],['Vitesse','1 450 tr/min environ']],
+    marche:'La plaque dit la tension d’un enroulement : 230/400 V veut dire 230 V par enroulement. Les barrettes font le couplage : en étoile, W2-U2-V2 reliés ; en triangle, W2-U1, U2-V1, V2-W1. Permuter deux phases inverse le sens.',
+    essai:'Hors tension, barrettes ôtées : les trois enroulements ont la même résistance, et aucun n’est relié à la carcasse. Sous tension, la pince : le même courant sur les trois phases.',
+    pannes:'Une phase manque : il ronfle sans démarrer et chauffe. Triangle sur une plaque 230/400 V en 400 V : chaque enroulement reçoit 400 V, il grille.'},
+  mono:{role:'Le moteur monophasé des petites machines : un enroulement principal, un auxiliaire et un condensateur permanent, qui fait tourner le champ.',
+    bornes:{Z1:'enroulement auxiliaire : un bout',U2:'enroulement principal : le neutre arrive ici',Z2:'enroulement auxiliaire : l’autre bout',C2:'condensateur : une borne',U1:'enroulement principal : la phase arrive ici',C1:'condensateur : l’autre borne',PE:'la terre, à la carcasse'},
+    carac:[['Plaque','230 V, 0,37 kW, 2,5 A, 1 400 tr/min'],['Condensateur permanent','16 µF, 450 V'],['Barrettes du sens 1','U1-C1, C2-Z1, Z2-U2'],['Barrettes du sens 2','U1-C2, C1-Z2, Z1-U2']],
+    marche:'Le principal est entre phase et neutre ; l’auxiliaire aussi, mais en série avec le condensateur, qui décale son courant : le champ tourne. Retourner l’auxiliaire par rapport au principal inverse le sens. Sans barrettes, les six bornes sont libres : des contacteurs peuvent retourner l’auxiliaire.',
+    essai:'Hors tension, barrettes ôtées : à l’ohmmètre, U1-U2 et Z1-Z2 ont chacun leur résistance ; au multimètre, calibre ⊣⊢, C1-C2 lit la valeur du condensateur, 16 µF. Avec les barrettes, les enroulements sont en parallèle sur le condensateur : la mesure ne veut rien dire.',
+    pannes:'Condensateur desséché ou auxiliaire coupé : il ronfle sans démarrer, et le relais thermique finit par couper. Branché entre deux phases (400 V) : il grille.'},
+  bpa:{role:'Le bouton d’arrêt : un contact qui s’ouvre quand on appuie.',bornes:{['11']:'contact à ouverture',['12']:'contact à ouverture'},carac:[['Contact','à ouverture'],['Couleur','rouge']],
+    marche:'Relâché, il relie 11 à 12 : la commande passe. Appuyé, il l’ouvre.',essai:'Hors tension, à l’ohmmètre : 0 Ω relâché, OL appuyé.',pannes:'Placé après l’auto-maintien, il n’arrête rien.'},
+  bpm:{role:'Le bouton de marche : un contact qui se ferme quand on appuie.',bornes:{['13']:'contact à fermeture',['14']:'contact à fermeture'},carac:[['Contact','à fermeture'],['Couleur','vert']],
+    marche:'Appuyé, il relie 13 à 14 ; l’auto-maintien du contacteur prend le relais au relâchement.',essai:'Hors tension, à l’ohmmètre : OL relâché, 0 Ω appuyé.',pannes:'Câblé à ouverture : la machine démarre à la mise sous tension.'},
+  au:{role:'L’arrêt d’urgence : un coup de poing qui ouvre la commande et reste enfoncé.',bornes:{['11']:'contact à ouverture',['12']:'contact à ouverture'},carac:[['Contact','à ouverture, à accrochage']],
+    marche:'Enfoncé, il ouvre 11-12 et reste verrouillé ; on le déverrouille en le touchant à nouveau.',essai:'Hors tension, à l’ohmmètre : 0 Ω déverrouillé, OL enfoncé.',pannes:'Placé ailleurs qu’en tête de la commande, il n’arrête pas tout.'},
+  ka:{role:'Un relais dont le contact change d’état un temps réglé après que sa bobine est alimentée.',
+    bornes:{A1:'la bobine : l’arrivée',A2:'la bobine : le commun',['15']:'le commun du contact',['16']:'à ouverture : fermé au repos, il s’ouvre à la fin de la temporisation',['18']:'à fermeture : il se ferme à la fin de la temporisation'},
+    carac:[['Temporisation','2, 3, 5 ou 8 s'],['Bobine','24, 48, 110, 230 ou 400 V ~']],
+    marche:'Bobine alimentée, il compte ; au bout du temps réglé, 15-16 s’ouvre et 15-18 se ferme. Bobine coupée, tout revient au repos.',
+    essai:'Au VAT : la tension de la commande entre A1 et A2 ; à la fin du temps, le contact bascule.',pannes:'Une bobine de la mauvaise tension, comme pour un contacteur.'},
+  vy:{role:'Un voyant de signalisation : marche, arrêt, défaut.',bornes:{X1:'l’arrivée',X2:'le retour au commun'},carac:[['Tension','24, 48, 110, 230 ou 400 V'],['Couleurs','vert la marche, rouge le défaut ou l’arrêt, orange une alerte']],
+    marche:'Il s’allume quand il reçoit sa tension.',essai:'Au VAT : sa tension entre X1 et X2 quand il doit s’allumer.',pannes:'Alimenté bien au-dessus de sa tension : il grille.'},
+  bor:{role:'Un bornier de passage : chaque borne relie le conducteur du haut à celui du bas, sous le même numéro.',bornesTxt:'Six bornes, numérotées de 1 à 6 : la borne du haut et celle du bas d’un même numéro sont reliées.',
+    carac:[['Conducteurs','deux au plus par borne à vis']],marche:'Il sépare le tableau des circuits qui en partent.',essai:'Hors tension, à l’ohmmètre : 0 Ω entre le haut et le bas d’une même borne.',pannes:'Une vis mal serrée : un conducteur sans continuité.'},
+  bpe:{role:'La barrette de terre : elle réunit les conducteurs de protection de tous les circuits.',bornesTxt:'Toutes ses bornes sont reliées entre elles. La première reçoit la terre de l’arrivée.',
+    carac:[['Conducteurs','vert-jaune uniquement']],marche:'Elle relie la carcasse de chaque récepteur à la prise de terre.',essai:'Hors tension, à l’ohmmètre : 0 Ω entre la barrette et la borne PE de chaque récepteur.',pannes:'Un récepteur sans terre : sa masse peut passer sous tension.'},
+  bn:{role:'La barrette de neutre : elle répartit le neutre vers plusieurs départs.',bornesTxt:'Toutes ses bornes sont reliées entre elles.',
+    carac:[['Conducteurs','bleu clair']],marche:'Elle évite de mettre trop de conducteurs sous une même borne.',essai:'Hors tension, à l’ohmmètre : 0 Ω entre deux bornes.',pannes:'Un neutre commun à deux circuits protégés par des différentiels différents fait déclencher l’un des deux.'},
+  wago3:{role:'Un connecteur de dérivation à trois entrées : la boîte de dérivation.',bornesTxt:'Ses trois entrées sont reliées. Un conducteur par entrée.',carac:[['Entrées','3']],marche:'Il relie les conducteurs d’un même rôle : les phases ensemble, les neutres ensemble, les terres ensemble.',essai:'Hors tension, à l’ohmmètre : 0 Ω entre deux entrées.',pannes:'Deux conducteurs dans la même entrée : l’un des deux n’est pas serré.'},
+  wago5:{role:'Un connecteur de dérivation à cinq entrées.',bornesTxt:'Ses cinq entrées sont reliées. Un conducteur par entrée.',carac:[['Entrées','5']],marche:'Comme celui à trois entrées.',essai:'Hors tension, à l’ohmmètre : 0 Ω entre deux entrées.',pannes:'Deux conducteurs dans la même entrée.'},
+  hc:{role:'Le contacteur jour/nuit : sa bobine est commandée par le contact tarifaire du compteur, son contact alimente le chauffe-eau.',
+    bornes:{A1:'la bobine : l’arrivée, depuis le contact tarifaire',A2:'la bobine : le neutre',['1']:'le contact de puissance : arrivée de la phase',['2']:'le contact de puissance : départ vers le chauffe-eau'},
+    carac:[['Bobine','230 V ~'],['Contact','20 A'],['Sélecteur','Auto (le compteur commande), 1 (marche forcée), 0 (arrêt)']],
+    marche:'En heures creuses, le compteur ferme C1-C2 : la bobine reçoit la phase, le contact 1-2 se ferme.',essai:'Au VAT : 230 V entre A1 et A2 en heures creuses.',pannes:'Chauffe-eau branché en direct : il chauffe aussi en heures pleines.'},
+  cpt:{role:'Le contact tarifaire du compteur : un contact sec, fermé aux heures creuses.',bornes:{C1:'une borne du contact',C2:'l’autre'},carac:[['Contact','sec : il ne fournit aucune tension, il en laisse passer une']],
+    marche:'Toucher le compteur change le tarif.',essai:'Hors tension, à l’ohmmètre : 0 Ω en heures creuses, OL en heures pleines.',pannes:'—'},
+  ce:{role:'Le chauffe-eau électrique : une résistance de 2 400 W, une cuve métallique reliée à la terre.',bornes:{L:'la phase, après le contacteur jour/nuit',N:'le neutre',PE:'la terre'},
+    carac:[['Puissance','2 400 W, 10,4 A sous 230 V'],['Circuit','20 A en 2,5 mm²']],marche:'Il chauffe quand L reçoit la phase.',essai:'Au VAT : 230 V entre L et N en heures creuses. La pince : 10 A environ.',pannes:'—'},
+  iv:{role:'L’interrupteur d’un volet roulant : une touche pour monter, une pour descendre, jamais les deux.',bornes:{L:'la phase',M:'vers ▲ du moteur : la montée',D:'vers ▼ du moteur : la descente'},
+    carac:[['Verrouillage','les deux touches ne peuvent pas être enfoncées ensemble']],marche:'Une touche relie L à ▲, l’autre L à ▼.',essai:'Hors tension, à l’ohmmètre : L-▲ puis L-▼.',pannes:'—'},
+  vr:{role:'Le moteur tubulaire d’un volet roulant : deux enroulements, un par sens, et un neutre commun.',bornes:{N:'le neutre (le conducteur bleu)',M:'▲ la montée',D:'▼ la descente',PE:'la terre'},
+    carac:[['Puissance','150 W environ'],['Fins de course','intégrées, non représentées']],marche:'La phase sur ▲ le fait monter, sur ▼ descendre.',essai:'Au VAT : 230 V entre ▲ et N à la montée.',pannes:'Les deux sens alimentés ensemble : il force et grille.'},
+  bpd:{role:'Le bouton d’à-coups : deux contacts sur le même poussoir, décalés.',bornes:{['13']:'contact à fermeture',['14']:'contact à fermeture',['21']:'contact à ouverture',['22']:'contact à ouverture'},
+    carac:[['Contacts','un à fermeture, un à ouverture, décalés']],marche:'Appuyé : 21-22 s’ouvre puis 13-14 se ferme. Relâché : 13-14 s’ouvre avant que 21-22 ne se referme, ce qui empêche l’auto-maintien de reprendre.',
+    essai:'Hors tension, à l’ohmmètre : les deux contacts, appuyé et relâché.',pannes:'—'}};
+/* la fiche : un dessin de l'appareil avec ses repères, puis les rubriques */
+function docFigure(t){const ty=TYPES[t],d={id:'doc',t,nm:ty.pre==='Réseau'?'':ty.pre+'1',p:{},x:0,y:0};
+  for(const q of ty.params||[])d.p[q.k]=q.def;if(ty.init)ty.init(d);else d.s={};
+  const sv=E('svg',{viewBox:`-24 -28 ${ty.w+48} ${ty.h+56}`,class:'doc-fig','aria-hidden':'true'});const g=E('g',{},sv);ty.draw(g,d);
+  for(const b of ty.bornes){E('circle',{cx:b.x,cy:b.y,r:7,fill:'#D5D9DC',stroke:'#4E565C','stroke-width':1.5},sv);
+    const l=b.l!=null?b.l:b.n;if(l){const dy=b.d==='t'?-11:b.d==='b'?21:4;T(sv,b.x,b.y+dy,l,{'text-anchor':'middle',class:'bl'});}}
+  return sv;}
+let docT=null;
+function ouvrirDoc(t){if(t)docT=t;openWin('doc');}
+function remplirDoc(){const b=WINS.doc.body;b.textContent='';
+  const surPl=[...new Set(st.devs.map(d=>d.t))];if(!docT||!TYPES[docT])docT=surPl.find(t=>DOC[t]&&t!=='res1'&&t!=='res3')||'km';
+  const row=H('div','row');const s=H('select','btn sm');s.setAttribute('aria-label','Choisir un appareil');
+  if(surPl.length){const og=document.createElement('optgroup');og.label='Sur la platine';
+    for(const t of surPl){const o=H('option');o.value=t;o.textContent=st.devs.filter(d=>d.t===t).map(d=>d.nm).join(', ')+' · '+TYPES[t].nom;og.appendChild(o);}s.appendChild(og);}
+  for(const[cat,nom]of CATS){const og=document.createElement('optgroup');og.label=nom;
+    for(const t in TYPES)if(TYPES[t].cat===cat){const o=H('option');o.value=t;o.textContent=TYPES[t].nom;og.appendChild(o);}s.appendChild(og);}
+  s.value=docT;s.onchange=()=>{docT=s.value;remplirDoc();};row.appendChild(s);b.appendChild(row);
+  const ty=TYPES[docT],D=DOC[docT]||{},c=H('div','doc');
+  c.appendChild(H('h3',null,esc(ty.nom)));if(D.role)c.appendChild(H('p',null,esc(D.role)));
+  const fig=H('div','doc-figbox');fig.appendChild(docFigure(docT));c.appendChild(fig);
+  c.appendChild(H('h4',null,'Les bornes'));
+  if(D.bornesTxt)c.appendChild(H('p',null,esc(D.bornesTxt)));
+  else{const tb=H('table','doc-tab');tb.innerHTML='<tr><th>Repère</th><th>Rôle</th></tr>'+ty.bornes.map(x=>`<tr><td><b>${esc(x.l!=null&&x.l!==''?x.l:x.n)}</b></td><td>${esc((D.bornes||{})[x.n]||(x.f==='PE'?'la terre':x.f==='N'?'le neutre':''))}</td></tr>`).join('');c.appendChild(tb);}
+  const car=(D.carac||[]).slice();
+  for(const q of ty.params||[]){if(car.some(r=>r[0].toLowerCase().startsWith(q.lab.toLowerCase().split(' ')[0])))continue;
+    const os=typeof q.opts==='function'?q.opts({p:Object.assign({},...(ty.params||[]).map(z=>({[z.k]:z.def})))}):q.opts;
+    car.push(['Réglage « '+q.lab+' »',os.map(o=>(q.noms&&q.noms[o])||(q.fmt?q.fmt(o):typeof o==='number'?nf(o,o%1?1:0):o)+(q.u?' '+q.u:'')).join(' · ')]);}
+  if(car.length){c.appendChild(H('h4',null,'Caractéristiques et réglages'));const tb=H('table','doc-tab');tb.innerHTML=car.map(r=>`<tr><th>${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join('');c.appendChild(tb);}
+  for(const[k,t]of[['marche','Comment il fonctionne'],['essai','Le contrôler'],['pannes','Pannes courantes']])if(D[k]&&D[k]!=='—'){c.appendChild(H('h4',null,t));c.appendChild(H('p',null,esc(D[k])));}
+  c.appendChild(H('p','note','Valeurs d’atelier, à relire avec le professeur d’électrotechnique. La fiche dit comment l’appareil se raccorde, pas le câblage de la mission.'));
+  b.appendChild(c);}
 /* ================= les schémas des missions =================
    Des schémas développés, aux symboles normalisés (NF EN 60617) simplifiés : chaque élément
    vertical occupe 50 unités, de y à y + 50. Le schéma dit ce qu'il faut faire, jamais où passe
@@ -1637,6 +1974,29 @@ function sTri(b,xs,y,kind,lab){if(kind==='th'){xs.forEach(x=>sTh(b,x,y));}else x
   if(kind!=='th')b.l(xs[0]-7,y+26,xs[2]-7,y+26,DASH);else b.l(xs[0]+8,y+25,xs[2]-8,y+25,DASH);b.t(xs[0]-22,y+30,lab,{'text-anchor':'end'});}
 function sMot(b,x,y,lab){b.c(x,y,30);b.t(x,y-2,'M',{'text-anchor':'middle',class:'st b'});b.t(x,y+16,'3 ~',{'text-anchor':'middle'});if(lab)b.t(x-38,y+5,lab,{'text-anchor':'end'});}
 function sTransfo(b,x,y,lab){b.c(x,y,13);b.c(x,y+20,13);if(lab)b.t(x+22,y+14,lab);}
+/* un fusible couché, de x à x + 54, sur la ligne y */
+function sFusH(b,x,y,lab){b.l(x,y,x+12,y);b.r(x+12,y-6,30,12);b.l(x+12,y,x+42,y);b.l(x+42,y,x+54,y);if(lab)b.t(x+27,y-12,lab,{'text-anchor':'middle'});}
+/* l'alimentation d'une commande en 24 V (repris le 12 novembre 2026 : F2 était dessiné en l'air, relié
+   par un seul bout). Le transformateur T1 debout, primaire entre deux phases à gauche, secondaire à
+   droite ; le fusible F2 (2 A) EN SÉRIE sur le fil qui part de la borne 24 du secondaire, puis la ligne
+   du 24 V ; la borne 0 descend au 0 V, le commun, la ligne du bas. Rend l'abscisse où la commande peut
+   commencer. */
+function sAlim24(b,xg,yb,y0,xfin,prim){const xt=xg+34,y1=yb+30,arc=(x,y,s)=>b.p(`M ${x} ${y} a 6 6 0 0 ${s} 0 12 a 6 6 0 0 ${s} 0 12 a 6 6 0 0 ${s} 0 12 a 6 6 0 0 ${s} 0 12`);
+  arc(xt-8,y1,0);arc(xt+8,y1,1);b.l(xt-1,y1-4,xt-1,y1+52);b.l(xt+1,y1-4,xt+1,y1+52);
+  b.pl([[xt-8,y1],[xt-8,y1-14],[xg,y1-14]]);b.pl([[xt-8,y1+48],[xt-8,y1+62],[xg,y1+62]]);
+  const p=prim||['L1','L2'];b.t(xg-3,y1-10,p[0],{'text-anchor':'end',class:'st b'});b.t(xg-3,y1+66,p[1],{'text-anchor':'end',class:'st b'});
+  b.t(xt-20,y1+30,'T1',{'text-anchor':'end'});
+  b.pl([[xt+8,y1],[xt+8,yb],[xt+14,yb]]);sFusH(b,xt+14,yb,'F2 · 2 A');b.l(xt+68,yb,xfin,yb);b.t(xt+76,yb-8,'24 V ~',{class:'st b'});
+  b.t(xt+19,y1+8,'24',{class:'sn'});b.t(xt+19,y1+52,'0',{class:'sn'});
+  b.pl([[xt+8,y1+48],[xt+8,y0],[xfin,y0]]);b.t(xt+14,y0+18,'0 V : le commun',{class:'st b'});
+  return xt+80;}
+/* la plaque à bornes du moteur monophasé, vue de face : Z1 U2 Z2 en haut, C2 U1 C1 en bas */
+function sPlaqueMono(b,x,y,sens,titre){const P={Z1:[x,y],U2:[x+34,y],Z2:[x+68,y],C2:[x,y+34],U1:[x+34,y+34],C1:[x+68,y+34]};
+  b.r(x-16,y-16,100,66,{rx:6});
+  const bar=(a,c)=>b.l(P[a][0],P[a][1],P[c][0],P[c][1],{'stroke-width':6,stroke:'#B08D1E'});
+  if(sens===1){bar('U1','C1');bar('C2','Z1');bar('Z2','U2');}else{bar('U1','C2');bar('C1','Z2');bar('Z1','U2');}
+  for(const k in P){b.c(P[k][0],P[k][1],6,{fill:'#fff'});b.t(P[k][0],P[k][1]+(k[0]==='C'||k==='U1'?32:-21),k,{'text-anchor':'middle',class:'sn'});}
+  if(titre)b.t(x+34,y+90,titre,{'text-anchor':'middle',class:'st b'});}
 
 const SCH={
   d1(){const b=SB(400,330,'Simple allumage');rails(b,60,340,70,290,'Ph · après Q2 (16 A)');
@@ -1675,9 +2035,7 @@ const SCH={
     b.dot(230,50);sInv(b,230,50,{haut:1,lab:'S1'});b.l(218,100,218,150);b.l(242,100,242,150);
     b.r(200,150,60,60,{rx:4});b.l(212,150,212,210);b.l(248,150,248,210);b.l(212,160,248,200,DASH);b.l(248,160,212,200,DASH);b.t(194,186,'S2',{'text-anchor':'end'});b.t(268,186,'permutateur',{class:'sn'});
     b.l(218,210,218,260);b.l(242,210,242,260);sInv(b,230,260,{lab:'S3'});b.l(230,310,230,330);sLampe(b,230,330,'E1');b.l(230,380,230,430);b.dot(230,430);return b.svg;},
-  ic(){const b=SB(580,450,'Démarrage direct : circuit de commande (24 V)');
-    sTransfo(b,60,50,'T1');b.l(60,83,60,110);b.l(60,110,120,110);sFus(b,120,60,'F2');b.l(120,110,520,110);b.t(150,102,'24 V ~',{class:'sn'});
-    b.l(60,30,60,37);b.l(48,420,520,420);b.t(48,438,'0 V',{class:'st b'});b.l(48,420,48,73);b.l(48,73,47,73);
+  ic(){const b=SB(580,450,'Démarrage direct : circuit de commande (24 V)');const yb=110,y0=420;sAlim24(b,26,yb,y0,540);
     b.dot(170,110);sCt(b,170,110,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,170,160,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
     b.dot(170,210);b.l(170,210,250,210);b.dot(250,210);sCt(b,170,210,{act:'bp',lab:'S1',b1:'13',b2:'14'});sCt(b,250,210,{b1:'13',b2:'14'});b.t(262,240,'KM1',{class:'sn'});
     b.l(170,260,250,260);b.dot(170,260);b.dot(250,260);b.l(170,260,170,300);sBob(b,170,300,'KM1');b.l(170,350,170,420);b.dot(170,420);
@@ -1690,21 +2048,21 @@ const SCH={
     sTri(b,X,160,'no','KM1');X.forEach(x=>b.l(x,210,x,240));sTri(b,X,240,'th','F1');
     b.l(120,290,140,350);b.l(160,290,160,345);b.l(200,290,180,350);sMot(b,160,380,'M1');b.t(150,440,'U1 · V1 · W1',{class:'sn'});
     b.l(330,42,330,380,DASH);b.l(330,380,190,380,DASH);b.t(340,300,'PE à la carcasse',{class:'sn'});return b.svg;},
-  ii(){const b=SB(900,560,'Inversion du sens de marche');const X=[90,130,170];
+  ii(){const b=SB(980,560,'Inversion du sens de marche');const X=[90,130,170];
     ['L1','L2','L3'].forEach((s,i)=>{b.t(X[i]-6,34,s,{class:'st b'});b.l(X[i],42,X[i],60);});sTri(b,X,60,'dj','Q1');
     X.forEach(x=>{b.l(x,110,x,140);b.dot(x,140);});b.l(90,140,240,140);b.l(130,150,280,150);b.l(170,160,320,160);
     [[X,'KM1'],[[240,280,320],'KM2']].forEach(([xs,l])=>{xs.forEach((x,i)=>b.l(x,i===0?140:i===1?150:160,x,180));sTri(b,xs,180,'no',l);});
     b.l(90,230,90,270);b.l(130,230,130,270);b.l(170,230,170,270);b.l(240,230,240,255);b.l(280,230,280,262);b.l(320,230,320,248);
     b.l(240,255,170,255);b.l(320,248,90,248);b.l(280,262,130,262);b.dot(90,248);b.dot(130,262);b.dot(170,255);b.t(250,290,'KM2 croise L1 et L3',{class:'sn'});
     X.forEach(x=>b.l(x,270,x,300));sTri(b,X,300,'th','F1');b.l(90,350,110,410);b.l(130,350,130,405);b.l(170,350,150,410);sMot(b,130,440,'M1');
-    const yb=90,y0=520;b.l(430,yb,860,yb);b.l(430,y0,860,y0);b.t(430,yb-10,'24 V ~ (après F2)',{class:'st b'});b.t(430,y0+18,'0 V',{class:'st b'});
-    b.dot(480,yb);sCt(b,480,yb,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,480,yb+50,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
-    b.dot(480,yb+100);b.l(480,yb+100,740,yb+100);
-    [[560,'S1','KM1','KM2'],[740,'S2','KM2','KM1']].forEach(([x,s,k,ko])=>{b.dot(x,yb+100);sCt(b,x,yb+100,{act:'bp',lab:s,b1:'13',b2:'14'});b.l(x,yb+100,x+60,yb+100);b.dot(x+60,yb+100);
+    const yb=90,y0=520,D=80;sAlim24(b,416,yb,y0,940);
+    b.dot(480+D,yb);sCt(b,480+D,yb,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,480+D,yb+50,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
+    b.dot(480+D,yb+100);b.l(480+D,yb+100,740+D,yb+100);
+    [[560+D,'S1','KM1','KM2'],[740+D,'S2','KM2','KM1']].forEach(([x,s,k,ko])=>{b.dot(x,yb+100);sCt(b,x,yb+100,{act:'bp',lab:s,b1:'13',b2:'14'});b.l(x,yb+100,x+60,yb+100);b.dot(x+60,yb+100);
       sCt(b,x+60,yb+100,{b1:'13',b2:'14'});b.t(x+72,yb+130,k,{class:'sn'});b.l(x,yb+150,x+60,yb+150);b.dot(x,yb+150);b.dot(x+60,yb+150);
       sCt(b,x,yb+150,{nf:1,lab:ko,b1:'21',b2:'22'});b.l(x,yb+200,x,yb+260);sBob(b,x,yb+260,k);b.l(x,yb+310,x,y0);b.dot(x,y0);});
-    b.t(600,yb+250,'verrouillage électrique',{class:'sn'});return b.svg;},
-  iy(){const b=SB(1050,620,'Démarrage étoile-triangle');const X=[100,140,180];
+    b.t(600+D,yb+250,'verrouillage électrique',{class:'sn'});return b.svg;},
+  iy(){const b=SB(1130,620,'Démarrage étoile-triangle');const X=[100,140,180];
     ['L1','L2','L3'].forEach((s,i)=>{b.t(X[i]-6,34,s,{class:'st b'});b.l(X[i],42,X[i],60);});sTri(b,X,60,'dj','Q1');X.forEach(x=>b.l(x,110,x,140));
     sTri(b,X,140,'no','KM1 ligne');X.forEach(x=>b.l(x,190,x,220));sTri(b,X,220,'th','F1');
     X.forEach((x,i)=>{b.l(x,270,x,300);b.dot(x,300);});b.l(100,300,100,420);b.l(140,300,140,420);b.l(180,300,180,420);b.t(64,440,'U1 V1 W1',{class:'sn'});
@@ -1712,15 +2070,15 @@ const SCH={
     [240,280,320].forEach((x,i)=>b.l(x,[300,310,320][i],x,340));sTri(b,[240,280,320],340,'no','KM3 triangle');b.l(240,390,240,470);b.l(280,390,280,470);b.l(320,390,320,470);b.t(240,488,'vers W2 U2 V2',{class:'sn'});
     sTri(b,[380,420,460],400,'no','');b.t(470,430,'KM2 étoile',{class:'sn'});[380,420,460].forEach(x=>b.l(x,370,x,400));b.l(380,450,460,450);b.dot(420,450);b.t(380,364,'W2 U2 V2',{class:'sn'});
     b.t(64,470,'M1 : six bornes, plaque 400/690 V',{class:'sn'});
-    const yb=90,y0=590,x0=560;b.l(x0,yb,1020,yb);b.l(x0,y0,1020,y0);b.t(x0,yb-10,'24 V ~ (après F2)',{class:'st b'});b.t(x0,y0+18,'0 V',{class:'st b'});
-    b.dot(600,yb);sCt(b,600,yb,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,600,yb+50,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
-    b.dot(600,yb+100);b.l(600,yb+100,660,yb+100);b.dot(660,yb+100);sCt(b,600,yb+100,{act:'bp',lab:'S1',b1:'13',b2:'14'});sCt(b,660,yb+100,{b1:'13',b2:'14'});b.t(672,yb+130,'KM1',{class:'sn'});
-    b.l(600,yb+150,660,yb+150);b.dot(630,yb+150);b.l(630,yb+150,630,yb+170);b.l(630,yb+170,990,yb+170);b.t(636,yb+165,'B',{class:'sn'});
+    const yb=90,y0=590,D=80;sAlim24(b,546,yb,y0,1100);
+    b.dot(600+D,yb);sCt(b,600+D,yb,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,600+D,yb+50,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
+    b.dot(600+D,yb+100);b.l(600+D,yb+100,660+D,yb+100);b.dot(660+D,yb+100);sCt(b,600+D,yb+100,{act:'bp',lab:'S1',b1:'13',b2:'14'});sCt(b,660+D,yb+100,{b1:'13',b2:'14'});b.t(672+D,yb+130,'KM1',{class:'sn'});
+    b.l(600+D,yb+150,660+D,yb+150);b.dot(630+D,yb+150);b.l(630+D,yb+150,630+D,yb+170);b.l(630+D,yb+170,990+D,yb+170);b.t(636+D,yb+165,'B',{class:'sn'});
     const r=[[630,'KA1','15','16',1,'KM3','21','22',1,'KM2'],[720,null,0,0,0,null,0,0,0,'KA1'],[810,'KM2','53','54',0,null,0,0,0,'KM1'],[990,'KA1','15','18',0,'KM2','61','62',1,'KM3']];
-    r.forEach(([x,l1,a1,b1,nf1,l2,a2,b2,nf2,k])=>{b.dot(x,yb+170);let y=yb+170;
+    r.forEach(([x0,l1,a1,b1,nf1,l2,a2,b2,nf2,k])=>{const x=x0+D;b.dot(x,yb+170);let y=yb+170;
       if(l1){sCt(b,x,y,{nf:!!nf1,act:l1==='KA1'?'tempo':null,lab:l1,b1:a1,b2:b1});y+=50;}
       if(l2){sCt(b,x,y,{nf:!!nf2,lab:l2,b1:a2,b2:b2});y+=50;}
-      if(x===810){b.l(x,yb+170,x+40,yb+170);b.dot(x+40,yb+170);sCt(b,x+40,yb+170,{lab:'',b1:'53',b2:'54'});b.t(x+56,yb+200,'KM1',{class:'sn'});b.l(x,yb+220,x+40,yb+220);b.dot(x,yb+220);b.dot(x+40,yb+220);}
+      if(x0===810){b.l(x,yb+170,x+40,yb+170);b.dot(x+40,yb+170);sCt(b,x+40,yb+170,{lab:'',b1:'53',b2:'54'});b.t(x+56,yb+200,'KM1',{class:'sn'});b.l(x,yb+220,x+40,yb+220);b.dot(x,yb+220);b.dot(x+40,yb+220);}
       b.l(x,y,x,yb+310);sBob(b,x,yb+310,k);b.l(x,yb+360,x,y0);b.dot(x,y0);});
     return b.svg;}
 };
@@ -1743,25 +2101,62 @@ Object.assign(SCH,{
     b.l(170,130,204,196);b.l(270,130,236,196);b.c(220,220,28);b.t(220,218,'M',{'text-anchor':'middle',class:'st b'});b.t(220,236,'1 ~',{'text-anchor':'middle'});b.t(256,224,'M1');
     b.t(150,170,'montée',{class:'sn','text-anchor':'end'});b.t(290,170,'descente',{class:'sn'});
     b.l(220,248,220,330);b.dot(220,330);b.l(240,240,300,280,DASH);sTerre(b,300,280);b.t(314,296,'PE',{class:'sn'});return b.svg;},
-  ia(){const b=SB(580,470,'Marche maintenue et marche par à-coups (24 V)');
-    b.l(60,60,540,60);b.t(60,50,'24 V ~ (après F2)',{class:'st b'});b.l(60,440,540,440);b.t(60,460,'0 V',{class:'st b'});
-    b.dot(150,60);sCt(b,150,60,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,150,110,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
-    b.dot(150,160);b.l(150,160,410,160);b.dot(280,160);b.dot(410,160);
-    sCt(b,150,160,{act:'bp',lab:'S1',b1:'13',b2:'14'});b.l(150,210,150,260);
-    sCt(b,280,160,{b1:'13',b2:'14'});b.t(292,190,'KM1',{class:'sn'});sCt(b,280,210,{nf:1,act:'bp',lab:'S2',b1:'21',b2:'22'});
-    sCt(b,410,160,{act:'bp',lab:'S2',b1:'13',b2:'14'});b.l(410,210,410,260);
-    b.l(150,260,410,260);b.dot(150,260);b.dot(280,260);b.dot(410,260);b.l(150,260,150,300);sBob(b,150,300,'KM1');b.l(150,350,150,440);b.dot(150,440);
-    b.t(300,400,'S2 : un même bouton, deux contacts',{class:'sn'});return b.svg;},
-  icas(){const b=SB(660,500,'Deux moteurs en cascade (24 V)');
-    b.l(60,60,620,60);b.t(60,50,'24 V ~ (après F2)',{class:'st b'});b.l(60,470,620,470);b.t(60,490,'0 V',{class:'st b'});
-    b.dot(150,60);sCt(b,150,60,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,150,110,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
-    b.dot(150,160);b.l(150,160,440,160);b.dot(230,160);b.dot(440,160);
-    sCt(b,150,160,{act:'bp',lab:'S1',b1:'13',b2:'14'});sCt(b,230,160,{b1:'13',b2:'14'});b.t(242,190,'KM1',{class:'sn'});
-    b.l(150,210,230,210);b.dot(150,210);b.dot(230,210);b.l(150,210,150,260);sBob(b,150,260,'KM1');b.l(150,310,150,470);b.dot(150,470);
-    sCt(b,440,160,{lab:'KM1',b1:'53',b2:'54'});sCt(b,440,210,{nf:1,act:'bp',lab:'S3',b1:'11',b2:'12'});sCt(b,440,260,{nf:1,act:'th',lab:'F3',b1:'95',b2:'96'});
-    b.dot(440,310);b.l(440,310,520,310);b.dot(520,310);sCt(b,440,310,{act:'bp',lab:'S2',b1:'13',b2:'14'});sCt(b,520,310,{b1:'13',b2:'14'});b.t(532,340,'KM2',{class:'sn'});
-    b.l(440,360,520,360);b.dot(440,360);b.dot(520,360);b.l(440,360,440,380);sBob(b,440,380,'KM2');b.l(440,430,440,470);b.dot(440,470);
-    b.t(470,190,'M1 doit tourner',{class:'sn'});return b.svg;}
+  ia(){const b=SB(640,470,'Marche maintenue et marche par à-coups (24 V)');const D=60;sAlim24(b,26,60,440,600);
+    b.dot(150+D,60);sCt(b,150+D,60,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,150+D,110,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
+    b.dot(150+D,160);b.l(150+D,160,410+D,160);b.dot(280+D,160);b.dot(410+D,160);
+    sCt(b,150+D,160,{act:'bp',lab:'S1',b1:'13',b2:'14'});b.l(150+D,210,150+D,260);
+    sCt(b,280+D,160,{b1:'13',b2:'14'});b.t(292+D,190,'KM1',{class:'sn'});sCt(b,280+D,210,{nf:1,act:'bp',lab:'S2',b1:'21',b2:'22'});
+    sCt(b,410+D,160,{act:'bp',lab:'S2',b1:'13',b2:'14'});b.l(410+D,210,410+D,260);
+    b.l(150+D,260,410+D,260);b.dot(150+D,260);b.dot(280+D,260);b.dot(410+D,260);b.l(150+D,260,150+D,300);sBob(b,150+D,300,'KM1');b.l(150+D,350,150+D,440);b.dot(150+D,440);
+    b.t(300+D,400,'S2 : un même bouton, deux contacts',{class:'sn'});return b.svg;},
+  icas(){const b=SB(720,500,'Deux moteurs en cascade (24 V)');const D=60;sAlim24(b,26,60,470,680);
+    b.dot(150+D,60);sCt(b,150+D,60,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,150+D,110,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
+    b.dot(150+D,160);b.l(150+D,160,440+D,160);b.dot(230+D,160);b.dot(440+D,160);
+    sCt(b,150+D,160,{act:'bp',lab:'S1',b1:'13',b2:'14'});sCt(b,230+D,160,{b1:'13',b2:'14'});b.t(242+D,190,'KM1',{class:'sn'});
+    b.l(150+D,210,230+D,210);b.dot(150+D,210);b.dot(230+D,210);b.l(150+D,210,150+D,260);sBob(b,150+D,260,'KM1');b.l(150+D,310,150+D,470);b.dot(150+D,470);
+    sCt(b,440+D,160,{lab:'KM1',b1:'53',b2:'54'});sCt(b,440+D,210,{nf:1,act:'bp',lab:'S3',b1:'11',b2:'12'});sCt(b,440+D,260,{nf:1,act:'th',lab:'F3',b1:'95',b2:'96'});
+    b.dot(440+D,310);b.l(440+D,310,520+D,310);b.dot(520+D,310);sCt(b,440+D,310,{act:'bp',lab:'S2',b1:'13',b2:'14'});sCt(b,520+D,310,{b1:'13',b2:'14'});b.t(532+D,340,'KM2',{class:'sn'});
+    b.l(440+D,360,520+D,360);b.dot(440+D,360);b.dot(520+D,360);b.l(440+D,360,440+D,380);sBob(b,440+D,380,'KM2');b.l(440+D,430,440+D,470);b.dot(440+D,470);
+    b.t(470+D,190,'M1 doit tourner',{class:'sn'});return b.svg;},
+  /* le moteur monophasé : la puissance, la plaque à bornes, la commande en 230 V (12 novembre 2026) */
+  m1(){const b=SB(800,560,'Moteur monophasé : puissance, plaque à bornes, commande');
+    b.t(92,40,'Ph',{class:'st b','text-anchor':'end'});b.t(148,40,'N',{class:'st b'});b.t(156,62,'après Q2 (10 A)',{class:'sn'});
+    b.l(100,44,100,70);b.l(140,44,140,70);sCt(b,100,70,{b1:'1',b2:'2'});sCt(b,140,70,{b1:'3',b2:'4'});b.l(94,96,134,96,DASH);b.t(80,100,'KM1',{'text-anchor':'end'});
+    b.l(100,120,100,140);sTh(b,100,140);sTh(b,100,190);sTh(b,100,240);b.num(89,152,'1');b.num(89,188,'2');b.num(89,202,'3');b.num(89,238,'4');b.num(89,252,'5');b.num(89,288,'6');
+    b.r(80,136,40,158,Object.assign({rx:6},DASH));b.t(76,222,'F1',{'text-anchor':'end'});b.t(126,230,'les trois pôles',{class:'sn'});b.t(126,244,'en série',{class:'sn'});
+    b.l(100,290,100,340);b.l(140,120,140,340);b.l(100,340,110,372);b.l(140,340,130,372);
+    b.c(120,400,30);b.t(120,398,'M',{'text-anchor':'middle',class:'st b'});b.t(120,414,'1 ~',{'text-anchor':'middle'});b.t(78,404,'M1',{'text-anchor':'end'});
+    b.t(96,366,'U1',{class:'sn','text-anchor':'end'});b.t(146,366,'U2',{class:'sn'});
+    b.l(150,412,230,470,DASH);sTerre(b,230,470);b.t(246,488,'PE',{class:'sn'});
+    b.t(40,520,'M1 : 230 V · 0,37 kW · 2,5 A · condensateur 16 µF',{class:'sn'});
+    sPlaqueMono(b,250,120,1,'↻ sens 1');sPlaqueMono(b,400,120,2,'↺ sens 2');
+    b.t(234,256,'Le réseau arrive sur U1 (phase) et U2 (neutre).',{class:'sn'});b.t(234,272,'Le condensateur est entre C1 et C2 ;',{class:'sn'});
+    b.t(234,288,'l’enroulement auxiliaire, entre Z1 et Z2.',{class:'sn'});
+    const yb=60,y0=500;b.l(560,yb,780,yb);b.l(560,y0,780,y0);b.t(560,yb-10,'Ph · après Q3 (2 A)',{class:'st b'});b.t(560,y0+18,'N',{class:'st b'});
+    b.dot(660,yb);sCt(b,660,yb,{nf:1,act:'th',lab:'F1',b1:'95',b2:'96'});sCt(b,660,yb+50,{nf:1,act:'bp',lab:'S0',b1:'11',b2:'12'});
+    b.dot(660,yb+100);b.l(660,yb+100,740,yb+100);b.dot(740,yb+100);sCt(b,660,yb+100,{act:'bp',lab:'S1',b1:'13',b2:'14'});sCt(b,740,yb+100,{b1:'13',b2:'14'});b.t(752,yb+130,'KM1',{class:'sn'});
+    b.l(660,yb+150,740,yb+150);b.dot(660,yb+150);b.dot(740,yb+150);b.l(660,yb+150,660,yb+220);sBob(b,660,yb+220,'KM1 230 V');b.l(660,yb+270,660,y0);b.dot(660,y0);
+    return b.svg;},
+  /* l'inversion du sens du moteur monophasé : KM1 et KM2 retournent l'enroulement auxiliaire */
+  m2(){const b=SB(640,640,'Moteur monophasé : inversion du sens, circuit de puissance');
+    b.t(110,40,'Ph · après Q1 (10 A)',{class:'st b'});b.l(100,44,100,60);
+    sTh(b,100,60);sTh(b,100,110);sTh(b,100,160);b.r(80,56,40,158,Object.assign({rx:6},DASH));b.t(76,140,'F1',{'text-anchor':'end'});b.t(126,140,'trois pôles en série',{class:'sn'});
+    b.l(100,210,100,240);b.dot(100,240);b.l(100,240,260,240);
+    sCt(b,100,240,{b1:'1',b2:'2'});b.t(84,272,'KM1',{'text-anchor':'end'});sCt(b,260,240,{b1:'1',b2:'2'});b.t(272,272,'KM2',{class:'sn'});
+    b.l(100,290,100,320);b.l(260,290,260,320);b.l(100,320,260,320);b.dot(100,320);b.dot(180,320);
+    b.l(100,320,100,340);b.r(90,340,20,50);b.t(84,360,'U1',{class:'sn','text-anchor':'end'});b.t(84,388,'U2',{class:'sn','text-anchor':'end'});b.t(118,372,'principal',{class:'sn'});b.l(100,390,100,600);
+    b.l(180,320,180,348);b.l(166,348,194,348);b.l(166,356,194,356);b.l(180,356,180,410);b.t(200,346,'C1',{class:'sn'});b.t(200,364,'C2',{class:'sn'});b.t(200,330,'16 µF',{class:'sn'});
+    b.dot(180,410);b.l(180,410,440,410);b.dot(280,410);b.dot(440,410);
+    sCt(b,280,410,{b1:'3',b2:'4'});b.t(264,442,'KM1',{'text-anchor':'end'});sCt(b,440,410,{b1:'3',b2:'4'});b.t(452,442,'KM2',{class:'sn'});
+    b.l(280,460,280,490);b.l(440,460,440,490);b.l(280,490,330,490);b.l(440,490,390,490);
+    b.r(330,482,60,16);b.t(330,478,'Z1',{class:'sn','text-anchor':'middle'});b.t(390,478,'Z2',{class:'sn','text-anchor':'middle'});b.t(360,516,'auxiliaire',{class:'sn','text-anchor':'middle'});
+    b.dot(305,490);b.l(305,490,305,530);sCt(b,305,530,{b1:'6',b2:'5'});b.t(318,560,'KM2',{class:'sn'});
+    b.dot(415,490);b.l(415,490,415,530);sCt(b,415,530,{b1:'6',b2:'5'});b.t(428,560,'KM1',{class:'sn'});
+    b.l(60,600,560,600);b.dot(100,600);b.l(305,580,305,600);b.dot(305,600);b.l(415,580,415,600);b.dot(415,600);b.t(60,618,'N · après Q1',{class:'st b'});
+    b.t(300,340,'M1 : le principal (U1-U2), le condensateur',{class:'sn'});b.t(300,356,'(C1-C2) et l’auxiliaire (Z1-Z2) ; la terre',{class:'sn'});b.t(300,372,'(PE) à la carcasse.',{class:'sn'});
+    b.t(300,150,'KM1 (sens 1) : C2 vers Z1, Z2 au neutre',{class:'sn'});b.t(300,168,'KM2 (sens 2) : C2 vers Z2, Z1 au neutre',{class:'sn'});
+    b.t(300,198,'La commande, en 24 V, est câblée :',{class:'sn'});b.t(300,214,'S1 sens 1, S2 sens 2, S0 arrêt,',{class:'sn'});b.t(300,230,'avec le verrouillage électrique.',{class:'sn'});
+    return b.svg;}
 });
 /* ================= les missions =================
    Chaque mission pose l'appareillage (prep), câble ce qui est déjà fait (conducteurs à cadenas),
@@ -1790,10 +2185,27 @@ function puissanceDirecte(A,KM1,F1,M1,lk){const o=lk?LK:{};
 /* la commande d'un démarrage direct, telle que le schéma la dessine */
 function commandeDirecte(A,KM1,F1,S0,S1,H1,H2,lk){const o=lk?LK:{},c='rouge',s=1;
   fil(k(A.F2,'b'),k(F1,'95'),c,s,o);fil(k(F1,'96'),k(S0,'11'),c,s,o);fil(k(S0,'12'),k(S1,'13'),c,s,o);fil(k(S1,'13'),k(KM1,'13'),c,s,o);
-  fil(k(S1,'14'),k(KM1,'A1'),c,s,o);fil(k(KM1,'14'),k(KM1,'A1'),c,s,o);fil(k(KM1,'A2'),k(A.T1,'S0'),c,s,o);
-  fil(k(A.F2,'b'),k(KM1,'53'),c,s,o);fil(k(KM1,'54'),k(H1,'X1'),c,s,o);fil(k(H1,'X2'),k(A.T1,'S0'),c,s,o);
-  fil(k(F1,'95'),k(F1,'97'),c,s,o);fil(k(F1,'98'),k(H2,'X1'),c,s,o);fil(k(H2,'X2'),k(H1,'X2'),c,s,o);}
+  fil(k(S1,'14'),k(KM1,'A1'),c,s,o);fil(k(KM1,'14'),k(KM1,'A1'),c,s,o);fil(k(KM1,'A2'),k(A.T1,'S0'),'blanc',s,o);
+  fil(k(A.F2,'b'),k(KM1,'53'),c,s,o);fil(k(KM1,'54'),k(H1,'X1'),c,s,o);fil(k(H1,'X2'),k(A.T1,'S0'),'blanc',s,o);
+  fil(k(F1,'95'),k(F1,'97'),c,s,o);fil(k(F1,'98'),k(H2,'X1'),c,s,o);fil(k(H2,'X2'),k(H1,'X2'),'blanc',s,o);}
+/* la commande d'une inversion de sens, avec son verrouillage électrique : le commun en blanc */
+function commandeInversion(A,KM1,KM2,F1,S0,S1,S2,lk){const o=lk?LK:{},c='rouge',s=1,w=(a,b,col)=>fil(k(a[0],a[1]),k(b[0],b[1]),col||c,s,o);
+  w([A.F2,'b'],[F1,'95']);w([F1,'96'],[S0,'11']);w([S0,'12'],[S1,'13']);w([S0,'12'],[KM1,'13']);w([S1,'14'],[KM1,'14']);w([KM1,'14'],[KM2,'21']);w([KM2,'22'],[KM1,'A1']);
+  w([S1,'13'],[S2,'13']);w([KM1,'13'],[KM2,'13']);w([S2,'14'],[KM2,'14']);w([KM2,'14'],[KM1,'21']);w([KM1,'22'],[KM2,'A1']);
+  w([KM1,'A2'],[A.T1,'S0'],'blanc');w([KM2,'A2'],[KM1,'A2'],'blanc');}
+/* l'armoire d'un moteur monophasé : arrivée 230 V, Q1 (10 A), T1 en 230/24 V et son fusible, la
+   barrette de neutre et celle de terre */
+function armoireMono(){const R=ajoute('res1',40,30,{},'Réseau');R.lk=1;const Q1=ajoute('db',60,190,{In:10},'Q1');Q1.lk=1;
+  const T1=ajoute('tr',460,40,{},'T1');T1.lk=1;const F2=ajoute('fu',660,40,{In:2},'F2');F2.lk=1;
+  const XN=ajoute('bn',760,60,{},'XN');XN.lk=1;const XPE=ajoute('bpe',760,120,{},'XPE');XPE.lk=1;
+  fil(nk(R,'L'),nk(Q1,'e1'),'marron',2.5,LK);fil(nk(R,'N'),nk(Q1,'eN'),'bleu',2.5,LK);fil(nk(R,'PE'),nk(XPE,'p1'),'vj',2.5,LK);
+  fil(nk(Q1,'s2'),nk(T1,'P230'),'marron',1.5,LK);fil(nk(Q1,'sN'),nk(T1,'P0'),'bleu',1.5,LK);fil(nk(T1,'S24'),nk(F2,'a'),'rouge',1,LK);
+  fil(nk(Q1,'sN'),nk(XN,'p1'),'bleu',2.5,LK);return{R,Q1,T1,F2,XN,XPE};}
 function lock(...ds){for(const d of ds)d.lk=1;}
+/* le relais thermique réglé sur l'intensité nominale de la plaque du moteur qu'il protège, à 6 % près */
+function essaiReglage(T,f,m){const F=T.d(f),M=T.d(m),In=TYPES[M.t].In(M),ir=+F.p.Ir;
+  return T.ok(Math.abs(ir-In)<=0.06*In+0.001,f+' est réglé sur l’intensité nominale de '+m+', '+fmtRT(In)+' A',
+    f+' est réglé sur '+fmtRT(ir)+' A (plage '+F.p.cal.replace('-',' à ')+' A) : un relais thermique se règle sur l’intensité nominale lue sur la plaque du moteur. On choisit la plage qui la contient, puis la molette.');}
 
 /* les essais communs */
 function essaiLampe(T,lampes){for(const e of lampes){
@@ -1805,6 +2217,8 @@ function essaiDirect(T,voyants){
   if(!T.ok(T.mot('M1')!==0,'Un appui sur S1 démarre le moteur','Rien ne démarre : suivez le 24 V depuis F2, à travers F1 (95-96), S0 et S1, jusqu’à A1 de KM1, et le retour de A2 au 0 V.'))return;
   T.relache('S1');T.ok(T.mot('M1')!==0,'Il continue de tourner quand on relâche S1 : l’auto-maintien','Le moteur s’arrête au relâchement : le contact 13-14 de KM1 doit être en parallèle sur S1.');
   if(voyants)T.ok(T.lampe('H1'),'H1 s’allume pendant la marche','H1 doit s’allumer par un contact à fermeture de KM1 (53-54).');
+  T.etape('Marche prolongée','Un relais thermique réglé trop bas déclenche en marche normale ; réglé trop haut, il ne protège plus. Il se règle sur l’intensité nominale de la plaque.');T.att(45);
+  T.ok(T.mot('M1')!==0,'Trois quarts de minute plus tard, le moteur tourne toujours','Le moteur s’est arrêté en marche normale.');essaiReglage(T,'F1','M1');
   T.etape('Appui sur S0');T.imp('S0');T.ok(T.mot('M1')===0,'Un appui sur S0 arrête le moteur','S0 ne coupe pas KM1 : il doit être en série, avant S1 et l’auto-maintien.');
   if(voyants)T.ok(!T.lampe('H1'),'H1 s’éteint à l’arrêt','H1 reste allumé à l’arrêt.');
   T.etape('S0 et S1 ensemble');T.appui('S0');T.appui('S1');T.ok(T.mot('M1')===0,'S0 et S1 enfoncés ensemble : l’arrêt l’emporte','La marche l’emporte sur l’arrêt : S0 doit être en amont de S1 et de l’auto-maintien.');T.relache('S1');T.relache('S0');
@@ -1821,17 +2235,17 @@ const MISSIONS=[
     consigne:'<p>L’arrivée 3 × 400 V, le disjoncteur Q1, le transformateur T1 et son fusible F2 sont câblés. Posez contacteurs, boutons et moteur depuis la bibliothèque.</p>',
     prep(){armoire();}},
   {id:'d1',grp:'Domestique · CAP',titre:'Le simple allumage',schema:'d1',court:'Un point lumineux commandé par un interrupteur.',
-    consigne:'<p>Une chambre : le point lumineux <b>E1</b> est commandé par l’interrupteur <b>S1</b>. Le tableau est câblé jusqu’au disjoncteur <b>Q2</b> (16 A).</p><p>Câblez le circuit d’éclairage en 1,5 mm², avec la terre jusqu’au point lumineux. Les connecteurs servent de boîte de dérivation. Puis mettez sous tension et essayez.</p>',
+    consigne:'<p>Une chambre : le point lumineux <b>E1</b> doit s’allumer et s’éteindre par l’interrupteur <b>S1</b>. Le tableau est câblé jusqu’au disjoncteur <b>Q2</b> (16 A).</p><p>Câblez le circuit d’éclairage, terre comprise, puis mettez en service.</p>',guide:'<ul><li>Conducteurs de 1,5 mm² : la section qui va avec 16 A.</li><li>La phase de Q2 arrive sur la borne L de S1 ; la borne 1 de S1 repart vers la borne L du point lumineux : c’est le retour.</li><li>Le neutre va de Q2 à la borne N du point lumineux, sans passer par S1.</li><li>La terre va de la barrette XPE à la borne PE du point lumineux.</li><li>Les connecteurs servent de boîte de dérivation.</li></ul>',
     prep(){tabDom([16]);ajoute('wago3',520,330,{},'W1');ajoute('wago3',620,330,{},'W2');ajoute('wago3',720,330,{},'W3');ajoute('dcl',760,130,{},'E1');ajoute('int',600,560,{},'S1');},
     test(T){T.pos('S1',0);const a=T.lampe('E1');T.pos('S1',1);const b=T.lampe('E1');
       if(!T.ok(a!==b,'S1 allume et éteint E1','La lampe ne change pas quand on bascule S1 : suivez la phase de Q2 jusqu’à S1, puis jusqu’à la lampe, et le neutre jusqu’à la lampe.'))return;
       T.pos('S1',b?1:0);essaiPolarite(T,'E1');T.pos('S1',b?0:1);essaiLampe(T,['E1']);}},
   {id:'d2',grp:'Domestique · CAP',titre:'Le va-et-vient',schema:'d2',court:'Une lampe commandée de deux endroits.',
-    consigne:'<p>Un couloir : la lampe <b>E1</b> s’allume et s’éteint depuis chaque bout, par les interrupteurs va-et-vient <b>S1</b> et <b>S2</b>.</p><p>Câblez en 1,5 mm² à partir de <b>Q2</b>. Les deux conducteurs qui relient S1 et S2, les navettes, prennent une couleur à eux.</p>',
+    consigne:'<p>Un couloir : la lampe <b>E1</b> doit s’allumer et s’éteindre depuis chaque bout, par les interrupteurs va-et-vient <b>S1</b> et <b>S2</b>. Le départ est le disjoncteur <b>Q2</b> (16 A).</p><p>Câblez, puis essayez toutes les combinaisons.</p>',guide:'<ul><li>1,5 mm².</li><li>La phase arrive sur la borne L de S1 ; ses bornes 1 et 2 partent vers les bornes 1 et 2 de S2 : ce sont les navettes, d’une couleur à elles.</li><li>La borne L de S2 repart vers la lampe : le retour.</li><li>Le neutre et la terre vont directement à la lampe.</li></ul>',
     prep(){tabDom([16]);ajoute('wago3',560,340,{},'W1');ajoute('wago3',680,340,{},'W2');ajoute('wago3',800,340,{},'W3');ajoute('dcl',740,130,{},'E1');ajoute('vv',520,580,{},'S1');ajoute('vv',920,580,{},'S2');},
     test:testVV},
   {id:'d3',grp:'Domestique · CAP',titre:'Le double allumage',schema:'d3',court:'Deux lampes, une touche chacune.',
-    consigne:'<p>Un séjour : l’interrupteur double allumage <b>S1</b> commande deux points lumineux, <b>E1</b> par sa première touche, <b>E2</b> par la seconde.</p><p>Câblez en 1,5 mm² à partir de <b>Q2</b>, avec la terre aux deux points lumineux.</p>',
+    consigne:'<p>Un séjour : l’interrupteur double allumage <b>S1</b> commande deux points lumineux, <b>E1</b> par sa première touche, <b>E2</b> par la seconde.</p><p>Câblez à partir de <b>Q2</b> (16 A), terre comprise.</p>',guide:'<ul><li>1,5 mm².</li><li>La phase arrive sur la borne L de S1, commune aux deux touches.</li><li>La borne 1 alimente le retour de E1, la borne 2 celui de E2.</li><li>Le neutre se répartit vers les deux lampes par un connecteur ; la terre aussi, depuis la barrette.</li></ul>',
     prep(){tabDom([16]);ajoute('wago5',540,340,{},'W1');ajoute('wago5',700,340,{},'W2');ajoute('dcl',620,130,{},'E1');ajoute('dcl',860,130,{},'E2');ajoute('da',660,580,{},'S1');},
     test(T){const s=(p1,p2)=>{T.d('S1').s.p1=p1;T.d('S1').s.p2=p2;recalc();T.att(0.15);return[T.lampe('E1'),T.lampe('E2')];};
       const a=s(0,0),b=s(1,0),c=s(0,1),d=s(1,1);
@@ -1839,7 +2253,7 @@ const MISSIONS=[
       if(!T.ok(b[0]!==b[1]&&c[0]!==c[1]&&b[0]!==c[0],'Chaque touche commande sa lampe, et une seule','Une touche commande les deux lampes, ou aucune : chaque touche (1 et 2) doit alimenter le retour de sa propre lampe.'))return;
       T.ok(d[0]&&d[1],'Les deux touches fermées : les deux lampes allumées','Les deux lampes ne s’allument pas ensemble.');s(1,1);essaiPolarite(T,'E1');essaiPolarite(T,'E2');s(0,0);essaiLampe(T,['E1','E2']);}},
   {id:'d4',grp:'Domestique · CAP',titre:'Le télérupteur et ses trois poussoirs',schema:'d4',court:'Un couloir commandé de trois endroits.',
-    consigne:'<p>Un long couloir : les deux lampes <b>E1</b> et <b>E2</b> s’allument ou s’éteignent à chaque appui sur l’un des trois boutons-poussoirs <b>S1</b>, <b>S2</b>, <b>S3</b>.</p><p>Les poussoirs commandent la bobine du télérupteur <b>KL1</b> (230 V) ; son contact 1-2 alimente les lampes. Câblez en 1,5 mm² à partir de <b>Q2</b>.</p>',
+    consigne:'<p>Un long couloir : les lampes <b>E1</b> et <b>E2</b> doivent changer d’état à chaque appui sur l’un des trois boutons-poussoirs <b>S1</b>, <b>S2</b>, <b>S3</b>. Un télérupteur <b>KL1</b> est posé.</p><p>Câblez à partir de <b>Q2</b> (16 A). La documentation du télérupteur dit le rôle de ses bornes.</p>',guide:'<ul><li>1,5 mm².</li><li>Les trois poussoirs sont en parallèle : ils envoient la phase sur A1 de KL1 ; A2 va au neutre.</li><li>La bobine de KL1 est en 230 V : elle se branche directement entre phase et neutre.</li><li>Le contact 1-2 de KL1 alimente les lampes, en parallèle.</li></ul>',
     prep(){tabDom([16]);ajoute('tl',240,200,{},'KL1');ajoute('wago5',540,360,{},'W1');ajoute('wago5',700,360,{},'W2');ajoute('wago3',860,360,{},'W3');
       ajoute('dcl',620,130,{},'E1');ajoute('dcl',840,130,{},'E2');ajoute('bp',520,600,{},'S1');ajoute('bp',700,600,{},'S2');ajoute('bp',880,600,{},'S3');},
     test(T){for(const s of['S1','S2','S3']){T.etape('Appui sur '+s);const e0=T.lampe('E1');T.imp(s);
@@ -1847,7 +2261,7 @@ const MISSIONS=[
       T.ok(T.lampe('E1')===T.lampe('E2'),'E1 et E2 s’allument et s’éteignent ensemble','Les deux lampes ne suivent pas le même contact de KL1.');
       if(!T.lampe('E1'))T.imp('S1');essaiPolarite(T,'E1');T.imp('S1');essaiLampe(T,['E1','E2']);}},
   {id:'d5',grp:'Domestique · CAP',titre:'La minuterie de l’escalier',schema:'d5',court:'Un appui, et la lumière s’éteint seule.',
-    consigne:'<p>Une cage d’escalier : un appui sur <b>S1</b> ou <b>S2</b> allume <b>E1</b> et <b>E2</b>, qui s’éteignent seules au bout d’une minute.</p><p>La minuterie <b>KT1</b> est alimentée par L et N ; les poussoirs envoient la phase sur sa borne 3 ; sa sortie ⊗ alimente les lampes. Câblez en 1,5 mm² à partir de <b>Q2</b>.</p>',
+    consigne:'<p>Une cage d’escalier : un appui sur <b>S1</b> ou <b>S2</b> allume <b>E1</b> et <b>E2</b>, qui s’éteignent seules au bout d’une minute. Une minuterie <b>KT1</b> est posée.</p><p>Câblez à partir de <b>Q2</b> (16 A).</p>',guide:'<ul><li>1,5 mm².</li><li>KT1 est alimentée par L et N.</li><li>Les poussoirs, en parallèle, envoient la phase sur sa borne 3.</li><li>Sa sortie ⊗ alimente les lampes.</li></ul>',
     prep(){tabDom([16]);ajoute('min',240,200,{},'KT1');ajoute('wago5',540,360,{},'W1');ajoute('wago5',700,360,{},'W2');ajoute('wago3',860,360,{},'W3');
       ajoute('dcl',620,130,{},'E1');ajoute('dcl',840,130,{},'E2');ajoute('bp',560,600,{},'S1');ajoute('bp',800,600,{},'S2');},
     test(T){T.ok(!T.lampe('E1'),'Au repos, l’escalier est éteint','Les lampes restent allumées au repos : elles doivent être alimentées par la sortie ⊗ de KT1, pas par la phase directe.');
@@ -1856,11 +2270,11 @@ const MISSIONS=[
       T.att(30);T.ok(!T.lampe('E1'),'Elles s’éteignent seules au bout d’une minute','Elles restent allumées : la lampe est peut-être alimentée sans passer par la sortie ⊗.');
       T.etape('Appui sur S2');T.imp('S2');T.ok(T.lampe('E1'),'S2 rallume l’escalier','S2 ne rallume pas : il doit être en parallèle sur S1.');essaiPolarite(T,'E1');T.att(70);essaiLampe(T,['E1','E2']);}},
   {id:'d6',grp:'Domestique · CAP',titre:'Le circuit de prises',schema:'d6',court:'Trois prises, de quoi les protéger.',
-    consigne:'<p>Une chambre : trois prises de courant 2P+T, <b>X1</b>, <b>X2</b>, <b>X3</b>, sur le disjoncteur <b>Q2</b> (20 A).</p><p>Câblez les trois prises : la section que demande 20 A, et la terre à chaque prise. Branchez ensuite des appareils depuis le panneau d’une prise, puis l’appareil en défaut.</p>',
+    consigne:'<p>Une chambre : trois prises de courant 2P+T, <b>X1</b>, <b>X2</b>, <b>X3</b>, sur le disjoncteur <b>Q2</b> (20 A).</p><p>Câblez les trois prises, puis branchez des appareils depuis le panneau d’une prise, et l’appareil en défaut.</p>',guide:'<ul><li>Sur 20 A, la section est de 2,5 mm².</li><li>Phase, neutre et terre vont à chaque prise ; on peut repiquer d’une prise à la suivante, deux conducteurs au plus par borne.</li></ul>',
     prep(){tabDom([20]);ajoute('wago5',540,360,{},'W1');ajoute('wago5',720,360,{},'W2');ajoute('pc',560,560,{},'X1');ajoute('pc',760,560,{},'X2');ajoute('pc',960,560,{},'X3');},
     test:testPrises},
   {id:'d7',grp:'Domestique · CAP',titre:'Le tableau de répartition',schema:'d7',court:'De l’arrivée aux deux circuits.',
-    consigne:'<p>Le tableau d’un studio : l’arrivée, l’interrupteur différentiel <b>Q1</b> (30 mA), puis deux disjoncteurs, <b>Q2</b> (16 A) pour l’éclairage et <b>Q3</b> (20 A) pour les prises. Les circuits partent du bornier <b>X0</b> : 1 et 2 l’éclairage, 3 et 4 les prises.</p><p>Câblez le tableau, en 6 mm² de l’arrivée aux disjoncteurs, et la terre de l’arrivée à la barrette.</p>',
+    consigne:'<p>Le tableau d’un studio : l’arrivée, l’interrupteur différentiel <b>Q1</b> (30 mA), puis deux disjoncteurs, <b>Q2</b> (16 A) pour l’éclairage et <b>Q3</b> (20 A) pour les prises. Les circuits partent du bornier <b>X0</b> : 1 et 2 l’éclairage, 3 et 4 les prises.</p><p>Câblez le tableau.</p>',guide:'<ul><li>De l’arrivée aux disjoncteurs : 6 mm².</li><li>L’arrivée passe d’abord par Q1, puis se répartit vers Q2 et Q3, phase et neutre.</li><li>Chaque disjoncteur alimente son circuit au bornier X0, à la section de son calibre.</li><li>La terre va de l’arrivée à la barrette.</li></ul>',
     prep(){const R=ajoute('res1',40,30,{},'Réseau');R.lk=1;ajoute('id',40,200,{},'Q1');ajoute('db',140,200,{In:16},'Q2');ajoute('db',240,200,{In:20},'Q3');
       const X=ajoute('bpe',40,440,{},'XPE');X.lk=1;const X0=ajoute('bor',480,190,{},'X0');X0.lk=1;
       const S1=ajoute('int',600,600,{},'S1'),E1=ajoute('dcl',680,130,{},'E1'),X1=ajoute('pc',920,560,{},'X1');lock(S1,E1,X1);
@@ -1868,7 +2282,7 @@ const MISSIONS=[
       fil(k(X0,'b3'),k(X1,'L'),'marron',2.5,LK);fil(k(X0,'b4'),k(X1,'N'),'bleu',2.5,LK);fil(k(E1,'PE'),k(X,'p2'),'vj',1.5,LK);fil(k(X1,'PE'),k(X,'p3'),'vj',2.5,LK);},
     tete:6,test:testTableau},
   {id:'d8',grp:'Domestique · CAP',titre:'Le va-et-vient à trois points',schema:'d8',court:'Un permutateur entre deux va-et-vient.',
-    consigne:'<p>Un grand séjour à trois portes : la lampe <b>E1</b> se commande de chacune, par deux va-et-vient <b>S1</b> et <b>S3</b> et un permutateur <b>S2</b> entre eux.</p><p>Les navettes de S1 arrivent sur 1 et 2 du permutateur, celles de S3 partent de 3 et 4. Câblez en 1,5 mm² à partir de <b>Q2</b>.</p>',
+    consigne:'<p>Un grand séjour à trois portes : la lampe <b>E1</b> doit se commander de chacune, par deux va-et-vient <b>S1</b> et <b>S3</b> et un permutateur <b>S2</b>.</p><p>Câblez à partir de <b>Q2</b> (16 A).</p>',guide:'<ul><li>1,5 mm².</li><li>Les navettes de S1 arrivent sur 1 et 2 du permutateur ; celles de S3 partent de 3 et 4.</li><li>La phase entre par L de S1 ; le retour vers la lampe part de L de S3.</li></ul>',
     prep(){tabDom([16]);ajoute('wago3',560,340,{},'W1');ajoute('wago3',680,340,{},'W2');ajoute('wago3',800,340,{},'W3');ajoute('dcl',720,130,{},'E1');
       ajoute('vv',480,600,{},'S1');ajoute('perm',700,600,{},'S2');ajoute('vv',920,600,{},'S3');},
     test(T){const L=(a,b,c)=>{T.d('S1').s.pos=a;T.d('S2').s.pos=b;T.d('S3').s.pos=c;recalc();T.att(0.1);return T.lampe('E1');};
@@ -1880,14 +2294,14 @@ const MISSIONS=[
       const on=[0,1,2,3,4,5,6,7].find(i=>t[i]),off=[0,1,2,3,4,5,6,7].find(i=>!t[i]);
       if(on!=null){L(on&1,(on>>1)&1,(on>>2)&1);essaiPolarite(T,'E1');}if(off!=null){L(off&1,(off>>1)&1,(off>>2)&1);essaiLampe(T,['E1']);}}},
   {id:'d9',grp:'Domestique · CAP',titre:'La prise commandée',schema:'d9',court:'Un lampadaire allumé depuis la porte.',
-    consigne:'<p>Une chambre : la prise <b>X1</b> est commandée par l’interrupteur <b>S1</b>, près de la porte, pour allumer le lampadaire qui y est branché.</p><p>Câblez en 1,5 mm² à partir de <b>Q2</b> (16 A), avec la terre à la prise.</p>',
+    consigne:'<p>Une chambre : la prise <b>X1</b> doit être commandée par l’interrupteur <b>S1</b>, près de la porte, pour allumer le lampadaire qui y est branché.</p><p>Câblez à partir de <b>Q2</b> (16 A), terre comprise.</p>',guide:'<ul><li>1,5 mm².</li><li>Comme un simple allumage : la phase passe par S1 avant d’arriver sur L de la prise ; le neutre et la terre y vont directement.</li></ul>',
     prep(){tabDom([16]);ajoute('wago3',560,340,{},'W1');ajoute('wago3',680,340,{},'W2');ajoute('wago3',800,340,{},'W3');ajoute('pc',760,560,{app:'lampe'},'X1');ajoute('int',540,580,{},'S1');},
     test(T){T.param('X1','app','lampe');T.pos('S1',0);const a=T.u('X1','L','N')>200;T.pos('S1',1);const b=T.u('X1','L','N')>200;
       if(!T.ok(a!==b,'S1 met la prise X1 sous tension et l’en retire','La prise ne change pas quand on bascule S1 : la phase de Q2 passe par S1 avant d’arriver sur L de la prise ; le neutre y va directement.'))return;
       T.pos('S1',a?0:1);T.ok(T.v('X1','L')>150&&T.v('X1','N')<50,'La phase arrive sur la borne L de la prise','Phase et neutre sont inversés sur la prise.');
       T.pos('S1',a?1:0);T.ok(T.sansPhase('X1'),'Prise coupée, aucune de ses bornes n’est sous tension','La prise reste sous tension quand elle est coupée : l’interrupteur doit couper la phase, jamais le neutre.');}},
   {id:'d10',grp:'Domestique · CAP',titre:'Le chauffe-eau en heures creuses',schema:'d10',court:'Le compteur commande, le contacteur coupe.',
-    consigne:'<p>Le chauffe-eau <b>B1</b> ne doit chauffer qu’en heures creuses. Le compteur ferme son contact tarifaire (C1-C2) aux heures creuses ; ce contact commande la bobine du contacteur jour/nuit <b>KM1</b> (230 V), dont le contact 1-2 alimente le chauffe-eau.</p><p>Puissance : <b>Q2</b> (20 A), la section qui va avec, et la terre au chauffe-eau. Commande : <b>Q3</b> (2 A). Essayez ensuite les trois positions du sélecteur de KM1 et les deux tarifs du compteur.</p>',
+    consigne:'<p>Le chauffe-eau <b>B1</b> ne doit chauffer qu’en heures creuses, quand le contact tarifaire du compteur (C1-C2) se ferme. Un contacteur jour/nuit <b>KM1</b> est posé.</p><p>Puissance sur <b>Q2</b> (20 A), commande sur <b>Q3</b> (2 A). Essayez ensuite les trois positions du sélecteur de KM1 et les deux tarifs.</p>',guide:'<ul><li>Puissance : 2,5 mm² sur 20 A, et la terre au chauffe-eau. Q2 vers 1 de KM1, 2 de KM1 vers L du chauffe-eau, le neutre en direct.</li><li>Commande : Q3 vers C1 du compteur, C2 vers A1 de KM1 (bobine 230 V), A2 au neutre.</li></ul>',
     prep(){tabDom([20,2]);ajoute('hc',340,200,{},'KM1');ajoute('cpt',250,30,{},'Compteur');ajoute('ce',820,110,{},'B1');ajoute('wago3',600,360,{},'W1');},
     test(T){const C=T.d('Compteur'),K=T.d('KM1'),ch=()=>T.u('B1','L','N')>200,mets=(hc,sel)=>{C.s.hc=hc;K.s.sel=sel;recalc();T.att(0.3);};
       mets(false,'auto');T.ok(!ch(),'En heures pleines, le chauffe-eau est arrêté','Le chauffe-eau chauffe en heures pleines : il doit passer par le contact 1-2 de KM1, pas par la phase directe.');
@@ -1896,7 +2310,7 @@ const MISSIONS=[
       mets(false,'1');T.ok(ch(),'Sélecteur sur 1 : marche forcée, même en heures pleines','La marche forcée ne fonctionne pas : le chauffe-eau doit être alimenté par le contact 1-2 de KM1.');
       mets(false,'auto');T.ok(T.sansPhase('B1'),'Chauffe-eau arrêté, ses bornes ne sont plus sous tension','Le contact de KM1 coupe le neutre au lieu de la phase.');}},
   {id:'d11',grp:'Domestique · CAP',titre:'Le volet roulant',schema:'d11',court:'Une touche pour monter, une pour descendre.',
-    consigne:'<p>Une chambre : le volet roulant est mû par un moteur tubulaire <b>M1</b> à deux sens. Son conducteur bleu est le neutre, ▲ fait monter, ▼ fait descendre. L’interrupteur <b>S1</b> envoie la phase sur l’un ou l’autre, jamais les deux.</p><p>Câblez en 1,5 mm² à partir de <b>Q2</b> (16 A), avec la terre au moteur.</p>',
+    consigne:'<p>Une chambre : le volet roulant est mû par un moteur tubulaire <b>M1</b> à deux sens, commandé par l’interrupteur à deux touches <b>S1</b>. Une touche le fait monter, l’autre descendre, jamais les deux ensemble.</p><p>Câblez à partir de <b>Q2</b> (16 A), terre comprise.</p>',guide:'<ul><li>1,5 mm².</li><li>Le moteur : N (bleu) le neutre, ▲ la montée, ▼ la descente.</li><li>La phase arrive sur L de S1 ; ▲ de S1 va à ▲ du moteur, ▼ à ▼.</li></ul>',
     prep(){tabDom([16]);ajoute('wago3',580,360,{},'W1');ajoute('wago3',700,360,{},'W2');ajoute('vr',760,110,{},'M1');ajoute('iv',560,580,{},'S1');},
     test(T){const S=T.d('S1'),m=p=>{S.s.pos=p;recalc();T.att(0.2);return[T.u('M1','M','N')>200,T.u('M1','D','N')>200];};
       const r0=m(0),r1=m(1),r2=m(2);
@@ -1905,25 +2319,25 @@ const MISSIONS=[
       T.ok(r2[1]&&!r2[0],'La touche ▼ le fait descendre','La touche ▼ n’alimente pas la seule borne ▼ du moteur.');
       m(0);T.ok(T.v('M1','N')<50,'Le neutre du moteur est bien le neutre','La borne N du moteur n’est pas au neutre.');}},
   {id:'i1',grp:'Industriel · CAP et bac pro',titre:'Démarrage direct : la commande',schema:'ic',court:'Marche, arrêt, auto-maintien, voyants.',
-    consigne:'<p>Un tapis roulant : son moteur <b>M1</b> démarre par <b>S1</b> et s’arrête par <b>S0</b>. Le circuit de puissance est câblé.</p><p>Câblez le circuit de commande en 24 V, en partant du fusible <b>F2</b> : F1 (95-96), S0, S1 et l’auto-maintien de KM1 (13-14), la bobine de KM1, le voyant de marche <b>H1</b> (KM1 53-54) et le voyant de défaut <b>H2</b> (F1 97-98). Le 0 V est la borne 0 du secondaire de T1.</p>',
-    prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),F1=ajoute('rt',40,610,{Ir:3.5},'F1'),M1=ajoute('mot',40,780,{},'M1');lock(KM1,F1,M1);
+    consigne:'<p>Un tapis roulant : son moteur <b>M1</b> doit démarrer par <b>S1</b>, s’arrêter par <b>S0</b>, et s’arrêter seul en cas de surcharge. Un voyant vert <b>H1</b> signale la marche, un rouge <b>H2</b> le défaut. La puissance est câblée.</p><p>Câblez la commande en 24 V, réglez le relais thermique <b>F1</b> d’après la plaque du moteur, puis mettez en service.</p>',guide:'<ul><li>On part du fusible F2 (2 A), qui protège le 24 V ; le retour se fait à la borne 0 de T1, le commun, repéré en blanc.</li><li>En série : F1 (95-96), S0 (11-12), puis S1 (13-14) avec, en parallèle, l’auto-maintien KM1 (13-14), jusqu’à A1 de KM1 ; A2 au commun.</li><li>H1 par KM1 (53-54), H2 par F1 (97-98).</li><li>F1 : la plage qui contient l’intensité nominale de la plaque, 3,5 A, puis la molette sur 3,5 A.</li></ul>',
+    prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),F1=ajoute('rt',40,610,{},'F1'),M1=ajoute('mot',40,780,{},'M1');lock(KM1,F1,M1);
       puissanceDirecte(A,KM1,F1,M1,true);ajoute('bpa',780,360,{},'S0');ajoute('bpm',880,360,{},'S1');ajoute('vy',790,560,{col:'vert'},'H1');ajoute('vy',890,560,{col:'rouge'},'H2');},
     test(T){essaiDirect(T,true);}},
   {id:'i2',grp:'Industriel · CAP et bac pro',titre:'Démarrage direct : la puissance',schema:'ip',court:'Q1, KM1, F1, le moteur et son couplage.',
-    consigne:'<p>Le même tapis roulant : cette fois, la commande est câblée et la puissance reste à faire.</p><p>Câblez de <b>Q1</b> au moteur, à travers les pôles de <b>KM1</b> puis de <b>F1</b>, en 1,5 mm², avec la terre au moteur. Lisez la plaque : réglez les barrettes du moteur pour le réseau 400 V et le relais thermique sur l’intensité nominale (panneau de chaque appareil).</p>',
+    consigne:'<p>Le même tapis roulant : la commande est câblée, la puissance reste à faire.</p><p>Câblez de <b>Q1</b> au moteur, avec la terre au moteur. Lisez la plaque : couplez le moteur pour le réseau 400 V et réglez le relais thermique.</p>',guide:'<ul><li>1,5 mm².</li><li>Chaque phase va de Q1 à KM1 (1, 3, 5), de KM1 (2, 4, 6) à F1 (1, 3, 5), puis de F1 (2, 4, 6) à U1, V1, W1.</li><li>Plaque 230/400 V sur un réseau 400 V : barrettes en étoile.</li><li>F1 : plage 2,5 à 4 A, molette sur 3,5 A.</li></ul>',
     prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),F1=ajoute('rt',40,610,{},'F1'),M1=ajoute('mot',40,780,{cpl:'aucune'},'M1');
       const S0=ajoute('bpa',780,360,{},'S0'),S1=ajoute('bpm',880,360,{},'S1'),H1=ajoute('vy',790,560,{col:'vert'},'H1'),H2=ajoute('vy',890,560,{col:'rouge'},'H2');
       lock(KM1,F1,M1,S0,S1,H1,H2);commandeDirecte(A,KM1,F1,S0,S1,H1,H2,true);},
     test(T){T.etape('Appui sur S1');T.imp('S1');
       if(!T.ok(T.mot('M1')!==0,'KM1 enclenché, le moteur tourne','Le moteur ne tourne pas : chaque phase doit aller de Q1 à KM1 (1, 3, 5), de KM1 (2, 4, 6) à F1 (1, 3, 5), puis de F1 (2, 4, 6) à U1, V1, W1.'))return;
       T.ok(T.d('M1').r.etat==='tourne normalement','Chaque enroulement reçoit sa tension nominale','Les enroulements ne reçoivent pas 230 V : plaque 230/400 V sur un réseau 400 V, quel couplage ?');
-      T.ok(T.d('F1').p.Ir===3.5,'F1 est réglé sur l’intensité nominale de la plaque, 3,5 A','Le réglage de F1 ne correspond pas à l’intensité nominale lue sur la plaque du moteur.');
+      essaiReglage(T,'F1','M1');
       T.etape('Marche prolongée','Un relais réglé trop bas déclenche en marche normale ; réglé trop haut, il ne protège plus.');T.att(25);
       T.etape('Surcharge du moteur');T.d('M1').s.bloque=true;recalc();T.attendu(true);T.att(12);T.attendu(false);
       T.ok(T.d('F1').s.trip&&T.mot('M1')===0,'Rotor bloqué : F1 déclenche et le moteur s’arrête','F1 ne déclenche pas : le courant du moteur doit traverser les trois pôles de F1.');}},
   {id:'i3',grp:'Industriel · CAP et bac pro',titre:'L’inversion du sens de marche',schema:'ii',court:'Deux contacteurs, et le verrouillage.',
-    consigne:'<p>Une porte de quai : <b>S1</b> la fait monter (KM1), <b>S2</b> descendre (KM2), <b>S0</b> l’arrête. La puissance est câblée : KM2 croise L1 et L3.</p><p>Câblez la commande en 24 V : chaque bouton avec son auto-maintien, et le <b>verrouillage électrique</b> — le contact 21-22 de chaque contacteur en série avec la bobine de l’autre. Sans lui, les deux contacteurs fermés ensemble feraient un court-circuit.</p>',
-    prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),KM2=ajoute('km',290,400,{},'KM2'),F1=ajoute('rt',40,610,{Ir:3.5},'F1'),M1=ajoute('mot',40,780,{},'M1');lock(KM1,KM2,F1,M1);
+    consigne:'<p>Une porte de quai : <b>S1</b> la fait monter (KM1), <b>S2</b> descendre (KM2), <b>S0</b> l’arrête. Les deux contacteurs ne doivent jamais être fermés ensemble. La puissance est câblée : KM2 croise L1 et L3.</p><p>Câblez la commande en 24 V et réglez <b>F1</b>.</p>',guide:'<ul><li>Chaque bouton a son auto-maintien.</li><li>Le verrouillage électrique : le contact 21-22 de chaque contacteur en série avec la bobine de l’autre. Sans lui, les deux fermés ensemble feraient un court-circuit.</li><li>Les retours des bobines (A2) au commun, en blanc.</li><li>F1 sur 3,5 A, plage 2,5 à 4 A.</li></ul>',
+    prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),KM2=ajoute('km',290,400,{},'KM2'),F1=ajoute('rt',40,610,{},'F1'),M1=ajoute('mot',40,780,{},'M1');lock(KM1,KM2,F1,M1);
       const o=LK;fil(k(A.Q1,'b2'),k(KM1,'p1'),'marron',1.5,o);fil(k(A.Q1,'b4'),k(KM1,'p3'),'noir',1.5,o);fil(k(A.Q1,'b6'),k(KM1,'p5'),'gris',1.5,o);
       fil(k(KM1,'p1'),k(KM2,'p1'),'marron',1.5,o);fil(k(KM1,'p3'),k(KM2,'p3'),'noir',1.5,o);fil(k(KM1,'p5'),k(KM2,'p5'),'gris',1.5,o);
       fil(k(KM1,'p2'),k(F1,'r1'),'marron',1.5,o);fil(k(KM1,'p4'),k(F1,'r3'),'noir',1.5,o);fil(k(KM1,'p6'),k(F1,'r5'),'gris',1.5,o);
@@ -1932,6 +2346,7 @@ const MISSIONS=[
       ajoute('bpa',780,360,{},'S0');ajoute('bpm',880,360,{},'S1');ajoute('bpm',980,360,{},'S2');},
     test(T){T.etape('Appui sur S1');T.imp('S1');const d1=T.mot('M1');
       if(!T.ok(d1!==0&&T.ferme('KM1'),'S1 enclenche KM1 : la porte monte','S1 n’enclenche pas KM1 (auto-maintien compris) : suivez le 24 V de F2 par F1, S0, S1, KM2 21-22, jusqu’à A1 de KM1.'))return;
+      essaiReglage(T,'F1','M1');
       T.etape('Appui sur S2 pendant la montée','Le contact 21-22 de KM1 doit être en série avec la bobine de KM2 : pendant que KM1 est fermé, KM2 ne peut pas s’enclencher.');
       T.imp('S2');T.ok(T.ferme('KM1')&&!T.ferme('KM2'),'S2 pendant la montée ne fait rien : le verrouillage électrique','KM2 s’enclenche pendant que KM1 est fermé.');
       T.etape('Appui sur S0');T.imp('S0');T.ok(T.mot('M1')===0,'S0 arrête la porte','S0 n’arrête pas tout : il doit être en série avant les deux branches.');
@@ -1941,8 +2356,8 @@ const MISSIONS=[
       T.etape('Appui sur S1 pendant la descente','Le contact 21-22 de KM2 doit être en série avec la bobine de KM1.');T.imp('S1');
       T.ok(T.ferme('KM2')&&!T.ferme('KM1'),'S1 pendant la descente ne fait rien : verrouillage dans les deux sens','KM1 s’enclenche pendant que KM2 est fermé.');T.imp('S0');}},
   {id:'i4',grp:'Industriel · CAP et bac pro',titre:'Le démarrage étoile-triangle (bac pro)',schema:'iy',court:'Trois contacteurs et une temporisation.',
-    consigne:'<p>Un compresseur de 1,5 kW, plaque 400/690 V : il démarre en <b>étoile</b> puis passe en <b>triangle</b> au bout de 5 s, pour limiter l’appel de courant. La puissance est câblée : KM1 la ligne, KM2 l’étoile, KM3 le triangle.</p><p>Câblez la commande en 24 V d’après le schéma : le relais temporisé <b>KA1</b> coupe KM2 par 15-16 et enclenche KM3 par 15-18 ; KM2 et KM3 se verrouillent l’un l’autre.</p>',
-    prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),KM2=ajoute('km',290,400,{},'KM2'),KM3=ajoute('km',540,400,{},'KM3'),F1=ajoute('rt',40,610,{Ir:3.5},'F1'),
+    consigne:'<p>Un compresseur de 1,5 kW, plaque 400/690 V : il doit démarrer en <b>étoile</b> puis passer en <b>triangle</b> au bout de 5 s, pour limiter l’appel de courant. La puissance est câblée : KM1 la ligne, KM2 l’étoile, KM3 le triangle.</p><p>Câblez la commande en 24 V et réglez <b>F1</b> d’après la plaque.</p>',guide:'<ul><li>Le relais temporisé KA1 coupe KM2 par 15-16 et enclenche KM3 par 15-18.</li><li>KM2 et KM3 se verrouillent l’un l’autre, par 21-22 et 61-62.</li><li>KM1 s’enclenche par KM2 (53-54) et se maintient par KM1 (53-54).</li><li>F1 sur 2 A, plage 1,6 à 2,5 A : l’intensité de la plaque en 400 V.</li></ul>',
+    prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),KM2=ajoute('km',290,400,{},'KM2'),KM3=ajoute('km',540,400,{},'KM3'),F1=ajoute('rt',40,610,{},'F1'),
       M1=ajoute('mot',40,780,{pl:'400/690',cpl:'aucune'},'M1');lock(KM1,KM2,KM3,F1,M1);const o=LK;
       fil(k(A.Q1,'b2'),k(KM1,'p1'),'marron',1.5,o);fil(k(A.Q1,'b4'),k(KM1,'p3'),'noir',1.5,o);fil(k(A.Q1,'b6'),k(KM1,'p5'),'gris',1.5,o);
       fil(k(KM1,'p2'),k(F1,'r1'),'marron',1.5,o);fil(k(KM1,'p4'),k(F1,'r3'),'noir',1.5,o);fil(k(KM1,'p6'),k(F1,'r5'),'gris',1.5,o);
@@ -1957,21 +2372,21 @@ const MISSIONS=[
       T.ok(T.mot('M1')!==0,'Le moteur tourne en étoile, sous tension réduite','Le moteur ne tourne pas.');
       T.etape('Fin de la temporisation','KA1 15-16 coupe KM2 ; KA1 15-18, à travers KM2 61-62, enclenche KM3.');T.att(+T.d('KA1').p.tp+1);
       T.ok(T.ferme('KM1')&&T.ferme('KM3')&&!T.ferme('KM2'),'Après la temporisation : KM2 retombe, KM3 s’enclenche, le moteur passe en triangle','Le passage en triangle ne se fait pas : KM2 doit retomber par KA1 15-16, et KM3 s’enclencher par KA1 15-18 et KM2 61-62.');
-      T.ok(T.d('M1').r.etat==='tourne normalement','En triangle, chaque enroulement reçoit ses 400 V','Les enroulements ne sont pas à leur tension nominale.');
+      T.ok(T.d('M1').r.etat==='tourne normalement','En triangle, chaque enroulement reçoit ses 400 V','Les enroulements ne sont pas à leur tension nominale.');essaiReglage(T,'F1','M1');
       T.etape('Appui sur S0');T.imp('S0');T.ok(!T.ferme('KM1')&&!T.ferme('KM2')&&!T.ferme('KM3'),'S0 arrête tout','Un contacteur reste fermé après S0.');}},
   {id:'i5',grp:'Industriel · CAP et bac pro',titre:'La marche par à-coups',schema:'ia',court:'Maintenue par S1, par à-coups avec S2.',
-    consigne:'<p>Un convoyeur qu’on avance par petits coups pour le réglage : <b>S1</b> le met en marche maintenue, <b>S0</b> l’arrête, et tant qu’on tient <b>S2</b> il avance, sans se maintenir.</p><p>S2 a deux contacts : 13-14 alimente la bobine, 21-22 coupe l’auto-maintien pendant l’appui. Câblez la commande en 24 V, la puissance est faite.</p>',
-    prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),F1=ajoute('rt',40,610,{Ir:3.5},'F1'),M1=ajoute('mot',40,780,{},'M1');lock(KM1,F1,M1);
+    consigne:'<p>Un convoyeur qu’on avance par petits coups pour le réglage : <b>S1</b> le met en marche maintenue, <b>S0</b> l’arrête, et tant qu’on tient <b>S2</b> il avance, sans se maintenir. La puissance est câblée.</p><p>Câblez la commande en 24 V et réglez <b>F1</b>.</p>',guide:'<ul><li>S2 a deux contacts : 13-14 alimente la bobine, 21-22 coupe l’auto-maintien pendant l’appui.</li><li>L’auto-maintien passe donc par KM1 (13-14) puis S2 (21-22).</li><li>F1 sur 3,5 A.</li></ul>',
+    prep(){const A=armoire();const KM1=ajoute('km',40,400,{},'KM1'),F1=ajoute('rt',40,610,{},'F1'),M1=ajoute('mot',40,780,{},'M1');lock(KM1,F1,M1);
       puissanceDirecte(A,KM1,F1,M1,true);ajoute('bpa',780,360,{},'S0');ajoute('bpm',880,360,{},'S1');ajoute('bpd',980,360,{},'S2');},
     test(T){T.etape('Appui sur S1');T.imp('S1');if(!T.ok(T.mot('M1')!==0,'S1 démarre le moteur, qui reste en marche','Le moteur ne démarre pas ou ne se maintient pas : S1 et la branche KM1 13-14 + S2 21-22 en parallèle, vers A1 de KM1.'))return;
-      T.imp('S0');T.ok(T.mot('M1')===0,'S0 l’arrête','S0 n’arrête pas le moteur.');
+      essaiReglage(T,'F1','M1');T.imp('S0');T.ok(T.mot('M1')===0,'S0 l’arrête','S0 n’arrête pas le moteur.');
       T.etape('S2 maintenu enfoncé');T.appui('S2');T.ok(T.mot('M1')!==0,'S2 enfoncé : le moteur tourne','S2 enfoncé ne fait rien : son contact 13-14 doit alimenter A1 de KM1, en parallèle sur S1.');
       T.relache('S2');T.ok(T.mot('M1')===0,'S2 relâché : le moteur s’arrête, sans auto-maintien','Le moteur reste en marche au relâchement : le contact 21-22 de S2 doit être en série avec l’auto-maintien de KM1 (13-14).');
       T.imp('S1');T.ok(T.mot('M1')!==0,'S1 repart en marche maintenue','La marche maintenue ne revient pas.');T.imp('S0');}},
   {id:'i6',grp:'Industriel · CAP et bac pro',titre:'Deux moteurs en cascade',schema:'icas',court:'Le second ne démarre qu’après le premier.',
-    consigne:'<p>Une trémie et son tapis : le tapis <b>M1</b> doit tourner avant que la vis <b>M2</b> ne démarre, sinon la matière s’accumule. <b>S1</b> démarre M1, <b>S2</b> démarre M2, <b>S3</b> arrête M2, <b>S0</b> arrête tout. La puissance est câblée.</p><p>Câblez la commande en 24 V : un contact de KM1 (53-54) autorise la branche de KM2 ; F1 protège tout, F3 la seule branche de M2.</p>',
+    consigne:'<p>Une trémie et son tapis : le tapis <b>M1</b> doit tourner avant que la vis <b>M2</b> ne démarre. <b>S1</b> démarre M1, <b>S2</b> démarre M2, <b>S3</b> arrête M2, <b>S0</b> arrête tout. La puissance est câblée.</p><p>Câblez la commande en 24 V et réglez les deux relais thermiques.</p>',guide:'<ul><li>Un contact de KM1 (53-54) autorise la branche de KM2.</li><li>F1 (95-96) en tête : il arrête tout ; F3 (95-96) dans la seule branche de M2.</li><li>F1 et F3 sur 3,5 A.</li></ul>',
     prep(){const A=armoire();A.Q1.p.In=10;
-      const KM1=ajoute('km',40,400,{},'KM1'),F1=ajoute('rt',40,610,{Ir:3.5},'F1'),M1=ajoute('mot',40,780,{},'M1'),KM2=ajoute('km',300,400,{},'KM2'),F3=ajoute('rt',300,610,{Ir:3.5},'F3'),M2=ajoute('mot',300,780,{},'M2');
+      const KM1=ajoute('km',40,400,{},'KM1'),F1=ajoute('rt',40,610,{},'F1'),M1=ajoute('mot',40,780,{},'M1'),KM2=ajoute('km',300,400,{},'KM2'),F3=ajoute('rt',300,610,{},'F3'),M2=ajoute('mot',300,780,{},'M2');
       lock(KM1,F1,M1,KM2,F3,M2);const o=LK;
       fil(k(A.Q1,'b2'),k(KM1,'p1'),'marron',1.5,o);fil(k(A.Q1,'b4'),k(KM1,'p3'),'noir',1.5,o);fil(k(A.Q1,'b6'),k(KM1,'p5'),'gris',1.5,o);
       fil(k(KM1,'p1'),k(KM2,'p1'),'marron',1.5,o);fil(k(KM1,'p3'),k(KM2,'p3'),'noir',1.5,o);fil(k(KM1,'p5'),k(KM2,'p5'),'gris',1.5,o);
@@ -1982,6 +2397,7 @@ const MISSIONS=[
     test(T){T.etape('Appui sur S2, M1 arrêté','M2 ne doit pouvoir démarrer que si M1 tourne : le contact 53-54 de KM1 en série dans la branche de KM2.');T.imp('S2');
       T.ok(T.mot('M2')===0,'M2 ne démarre pas tant que M1 est arrêté','M2 démarre seul : la branche de KM2 doit passer par le contact 53-54 de KM1.');T.imp('S0');
       T.etape('Appui sur S1');T.imp('S1');if(!T.ok(T.mot('M1')!==0,'S1 démarre M1, qui reste en marche','M1 ne démarre pas ou ne se maintient pas : F1, S0, puis S1 en parallèle avec KM1 13-14, vers A1 de KM1.'))return;
+      essaiReglage(T,'F1','M1');essaiReglage(T,'F3','M2');
       T.etape('Appui sur S2');T.imp('S2');if(!T.ok(T.mot('M2')!==0,'Avec M1 en marche, S2 démarre M2, qui reste en marche','M2 ne démarre pas ou ne se maintient pas : KM1 53-54, S3, F3 95-96, puis S2 en parallèle avec KM2 13-14, vers A1 de KM2.'))return;
       T.etape('Appui sur S3');T.imp('S3');T.ok(T.mot('M2')===0&&T.mot('M1')!==0,'S3 arrête M2 seul','S3 n’arrête pas M2 seul : il doit être dans la seule branche de KM2.');
       T.imp('S2');T.etape('Appui sur S0');T.imp('S0');T.ok(T.mot('M1')===0&&T.mot('M2')===0,'S0 arrête les deux moteurs','S0 doit être en tête de toute la commande.');
@@ -1990,29 +2406,85 @@ const MISSIONS=[
       T.d('M2').s.bloque=false;T.d('F3').s.trip=false;T.d('F3').s.th=0;recalc();T.att(0.2);
       T.etape('Surcharge de M1','F1 95-96 est en tête : sa surcharge arrête tout.');T.d('M1').s.bloque=true;recalc();T.attendu(true);T.att(12);T.attendu(false);
       T.ok(T.mot('M1')===0&&T.mot('M2')===0,'Une surcharge de M1 arrête les deux moteurs','La surcharge de M1 n’arrête pas tout : F1 95-96 doit être en tête de la commande.');}},
+  {id:'m1',grp:'Moteur monophasé · CAP et bac pro',titre:'Le moteur monophasé : raccordement et sens',schema:'m1',court:'La plaque à bornes, le condensateur, le relais thermique.',
+    consigne:'<p>Le touret à meuler de l’atelier : son moteur monophasé <b>M1</b> doit tourner dans le <b>sens 1</b> (↻), celui de la flèche du carter, démarrer par <b>S1</b>, s’arrêter par <b>S0</b>, et s’arrêter seul en cas de surcharge. Le tableau et la commande, en 230 V, sont câblés.</p><p>Câblez la puissance de <b>Q2</b> au moteur, raccordez sa plaque à bornes pour le sens 1, réglez <b>F1</b>, puis mettez en service.</p>',
+    guide:'<ul><li>Q2 (10 A) : 1,5 mm². Phase et neutre passent par KM1 (1-2 et 3-4).</li><li>Le relais thermique est différentiel : en monophasé, le courant traverse ses trois pôles en série (2 vers 3, 4 vers 5), sinon il déclenche sur déséquilibre.</li><li>Le réseau arrive sur U1 (phase) et U2 (neutre). Pour le sens 1 : barrettes U1-C1, C2-Z1, Z2-U2 (panneau du moteur), ou trois ponts.</li><li>F1 : plage 1,6 à 2,5 A, molette sur 2,5 A, l’intensité de la plaque.</li><li>La terre à la carcasse.</li></ul>',
+    prep(){const{R,Q1,Qs,X}=tabDom([10,2]);const Q3=Qs[1];
+      const KM1=ajoute('km',360,200,{bob:230},'KM1'),F1=ajoute('rt',360,400,{},'F1'),M1=ajoute('mono',360,600,{cpl:'aucune'},'M1'),S0=ajoute('bpa',720,420,{},'S0'),S1=ajoute('bpm',820,420,{},'S1');
+      lock(KM1,F1,M1,S0,S1);const o=LK,c='rouge';
+      fil(k(Q3,'s2'),k(F1,'95'),c,1.5,o);fil(k(F1,'96'),k(S0,'11'),c,1.5,o);fil(k(S0,'12'),k(S1,'13'),c,1.5,o);fil(k(S1,'13'),k(KM1,'13'),c,1.5,o);
+      fil(k(S1,'14'),k(KM1,'A1'),c,1.5,o);fil(k(KM1,'14'),k(KM1,'A1'),c,1.5,o);fil(k(KM1,'A2'),k(Q3,'sN'),'bleu',1.5,o);},
+    test(T){T.etape('Appui sur S1');T.imp('S1');const M=T.d('M1'),d=T.mot('M1');
+      if(!T.ok(d!==0,'S1 démarre le moteur','Le moteur ne tourne pas'+(M.r&&M.r.etat&&M.r.etat!=='à l’arrêt'?' ('+M.r.etat+')':'')+' : la phase et le neutre arrivent sur U1 et U2 à travers KM1 et F1, et le condensateur est en série avec l’enroulement auxiliaire (plaque à bornes).'))return;
+      T.ok(d===1,'Il tourne dans le sens 1, celui de la flèche du carter','Il tourne dans le sens 2 : c’est le sens de l’enroulement auxiliaire par rapport au principal qui décide (plaque à bornes).');
+      T.ok(M.r.etat==='tourne normalement','Il tourne sur ses deux enroulements','Il tourne, mais pas normalement : '+(M.r.etat||'')+'.');
+      essaiReglage(T,'F1','M1');
+      T.etape('Marche prolongée','Le relais thermique est différentiel : ses trois pôles doivent porter le même courant.');T.att(100);
+      T.ok(T.mot('M1')!==0,'Une minute et demie plus tard, il tourne toujours : F1 ne voit ni surcharge ni déséquilibre','Le moteur s’est arrêté en marche normale.');
+      T.etape('Appui sur S0');T.imp('S0');T.ok(T.mot('M1')===0,'S0 l’arrête','S0 n’arrête pas le moteur.');
+      T.ok(T.v('M1','U1')<50,'Arrêté, sa borne U1 n’est plus sous tension : KM1 coupe la phase','La borne U1 reste sous tension à l’arrêt : la phase doit passer par KM1.');
+      T.etape('Surcharge du moteur');T.imp('S1');M.s.bloque=true;recalc();T.attendu(true);T.att(12);T.attendu(false);
+      T.ok(T.d('F1').s.trip&&T.mot('M1')===0,'Rotor bloqué : F1 déclenche et le moteur s’arrête','F1 ne déclenche pas : le courant du moteur doit traverser ses pôles.');}},
+  {id:'m2',grp:'Moteur monophasé · CAP et bac pro',titre:'L’inversion de sens d’un moteur monophasé (bac pro)',schema:'m2',court:'Deux contacteurs retournent l’enroulement auxiliaire.',
+    consigne:'<p>Le palan de l’atelier : son moteur monophasé <b>M1</b> doit monter (sens 1) par <b>KM1</b>, commandé par <b>S1</b>, et descendre (sens 2) par <b>KM2</b>, commandé par <b>S2</b>. La commande en 24 V est câblée, avec son verrouillage électrique.</p><p>Câblez la puissance d’après le schéma : sans barrettes sur la plaque à bornes, ce sont les contacteurs qui retournent l’enroulement auxiliaire. Réglez <b>F1</b>.</p>',
+    guide:'<ul><li>1,5 mm² sur 10 A.</li><li>La phase traverse les trois pôles de F1 en série, puis KM1 (1-2) et KM2 (1-2), en parallèle, jusqu’à U1. Un pont relie U1 à C1.</li><li>KM1 relie C2 à Z1 (3-4) et Z2 au neutre (6-5) ; KM2 relie C2 à Z2 (3-4) et Z1 au neutre (6-5).</li><li>Le neutre se répartit depuis la barrette XN : U2, puis la borne 5 de KM1 et celle de KM2.</li><li>Barrettes du moteur : aucune. F1 sur 2,5 A. La terre à la carcasse.</li></ul>',
+    prep(){const A=armoireMono();const KM1=ajoute('km',40,400,{},'KM1'),KM2=ajoute('km',290,400,{},'KM2'),F1=ajoute('rt',300,200,{},'F1'),M1=ajoute('mono',40,780,{cpl:'aucune'},'M1');
+      const S0=ajoute('bpa',780,360,{},'S0'),S1=ajoute('bpm',880,360,{},'S1'),S2=ajoute('bpm',980,360,{},'S2');lock(KM1,KM2,F1,M1,S0,S1,S2);
+      commandeInversion(A,KM1,KM2,F1,S0,S1,S2,true);},
+    test(T){T.etape('Appui sur S1');T.imp('S1');const M=T.d('M1'),d1=T.mot('M1');
+      if(!T.ok(d1!==0&&T.ferme('KM1'),'S1 enclenche KM1, le moteur tourne','KM1 est fermé mais le moteur ne tourne pas'+(M.r&&M.r.etat&&M.r.etat!=='à l’arrêt'?' ('+M.r.etat+')':'')+' : la phase par F1 et KM1 (1-2) jusqu’à U1, le condensateur entre U1 et l’auxiliaire par KM1 (3-4), le neutre sur U2 et, par KM1 (6-5), sur l’autre bout de l’auxiliaire.'))return;
+      T.ok(d1===1,'KM1 : sens 1, le palan monte','KM1 fait tourner le moteur dans le sens 2 : avec KM1, C2 va sur Z1, et Z2 au neutre.');
+      essaiReglage(T,'F1','M1');
+      T.etape('Marche prolongée','Le relais thermique est différentiel : ses trois pôles doivent porter le même courant.');T.att(100);
+      T.ok(T.mot('M1')!==0,'Une minute et demie plus tard, il tourne toujours','Le moteur s’est arrêté en marche normale.');
+      T.etape('Appui sur S0, puis sur S2');T.imp('S0');T.ok(T.mot('M1')===0,'S0 l’arrête','S0 n’arrête pas le moteur.');T.imp('S2');const d2=T.mot('M1');
+      if(!T.ok(d2!==0&&T.ferme('KM2'),'S2 enclenche KM2, le moteur tourne','KM2 est fermé mais le moteur ne tourne pas : KM2 (1-2) en parallèle sur KM1 (1-2), C2 vers Z2 par KM2 (3-4), Z1 au neutre par KM2 (6-5).'))return;
+      T.ok(d2===-d1,'KM2 : sens 2, le palan descend','Le moteur tourne dans le même sens avec KM2 : KM2 doit retourner l’auxiliaire, C2 sur Z2 et Z1 au neutre.');
+      T.imp('S0');T.ok(T.v('M1','U1')<50,'À l’arrêt, U1 n’est plus sous tension','U1 reste sous tension à l’arrêt : la phase doit passer par KM1 ou KM2.');}},
   {id:'p1',grp:'Dépannage',titre:'Le va-et-vient capricieux',schema:'d2',panne:1,court:'Ça ne marche que d’un côté.',
-    consigne:'<p>Le couloir est câblé, mais la lampe ne s’allume que dans certaines positions des interrupteurs. Trouvez la panne : essayez sous tension, au VAT ; puis consignez et contrôlez chaque conducteur à l’ohmmètre.</p><p>Remplacez ce qui est défectueux : ôtez-le et tirez-en un neuf.</p>',
+    consigne:'<p>Le couloir est câblé, mais la lampe ne s’allume que dans certaines positions des interrupteurs. Trouvez la panne : essayez sous tension, au VAT ; puis consignez et contrôlez chaque conducteur à l’ohmmètre.</p><p>Remplacez ce qui est défectueux : ôtez-le et tirez-en un neuf.</p>',guide:'<ul><li>Sous tension, au VAT : entre la phase et chaque navette, selon la position de S1.</li><li>Consignez, puis contrôlez chaque navette à l’ohmmètre, bout à bout.</li><li>Un conducteur coupé s’ôte et se remplace par un neuf.</li></ul>',
     prep(){chargeSolution('d2');const w=st.wires.find(x=>x.col==='violet');if(w)w.cut=1;},
     test(T){testVV(T);}},
   {id:'p2',grp:'Dépannage',titre:'Le moteur qui ne reste pas en marche',schema:'ic',panne:1,court:'Il tourne tant qu’on appuie.',
-    consigne:'<p>Le tapis roulant démarre quand on appuie sur S1, mais s’arrête dès qu’on relâche. Le câblage paraît conforme au schéma.</p><p>Cherchez sous tension, au VAT, quel contact ne fait pas ce qu’il devrait ; consignez avant de démonter. Le panneau d’un appareil permet de le remplacer par un neuf.</p>',
+    consigne:'<p>Le tapis roulant démarre quand on appuie sur S1, mais s’arrête dès qu’on relâche. Le câblage paraît conforme au schéma.</p><p>Cherchez sous tension, au VAT, quel contact ne fait pas ce qu’il devrait ; consignez avant de démonter. Le panneau d’un appareil permet de le remplacer par un neuf.</p>',guide:'<ul><li>Au VAT, KM1 enclenché (S1 tenu) : entre 13 et 14 de KM1, on doit lire 0 V.</li><li>Le contact d’auto-maintien est dans le contacteur : on remplace le contacteur.</li></ul>',
     prep(){chargeSolution('i1');const k1=devNm('KM1');if(k1)k1.s.def='13-14';},
     test(T){essaiDirect(T,true);}},
   {id:'p3',grp:'Dépannage',titre:'Le différentiel qui saute',schema:'d6',panne:1,court:'Ça saute quand on branche la bouilloire.',
-    consigne:'<p>Dans la chambre, le différentiel <b>Q1</b> déclenche dès qu’on branche la bouilloire sur l’une des prises. Sur les deux autres, tout va bien.</p><p>Trouvez la prise en cause et corrigez son raccordement.</p>',
+    consigne:'<p>Dans la chambre, le différentiel <b>Q1</b> déclenche dès qu’on branche la bouilloire sur l’une des prises. Sur les deux autres, tout va bien.</p><p>Trouvez la prise en cause et corrigez son raccordement.</p>',guide:'<ul><li>Le différentiel voit un courant qui part à la terre.</li><li>Regardez les bornes N et PE de chaque prise.</li></ul>',
     prep(){chargeSolution('d6');const X=devNm('X3');const a=st.wires.find(w=>w.b===k(X,'N')||w.a===k(X,'N')),b=st.wires.find(w=>w.b===k(X,'PE')||w.a===k(X,'PE'));
       if(a&&b){const fa=a.a===k(X,'N')?'a':'b',fb=b.a===k(X,'PE')?'a':'b';a[fa]=k(X,'PE');b[fb]=k(X,'N');}},
     test:testPrises},
   {id:'p4',grp:'Dépannage',titre:'Le moteur qui ronfle',schema:'ip',panne:1,court:'Il grogne et ne démarre pas.',
-    consigne:'<p>Le tapis roulant ne démarre plus : à l’appui sur S1, KM1 s’enclenche, le moteur grogne sans tourner, puis F1 déclenche. Le câblage semble conforme.</p><p>Au VAT, sous tension et KM1 enclenché : entre les deux bouts d’un même conducteur, on doit lire 0 V. Puis consignez, contrôlez à l’ohmmètre et remplacez ce qui est défectueux.</p>',
+    consigne:'<p>Le tapis roulant ne démarre plus : à l’appui sur S1, KM1 s’enclenche, le moteur grogne sans tourner, puis F1 déclenche. Le câblage semble conforme.</p><p>Au VAT, sous tension et KM1 enclenché : entre les deux bouts d’un même conducteur, on doit lire 0 V. Puis consignez, contrôlez à l’ohmmètre et remplacez ce qui est défectueux.</p>',guide:'<ul><li>Au VAT, entre les deux bouts d’un même conducteur : 0 V attendu.</li><li>Puis à l’ohmmètre, hors tension, conducteur par conducteur.</li></ul>',
     prep(){chargeSolution('i1');const KM1=devNm('KM1'),F1=devNm('F1'),M1=devNm('M1');
       for(const w of st.wires){const t=[w.a,w.b].join(' ');if([KM1,F1,M1].some(d=>t.includes(d.id+'.p')||t.includes(d.id+'.r')||t.includes(d.id+'.U1')||t.includes(d.id+'.V1')||t.includes(d.id+'.W1')))w.lk=0;}
       const w=st.wires.find(x=>x.a===k(KM1,'p4')&&x.b===k(F1,'r3'));if(w)w.cut=1;},
     test(T){essaiDirect(T,true);}},
   {id:'p5',grp:'Dépannage',titre:'Le disjoncteur qui saute à l’allumage',schema:'d3',panne:1,court:'La première touche marche, la seconde fait tout sauter.',
-    consigne:'<p>Dans le séjour, la première touche de <b>S1</b> allume E1. Dès qu’on appuie sur la seconde, <b>Q2</b> déclenche.</p><p>Trouvez pourquoi en suivant chaque conducteur depuis la seconde touche, et corrigez.</p>',
+    consigne:'<p>Dans le séjour, la première touche de <b>S1</b> allume E1. Dès qu’on appuie sur la seconde, <b>Q2</b> déclenche.</p><p>Trouvez pourquoi en suivant chaque conducteur depuis la seconde touche, et corrigez.</p>',guide:'<ul><li>Suivez chaque conducteur depuis la borne 2 de S1.</li><li>Un retour ne doit jamais rejoindre le neutre.</li></ul>',
     prep(){chargeSolution('d3');const S1=devNm('S1'),W1=devNm('W1');fil(k(S1,'2'),k(W1,'w4'),'violet',1.5);},
     test(T){MISSIONS.find(m=>m.id==='d3').test(T);}},
+  /* le 12 novembre 2026 : le condensateur, les tensions de bobine, le réglage du relais thermique */
+  {id:'p6',grp:'Dépannage',titre:'Le touret qui ronfle',schema:'m1',panne:1,court:'KM1 colle, le moteur grogne et ne part pas.',
+    consigne:'<p>Le touret ne démarre plus : à l’appui sur S1, KM1 s’enclenche, le moteur ronfle sans tourner, puis F1 déclenche. Le câblage est conforme au schéma.</p><p>Mesurez au VAT, puis consignez et contrôlez au multimètre ce qui peut l’être : son calibre ⊣⊢ lit un condensateur isolé. Remplacez ce qui est défectueux.</p>',
+    guide:'<ul><li>Sous tension, U1-U2 reçoit bien 230 V : l’enroulement principal est alimenté.</li><li>Un moteur monophasé qui ronfle sans démarrer : son champ ne tourne pas. L’auxiliaire, ou le condensateur ?</li><li>Le condensateur se mesure hors tension et isolé : barrettes ôtées, multimètre sur ⊣⊢ entre C1 et C2. Sa plaque dit 16 µF.</li><li>Le panneau du moteur permet de remplacer le condensateur ; remettez ensuite les barrettes du sens 1.</li></ul>',
+    prep(){chargeSolution('m1');const M=devNm('M1');if(M)M.s.C=1.2;},
+    test(T){MISSIONS.find(m=>m.id==='m1').test(T);}},
+  {id:'p7',grp:'Dépannage',titre:'Le contacteur qui broute',schema:'ic',panne:1,court:'Il vibre et grésille, mais ne colle pas.',
+    consigne:'<p>Le tapis roulant ne démarre plus. À l’appui sur S1, le contacteur KM1 vibre et grésille sans coller ; si l’on insiste, il chauffe. Le câblage est conforme au schéma, et le contacteur vient d’être changé.</p><p>Mesurez ce que reçoit sa bobine, comparez à ce qui est écrit dessus, et remplacez ce qui doit l’être.</p>',
+    guide:'<ul><li>Au VAT, entre A1 et A2 de KM1, S1 enfoncé : la tension de la commande.</li><li>L’étiquette de la bobine dit la tension pour laquelle elle est faite.</li><li>Hors tension, la bobine se change dans le panneau du contacteur (« Bobine »).</li></ul>',
+    prep(){chargeSolution('i1');const k1=devNm('KM1');if(k1)k1.p.bob=48;},
+    test(T){essaiDirect(T,true);}},
+  {id:'p8',grp:'Dépannage',titre:'Le télérupteur qui grille',schema:'d4',panne:1,court:'Au premier appui, il est hors service.',
+    consigne:'<p>Dans le couloir, le télérupteur KL1 a été remplacé la semaine dernière. Depuis, il grille au premier appui sur un poussoir ; un second, neuf, a grillé de la même façon.</p><p>Trouvez pourquoi, et remettez le couloir en service.</p>',
+    guide:'<ul><li>Le télérupteur se commande en 230 V, entre phase et neutre.</li><li>Lisez la tension de bobine du télérupteur posé : son étiquette, ou son panneau.</li><li>Le remplacer par un appareil identique ne change rien : il faut la bonne bobine.</li></ul>',
+    prep(){chargeSolution('d4');const kl=devNm('KL1');if(kl)kl.p.bob=24;},
+    test(T){MISSIONS.find(m=>m.id==='d4').test(T);}},
+  {id:'p9',grp:'Dépannage',titre:'Le tapis qui s’arrête tout seul',schema:'ic',panne:1,court:'Il tourne une demi-minute, puis H2 s’allume.',
+    consigne:'<p>Le tapis roulant démarre bien, mais s’arrête de lui-même au bout d’une demi-minute, et le voyant rouge H2 s’allume. On réarme F1 : ça recommence. Le moteur n’est pas plus chargé que d’habitude.</p><p>Trouvez la cause et corrigez.</p>',
+    guide:'<ul><li>H2 allumé : c’est le relais thermique F1 qui a déclenché.</li><li>Comparez l’intensité que lit la pince sur une phase du moteur au réglage de F1.</li><li>F1 se règle sur l’intensité nominale de la plaque : choisir la plage qui la contient, puis la molette.</li></ul>',
+    prep(){chargeSolution('i1');const f=devNm('F1');if(f){f.p.cal='1-1,6';f.p.Ir=1.6;}},
+    test(T){essaiDirect(T,true);}},
 ];
 function testVV(T){const L=(a,b)=>{T.d('S1').s.pos=a;T.d('S2').s.pos=b;recalc();T.att(0.1);return T.lampe('E1');};
   const t00=L(0,0),t01=L(0,1),t10=L(1,0),t11=L(1,1);
@@ -2046,7 +2518,13 @@ function chargeSolution(id){const m=MISSIONS.find(x=>x.id===id);m.prep();const d
     w(['X1','L'],['X2','L'],'marron',2.5);w(['X1','N'],['X2','N'],'bleu',2.5);w(['X1','PE'],['X2','PE'],'vj',2.5);
     w(['X2','L'],['X3','L'],'marron',2.5);w(['X2','N'],['X3','N'],'bleu',2.5);w(['X2','PE'],['X3','PE'],'vj',2.5);}
   if(id==='d3'){w(['Q2','s2'],['S1','L'],'marron');w(['S1','1'],['E1','L'],'orange');w(['S1','2'],['E2','L'],'violet');w(['Q2','sN'],['W1','w1'],'bleu');w(['W1','w2'],['E1','N'],'bleu');w(['W1','w3'],['E2','N'],'bleu');w(['XPE','p2'],['E1','PE'],'vj');w(['XPE','p3'],['E2','PE'],'vj');}
-  if(id==='i1'){const A={F2:d('F2'),T1:d('T1')};commandeDirecte(A,d('KM1'),d('F1'),d('S0'),d('S1'),d('H1'),d('H2'),false);}}
+  if(id==='i1'){const A={F2:d('F2'),T1:d('T1')};commandeDirecte(A,d('KM1'),d('F1'),d('S0'),d('S1'),d('H1'),d('H2'),false);d('F1').p.cal='2,5-4';d('F1').p.Ir=3.5;}
+  if(id==='d4'){w(['Q2','s2'],['KL1','1'],'marron');w(['Q2','s2'],['W1','w1'],'marron');w(['W1','w2'],['S1','1'],'marron');w(['W1','w3'],['S2','1'],'marron');w(['W1','w4'],['S3','1'],'marron');
+    w(['S1','2'],['W2','w1'],'orange');w(['S2','2'],['W2','w2'],'orange');w(['S3','2'],['W2','w3'],'orange');w(['W2','w4'],['KL1','A1'],'orange');
+    w(['Q2','sN'],['KL1','A2'],'bleu');w(['KL1','A2'],['W3','w1'],'bleu');w(['W3','w2'],['E1','N'],'bleu');w(['W3','w3'],['E2','N'],'bleu');
+    w(['KL1','2'],['E1','L'],'violet');w(['E1','L'],['E2','L'],'violet');w(['XPE','p2'],['E1','PE'],'vj');w(['XPE','p3'],['E2','PE'],'vj');}
+  if(id==='m1'){w(['Q2','s2'],['KM1','p1'],'marron');w(['Q2','sN'],['KM1','p3'],'bleu');w(['KM1','p2'],['F1','r1'],'marron');w(['F1','r2'],['F1','r3'],'marron');w(['F1','r4'],['F1','r5'],'marron');
+    w(['F1','r6'],['M1','U1'],'marron');w(['KM1','p4'],['M1','U2'],'bleu');w(['XPE','p2'],['M1','PE'],'vj');d('M1').p.cpl='S1';d('F1').p.cal='1,6-2,5';d('F1').p.Ir=2.5;}}
 function missionCourante(){return st.mis?MISSIONS.find(m=>m.id===st.mis):null;}
 function chargeMission(id){const m=MISSIONS.find(x=>x.id===id);if(!m)return;
   st={devs:[],wires:[],nid:1,mis:id};m.prep();for(const d of st.devs){if(estSource(d))d.s.on=false;}
@@ -2061,9 +2539,9 @@ const STOP={};
 function remiseAZero(){for(const d of st.devs){const s=d.s;
   if('pos'in s)s.pos=0;if('p1'in s){s.p1=0;s.p2=0;}if('p'in s)s.p=false;if('c'in s)s.c=false;if('coil'in s)s.coil=false;
   if(d.t==='id'||d.t==='db'||d.t==='q3'){s.on=true;s.trip=null;s.th=0;}if(d.t==='fu'){s.ferme=true;s.fondu=false;s.th=0;}
-  if(d.t==='rt'){s.trip=false;s.th=0;}if('hs'in s)s.hs=false;if(d.t==='km'){s.pomp=false;s.man=false;}
+  if(d.t==='rt'){s.trip=false;s.th=0;}if('hs'in s)s.hs=false;if(d.t==='km'){s.pomp=false;s.man=false;s.broute=false;s.surv=false;s.chb=0;}
   if(d.t==='min'){s.t=0;s.trig=false;s.act=false;s.perm=false;}if(d.t==='ka')s.t=0;
-  if(d.t==='mot'){s.bloque=false;s.n=0;s.chauffe=0;}if(d.t==='pc'){s.touch=false;d.p.app='rien';}if(d.t==='tr')s.emf=C0;
+  if(estMot(d)){s.bloque=false;s.n=0;s.chauffe=0;}if(d.t==='pc'){s.touch=false;d.p.app='rien';}if(d.t==='tr')s.emf=C0;
   if(d.t==='cpt')s.hc=false;if(d.t==='hc')s.sel='auto';if(d.t==='vr'){s.h=0.5;s.chauffe=0;}if(d.t==='bpd')s.trans=false;
   if(estSource(d)){s.on=false;s.trip=null;}}}
 function apiEssai(L){let etape=null,attendu=false,evIdx=SIM.ev.length;
@@ -2102,18 +2580,25 @@ const secMin=In=>In<=2?1:In<=16?1.5:In<=20?2.5:In<=25?4:6;
 function descr(w){return nomBorne(w.a)+' → '+nomBorne(w.b);}
 function regles(m){const L=[],libres=st.wires.filter(w=>!w.lk);
   /* 1. les couleurs : le rôle d'un conducteur se lit sur ce qu'il relie, à travers les connecteurs */
-  const uf=UF();for(const d of st.devs)for(const b of TYPES[d.t].bornes)uf.add(nk(d,b.n));
-  for(const w of st.wires)uf.union(w.a,w.b);for(const d of st.devs)if(TYPES[d.t].cat==='cnx')for(const[a,b]of TYPES[d.t].links(d))uf.union(nk(d,a),nk(d,b));
-  const role=new Map();for(const d of st.devs)for(const b of TYPES[d.t].bornes)if(b.f){const r=uf.find(nk(d,b.n));if(!role.has(r))role.set(r,new Set());role.get(r).add(b.f);}
-  const fautes=[];let melange=null;
-  for(const w of libres){const s=role.get(uf.find(w.a))||new Set();
+  const uf=UF(),uf2=UF();for(const d of st.devs)for(const b of TYPES[d.t].bornes){uf.add(nk(d,b.n));uf2.add(nk(d,b.n));}
+  for(const w of st.wires){uf.union(w.a,w.b);uf2.union(w.a,w.b);}
+  for(const d of st.devs){if(TYPES[d.t].cat==='cnx')for(const[a,b]of TYPES[d.t].links(d))uf.union(nk(d,a),nk(d,b));
+    /* uf2 passe aussi les contacts, dans toutes leurs positions : derrière le pôle d'un contacteur, le
+       neutre coupé peut rester bleu clair sans y être obligé (12 novembre 2026) */
+    for(const[a,b]of possibles(d))uf2.union(nk(d,a),nk(d,b));}
+  const roles=u=>{const m=new Map();for(const d of st.devs)for(const b of TYPES[d.t].bornes)if(b.f){const r=u.find(nk(d,b.n));if(!m.has(r))m.set(r,new Set());m.get(r).add(b.f);}return m;};
+  const role=roles(uf),role2=roles(uf2),fautes=[];let melange=null;
+  for(const w of libres){const s=role.get(uf.find(w.a))||new Set(),s2=role2.get(uf2.find(w.a))||new Set();
     if(s.has('N')&&s.has('PE')){melange=w;continue;}
     if(s.has('N')&&w.col!=='bleu')fautes.push(descr(w)+' porte le neutre : il doit être bleu clair');
     else if(s.has('PE')&&w.col!=='vj')fautes.push(descr(w)+' porte la terre : il doit être vert-jaune');
-    else if(!s.size&&w.col==='bleu')fautes.push(descr(w)+' est bleu clair, réservé au neutre');
-    else if(!s.size&&w.col==='vj')fautes.push(descr(w)+' est vert-jaune, réservé à la terre');}
+    /* le commun de la commande, le 0 V du transformateur, se repère en blanc (12 novembre 2026) */
+    else if(s.has('C0')&&w.col!=='blanc')fautes.push(descr(w)+' est le commun de la commande, le 0 V du transformateur : il se repère en blanc');
+    else if(!s.has('N')&&!s2.has('N')&&w.col==='bleu')fautes.push(descr(w)+' est bleu clair, réservé au neutre');
+    else if(!s.has('PE')&&w.col==='vj')fautes.push(descr(w)+' est vert-jaune, réservé à la terre');
+    else if(!s.has('C0')&&!s2.has('C0')&&w.col==='blanc')fautes.push(descr(w)+' est blanc, réservé au commun de la commande');}
   if(melange)L.push({ok:false,txt:'Le neutre et la terre se rejoignent',aide:'Un même conducteur relie une borne N et une borne PE ('+descr(melange)+'). Ils doivent rester séparés après le différentiel.'});
-  L.push({ok:!fautes.length,txt:'Les couleurs : bleu clair pour le neutre, vert-jaune pour la terre, ni l’un ni l’autre ailleurs',aide:fautes.slice(0,3).join(' · ')+(fautes.length>3?' · et '+(fautes.length-3)+' autre(s).':'')});
+  L.push({ok:!fautes.length,txt:'Les couleurs : bleu clair pour le neutre, vert-jaune pour la terre, blanc pour le commun de la commande, chacune à sa place',aide:fautes.slice(0,3).join(' · ')+(fautes.length>3?' · et '+(fautes.length-3)+' autre(s).':'')});
   /* 2. la terre de chaque récepteur à masse métallique */
   const pe=new Set(st.devs.filter(estSource).map(d=>uf.find(nk(d,'PE'))));
   const sansPE=st.devs.filter(d=>TYPES[d.t].classe1&&!pe.has(uf.find(nk(d,'PE')))).map(d=>d.nm);
@@ -2150,7 +2635,8 @@ function remplirVerif(){const b=WINS.verif.body;b.textContent='';const v=dernier
   if(!v||!m||v.m!==m.id){b.appendChild(H('p','note pad','Câblez, puis touchez « Vérifier mon câblage » : la platine est essayée sur une copie, et revient comme vous l’avez laissée.'));return;}
   b.appendChild(H('div','verdict '+(v.fautes?'ko':'ok'),v.fautes?esc(v.fautes+(v.fautes>1?' points à reprendre':' point à reprendre')):'Tout est bon : mission réussie'));
   const ul=H('ul','verif');for(const x of v.tout){if(x.t){ul.appendChild(H('li','vt',esc(x.t)));continue;}
-    const li=H('li',x.ok?'ok':'ko','<span class="mk">'+(x.ok?'✓':'✗')+'</span><span>'+esc(x.txt)+(x.aide&&!x.ok?'<em>'+esc(x.aide)+'</em>':'')+'</span>');ul.appendChild(li);}
+    const aide=x.aide&&!x.ok?(opts.guide==='guide'?'<em>'+esc(x.aide)+'</em>':'<details class="indice"><summary>Indice</summary>'+esc(x.aide)+'</details>'):'';
+    const li=H('li',x.ok?'ok':'ko','<span class="mk">'+(x.ok?'✓':'✗')+'</span><span>'+esc(x.txt)+aide+'</span>');ul.appendChild(li);}
   b.appendChild(ul);}
 /* ================= la bibliothèque =================
    L'appareillage par famille. On le fait glisser sur la platine, ou on le touche puis on touche
@@ -2218,13 +2704,25 @@ function majMission(){const ms=$('missions'),m=missionCourante();ms.textContent=
     const o=H('option');o.value=x.id;o.textContent=(prog[x.id]?'✓ ':'')+x.titre;og.appendChild(o);}
   ms.value=m?m.id:'';$('btnVerif').hidden=!(m&&m.test);$('recommencer').hidden=!m;
   $('misTitre').textContent=m?m.titre:'Platine libre';
-  if(winState('consigne').open)remplirConsigne();if(winState('schema').open)remplirSchema();if(winState('verif').open)remplirVerif();}
+  if(winState('consigne').open)remplirConsigne();if(winState('schema').open)remplirSchema();if(winState('verif').open)remplirVerif();if(WINS.doc&&winState('doc').open)remplirDoc();}
 function remplirConsigne(){const b=WINS.consigne.body,m=missionCourante();b.textContent='';
   const c=H('div','consigne');
   if(!m){c.innerHTML='<p>Choisissez une mission dans la liste, ou câblez librement : posez l’appareillage depuis la bibliothèque.</p>';b.appendChild(c);return;}
-  c.innerHTML=`<h3>${esc(m.titre)}</h3>${m.consigne}`+(m.test?`<details class="ce"><summary>Ce que la vérification regarde</summary><ul>
-    <li>le fonctionnement, essayé comme on le ferait à la mise en service ;</li><li>les couleurs : bleu clair pour le neutre, vert-jaune pour la terre ;</li>
+  /* le guidage (12 novembre 2026, « des TP moins guidés ») : en autonomie, le cahier des charges seul,
+     le détail replié dans un coup de pouce et les indices de la vérification repliés aussi ; guidé, le
+     pas à pas est déplié et les indices écrits en clair */
+  const guide=opts.guide==='guide';
+  const sw=H('div','seg sm guidage');sw.setAttribute('role','group');sw.setAttribute('aria-label','Guidage');
+  for(const[k,l]of[['auto','En autonomie'],['guide','Guidé']]){const bt=H('button',null,l);bt.type='button';bt.setAttribute('aria-pressed',String(k==='guide'?guide:!guide));
+    bt.onclick=()=>{opts.guide=k;save();remplirConsigne();if(winState('verif').open)remplirVerif();};sw.appendChild(bt);}
+  b.appendChild(sw);
+  c.innerHTML=`<h3>${esc(m.titre)}</h3>${m.consigne}`+
+    (m.guide?(guide?`<h4 class="pas">Pas à pas</h4>${m.guide}`:`<details class="ce"><summary>Coup de pouce</summary>${m.guide}</details>`):'')+
+    `<p class="note">Le schéma et la documentation de chaque appareil (ses bornes, ses réglages, comment le contrôler) sont dans les fenêtres « Schéma » et « Documentation ».</p>`+
+    (m.test?`<details class="ce"><summary>Ce que la vérification regarde</summary><ul>
+    <li>le fonctionnement, essayé comme on le ferait à la mise en service ;</li><li>les couleurs : bleu clair pour le neutre, vert-jaune pour la terre, blanc pour le commun de la commande (le 0 V du transformateur) ;</li>
     <li>la terre de chaque récepteur à masse métallique ;</li><li>la section des conducteurs par rapport au calibre qui les protège ;</li>
+    <li>le réglage des relais thermiques, d’après la plaque du moteur ;</li>
     <li>deux conducteurs au plus par borne, un seul par entrée de connecteur.</li></ul></details>`:'')+
     `<p class="note">On câble toujours hors tension : le bouton « Mettre sous tension » s’éteint pour câbler, et la platine refuse de modifier un circuit sous tension.</p>`;
   b.appendChild(c);}
@@ -2238,6 +2736,7 @@ function remplirSchema(){const b=WINS.schema.body,m=missionCourante();b.textCont
 makeWin('consigne','La consigne',{onOpen:remplirConsigne,defW:460});
 makeWin('schema','Le schéma',{onOpen:remplirSchema,defW:620});
 makeWin('verif','La vérification',{onOpen:remplirVerif,defW:480});
+makeWin('doc','La documentation',{onOpen:remplirDoc,defW:520});
 let charge=false;
 try{const o=JSON.parse(localStorage.getItem(KEY)||'null');
   if(o&&o.s){restore(o.s);Object.assign(opts,o.o||{});opts.wins=opts.wins&&typeof opts.wins==='object'?opts.wins:{};prog=o.p||{};charge=true;
@@ -2253,17 +2752,17 @@ else chargeMission('d1');
 choisirOutil('sel');ajusteLib();
 let tPrec=performance.now(),nTick=0;
 setInterval(()=>{const t=performance.now(),dt=Math.min(0.25,(t-tPrec)/1000)*(opts.acc||1);tPrec=t;
-  if(!sousTensionReseau()&&!st.devs.some(d=>d.t==='mot'&&Math.abs(d.s.n||0)>1))return;
+  if(!sousTensionReseau()&&!st.devs.some(d=>estMot(d)&&Math.abs(d.s.n||0)>1))return;
   if(tick(dt)){render();renderPanel();return;}
   animeMoteurs();
   /* ce qui compte (minuterie, temporisation, échauffement) se redessine deux fois par seconde */
-  if(++nTick%10===0&&st.devs.some(d=>d.t==='min'&&d.s.t>0||d.t==='ka'&&d.s.coil||d.t==='rt'&&d.s.th>0.01||d.t==='mot'||d.t==='vr'||d.t==='pc'&&d.p.wm==='oui')){render();if(!majVivant()&&sel)renderPanel();}},50);
+  if(++nTick%10===0&&st.devs.some(d=>d.t==='min'&&d.s.t>0||d.t==='ka'&&d.s.coil||d.t==='rt'&&d.s.th>0.01||estMot(d)||d.t==='km'&&(d.s.broute||d.s.chb>0)||d.t==='vr'||d.t==='pc'&&d.p.wm==='oui')){render();if(!majVivant()&&sel)renderPanel();}},50);
 /* planche de contrôle : tous les schémas d'un coup (#planche-schemas), pour les relire en grand */
 if(location.hash==='#planche-schemas'){const p=H('div','planche');p.style.cssText='position:fixed;inset:0;z-index:99;background:#fff;overflow:auto;display:grid;grid-template-columns:1fr;gap:10px;padding:10px';
   for(const k in SCH){const c=H('div');c.style.border='1px solid #ccc';c.appendChild(SCH[k]());p.appendChild(c);}document.body.appendChild(p);}
 /* porte d'essai, pour les scénarios */
 window.__cab={get st(){return st},recalc,tick,verifier,chargeMission,chargeSolution,MISSIONS,TYPES,devNm,fil,nk,mesureVAT,mesureOhm,
-  get SIM(){return SIM},get dernier(){return dernierVerdict},regles,render,commit,construit,conflits,
+  get SIM(){return SIM},get dernier(){return dernierVerdict},regles,render,commit,construit,conflits,DOC,remplirDoc,ouvrirDoc,mesureCap,remplirConsigne,remplirVerif,openWin,remplirSchema,SCH,
   choisirOutil,courantsFils,courantPince,lectureMulti,lecturePince,lectureWatt,renderPanel,opts,
   set mesure(v){mesure=v},set pince(v){pince=v},get pince(){return pince},set sel(v){sel=v}};
 })();
