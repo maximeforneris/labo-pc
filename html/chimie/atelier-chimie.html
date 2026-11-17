@@ -298,12 +298,14 @@ table.tab{border-collapse:collapse;font:.8rem var(--mono);width:100%}
 #pl .tu-horl{fill:#2B3136;fill-opacity:.9}
 #pl .tu-horl-t{font:700 16px var(--mono);fill:#fff}
 #pl #lyTuto{pointer-events:none}
+#pl #lyMain{pointer-events:none}   /* bulles, cibles, loupes, places : le doigt passe au travers (une bulle « débouché » cachait la spatule) */
 @media (max-width:760px){.tu-t{font-size:.98rem}}
 /* ================= à la main (13 novembre 2026) : la paillasse seule, la fiche de manip à droite ================= */
 .app.en-main .bar,.app.en-main .hors-main{display:none}
 .app.en-main #pl .dev{cursor:grab}
 #pl .mn-vise{fill:rgba(255,196,0,.14);stroke:#E8A400;stroke-width:2.4;stroke-dasharray:6 4}
 #pl .mn-aplomb{stroke:#E8A400;stroke-width:1.3;stroke-dasharray:3 4}
+#pl .mn-place{fill:rgba(255,196,0,.10);stroke:#E8A400;stroke-width:2;stroke-dasharray:6 4}
 #pl .mn-hud{fill:#1E2A26;fill-opacity:.88}
 #pl .mn-hud-t{font-weight:700;font-family:var(--ui);fill:#fff}
 #pl .mn-goutte{stroke:rgba(40,60,70,.55);stroke-width:.5}
@@ -953,9 +955,11 @@ deco('pipette',{nom:'Pipette jaugée et propipette',pre:'Pi',w:26,h:330,params:[
     E('path',{d:'M5 70 Q5 28 13 14 Q21 28 21 70 Z',fill:STY.sch?'#fff':'#D8433A',stroke:STY.sch?'#111':'#8E2620','stroke-width':0.9},g);E('circle',{cx:13,cy:44,r:7,fill:STY.sch?'#fff':'#B83A31',stroke:STY.sch?'#111':'#8E2620','stroke-width':0.7},g);}});
 deco('pipgrad',{nom:'Pipette graduée de 10 mL',pre:'Pi',w:16,h:300,draw:(g,d)=>{const V=VERRE();E('path',{d:'M5 0 V286 L8 300 L11 286 V0 Z',fill:V.fill,stroke:V.st,'stroke-width':V.sw},g);for(let i=0;i<=10;i++)E('line',{x1:11,y1:30+i*24,x2:14,y2:30+i*24,stroke:TRAIT(),'stroke-width':0.5},g);}});
 deco('cpg',{nom:'Compte-gouttes',pre:'CG',w:16,h:110,draw:(g,d)=>{const V=VERRE();E('path',{d:'M5 34 V100 L8 110 L11 100 V34 Z',fill:V.fill,stroke:V.st,'stroke-width':V.sw},g);E('path',{d:'M3 34 Q3 0 8 0 Q13 0 13 34 Z',fill:STY.sch?'#fff':'#2E2E2E',stroke:STY.sch?'#111':'#000','stroke-width':0.7},g);}});
-deco('pissette',{nom:'Pissette d’eau distillée',pre:'Pis',w:70,h:170,draw:(g,d)=>{E('path',{d:'M8 60 Q8 50 20 48 H50 Q62 50 62 60 V160 Q62 170 52 170 H18 Q8 170 8 160 Z',fill:STY.sch?'#fff':'rgba(235,240,243,.95)',stroke:STY.sch?'#111':'#8A969E','stroke-width':1.1},g);
-  E('rect',{x:24,y:36,width:22,height:14,rx:2,fill:STY.sch?'#fff':'#E9ECEE',stroke:OR.st(),'stroke-width':0.8},g);E('path',{d:'M35 36 V10 Q35 2 44 4 L66 14',fill:'none',stroke:STY.sch?'#111':'#8A969E','stroke-width':2.4},g);
-  T(g,35,112,'eau',{class:'gtxt','text-anchor':'middle',fill:TRAIT()});T(g,35,122,'distillée',{class:'gtxt','text-anchor':'middle',fill:TRAIT()});}});
+deco('pissette',{nom:'Pissette d’eau distillée',pre:'Pis',w:70,h:170,draw:(g,d)=>dessinePissette(g,false)});
+/* miroir : le bec à gauche (la pissette posée à droite d'un récipient, à la main) ; le texte reste à l'endroit */
+function dessinePissette(g,miroir){E('path',{d:'M8 60 Q8 50 20 48 H50 Q62 50 62 60 V160 Q62 170 52 170 H18 Q8 170 8 160 Z',fill:STY.sch?'#fff':'rgba(235,240,243,.95)',stroke:STY.sch?'#111':'#8A969E','stroke-width':1.1},g);
+  E('rect',{x:24,y:36,width:22,height:14,rx:2,fill:STY.sch?'#fff':'#E9ECEE',stroke:OR.st(),'stroke-width':0.8},g);E('path',{d:miroir?'M35 36 V10 Q35 2 26 4 L4 14':'M35 36 V10 Q35 2 44 4 L66 14',fill:'none',stroke:STY.sch?'#111':'#8A969E','stroke-width':2.4},g);
+  T(g,35,112,'eau',{class:'gtxt','text-anchor':'middle',fill:TRAIT()});T(g,35,122,'distillée',{class:'gtxt','text-anchor':'middle',fill:TRAIT()});}
 deco('spatule',{nom:'Spatule',pre:'Sp',w:150,h:14,draw:(g,d)=>{E('path',{d:'M0 7 Q0 2 10 2 H28 L32 6 H150 V8 H32 L28 12 H10 Q0 12 0 7 Z',fill:STY.sch?'#fff':'#C7CDD1',stroke:STY.sch?'#111':'#6B747B','stroke-width':0.8},g);}});
 deco('baguette',{nom:'Agitateur en verre',pre:'Agv',w:8,h:180,draw:(g,d)=>{const V=VERRE();E('rect',{x:1,y:0,width:6,height:180,rx:3,fill:V.fill,stroke:V.st,'stroke-width':V.sw},g);}});
 deco('pinceb',{nom:'Pince en bois',pre:'Pb',w:160,h:30,draw:(g,d)=>{const c=STY.sch?'#fff':'#D9B98C',st=STY.sch?'#111':'#8A6A3E';E('path',{d:'M0 12 L120 6 L160 10 L160 14 L120 12 L0 18 Z',fill:c,stroke:st,'stroke-width':0.9},g);E('path',{d:'M0 18 L120 20 L160 18 L160 22 L120 26 L0 24 Z',fill:c,stroke:st,'stroke-width':0.9},g);E('rect',{x:96,y:8,width:10,height:16,rx:2,fill:STY.sch?'#fff':'#9AA2A8',stroke:st},g);}});
@@ -2529,6 +2533,14 @@ function verserProduit(d,id,q,ins){const p=PROD[id];if(!p||!d||!d.c)return false
   if(perdu>0.05)toast(d.nm+' déborde : '+fml(perdu)+' sont sur la paillasse.','warn');
   if(p.note&&(p.pict||[]).includes('05')&&!d.c.vu['secu'+id]){d.c.vu['secu'+id]=1;}
   return true;}
+/* le papier filtre de l'entonnoir b garde les précipités et les solides de la portion p ; le liquide passe (p le garde) */
+function filtrerPar(b,p){
+  const pc=pptComp(p.eq),res=contenu();res.Cv=0;
+  for(const k in pc){const n=Math.min(pc[k],p.tot[k]||0);res.tot[k]=n;p.tot[k]-=n;}
+  res.sol=p.sol;p.sol={};res.met=p.met;p.met={};res.V=0;
+  if(!b.c)b.c=contenu();for(const k in res.tot)b.c.tot[k]=(b.c.tot[k]||0)+res.tot[k];for(const k in res.sol)b.c.sol[k]=(b.c.sol[k]||0)+res.sol[k];
+  b.c.V=Math.max(b.c.V,2e-4);equilibre(b.c,true);b.c.V=Math.max(b.c.V,2e-4);
+  if(p.V>0)equilibre(p,true);}
 /* transvaser de a vers b ; b peut être un entonnoir (filtration), qui laisse passer le filtrat dans le récipient où il plonge */
 function transvaser(a,b,mL,ins,tout){if(!a||!b||a===b)return false;
   const Va=volumeTotal(a);if(Va<=1e-6&&!tout){toast(a.nm+' est vide.','warn');return false;}
@@ -2536,13 +2548,7 @@ function transvaser(a,b,mL,ins,tout){if(!a||!b||a===b)return false;
   pushHist();
   if(b.t==='entonnoir'){const sous=devId(b.dans);
     const filt=b.p.filtre==='oui';const p=prelever(a.c,q,{tout});
-    if(filt){/* le filtre garde les précipités et les solides ; le liquide passe */
-      const pc=pptComp(p.eq),res=contenu();res.Cv=0;
-      for(const k in pc){const n=Math.min(pc[k],p.tot[k]||0);res.tot[k]=n;p.tot[k]-=n;}
-      res.sol=p.sol;p.sol={};res.met=p.met;p.met={};res.V=0;
-      if(!b.c)b.c=contenu();for(const k in res.tot)b.c.tot[k]=(b.c.tot[k]||0)+res.tot[k];for(const k in res.sol)b.c.sol[k]=(b.c.sol[k]||0)+res.sol[k];
-      b.c.V=Math.max(b.c.V,2e-4);equilibre(b.c,true);b.c.V=Math.max(b.c.V,2e-4);
-      if(p.V>0)equilibre(p,true);}
+    if(filt)filtrerPar(b,p);
     if(sous&&sous.c){fusion(sous.c,p);nomsContenu(sous,'filtrat');noterGeste(a,'Filtré de '+a.nm+' vers '+sous.nm+' : '+fml(q)+'.');}
     else noterGeste(a,'Versé dans l’entonnoir, rien dessous : le filtrat coule sur la paillasse.');
     return true;}
@@ -2714,7 +2720,7 @@ let LEGBOX=null;
 function render(){
   STY.sch=!!opts.sch;$('pl').classList.toggle('sch',STY.sch);
   const gF=$('lyFond'),gD=$('lyDev'),gL=$('lyLien'),gG=$('lyLeg'),gU=$('lyUi');gF.textContent='';gD.textContent='';gL.textContent='';gG.textContent='';gU.textContent='';
-  placePendus();placeAttaches();GEOLIQ={};
+  placePendus();placeAttaches();GEOLIQ={};if(mnVisuel())mnPlaceDocks();
   /* la paillasse */
   if(!STY.sch){E('rect',{x:-4000,y:Y0,width:9000,height:60,fill:'#D9DDD5',stroke:'#B9BFB5','stroke-width':1},gF);E('rect',{x:-4000,y:Y0+60,width:9000,height:400,fill:'#C2C8BE'},gF);}
   else{E('rect',{x:-4000,y:Y0,width:9000,height:400,fill:'#fff'},gF);E('path',{d:`M-4000 ${Y0} H5000`,stroke:'#111','stroke-width':1.6},gF);for(let x=-200;x<1600;x+=14)E('path',{d:`M${x} ${Y0+1} l-9 9`,stroke:'#111','stroke-width':0.7},gF);}
@@ -3953,7 +3959,7 @@ MAIN('decantation',{depart:()=>{const e=rcT('ep50');viderContenu(e.c);e.c.noms=[
     /* la seconde éprouvette à gauche : la loupe de la première s'ouvre à droite, et la cachait */
     B('ep50',e.x+28-150,{leg:'Éprouvette 2'});B('pissette',e.x+28+210);B('flacon',e.x+28+310,{p:{prod:'huile'}});B('flacon',e.x+28+390,{p:{prod:'cuso4_01'}});},
   etapes:[
-    {t:'Versez 30 mL d’eau distillée dans l’éprouvette, à la pissette.',a:'Lâchez la pissette le bec au-dessus de l’éprouvette, puis un appui long : un jet. Finissez par des petits jets (un toucher). Touchez l’éprouvette : la loupe montre les graduations.',
+    {t:'Versez 30 mL d’eau distillée dans l’éprouvette, à la pissette.',a:'Glissez la pissette près de l’éprouvette : elle prend sa place à côté. Puis un appui long sur elle : un jet. Finissez par des petits jets (un toucher). Touchez l’éprouvette : la loupe montre les graduations.',
       ok:M=>{const v=M.v('Éprouvette','eau');return v>=29&&v<=31.5;}},
     {t:'Débouchez le flacon d’huile.',a:'Touchez-le.',ok:M=>M.ouvert('huile')||M.v('Éprouvette','huile')>0},
     {t:'Versez l’huile jusqu’à 45 mL : où se place-t-elle ?',a:'Tenez le flacon au-dessus de l’éprouvette : il verse tant que vous l’y tenez. Lisez le haut du liquide sur les graduations.',
@@ -4345,12 +4351,12 @@ MAIN('dissolution',{depart:()=>{const cp=st.devs.find(d=>d.t==='coupelle'),f=st.
     {t:'Ouvrez le flacon de sulfate de cuivre.',a:'Touchez-le : son bouchon se pose devant lui.',ok:M=>M.ouvert('cuso4h')||M.m('Coupelle','cuso4h')>0},
     {t:'Pesez 2,50 g de sulfate de cuivre dans la coupelle.',a:'Glissez la spatule dans le flacon, lâchez-la et touchez-la : elle se remplit. Lâchez-la au-dessus de la coupelle : chaque toucher fait tomber un peu de solide, un appui long l’incline. Trop lourd ? La spatule vide, au-dessus de la coupelle, en reprend un peu.',
       ok:M=>Math.abs(M.balance()-2.5)<=0.02&&M.m('Coupelle','cuso4h')>0},
-    {t:'Versez tout le solide dans la fiole, par l’entonnoir.',a:'Prenez la coupelle et tenez-la au-dessus de la fiole : elle se vide d’un coup.',
+    {t:'Versez tout le solide dans la fiole, par l’entonnoir.',a:'Prenez la coupelle et tenez-la au-dessus de l’entonnoir : elle se vide d’un coup.',
       ok:M=>{const f=M.dev('Fiole jaugée');return (f.c.sol.cuso4h||0)>0||(f.c.tot.Cu||0)>0;}},
-    {t:'Remplissez la fiole d’eau distillée, aux trois quarts.',a:'Lâchez la pissette le bec au-dessus de la fiole, puis un appui long : un jet.',ok:M=>M.vol('Fiole jaugée')>=60},
+    {t:'Remplissez la fiole d’eau distillée, aux trois quarts.',a:'Glissez la pissette près de la fiole : sa place s’affiche à côté, lâchez-la. Puis un appui long sur la pissette : un jet.',ok:M=>M.vol('Fiole jaugée')>=60},
     {t:'Retirez l’entonnoir, puis bouchez et retournez la fiole jusqu’à ce que tout soit dissous.',a:'Glissez l’entonnoir hors de la fiole. Prenez la fiole et secouez-la ; recommencez tant qu’on voit des cristaux.',
       ok:M=>{const f=M.dev('Fiole jaugée');return !M.dans('entonnoir','Fiole jaugée')&&(f.c.sol.cuso4h||0)*PROD.cuso4h.M<0.002&&M.L.ag[f.id]!=null;}},
-    {t:'Complétez au trait à la pissette.',a:'Touchez la fiole : la loupe montre le trait. Un jet, puis des petits jets (un toucher) : le bas du ménisque sur le trait.',ok:M=>mnAuTrait(M,'Fiole jaugée')},
+    {t:'Complétez au trait à la pissette.',a:'Touchez la fiole : la loupe montre le trait. Un jet (appui long sur la pissette), puis des petits jets (un toucher) : le bas du ménisque sur le trait.',ok:M=>mnAuTrait(M,'Fiole jaugée')},
     {t:'Bouchez et retournez encore.',a:'Secouez la fiole : la solution devient homogène.',ok:M=>M.agite('Fiole jaugée')&&mnAuTrait(M,'Fiole jaugée')},
     {t:'Quelle concentration en masse avez-vous préparée ?',a:'C = m ÷ V : la masse pesée en grammes, le volume de la fiole en litres.',
       saisie:{cle:'Cm',lab:'C =',u:'g/L',dec:1,juge:(v,M)=>{const f=M.dev('Fiole jaugée'),m=((f.c.tot.Cu||0)+(f.c.sol.cuso4h||0))*PROD.cuso4h.M,c=m/0.1;
@@ -4643,6 +4649,13 @@ function mnNomMin(nom){return nom.replace(/^([A-ZÉ])([a-zé])/,(m,a,b)=>a.toLow
 function mnDe(nom){const n=mnNomMin(nom);return(/^[aeéèêiouyhAEÉIOUYH]/.test(n)?'d’':'de ')+n;}
 function mnDire(cle,msg,k){if(MN.dit[cle])return;MN.dit[cle]=1;toast(msg,k||'info');}
 function mnCpgDans(f){return st.devs.find(x=>x.t==='cpg'&&x.s&&x.s.f===f.id);}
+/* l'ouverture où l'on verse : celle du récipient, ou le haut de l'entonnoir qui y plonge (15 novembre 2026 : « le contenu
+   devrait se verser dans l'entonnoir »). fond : là où arrivent le filet, les gouttes, le jet. Ce qui passe par l'entonnoir
+   finit dans le récipient (mnDans), le papier filtre gardant les solides. */
+function mnEntonnoir(c){return st.devs.find(x=>x.t==='entonnoir'&&x.dans===c.id);}
+function mnOuv(c){const en=mnEntonnoir(c),G=geo(c);if(en)return{x:G.cx,y:en.y+2,r:33,en,fond:en.y+32};return{x:G.cx,y:G.yb-G.k.H,r:TYPES[c.t].ouv||10,en:null,fond:mnSurface(c)};}
+function mnFond(c){return c?mnOuv(c).fond:Y0;}
+function mnDans(c,p){const en=mnEntonnoir(c);if(en&&en.p.filtre==='oui')filtrerPar(en,p);fusion(c.c,p);}
 
 /* ---------- le dessin : le flacon débouché et son liquide, le compte-gouttes et ce qu'il contient ---------- */
 TYPES.flacon.rang=1.5;   // dessiné après le compte-gouttes qui y trempe : l'étiquette le cache
@@ -4682,15 +4695,15 @@ function mnVerseur(d){if(d.t==='flacon'){const p=PROD[d.p.prod];return !!(d.p.ou
 function mnSurface(c){const GL=GEOLIQ[c.id];if(GL&&GL.h>0.5)return GL.yb-GL.h;const G=geo(c);return G.yb-2;}
 function mnCibleVerse(d,nx,ny){const B=mnBouche(d),bx=nx+B.x,by=ny+B.y;let best=null,bd=1e9;
   for(const c of st.devs){if(c===d||!c.c||!TYPES[c.t].recip||c.t==='recueil'||dependants(d).includes(c))continue;
-    const G=geo(c),top=G.yb-G.k.H,dx=Math.abs(bx-G.cx),dy=top-by;if(dx>60||dy<8||dy>150)continue;
+    const O=mnOuv(c),top=O.y,dx=Math.abs(bx-O.x),dy=top-by;if(dx>60||dy<(O.en?-45:8)||dy>150)continue;   // tenu dans le cône d'un entonnoir : il remonte au-dessus
     if(d.t==='tube'&&ny+hDev(d)*0.4>top)continue;   // un tube qu'on range à hauteur des autres ne verse pas dans son voisin
     const dd=dx+Math.abs(dy-30)*0.4;if(dd<bd){bd=dd;best=c;}}
   return best;}
 /* sous la pointe du compte-gouttes : le récipient où la goutte tombe, ou celui où la pointe trempe */
 function mnRecipSous(tx,ty){let best=null;
-  for(const c of st.devs){if(!c.c||!TYPES[c.t].recip||c.t==='recueil'||c.t==='bur')continue;const G=geo(c),top=G.yb-G.k.H,ro=TYPES[c.t].ouv||10;
-    if(Math.abs(tx-G.cx)>Math.max(ro-1,6)+6)continue;if(ty>G.yb-2||top-ty>190)continue;
-    const dans=ty>top+2,o={c,top,dans};if(!best||(dans&&!best.dans)||(dans===best.dans&&top<best.top))best=o;}
+  for(const c of st.devs){if(!c.c||!TYPES[c.t].recip||c.t==='recueil'||c.t==='bur')continue;const G=geo(c),O=mnOuv(c),top=O.y,ro=O.r;
+    if(Math.abs(tx-O.x)>Math.max(ro-1,6)+6)continue;if(ty>G.yb-2||top-ty>190)continue;
+    const dans=!O.en&&ty>top+2,o={c,top,dans};if(!best||(dans&&!best.dans)||(dans===best.dans&&top<best.top))best=o;}
   return best;}
 function mnFlaconSous(tx,ty){return st.devs.find(f=>f.t==='flacon'&&tx>f.x+12&&tx<f.x+52&&ty>f.y+14&&ty<f.y+134);}
 function mnHud(d,txt,dur){const t1=performance.now()+(dur||2600);MN.huds=MN.huds.filter(h=>h.id!==d.id);MN.huds.push({id:d.id,txt,t1});mnReveil();}
@@ -4724,10 +4737,10 @@ function mainMove(e){const D=drag,d=D.d,p=ptSVG(e.clientX,e.clientY);
   if(D.cpg){D.cpg.x=d.x+24;D.cpg.y=d.y+2;}
   mnReveil();}
 function mnPose(D,cible){const d=D.d;
-  if(cible){const G=geo(cible),top=G.yb-G.k.H,ro=TYPES[cible.t].ouv||10,B=mnBouche(d),gauche=D.nx+wDev(d)/2<=G.cx;
+  if(cible){const O=mnOuv(cible),top=O.y,ro=O.r,B=mnBouche(d),gauche=D.nx+wDev(d)/2<=O.x;
     if(!MN.pour||MN.pour.d!==d)MN.pour={d,c:null,ang:0,acc:0,tot:{},deb:0};
     const P=MN.pour;if(P.c!==cible||P.gauche!==gauche){P.c=cible;P.gauche=gauche;P.t0=performance.now();P.piv={x:B.x+(gauche?1:-1)*B.r*0.8,y:B.y};}
-    d.x=G.cx+(gauche?-1:1)*ro*0.3-P.piv.x;d.y=Math.min(top,cible.y)-16-P.piv.y;}
+    d.x=O.x+(gauche?-1:1)*ro*0.3-P.piv.x;d.y=(O.en?top:Math.min(top,cible.y))-16-P.piv.y;}
   else{d.x=D.nx;d.y=D.ny;if(MN.pour&&MN.pour.d===d)MN.pour.c=null;}}
 /* secouer : trois allers-retours en un peu plus d'une seconde */
 function mnSecoue(D,p){const vx=p.x-D.lx;D.lx=p.x;if(Math.abs(vx)<0.4)return;const s=Math.sign(vx),now=performance.now();
@@ -4757,7 +4770,7 @@ function mnTomber(d){const ty=TYPES[d.t],h=hDev(d),cx=d.x+wDev(d)/2,bas=d.y+h;le
   for(const f of surfacesPour(d)){const tol=f.cx!=null?14:0;if(cx<f.x0-tol||cx>f.x1+tol)continue;if(f.y<bas-45)continue;if(!best||f.y<best.y)best=f;}
   if(!best)best={y:Y0,sur:null};d.y=Math.round(best.y-h);d.x=Math.round(best.cx!=null?best.cx-ty.w/2:d.x);d.sur=best.sur;}
 function mnChevauche(d){const b=boiteDev(d),deps=dependants(d);
-  for(const o of st.devs){if(o===d||deps.includes(o)||o.id===d.sur||o.t==='etagere'||(o.t==='cpg'&&o.s.f===d.id)||(TYPES[o.t].lien&&o.p.a))continue;if(o.t==='cpg'||o.t==='bur'||o.t==='ampoule')continue;
+  for(const o of st.devs){if(o===d||deps.includes(o)||o.id===d.sur||o.t==='etagere'||(o.t==='cpg'&&o.s.f===d.id)||(TYPES[o.t].lien&&o.p.a))continue;if(o.t==='cpg'||o.t==='bur'||o.t==='ampoule'||(o.t==='pissette'&&o.s&&o.s.dock))continue;
     const to=TYPES[o.t];if(!(to.cont||to.support||o.t==='flacon'||o.t==='pissette'))continue;
     const c=boiteDev(o),ox=Math.min(b.x1,c.x1)-Math.max(b.x0,c.x0),oy=Math.min(b.y1,c.y1)-Math.max(b.y0,c.y0);if(ox>6&&oy>6)return true;}
   return false;}
@@ -4776,7 +4789,7 @@ function mnPresse(cg){MN.presse=cg.id;clearTimeout(MN.presseT);MN.presseT=setTim
   const R=mnRecipSous(tx,ty);
   if(R&&R.dans&&ty>mnSurface(R.c)+1&&R.c.c.V*1000>0.02){mnAspireRecip(cg,R.c);render();return;}
   if(v0<GOUTTE*0.6){mnHud(cg,'vide');mnDire('vide','Le compte-gouttes est vide : glissez-le dans un flacon ouvert, puis touchez la poire.');render();return;}
-  const portion=prelever(c0,GOUTTE),dst=R?R.c:null,y1=dst?mnSurface(dst):Y0;
+  const portion=prelever(c0,GOUTTE),dst=R?R.c:null,y1=mnFond(dst);
   MN.gouttes.push({x:tx,y0:ty,y1,t0:performance.now(),dur:clamp(Math.sqrt(Math.max(8,y1-ty)/900),0.12,0.55),col:tuCouleur(portion),dst,portion,cle:cg.s.cle||'mix',nom:cg.s.nom||'liquide'});
   render();mnReveil();}
 function mnPortionFlacon(f,q){const base=portionProduit(f.p.prod,q),pol=mnC(f,'pol');
@@ -4797,7 +4810,7 @@ function mnAtterrit(g){const d=g.dst;
   if((!d||!d.c||!st.devs.includes(d))&&g.bur){mnDire('burpaillasse','Rien sous la burette : la goutte tombe sur la paillasse.','warn');return;}
   if(!d||!d.c||!st.devs.includes(d)){mnDire('paillasse','Une goutte sur la paillasse : lâchez d’abord le compte-gouttes au-dessus d’un tube, puis pressez.');return;}
   if(capaciteMax(d)-volumeTotal(d)<GOUTTE*0.5){mnDire('deb'+d.id,mnLeg(d)+' est plein : la goutte coule le long du tube.','warn');return;}
-  fusion(d.c,g.portion);nomsContenu(d,g.nom);mnCompte(d,g.cle,1,g.nom);if(g.bur){mnCompteV(d,'bur',GOUTTE);if(st.rel.mode==='burette'&&sondesDans(d.id).length)relever('burette');}
+  mnDans(d,g.portion);nomsContenu(d,g.nom);mnCompte(d,g.cle,1,g.nom);if(g.bur){mnCompteV(d,'bur',GOUTTE);if(st.rel.mode==='burette'&&sondesDans(d.id).length)relever('burette');}
   const via=g.via||'au compte-gouttes';if(!MN.lot||MN.lot.id!==d.id||MN.lot.nom!==g.nom||MN.lot.via!==via){mnFinLot();MN.lot={id:d.id,nom:g.nom,n:0,via};}MN.lot.n++;
   clearTimeout(MN.lotT);MN.lotT=setTimeout(mnFinLot,2500);
   const n=MN.lot.n;mnHud(d,n+' goutte'+(n>1?'s':''));}
@@ -4809,13 +4822,13 @@ function mnFinLot(){const l=MN.lot;MN.lot=null;clearTimeout(MN.lotT);if(!l)retur
 function mnFlushVerse(P){let q=P.acc;P.acc=0;const d=P.d,dst=P.c;if(!dst||!dst.c||q<=0)return;
   let portion,cle,nom;
   if(d.t==='flacon'){cle=d.p.prod;nom=PROD[cle].nom;}
-  else if(volumeTotal(d)<0.5&&(Object.keys(d.c.sol).length||Object.keys(d.c.met).length)){const p=prelever(d.c,0,{tout:true}),n=(d.c.noms||[]).slice();fusion(dst.c,p);for(const x of n)nomsContenu(dst,x);d.c.noms=[];
+  else if(volumeTotal(d)<0.5&&(Object.keys(d.c.sol).length||Object.keys(d.c.met).length)){const p=prelever(d.c,0,{tout:true}),n=(d.c.noms||[]).slice();mnDans(dst,p);for(const x of n)nomsContenu(dst,x);d.c.noms=[];
     const L=mnLog();L.tg[dst.id]=SIMT;if(L.t1[dst.id]==null)L.t1[dst.id]=SIMT;(L.v[dst.id]=L.v[dst.id]||{}).solide=1;P.tot[dst.id]=(P.tot[dst.id]||0)+0.001;P.nom='le solide de '+mnLeg(d);mnHud(dst,'tout versé');if(drag&&drag.k==='main')drag.change=true;return;}
   else{const v=volumeTotal(d);if(v<0.004)return;q=Math.min(q,v);cle='mix';nom=(d.c.noms||[]).length===1?d.c.noms[0]:'le contenu de '+mnLeg(d);}
   const place=capaciteMax(dst)-volumeTotal(dst);if(place<0.01){P.deb+=q;mnHud(dst,'ça déborde !');return;}
   if(q>place){P.deb+=q-place;q=place;}
   portion=d.t==='flacon'?mnPortionFlacon(d,q):prelever(d.c,q);
-  fusion(dst.c,portion);if(dst.t==='bur')dst.s.zeroOk=false;nomsContenu(dst,d.t==='flacon'?nom:null);for(const n of(d.t!=='flacon'&&d.c.noms)||[])nomsContenu(dst,n);
+  mnDans(dst,portion);if(dst.t==='bur')dst.s.zeroOk=false;nomsContenu(dst,d.t==='flacon'?nom:null);for(const n of(d.t!=='flacon'&&d.c.noms)||[])nomsContenu(dst,n);
   const L=mnLog();(L.v[dst.id]=L.v[dst.id]||{})[cle]=(L.v[dst.id][cle]||0)+q;(L.tv[dst.id]=L.tv[dst.id]||{})[cle]=SIMT;L.tg[dst.id]=SIMT;if(L.t1[dst.id]==null)L.t1[dst.id]=SIMT;
   const k=dst.id;P.tot[k]=(P.tot[k]||0)+q;P.nom=nom;mnHud(dst,mnALoupe(dst)?'ça coule':'+ '+fml(P.tot[k]));if(drag&&drag.k==='main')drag.change=true;}
 function mnFinVerse(P){if(P.acc>0)mnFlushVerse(P);const d=P.d;d._rot=null;
@@ -4853,12 +4866,12 @@ function mnDessine(now){const g=$('lyMain');if(!g)return;g.textContent='';if(!mn
   /* là où ira la goutte, quand on tient le compte-gouttes */
   if(drag&&drag.k==='main'&&drag.moved&&drag.d.t==='cpg'){const cg=drag.d,tx=cg.x+8,ty=cg.y+110,f=mnFlaconSous(tx,ty),R=f?null:mnRecipSous(tx,ty);
     if(f)E('ellipse',{cx:f.x+32,cy:f.y+17,rx:17,ry:7,class:'mn-vise'},g);
-    else if(R){const G=geo(R.c);E('ellipse',{cx:G.cx,cy:R.top,rx:(TYPES[R.c.t].ouv||10)+7,ry:5,class:'mn-vise'},g);
-      if(!R.dans)E('line',{x1:tx,y1:ty+3,x2:tx,y2:mnSurface(R.c)-2,class:'mn-aplomb'},g);}}
+    else if(R){const O=mnOuv(R.c);E('ellipse',{cx:O.x,cy:R.top,rx:O.r+7,ry:5,class:'mn-vise'},g);
+      if(!R.dans)E('line',{x1:tx,y1:ty+3,x2:tx,y2:O.fond-2,class:'mn-aplomb'},g);}}
   /* la cible visée, avant que ça coule */
-  {const P=MN.pour;if(P&&P.c&&P.ang<48){const G=geo(P.c);E('ellipse',{cx:G.cx,cy:G.yb-G.k.H,rx:(TYPES[P.c.t].ouv||10)+8,ry:5,class:'mn-vise'},g);}}
+  {const P=MN.pour;if(P&&P.c&&P.ang<48){const O=mnOuv(P.c);E('ellipse',{cx:O.x,cy:O.y,rx:O.r+8,ry:5,class:'mn-vise'},g);}}
   /* le filet qui coule */
-  const P=MN.pour;if(P&&P.c&&P.ang>48&&mnVerseur(P.d)){const lx=P.d.x+P.piv.x,ly=P.d.y+P.piv.y,ys=mnSurface(P.c),G=geo(P.c),xs=G.cx;
+  const P=MN.pour;if(P&&P.c&&P.ang>48&&mnVerseur(P.d)){const lx=P.d.x+P.piv.x,ly=P.d.y+P.piv.y,O=mnOuv(P.c),ys=O.fond,xs=O.x;
     const col=P.d.t==='flacon'?mnCouleurProduit(P.d.p.prod):tuCouleur(P.d.c),w=1.2+2.2*(P.ang-48)/30;
     const dp=`M${lx.toFixed(1)} ${(ly+2).toFixed(1)} Q${((lx+xs)/2).toFixed(1)} ${(ly+6).toFixed(1)} ${xs.toFixed(1)} ${ys.toFixed(1)}`;
     E('path',{d:dp,fill:'none',stroke:'rgba(70,100,115,.45)','stroke-width':(w+1.4).toFixed(2),'stroke-linecap':'round'},g);
@@ -4915,7 +4928,9 @@ function mnPanneau(box){const x=expMain();
       <li><b>Le lâcher au-dessus d’un tube</b> : il y reste tenu. Chaque toucher de la poire fait tomber une goutte ; un appui long, une goutte après l’autre.</li>
       <li><b>Tenir un flacon au-dessus d’un tube</b> : il s’incline et verse tant qu’on l’y tient.</li>
       <li><b>Secouer un tube</b> de gauche à droite : il est agité.</li>
-      <li><b>Toucher un tube</b> : le panneau dit ce qu’on y voit.</li></ul></details>
+      <li><b>Toucher un tube</b> : le panneau dit ce qu’on y voit.</li>${st.devs.some(d=>d.t==='spatule')?`
+      <li><b>La spatule</b> : lâchée sur un flacon de solide ouvert, un toucher la remplit ; au-dessus d’un récipient, chaque toucher fait tomber un peu de solide. Tenue, elle montre où elle ira.</li>`:''}${st.devs.some(d=>d.t==='pissette')?`
+      <li><b>Glisser la pissette près d’un récipient</b> : sa place s’affiche à côté ; lâchée, elle s’y penche. Un toucher : un petit jet ; un appui long : un jet.</li>`:''}</ul></details>
     <details class="mn-att" id="mnAtt"><summary>Ce qu’on doit observer</summary>${x.attendu||''}</details>`;
   MN.ficheH='';MN.vuH='';mnMajFiche();}
 function mnMajFiche(){const box=$('mnEt');if(!box)return;const x=expMain();if(!x)return;const R=mnEtats();
@@ -5034,11 +5049,13 @@ function basculeMain(){if(TU.on)tuQuitter();opts.atelier=!opts.atelier;sel=null;
 /* ================= à la main : le matériel de la chimie (13 novembre 2026) =================
    Demandé le 13 novembre 2026 (« fais pareil pour les tp de chimie »), après le test des ions et le titrage.
    Les gestes du matériel que les TP de chimie emploient, pour toutes les expériences qui portent `main:` :
-     la pissette          glissée et lâchée le bec au-dessus d'un récipient, elle y reste ; un toucher, un petit jet
+     la pissette          glissée près d'un récipient, elle montre sa place à côté de lui ; lâchée, elle s'y met, penchée,
+                          le bec au-dessus de l'ouverture (de l'entonnoir s'il y en a un) ; un toucher, un petit jet
                           (0,1 mL) ; un appui long, un jet qui forcit en une seconde et demie (jusqu'à 8 mL/s)
-     la spatule           lâchée le cuilleron dans un flacon de solide ouvert, elle y trempe : un toucher la remplit
-                          (un second, la vide dans le flacon) ; lâchée au-dessus d'un récipient, un toucher fait tomber
-                          un peu de solide (un morceau entier si c'en est un), un appui long l'incline et la vide
+     la spatule           lâchée le cuilleron (ou le doigt) sur un flacon de solide ouvert, elle y trempe : un toucher la
+                          remplit (un second, la vide dans le flacon) ; lâchée au-dessus d'un récipient, un toucher fait
+                          tomber un peu de solide (un morceau entier si c'en est un), un appui long l'incline et la vide.
+                          Tenue, elle montre où elle ira ; elle se prend dans une bande de 38 unités, pas sur son manche seul
      la pipette jaugée    lâchée la pointe dans un liquide : un appui long sur la propipette aspire ; lâchée au-dessus
                           d'un récipient, un toucher sur la propipette fait tomber une goutte (ajuster au trait), un
                           appui long la vide ; toucher le verre ouvre la loupe du trait
@@ -5066,8 +5083,16 @@ function mnCouleurSolide(id){const p=PROD[id];if(!p)return'#DDD';if(p.col)return
 
 TYPES.spatule.rangDe=d=>d.s&&d.s.f?1:2.6;
 /* ---------- le dessin : la spatule chargée, la pipette et son liquide, le solide dans son flacon ---------- */
-{const sp0=TYPES.spatule.draw;TYPES.spatule.draw=(g,d)=>{sp0(g,d);const q=d.s&&d.s.charge;if(q&&q.g>0.005&&!STY.sch){const r=clamp(3+Math.sqrt(q.g)*4,3,9);
-    E('ellipse',{cx:13,cy:4,rx:r+2,ry:r*0.55,fill:mnCouleurSolide(q.id),stroke:'rgba(0,0,0,.25)','stroke-width':0.4},g);}};
+/* dans un flacon, la spatule s'y tient debout, le manche vers le haut (couchée, il sortait de la vue à droite) */
+const SPAT_FL=-75;
+{const sp0=TYPES.spatule.draw;TYPES.spatule.draw=(g0,d)=>{const g=mnVisuel()&&d.s&&d.s.f?E('g',{transform:`rotate(${SPAT_FL} 12 7)`},g0):g0;sp0(g,d);const q=d.s&&d.s.charge;if(q&&q.g>0.005&&!STY.sch){const r=clamp(3+Math.sqrt(q.g)*4,3,9);
+    E('ellipse',{cx:13,cy:4,rx:r+2,ry:r*0.55,fill:mnCouleurSolide(q.id),stroke:'rgba(0,0,0,.25)','stroke-width':0.4},g);}
+    /* le manche fait 2 unités d'épaisseur : on la prend dans une bande de 38 (15 novembre 2026, « la spatule est dure à attraper ») */
+    if(mnVisuel())E('rect',{x:-6,y:-14,width:162,height:38,fill:'transparent'},g);};
+ const ps0=TYPES.pissette.draw;TYPES.pissette.draw=(g,d)=>{const k=mnVisuel()&&d.s&&d.s.dock;
+    if(!k){ps0(g,d);if(mnVisuel())E('rect',{x:4,y:0,width:62,height:172,fill:'transparent'},g);return;}
+    const R=mnPisRot(k.cote),gi=E('g',{transform:`rotate(${R.a} ${R.bx} 14)`},g);dessinePissette(gi,k.cote>0);
+    E('rect',{x:4,y:28,width:62,height:144,fill:'transparent'},gi);};
  const pi0=TYPES.pipette.draw;TYPES.pipette.draw=(g,d)=>{const c=mnC(d,'cg'),v=mnVol(c);
     if(v>0.002&&!STY.sch){const y=pipY(d,v),id='mnPipC'+d.id,cp=E('clipPath',{id},g);E('rect',{x:-2,y,width:30,height:340-y},cp);
       E('path',{d:'M11.6 70 V150 Q3.6 158 3.6 180 Q3.6 205 11.6 212 V318 L13 329 L14.4 318 V212 Q22.4 205 22.4 180 Q22.4 158 14.4 150 V70 Z',fill:tuCouleur(c),'clip-path':`url(#${id})`},g);}
@@ -5076,13 +5101,13 @@ TYPES.spatule.rangDe=d=>d.s&&d.s.f?1:2.6;
 function pipY(d,v){const V0=+d.p.vol||10,f=v/V0;
   if(f<=0.05)return 318-f/0.05*106;if(f<=0.95)return 212-(f-0.05)/0.9*62;if(f<=1)return 150-(f-0.95)/0.05*45;return Math.max(70,105-(f-1)/0.06*33);}
 function pipPointe(d){return{x:d.x+13,y:d.y+330};}
-function pissBec(d){return{x:d.x+66,y:d.y+14};}
+function pissBec(d){const k=d.s&&d.s.dock;return{x:d.x+(k&&k.cote>0?4:66),y:d.y+14};}
 function spatPointe(d){return{x:d.x+12,y:d.y+7};}
 function buchFlamme(d){return{x:d.x+6,y:d.y+8};}
 
 /* ---------- l'aiguillage ---------- */
 function mainDownMateriel(d,e,p){
-  const base={k:'main',d,x0:e.clientX,y0:e.clientY,p0:p,ox:d.x,oy:d.y,sur0:d.sur,f0:d.s&&d.s.f,moved:false,snap:snapshot(),rev:[],run:0,sgn:0,lx:p.x};
+  const base={k:'main',d,x0:e.clientX,y0:e.clientY,p0:p,ox:d.x,oy:d.y,sur0:d.sur,f0:d.s&&d.s.f,dock0:d.s&&d.s.dock,moved:false,snap:snapshot(),rev:[],run:0,sgn:0,lx:p.x};
   /* un fil du voltmètre en attente : la lame touchée le reçoit */
   if(MN.fil){const F=MN.fil,v=devId(F.id);MN.fil=null;
     const lame=d.t==='lame'?d:st.devs.filter(x=>x.t==='lame').map(x=>{const b=boiteDev(x);return{x,dd:Math.hypot(Math.max(b.x0-p.x,0,p.x-b.x1),Math.max(b.y0-p.y,0,p.y-b.y1))};}).filter(o=>o.dd<45).sort((a,b)=>a.dd-b.dd).map(o=>o.x)[0];
@@ -5119,25 +5144,39 @@ function mainUpMateriel(D){const d=D.d;if(D.moved)return;
 
 /* ---------- prendre, déplacer, lâcher le petit matériel ---------- */
 function mainMoveMateriel(D,e,p){const d=D.d;
-  if(!D.moved){if(Math.hypot(e.clientX-D.x0,e.clientY-D.y0)<6)return;D.moved=true;if(!D.long)clearTimeout(D.appui);if(d.sur)d.sur=null;if(d.s)d.s.f=null;d._tu=1;MN.aspire=null;}
-  d.x=D.ox+(p.x-D.p0.x);d.y=D.oy+(p.y-D.p0.y);mnReveil();}
+  if(!D.moved){if(Math.hypot(e.clientX-D.x0,e.clientY-D.y0)<6)return;D.moved=true;if(!D.long)clearTimeout(D.appui);if(d.sur)d.sur=null;if(d.s)d.s.f=null;d._tu=1;MN.aspire=null;
+    /* la pissette quitte sa place : redressée, elle se tient par le milieu */
+    if(d.t==='pissette'&&D.dock0){d.s.dock=null;D.ax=D.p0.x-35-D.ox;D.ay=D.p0.y-100-D.oy;}
+    /* la spatule sortie d'un flacon se couche : le doigt la tient au milieu du manche, le cuilleron 63 à gauche */
+    if(d.t==='spatule'&&D.f0){D.ax=D.p0.x-75-D.ox;D.ay=D.p0.y-7-D.oy;}
+    /* on la déplace : le jet ou le versement d'un appui long s'arrête */
+    if(D.long&&(d.t==='pissette'||d.t==='spatule')){mnFinLong(D);D.long=false;}}
+  D.ptr=p;d.x=D.ox+(D.ax||0)+(p.x-D.p0.x);d.y=D.oy+(D.ay||0)+(p.y-D.p0.y);mnReveil();}
 function mainUpMateriel2(D,annule){const d=D.d;clearTimeout(D.appui);
   if(D.long){mnFinLong(D);D.long=false;if(!D.moved){commit();return;}}
   if(!D.moved){if(!annule)mnTapeMateriel(D);return;}
   d._tu=0;
-  if(annule){d.x=D.ox;d.y=D.oy;d.sur=D.sur0||null;if(d.s)d.s.f=D.f0||null;commit();return;}
+  if(annule){d.x=D.ox;d.y=D.oy;d.sur=D.sur0||null;if(d.s){d.s.f=D.f0||null;if(D.dock0)d.s.dock=D.dock0;}commit();return;}
   if(d.t==='pissette')mnLacherPissette(D);else if(d.t==='spatule')mnLacherSpatule(D);else if(d.t==='pipette')mnLacherPipette(D);
   else if(d.t==='buchette')mnLacherBuchette(D);else if(d.t==='papierph')mnLacherPapier(D);
   hist.push(D.snap);if(hist.length>60)hist.shift();commit();}
-function mnPoserOuRevenir(D){const d=D.d;mnTomber(d);if(mnChevauche(d)){d.x=D.ox;d.y=D.oy;d.sur=D.sur0||null;if(d.s)d.s.f=D.f0||null;}}
-function mnLacherPissette(D){const d=D.d,B=pissBec(d),R=mnRecipSous(B.x,B.y+30);
-  if(R&&!R.dans){const G=geo(R.c);d.x=Math.round(G.cx-66);d.y=Math.round(R.top-12-14);d.sur=null;mnHud(d,'au-dessus de '+mnLeg(R.c),1400);return;}
+function mnPoserOuRevenir(D){const d=D.d;mnTomber(d);if(mnChevauche(d)){d.x=D.ox;d.y=D.oy;d.sur=D.sur0||null;if(d.s){d.s.f=D.f0||null;if(D.dock0)d.s.dock=D.dock0;}}}
+function mnLacherPissette(D){const d=D.d,T=mnCibleDock(d);
+  if(T){d.s.dock={c:T.c.id,cote:T.cote};mnPlaceDock(d);noterGeste(T.c,'Pissette posée à côté de '+mnLeg(T.c)+'.');mnHud(d,'touchez-la pour verser',2200);return;}
   mnPoserOuRevenir(D);}
-function mnLacherSpatule(D){const d=D.d,P=spatPointe(d),f=mnFlaconSous(P.x,P.y);
-  if(f&&mnSolide(f.p.prod)){if(!f.p.ouvert){toast('Ce flacon est bouché : touchez-le pour l’ouvrir, puis replongez-y la spatule.','info');d.x=D.ox;d.y=D.oy;d.s.f=D.f0||null;return;}
+/* où va la spatule qu'on tient : ce qui est sous le cuilleron, à défaut ce qui est sous le doigt. On la prend par le
+   manche, le cuilleron 6 cm plus loin : il ne devait plus viser seul (15 novembre 2026) */
+function mnCibleSpatule(d,ptr){const P=spatPointe(d),f=mnFlaconSous(P.x,P.y);if(f&&mnSolide(f.p.prod))return{f};
+  const R=mnRecipSous(P.x,P.y+20);if(R)return{R};
+  if(ptr){const f2=mnFlaconSous(ptr.x,ptr.y);if(f2&&mnSolide(f2.p.prod))return{f:f2};const c=mnRecipSousDoigt(ptr.x,ptr.y);if(c)return{R:{c,top:mnOuv(c).y,dans:false}};}
+  return null;}
+/* le récipient sous le doigt, son entonnoir compris */
+function mnRecipSousDoigt(x,y){const en=st.devs.find(e=>{if(e.t!=='entonnoir'||!e.dans)return false;const b=boiteDev(e);return x>=b.x0-8&&x<=b.x1+8&&y>=b.y0-30&&y<=b.y1;});
+  const c=en?devId(en.dans):cibleRecipient(x,y);return c&&c.c&&c.t!=='recueil'&&c.t!=='bur'?c:null;}
+function mnLacherSpatule(D){const d=D.d,T=mnCibleSpatule(d,D.ptr);
+  if(T&&T.f){const f=T.f;if(!f.p.ouvert){toast('Ce flacon est bouché : touchez-le pour l’ouvrir, puis replongez-y la spatule.','info');d.x=D.ox;d.y=D.oy;d.s.f=D.f0||null;return;}
     d.s.f=f.id;d.x=f.x+32-12;d.y=f.y+30;d.sur=null;return;}
-  const R=mnRecipSous(P.x,P.y+20);
-  if(R){const G=geo(R.c);d.x=Math.round(G.cx-12);d.y=Math.round(Math.min(R.top,R.c.y)-16-7);d.sur=null;mnHud(d,'au-dessus de '+mnLeg(R.c),1400);return;}
+  if(T&&T.R){const R=T.R,O=mnOuv(R.c);d.x=Math.round(O.x-12);d.y=Math.round((O.en?R.top:Math.min(R.top,R.c.y))-16-7);d.sur=null;mnHud(d,'au-dessus de '+mnLeg(R.c),1400);return;}
   mnPoserOuRevenir(D);}
 function mnLacherPipette(D){const d=D.d,P=pipPointe(d),f=mnFlaconSous(P.x,P.y);
   if(f){toast('On ne plonge pas une pipette dans un flacon : versez d’abord un peu de solution dans un bécher.','info');d.x=D.ox;d.y=D.oy;return;}
@@ -5175,7 +5214,7 @@ function mnTapeMateriel(D){const d=D.d;
   if(d.t==='pipette'){if(!D.propi){MN.loupe=MN.loupe===d.id?null:d.id;render();mnDessine(performance.now());return;}pushHist();mnPipGoutte(d);commit();return;}}
 function mnAppuiLong(D){const d=D.d;pushHist();
   if(d.t==='pissette'){MN.jet={id:d.id,t0:performance.now(),tot:0};}
-  else if(d.t==='spatule'){const q=d.s.charge;if(d.s.f){mnSpatule(d);return;}if(!q||q.g<0.005){mnHud(d,'vide',1200);return;}MN.verseSol={id:d.id};d._rot={a:-28,px:12,py:7};}
+  else if(d.t==='spatule'){const q=d.s.charge;if(d.s.f||!q||q.g<0.005)return;/* dans le flacon ou vide : un appui pour la prendre, pas un geste (il vidait la spatule qu'on sortait) */MN.verseSol={id:d.id};d._rot={a:-28,px:12,py:7};}
   else if(d.t==='pipette'){const R=mnRecipSous(pipPointe(d).x,pipPointe(d).y);if(R&&R.dans&&pipPointe(d).y>mnSurface(R.c)+1)MN.aspire={id:d.id,c:R.c.id};else MN.videPip={id:d.id};}
   mnReveil();}
 function mnFinLong(D){const d=D.d;
@@ -5186,11 +5225,42 @@ function mnFinLong(D){const d=D.d;
   mnFinLotMat();}
 
 /* ---------- la pissette ---------- */
-function mnJet(d,q,court){const B=pissBec(d),R=mnRecipSous(B.x,B.y+30),c=R?R.c:null;
+/* le récipient où va le jet : celui à côté duquel la pissette a sa place, ou celui sous son bec */
+function mnPisCible(d){const k=d.s&&d.s.dock;if(k)return devId(k.c)||null;const B=pissBec(d),R=mnRecipSous(B.x,B.y+30);return R?R.c:null;}
+function mnJet(d,q,court){const c=mnPisCible(d);
   if(court)MN.jetCourt={id:d.id,t:performance.now()+160,c:c?c.id:null};
-  if(!c){mnDire('jetpaillasse','Le jet tombe sur la paillasse : lâchez la pissette le bec au-dessus d’un récipient.');return 0;}
+  if(!c){mnDire('jetpaillasse','Le jet tombe sur la paillasse : glissez la pissette près du récipient, elle prend sa place à côté de lui.');return 0;}
   const place=capaciteMax(c)-volumeTotal(c);if(place<=0.01){mnHud(c,'ça déborde !');return 0;}q=Math.min(q,place);
-  fusion(c.c,portionProduit('eau',q));nomsContenu(c,PROD.eau.nom);mnCompteV(c,'eau',q);mnLotMat(c,'eau',q,'d’eau distillée, à la pissette');mnReveil();return q;}
+  mnDans(c,portionProduit('eau',q));nomsContenu(c,PROD.eau.nom);mnCompteV(c,'eau',q);mnLotMat(c,'eau',q,'d’eau distillée, à la pissette');mnReveil();return q;}
+/* ---------- la pissette à sa place ----------
+   Demandé le 15 novembre 2026 (« l'eau est trop dure à gérer, il faut une place à côté de la fiole, puis pouvoir appuyer
+   dessus pour faire couler l'eau »). Glissée près d'un récipient, la pissette montre sa place à côté de lui, du côté où on
+   la tient ; lâchée, elle s'y met, penchée de 38°, le bec au-dessus de l'ouverture : on n'a plus à viser du bec. d.s.dock
+   = {c, cote} (cote −1 : à gauche, le bec vers la droite). Sa position se recalcule à chaque dessin (mnPlaceDocks, depuis
+   render) : l'entonnoir retiré, le bec descend au col ; le récipient qu'on secoue, elle l'attend. Reprise, elle se redresse. */
+const PIS_ANG=38;
+function mnPisRot(cote){return cote>0?{a:-PIS_ANG,bx:4}:{a:PIS_ANG,bx:66};}
+function mnPisPose(c,cote){const O=mnOuv(c),R=mnPisRot(cote);return{x:Math.round(O.x+cote*4-R.bx),y:Math.round(O.y-6-14)};}
+/* le milieu du corps de la pissette posée en P, penchée autour de son bec */
+function mnPisCentre(P,cote){const R=mnPisRot(cote),a=R.a*Math.PI/180,vx=35-R.bx,vy=86;return{x:P.x+R.bx+vx*Math.cos(a)-vy*Math.sin(a),y:P.y+14+vx*Math.sin(a)+vy*Math.cos(a)};}
+function mnPlaceDock(d){const k=d.s&&d.s.dock,c=k&&devId(k.c);if(!c||!c.c){if(d.s)d.s.dock=null;return;}const P=mnPisPose(c,k.cote);d.x=P.x;d.y=P.y;d.sur=null;}
+function mnPlaceDocks(){const D=drag&&drag.k==='main'&&drag.moved?drag:null;
+  for(const d of st.devs){if(d.t!=='pissette'||!d.s||!d.s.dock)continue;const c=devId(d.s.dock.c);if(D&&c&&(D.d===c||dependants(D.d).includes(c)))continue;mnPlaceDock(d);}}
+/* la place que prendrait la pissette lâchée là : celle du récipient le plus proche de la pissette (surtout en largeur, à 150
+   au plus), du côté où on la tient. Pas la place la plus proche : entre deux éprouvettes, la place de droite de l'une
+   l'emportait sur celle de gauche de l'autre, qu'on visait */
+function mnCibleDock(d){const cx=d.x+35,cy=d.y+100;let best=null,bd=1e9;
+  for(const c of st.devs){if(!c.c||!TYPES[c.t].recip||c.t==='recueil'||c.t==='bur')continue;const O=mnOuv(c),dx=Math.abs(cx-O.x);if(dx>150)continue;
+    const dd=dx+0.3*Math.abs(cy-(O.y+50));if(dd>=bd||dd>190)continue;const cote=cx<O.x?-1:1;bd=dd;best={c,cote,P:mnPisPose(c,cote)};}
+  return best;}
+/* le milieu du manche de la spatule, là où on la prend (porte d'essai) : debout dans un flacon, il est au-dessus */
+function spatPrise(d){if(d.s&&d.s.f){const a=SPAT_FL*Math.PI/180;return{x:d.x+12+63*Math.cos(a),y:d.y+7+63*Math.sin(a)};}return{x:d.x+75,y:d.y+7};}
+/* le milieu du corps de la pissette, là où l'on appuie (porte d'essai) */
+function pissCorps(d){const k=d.s&&d.s.dock;return k?mnPisCentre({x:d.x,y:d.y},k.cote):{x:d.x+35,y:d.y+100};}
+function mnDessinePlace(g,T){const R=mnPisRot(T.cote),O=mnOuv(T.c),gp=E('g',{transform:`translate(${T.P.x} ${T.P.y}) rotate(${R.a} ${R.bx} 14)`,class:'mn-place'},g);
+  E('path',{d:'M8 60 Q8 50 20 48 H50 Q62 50 62 60 V160 Q62 170 52 170 H18 Q8 170 8 160 Z'},gp);
+  E('path',{d:T.cote>0?'M35 48 V10 Q35 2 26 4 L4 14':'M35 48 V10 Q35 2 44 4 L66 14',fill:'none'},gp);
+  E('ellipse',{cx:O.x,cy:O.y,rx:O.r+7,ry:5,class:'mn-vise'},g);}
 /* ---------- la spatule ---------- */
 function mnSpatule(d){const f=d.s.f&&devId(d.s.f),q=d.s.charge;
   if(f){if(q&&q.g>0.005){d.s.charge=null;mnHud(d,'remise dans le flacon',1200);return;}
@@ -5201,9 +5271,9 @@ function mnSpatule(d){const f=d.s.f&&devId(d.s.f),q=d.s.charge;
   mnSolTombe(d,mnMorceau(q.id)?q.g:Math.min(q.g,0.06+Math.random()*0.1));}
 function mnSolTombe(d,g){const q=d.s.charge;if(!q)return;g=Math.min(g,q.g);if(g<=0)return;q.g-=g;if(q.g<0.003)d.s.charge=null;
   const P=spatPointe(d),R=mnRecipSous(P.x,P.y+20),c=R?R.c:null;
-  MN.grains.push({x:P.x,y0:P.y+3,y1:c?mnSurface(c):Y0,t0:performance.now(),col:mnCouleurSolide(q.id)});
+  MN.grains.push({x:P.x,y0:P.y+3,y1:mnFond(c),t0:performance.now(),col:mnCouleurSolide(q.id)});
   if(!c){mnDire('solpaillasse','Le solide tombe sur la paillasse : lâchez la spatule au-dessus de la coupelle ou du récipient.');return;}
-  fusion(c.c,portionProduit(q.id,g));nomsContenu(c,PROD[q.id].nom);const L=mnLog();L.m=L.m||{};(L.m[c.id]=L.m[c.id]||{})[q.id]=(L.m[c.id][q.id]||0)+g;L.tg[c.id]=SIMT;if(L.t1[c.id]==null)L.t1[c.id]=SIMT;
+  mnDans(c,portionProduit(q.id,g));nomsContenu(c,PROD[q.id].nom);const L=mnLog();L.m=L.m||{};(L.m[c.id]=L.m[c.id]||{})[q.id]=(L.m[c.id][q.id]||0)+g;L.tg[c.id]=SIMT;if(L.t1[c.id]==null)L.t1[c.id]=SIMT;
   mnLotMat(c,q.id,g,mnDe(PROD[q.id].nom)+', à la spatule','g');}
 /* ---------- la pipette jaugée ---------- */
 function mnPipGoutte(d){const c0=mnC(d,'cg'),v=mnVol(c0),P=pipPointe(d);if(v<GOUTTE*0.5){mnHud(d,'vide',1200);return;}
@@ -5217,7 +5287,7 @@ function mnPipAspire(d,c,q){const c0=mnC(d,'cg')||(d.s.cg=contenu()),v=mnVol(c0)
   q=Math.min(q,c.c.V*1000-0.05);if(q<=0)return;fusion(c0,prelever(c.c,q));d.s.noms=(c.c.noms||[]).slice();if(!d.s.cg)d.s.cg=c0;}
 function mnPipVide(d,q){const c0=mnC(d,'cg'),v=mnVol(c0),P=pipPointe(d);if(v<0.004){MN.videPip=null;return;}q=Math.min(q,v);
   const R=mnRecipSous(P.x,P.y),c=R?R.c:null,p=prelever(c0,q);
-  if(c){fusion(c.c,p);for(const n of d.s.noms||[])nomsContenu(c,n);mnCompteV(c,'pip',q);mnLotMat(c,'pip',q,'à la pipette jaugée');}
+  if(c){mnDans(c,p);for(const n of d.s.noms||[])nomsContenu(c,n);mnCompteV(c,'pip',q);mnLotMat(c,'pip',q,'à la pipette jaugée');}
   else mnDire('pippaillasse','La pipette se vide sur la paillasse : lâchez-la la pointe dans le récipient.','warn');}
 /* ---------- un journal par geste continu, pas par goutte ---------- */
 function mnLotMat(c,cle,q,txt,u){if(!MN.lotM||MN.lotM.id!==c.id||MN.lotM.cle!==cle){mnFinLotMat();MN.lotM={id:c.id,cle,q:0,txt,u:u||'mL'};}MN.lotM.q+=q;
@@ -5240,11 +5310,16 @@ function mnBoucleMateriel(now,dt){let bouge=false;
   return bouge;}
 function mnDessineMateriel(g,now){
   const jets=[];if(MN.jet)jets.push(MN.jet.id);if(MN.jetCourt)jets.push(MN.jetCourt.id);
-  for(const id of jets){const d=devId(id);if(!d)continue;const B=pissBec(d),R=mnRecipSous(B.x,B.y+30),ys=R?mnSurface(R.c):Y0;
-    E('path',{d:`M${B.x} ${B.y} Q${B.x+6} ${B.y+8} ${B.x+4} ${ys}`,fill:'none',stroke:'rgba(70,100,115,.4)','stroke-width':3,'stroke-linecap':'round'},g);
-    E('path',{d:`M${B.x} ${B.y} Q${B.x+6} ${B.y+8} ${B.x+4} ${ys}`,fill:'none',stroke:'#D6E6EE','stroke-width':1.8,'stroke-linecap':'round'},g);}
+  for(const id of jets){const d=devId(id);if(!d)continue;const B=pissBec(d),ys=mnFond(mnPisCible(d)),sx=d.s.dock&&d.s.dock.cote>0?-1:1,dp=`M${B.x} ${B.y} Q${B.x+6*sx} ${B.y+8} ${B.x+4*sx} ${ys}`;
+    E('path',{d:dp,fill:'none',stroke:'rgba(70,100,115,.4)','stroke-width':3,'stroke-linecap':'round'},g);
+    E('path',{d:dp,fill:'none',stroke:'#D6E6EE','stroke-width':1.8,'stroke-linecap':'round'},g);}
+  /* ce que vise la spatule qu'on tient ; la place qu'aurait la pissette */
+  if(drag&&drag.k==='main'&&drag.moved&&drag.mat==='spatule'){const T=mnCibleSpatule(drag.d,drag.ptr);
+    if(T&&T.f)E('ellipse',{cx:T.f.x+32,cy:T.f.y+17,rx:17,ry:7,class:'mn-vise'},g);
+    else if(T&&T.R){const O=mnOuv(T.R.c);E('ellipse',{cx:O.x,cy:O.y,rx:O.r+7,ry:5,class:'mn-vise'},g);}}
+  if(drag&&drag.k==='main'&&drag.moved&&drag.mat==='pissette'){const T=mnCibleDock(drag.d);if(T)mnDessinePlace(g,T);}
   for(const gr of MN.grains){const u=(now-gr.t0)/450;for(let i=0;i<5;i++){const y=gr.y0+(gr.y1-gr.y0)*Math.min(1,u*u*(1+i*0.12));E('circle',{cx:gr.x+(i-2)*1.6,cy:y,r:1.3,fill:gr.col,stroke:'rgba(0,0,0,.3)','stroke-width':0.3},g);}}
-  if(MN.videPip){const d=devId(MN.videPip.id);if(d){const P=pipPointe(d),R=mnRecipSous(P.x,P.y),ys=R?mnSurface(R.c):Y0;E('line',{x1:P.x,y1:P.y,x2:P.x,y2:ys,stroke:tuCouleur(mnC(d,'cg')),'stroke-width':1.4},g);}}
+  if(MN.videPip){const d=devId(MN.videPip.id);if(d){const P=pipPointe(d),R=mnRecipSous(P.x,P.y),ys=mnFond(R&&R.c);E('line',{x1:P.x,y1:P.y,x2:P.x,y2:ys,stroke:tuCouleur(mnC(d,'cg')),'stroke-width':1.4},g);}}
   if(MN.fil){const v=devId(MN.fil.id);if(v){const x=v.x+(MN.fil.k==='com'?30:74),y=v.y+128;E('circle',{cx:x,cy:y,r:11+2*Math.sin(now/150),class:'mn-vise'},g);}}}
 
 /* ---------- la loupe d'un récipient : le trait d'une fiole, les graduations d'une éprouvette ; celle de la pipette ---------- */
@@ -6004,7 +6079,7 @@ window.__chim={get st(){return st},TYPES,PROD,EXPS,chargeExperience,verserProdui
   get sel(){return sel},set sel(v){sel=v},opts,poser,lacher,cibleRecipient,
   TUTOS,TUA,TU,tuDemarrer,tuQuitter,tuEtape,rangerNiveau2,basculeNiveau2,lectureBurette,volumeTotal,boiteDev,geo,
   MN,enMain,mnVisuel,basculeMain,mnPresse,mnEtats,mnLog,mnAttendre,ptSVG,get drag(){return drag},get VUE(){return VUE},
-  Y0,mnVol,mnC,mnSurface,pipPointe,sousBurette,surQui,experienceCourante};
+  Y0,mnVol,mnC,mnSurface,pipPointe,sousBurette,surQui,experienceCourante,mnOuv,pissCorps,pissBec,spatPrise};
 })();
 </script>
 
