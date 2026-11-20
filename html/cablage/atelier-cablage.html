@@ -182,7 +182,7 @@ select.btn{padding-right:28px;max-width:100%}
   .libsec,.libgrid{display:contents}
   .lib .lab,.libnote{display:none}
   .item{flex:none;touch-action:pan-x;padding:5px}
-  .win.float{left:8px!important;right:8px!important;top:auto!important;bottom:8px!important;width:auto!important;max-height:70vh!important}
+  .win.float{left:8px!important;right:8px!important;top:auto!important;bottom:8px!important;width:auto!important;max-height:min(70vh,calc(100% - 24px))!important}
   .win-grip{display:none}
   .bar-sp{display:none}
 }
@@ -1724,7 +1724,7 @@ function makeWin(id,title,o){o=o||{};
   w.head.addEventListener('pointerdown',e=>{toFront(w);if(e.target.closest('button')||winState(id).dock)return;
     const r=el.getBoundingClientRect();d={dx:e.clientX-r.left,dy:e.clientY-r.top};w.head.setPointerCapture(e.pointerId);});
   w.head.addEventListener('pointermove',e=>{if(!d)return;const r=el.getBoundingClientRect();
-    const top=clamp(e.clientY-d.dy,0,Math.max(0,innerHeight-48));Object.assign(el.style,{left:clamp(e.clientX-d.dx,0,Math.max(0,innerWidth-r.width))+'px',top:top+'px',right:'auto',bottom:'auto',maxHeight:`calc(100vh - ${top+12}px)`});});
+    const top=clamp(e.clientY-d.dy,0,Math.max(0,hautVisible()-48));Object.assign(el.style,{left:clamp(e.clientX-d.dx,0,Math.max(0,innerWidth-r.width))+'px',top:top+'px',right:'auto',bottom:'auto',maxHeight:hautMax(top+12)});});
   const endD=()=>{if(!d)return;d=null;const r=el.getBoundingClientRect(),s=winState(id);s.x=Math.round(r.left);s.y=Math.round(r.top);save();};
   w.head.addEventListener('pointerup',endD);w.head.addEventListener('pointercancel',endD);
   const grip=el.querySelector('.win-grip');let g=null;
@@ -1741,12 +1741,32 @@ function layoutWin(id){const w=WINS[id],s=winState(id),el=w.el,dock=$('dock');
   if(s.dock){if(el.parentNode!==dock)dock.appendChild(el);Object.assign(el.style,{left:'',top:'',right:'',bottom:'',width:'',zIndex:'',maxHeight:''});}
   else{if(el.parentNode!==document.body)document.body.appendChild(el);const width=Math.min(s.w||w.defW,innerWidth-16);el.style.width=width+'px';
     /* la fenêtre ne dépasse jamais le haut de l'écran : sa hauteur suit la place qui reste (12 novembre 2026) */
-    if(s.x!=null&&s.y!=null){const top=clamp(s.y,0,Math.max(0,innerHeight-48));Object.assign(el.style,{left:clamp(s.x,0,Math.max(0,innerWidth-width))+'px',top:top+'px',right:'auto',bottom:'auto',maxHeight:`calc(100vh - ${top+12}px)`});}
-    else{const n=Object.keys(WINS).indexOf(id);Object.assign(el.style,{left:'',top:'',right:(16+24*n)+'px',bottom:(16+24*n)+'px',maxHeight:`calc(100vh - ${32+24*n+12}px)`});}toFront(w);}
+    if(s.x!=null&&s.y!=null){const top=clamp(s.y,0,Math.max(0,hautVisible()-48));Object.assign(el.style,{left:clamp(s.x,0,Math.max(0,innerWidth-width))+'px',top:top+'px',right:'auto',bottom:'auto',maxHeight:hautMax(top+12)});}
+    else{const n=Object.keys(WINS).indexOf(id);Object.assign(el.style,{left:'',top:'',right:(16+24*n)+'px',bottom:(16+24*n)+'px',maxHeight:hautMax(32+24*n+12)});}toFront(w);requestAnimationFrame(()=>garderTitre(id));}
   applyLayout();}
+/* la hauteur qu'on voit vraiment (20 novembre 2026, « sur tablette la doc gêne, on ne peut pas la fermer,
+   la croix est trop haute ») : sur tablette, 100vh compte l'écran comme si la barre d'adresse était
+   cachée ; tant qu'elle est là, une fenêtre longue calée sur 100vh montait sous le haut de l'écran, son
+   titre et sa croix avec. On prend la plus petite des hauteurs que donne le navigateur, en pixels. */
+function hautVisible(){const c=document.documentElement.clientHeight;return Math.min(innerHeight,c>0?c:innerHeight);}
+function hautMax(marge){return `min(${Math.max(140,hautVisible()-marge)}px, calc(100% - ${marge}px))`;}
+/* un dernier filet : si un navigateur place quand même le titre au-dessus de l'écran, la fenêtre
+   se recale en haut, son titre et sa croix en vue */
+function garderTitre(id){const w=WINS[id],s=winState(id);if(!s.open||s.dock)return;
+  if(w.el.getBoundingClientRect().top<0)Object.assign(w.el.style,{top:'8px',bottom:'auto',maxHeight:hautMax(20)});}
 function openWin(id){const s=winState(id);s.open=true;s.min=false;layoutWin(id);save();const w=WINS[id];if(w.onOpen)w.onOpen();}
 function closeWin(id){const s=winState(id);s.open=false;layoutWin(id);save();}
-addEventListener('resize',()=>{for(const id in WINS)if(winState(id).open&&!winState(id).dock)layoutWin(id);});
+/* un bouton de la barre ouvre sa fenêtre, et la referme si elle flotte déjà devant (20 novembre 2026) */
+function basculerWin(id){const s=winState(id),w=WINS[id];
+  if(s.open&&!s.dock&&!s.min&&+(w.el.style.zIndex||0)===winZ){closeWin(id);return;}openWin(id);}
+const refaireWins=()=>{Object.keys(WINS).filter(id=>winState(id).open&&!winState(id).dock)
+  .sort((x,y)=>(+WINS[x].el.style.zIndex||0)-(+WINS[y].el.style.zIndex||0)).forEach(layoutWin);};
+addEventListener('resize',refaireWins);
+if(window.visualViewport)visualViewport.addEventListener('resize',refaireWins);
+/* Échap ferme la fenêtre flottante du dessus, comme dans l'atelier de physique-chimie */
+addEventListener('keydown',e=>{if(e.key!=='Escape')return;let haut=null,z=-1;
+  for(const id in WINS){const s=winState(id);if(!s.open||s.dock)continue;const zz=+(WINS[id].el.style.zIndex||0);if(zz>z){z=zz;haut=id;}}
+  if(haut)closeWin(haut);});
 function applyLayout(){const app=document.querySelector('.app'),docked=$('dock').querySelector('.win:not([hidden])');
   app.classList.toggle('no-lib',!opts.lib);$('panel').hidden=!opts.panel;app.classList.toggle('no-side',!opts.panel&&!docked);
   $('b-lib').setAttribute('aria-pressed',String(!!opts.lib));$('b-panel').setAttribute('aria-pressed',String(!!opts.panel));}
@@ -2686,7 +2706,7 @@ function construitBarre(){
   $('b-range').onclick=()=>{opts.range=!opts.range;majRangement();render();save();majBarre();};
   $('b-lib').onclick=()=>{opts.lib=!opts.lib;applyLayout();save();};
   $('b-panel').onclick=()=>{opts.panel=!opts.panel;applyLayout();save();};
-  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openWin(b.dataset.open));
+  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>basculerWin(b.dataset.open));
   const ms=$('missions');ms.onchange=()=>{const id=ms.value;if(!id)return;
     const travail=st.wires.some(w=>!w.lk)||st.devs.some(d=>!d.lk);
     if(travail&&!confirm('Charger « '+MISSIONS.find(m=>m.id===id).titre+' » ? Le câblage en cours sera remplacé.')){majMission();return;}

@@ -219,7 +219,7 @@ select.btn{padding-right:28px;max-width:100%}
   .libsec,.libgrid{display:contents}
   .lib .lab,.libnote{display:none}
   .item{flex:none;touch-action:pan-x;padding:5px}
-  .win.float{left:8px!important;right:8px!important;top:auto!important;bottom:8px!important;width:auto!important;max-height:70vh}
+  .win.float{left:8px!important;right:8px!important;top:auto!important;bottom:8px!important;width:auto!important;max-height:min(70vh,calc(100% - 24px))}
   .win-grip{display:none}
   .bar-sp{display:none}
 }
@@ -1238,8 +1238,8 @@ function makeWin(id,title,o={}){
   w.head.addEventListener('pointerdown',e=>{toFront(w);if(e.target.closest('button,select,input')||winState(id).dock)return;
     const r=el.getBoundingClientRect();d={dx:e.clientX-r.left,dy:e.clientY-r.top};w.head.setPointerCapture(e.pointerId);});
   w.head.addEventListener('pointermove',e=>{if(!d)return;const r=el.getBoundingClientRect();
-    const x=clamp(e.clientX-d.dx,0,Math.max(0,innerWidth-r.width)),y=clamp(e.clientY-d.dy,0,Math.max(0,innerHeight-48));
-    Object.assign(el.style,{left:x+'px',top:y+'px',right:'auto',bottom:'auto'});});
+    const x=clamp(e.clientX-d.dx,0,Math.max(0,innerWidth-r.width)),y=clamp(e.clientY-d.dy,0,Math.max(0,hautVisible()-48));
+    Object.assign(el.style,{left:x+'px',top:y+'px',right:'auto',bottom:'auto',maxHeight:hautMax(y+12)});});
   const endD=()=>{if(!d)return;d=null;const r=el.getBoundingClientRect(),s=winState(id);s.x=Math.round(r.left);s.y=Math.round(r.top);save();};
   w.head.addEventListener('pointerup',endD);w.head.addEventListener('pointercancel',endD);
   // élargir par le coin
@@ -1258,21 +1258,34 @@ function layoutWin(id){
   el.classList.toggle('docked',!!s.dock);el.classList.toggle('float',!s.dock);el.classList.toggle('min',!!s.min);
   w.head.querySelector('[data-w="dock"]').title=s.dock?'Détacher la fenêtre':'Ranger dans la colonne de droite';
   w.head.querySelector('[data-w="min"]').title=s.min?'Déplier':'Réduire';
-  if(s.dock){if(el.parentNode!==dock)dock.appendChild(el);Object.assign(el.style,{left:'',top:'',right:'',bottom:'',width:'',zIndex:''});}
+  if(s.dock){if(el.parentNode!==dock)dock.appendChild(el);Object.assign(el.style,{left:'',top:'',right:'',bottom:'',width:'',zIndex:'',maxHeight:''});}
   else{if(el.parentNode!==document.body)document.body.appendChild(el);
     const width=Math.min(s.w||w.defW,innerWidth-16);el.style.width=width+'px';
-    if(s.x!=null&&s.y!=null){Object.assign(el.style,{left:clamp(s.x,0,Math.max(0,innerWidth-width))+'px',top:clamp(s.y,0,Math.max(0,innerHeight-48))+'px',right:'auto',bottom:'auto'});}
-    else{const n=Object.keys(WINS).indexOf(id);Object.assign(el.style,{left:'',top:'',right:(16+24*n)+'px',bottom:(16+24*n)+'px'});}
-    toFront(w);}
+    if(s.x!=null&&s.y!=null){Object.assign(el.style,{left:clamp(s.x,0,Math.max(0,innerWidth-width))+'px',top:clamp(s.y,0,Math.max(0,hautVisible()-48))+'px',right:'auto',bottom:'auto',maxHeight:hautMax(clamp(s.y,0,Math.max(0,hautVisible()-48))+12)});}
+    else{const n=Object.keys(WINS).indexOf(id);Object.assign(el.style,{left:'',top:'',right:(16+24*n)+'px',bottom:(16+24*n)+'px',maxHeight:hautMax(32+24*n+12)});}
+    toFront(w);requestAnimationFrame(()=>garderTitre(id));}
   applyLayout();
 }
+/* la hauteur qu'on voit vraiment (20 novembre 2026, « sur tablette la doc gêne, on ne peut pas la fermer,
+   la croix est trop haute », signalé sur l'atelier de câblage) : sur tablette, 100vh compte l'écran comme
+   si la barre d'adresse était cachée ; tant qu'elle est là, une fenêtre longue montait sous le haut de
+   l'écran, son titre et sa croix avec. On prend la plus petite des hauteurs que donne le navigateur. */
+function hautVisible(){const c=document.documentElement.clientHeight;return Math.min(innerHeight,c>0?c:innerHeight);}
+function hautMax(marge){return `min(${Math.max(140,hautVisible()-marge)}px, calc(100% - ${marge}px))`;}
+/* un dernier filet : si un navigateur place quand même le titre au-dessus de l'écran, la fenêtre
+   se recale en haut, son titre et sa croix en vue */
+function garderTitre(id){const w=WINS[id],s=winState(id);if(!s.open||s.dock)return;
+  if(w.el.getBoundingClientRect().top<0)Object.assign(w.el.style,{top:'8px',bottom:'auto',maxHeight:hautMax(20)});}
 function openWin(id){const s=winState(id);s.open=true;layoutWin(id);save();const w=WINS[id];if(w.onOpen)w.onOpen();}
 function closeWin(id){const s=winState(id),w=WINS[id];s.open=false;layoutWin(id);save();if(w.onClose)w.onClose();}
 const winOn=id=>{const s=opts.wins[id];return!!(s&&s.open&&!s.min);};
 /* appelées par la boucle d'animation : à chaque image, et quatre fois par seconde */
 function drawWindowsFast(){for(const id in WINS){const w=WINS[id];if(w.fast&&winOn(id))w.fast();}}
 function drawWindowsSlow(){for(const id in WINS){const w=WINS[id];if(w.slow&&winOn(id))w.slow();}}
-addEventListener('resize',()=>{for(const id in WINS)if(winState(id).open&&!winState(id).dock)layoutWin(id);});
+const refaireWins=()=>{Object.keys(WINS).filter(id=>winState(id).open&&!winState(id).dock)
+  .sort((x,y)=>(+WINS[x].el.style.zIndex||0)-(+WINS[y].el.style.zIndex||0)).forEach(id=>layoutWin(id));};
+addEventListener('resize',refaireWins);
+if(window.visualViewport)visualViewport.addEventListener('resize',refaireWins);
 
 /* la disposition de l'écran : bibliothèque et panneau se montrent ou se cachent ; la colonne
    de droite reste tant qu'une fenêtre y est rangée */
