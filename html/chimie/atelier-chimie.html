@@ -434,7 +434,7 @@ function T(par,x,y,s,at){const t=E('text',Object.assign({x,y},at||{}),par);t.tex
 function H(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /* nombres à la française : virgule, espace insécable entre milliers */
-function nf(v,d){if(!isFinite(v))return '—';const s=(+v).toFixed(d==null?0:d).split('.');
+function nf(v,d){if(!isFinite(v))return '—';let t=(+v).toFixed(d==null?0:d);if(/^-0(\.0+)?$/.test(t))t=t.slice(1);const s=t.split('.');   // jamais « -0,00 » : un pH-mètre dans l'acide à 1 mol/L, un thermomètre dans la glace fondante
   s[0]=s[0].replace(/\B(?=(\d{3})+(?!\d))/g,' ');return s.join(',');}
 /* trois chiffres significatifs : 0,0500 ; 1,25 ; 12,5 */
 function n3(v){if(!isFinite(v))return '—';if(v===0)return '0';const a=Math.abs(v),d=clamp(2-Math.floor(Math.log10(a)),0,6);return nf(v,d);}
@@ -464,6 +464,10 @@ function nomCouleur(rgb){const[r,g,b]=rgb,mx=Math.max(r,g,b),mn=Math.min(r,g,b),
   else if(h<195)n=l>0.8?'bleu-vert pâle':'bleu-vert';else if(h<255)n=l>0.8?'bleu très clair':l>0.62?'bleu clair':l<0.3?'bleu foncé':'bleue';
   else if(h<290)n=l>0.75?'mauve':'violette';else n=l>0.72?'rose':'fuchsia';
   if(l>0.9&&s<0.5)n+=' (à peine teintée)';return n;}
+/* nomCouleur accorde à « une solution » ; auMasc accorde à « un précipité », « un résidu », « du liquide » (23 novembre 2026 :
+   la page écrivait « de liquide bleue », et « un précipité jaun » en ôtant le e de jaune). « incolore » et « blanchâtre » ne changent pas */
+const MASC={bleue:'bleu',verte:'vert',brune:'brun',grise:'gris',noire:'noir',violette:'violet','orangée':'orangé','teintée)':'teinté)'};
+function auMasc(n){return String(n||'').split(' ').map(w=>MASC[w]||w).join(' ');}
 /* ================= les produits =================
    Ce qu'on verse. Chacun dit s'il est au labo, d'après l'inventaire de
    _commun/tp/ORGANISATION-LABO-PLAN (photos du 24 septembre et du 1er octobre 2026, commande
@@ -539,7 +543,7 @@ S('cuso4h','Sulfate de cuivre II pentahydraté',249.69,{Cu:1,so4:1},317,11.5,'#2
 S('cuso4a','Sulfate de cuivre II anhydre',159.61,{Cu:1,so4:1},203,-66.5,'#ECECE4','poudre',{pict:['07','09'],ou:ARM_S+', étagère Cu ; '+SORDA,
   note:'Blanc tant qu’il est sec, il bleuit au contact de l’eau : le test de l’eau.'});
 S('cucl2','Chlorure de cuivre II',170.48,{Cu:1,Cl:2},730,-10,'#3CA88C','cristaux',{pict:['06','09'],ou:ARM_S+', étagère Cu'});
-S('znso4','Sulfate de zinc heptahydraté',287.56,{Zn:1,so4:1},960,17.8,'#F6F6F2','cristaux',{pict:['05','09'],ou:ARM_S+', étagère Zn'});
+S('znso4','Sulfate de zinc heptahydraté',287.56,{Zn:1,so4:1},960,17.8,'#F6F6F2','cristaux',{pict:['05','07','09'],ou:ARM_S+', étagère Zn'});
 S('feso4','Sulfate de fer II heptahydraté',278.01,{Fe2:1,so4:1},400,12,'#B7D8A4','cristaux',{pict:['07'],ou:ARM_S+', étagère Fe ; '+SORDA});
 S('fe2so43','Sulfate de fer III',399.88,{Fe3:2,so4:3},440,-30,'#E6C98C','poudre',{pict:['05'],ou:ARM_S+', étagère Fe ; '+SORDA});
 S('al2so43s','Sulfate d’aluminium',666.4,{Al:2,so4:3},870,-10,'#F7F7F4','cristaux',{pict:['05'],ou:ARM_S+', étagère Al'});
@@ -559,11 +563,11 @@ S('caco3','Calcaire (carbonate de calcium)',100.09,{Ca:1,carb:1},0,0,'#EEEBE2','
   note:'Il ne se dissout pas dans l’eau, mais un acide l’attaque en faisant mousser du dioxyde de carbone.'});
 S('sucre','Sucre (saccharose)',342.3,{sucre:1},2000,5.4,'#FBFBF8','cristaux',{labo:'non',ou:'cuisine'});
 S('zestes','Zestes d’orange',1,{},0,0,'#F2A23A','morceau',{labo:'non',ou:'trois oranges',inerte:1,note:'Râpés et chauffés dans l’eau, ils libèrent leur huile essentielle (environ 2 % de leur masse).'});
-S('savon_s','Savon',304,{Na:1,savon:1},30,0,'#F4F0E2','morceau',{labo:'non',ou:'obtenu par saponification'});
+S('savon_s','Savon',304,{Na:1,savon:1},30,0,'#F4F0E2','morceau',{labo:'non',ou:'obtenu par saponification',flotte:true});   // moins dense que l'eau salée saturée (1,2 g/mL) : relargué, il flotte
 S('mno2','Dioxyde de manganèse',86.94,{},0,0,'#2A2522','poudre',{labo:'non',ou:'à acheter',pict:['07'],catal:'mno2',note:'Un catalyseur : il décompose l’eau oxygénée sans être consommé.'});
 S('levure','Levure de boulanger',100,{},0,0,'#D9C49A','poudre',{labo:'non',ou:'cuisine',catal:'levure',note:'Elle contient de la catalase : elle décompose l’eau oxygénée.'});
-S('chromate','Chromate de potassium',194.19,{},0,0,'#F2D000','cristaux',{labo:'retirer',pict:['03','06','08','09'],ou:ARM_S+', étagère K',
-  note:'Cancérogène, mutagène, toxique pour la reproduction : à faire enlever par la filière des déchets dangereux. La page refuse de s’en servir.'});
+S('chromate','Chromate de potassium',194.19,{},0,0,'#F2D000','cristaux',{labo:'retirer',pict:['07','08','09'],ou:ARM_S+', étagère K',
+  note:'Cancérogène, mutagène, sensibilisant : à faire enlever par la filière des déchets dangereux. La page refuse de s’en servir.'});
 S('dichromate','Dichromate de potassium',294.18,{},0,0,'#F07A10','cristaux',{labo:'retirer',pict:['03','05','06','08','09'],ou:ARM_S,
   note:'Chrome VI, cancérogène : à faire enlever. La page refuse de s’en servir.'});
 /* les métaux en poudre ou en morceaux (les lames sont du matériel) */
@@ -588,7 +592,7 @@ P('cyclohexane','Cyclohexane','liquide',{t:'liq',rho:0.78,misc:false,col:'#FBFBF
   note:'Un solvant qui ne se mélange pas à l’eau et flotte dessus : il extrait le diiode, qui y devient violet.'});
 P('dcm','Dichlorométhane','liquide',{t:'liq',rho:1.33,misc:false,col:'#FBFBF6',pict:['07','08'],labo:'non',ou:'à éviter au lycée',
   note:'Solvant chloré, suspecté cancérogène : la page le garde pour voir une couche organique sous l’eau.'});
-P('limonene','Huile essentielle d’orange','liquide',{t:'liq',rho:0.84,misc:false,volat:0.4,col:'#F6E7A6',labo:'non',ou:'obtenue par hydrodistillation de zestes d’orange'});
+P('limonene','Huile essentielle d’orange','liquide',{t:'liq',rho:0.84,misc:false,volat:0.4,col:'#F6E7A6',pict:['02','07','08','09'],labo:'non',ou:'obtenue par hydrodistillation de zestes d’orange'});
 P('huile','Huile végétale','liquide',{t:'liq',rho:0.92,misc:false,col:'#E9D47C',ou:ARM_S+', en bouteille alimentaire : à transvaser',note:'Elle ne se mélange pas à l’eau et flotte dessus.'});
 /* les produits ménagers */
 P('vinaigre','Vinaigre blanc à 8°','menager',{t:'sol',comp:{acet:1.333},ou:'produits ménagers, '+ARM_V,note:'8 g d’acide éthanoïque pour 100 mL : 1,33 mol/L.'});
@@ -657,12 +661,24 @@ function dessineLiquide(g,d){const ty=TYPES[d.t],k=ty.cont,c=d.c;if(!c)return;co
   let Vp=0;if(eq)for(const x in eq.ppt)Vp+=eq.ppt[x]*(PPT[x].gel>=0.8?1800:350);Vp*=(1-c.susp);
   /* les couches, la plus dense au fond ; le volume d'un objet immergé fait monter le niveau */
   const L=couches(c);let cum=0;for(const q of L){q.h0=hauteur(k,cum+(cum>0?Vimm:0));cum+=q.V;q.h1=hauteur(k,cum+Vimm);}
-  const aq=L.find(q=>q.aq),hT=L.length?L[L.length-1].h1:0,hA0=aq?aq.h0:0,hA=aq?aq.h1:0,hP=aq?Math.min(hA,hA0+hauteur(k,Vp)):0;
+  const aq=L.find(q=>q.aq),hT=L.length?L[L.length-1].h1:0,hA0=aq?aq.h0:0,hA=aq?aq.h1:0,hP=aq?Math.min(hA,hA0+(Vp>1e-4?Math.max(hauteur(k,Vp),5):hauteur(k,Vp))):0;   // un dépôt se voit toujours : 5 unités au moins
   GEOLIQ[d.id]={cx:d.x+cx,yb:d.y+yb,h:hT,hA0,hA,hT,k,ty};
   if(aq&&Vaq>0.0005){
     E('path',{d:polyProfil(k,cx,yb,hA0,hA,-0.05),fill:liqHex(ap.sol),'fill-opacity':STY.sch?0.9:0.92},g);
-    if(ap.op>0.01)E('path',{d:polyProfil(k,cx,yb,hP,hA,-0.05),fill:liqHex(ap.ppt),'fill-opacity':(ap.op*0.92).toFixed(3)},g);
-    if(hP-hA0>0.3)E('path',{d:polyProfil(k,cx,yb,hA0,hP,-0.05),fill:liqHex(ap.ppt),'fill-opacity':0.96},g);}
+    /* le précipité, bien visible (23 novembre 2026 : « les précipités ne sont pas assez visibles ») : sa vraie couleur et non celle
+       du liquide teinté, un trouble jamais trop pâle, des flocons qui ne bougent pas d'un dessin à l'autre, et un dépôt au bord
+       marqué. Un précipité blanc sur un verre clair ne se voyait pas : il est blanc laiteux, cerné de gris */
+    if(ap.w>0){const pc=ap.ppt,blanc=Math.min(pc[0],pc[1],pc[2])>0.82,colP=STY.sch?liqHex(pc):blanc?'#FCFCFA':rgb2hex(pc.map(v=>v*0.92)),
+      bord=STY.sch?'#111':blanc?'rgba(70,82,92,.6)':'rgba(0,0,0,.38)',rh=rayon(k.prof,Math.max(0.5,(hP+hA)/2));let s0=7;for(const ch of String(d.id))s0=(s0*31+ch.charCodeAt(0))%9973;let sd=s0;
+      const alea=()=>{sd=(sd*1103515245+12345)%2147483648;return sd/2147483648;};
+      if(ap.op>0.004&&hA-hP>0.5){const opV=Math.min(0.94,0.3+ap.op*0.7);E('path',{d:polyProfil(k,cx,yb,hP,hA,-0.05),fill:colP,'fill-opacity':(opV*(blanc?0.85:1)).toFixed(3)},g);
+        const n=Math.round(clamp(4+ap.op*40,4,44)*Math.min(1,(hA-hP)/12+0.3));for(let i=0;i<n;i++){const y=yb-hP-alea()*(hA-hP),r=rayon(k.prof,yb-y)||rh,x=cx+(alea()*2-1)*Math.max(1,r-1.4);
+          E('circle',{cx:x.toFixed(1),cy:y.toFixed(1),r:(0.55+alea()*0.75).toFixed(2),fill:colP,stroke:bord,'stroke-width':0.3,'fill-opacity':0.95},g);}}
+      sd=s0+4099;   // le dépôt tire ses grains à part : ils ne bougent pas quand le trouble s'éclaircit
+      if(hP-hA0>0.3){E('path',{d:polyProfil(k,cx,yb,hA0,hP,-0.05),fill:colP,'fill-opacity':0.97},g);const rt=rayon(k.prof,hP);
+        if(rt>1)E('path',{d:`M${(cx-rt+0.6).toFixed(2)} ${(yb-hP).toFixed(2)} Q${(cx-rt/2).toFixed(1)} ${(yb-hP-0.9).toFixed(2)} ${cx} ${(yb-hP).toFixed(2)} T${(cx+rt-0.6).toFixed(2)} ${(yb-hP).toFixed(2)}`,fill:'none',stroke:bord,'stroke-width':0.55},g);
+        const m=Math.round(clamp((hP-hA0)*3,4,30));for(let i=0;i<m;i++){const h=hA0+alea()*(hP-hA0),r=rayon(k.prof,h);if(r<1)continue;
+          E('circle',{cx:(cx+(alea()*2-1)*(r-1)).toFixed(1),cy:(yb-h).toFixed(1),r:(0.4+alea()*0.5).toFixed(2),fill:'none',stroke:bord,'stroke-width':0.3},g);}}}}
   for(const q of L){if(q.aq)continue;E('path',{d:polyProfil(k,cx,yb,q.h0,q.h1,-0.05),fill:liqHex(couleurOrg(q.o,1.2*k.rmax/10)),'fill-opacity':0.88},g);
     if(c.emuls>0)E('path',{d:polyProfil(k,cx,yb,q.h0,q.h1,-0.05),fill:'#fff','fill-opacity':(0.5*c.emuls).toFixed(2)},g);}
   /* le ménisque au-dessus de chaque couche : la surface, et les interfaces */
@@ -674,7 +690,7 @@ function dessineLiquide(g,d){const ty=TYPES[d.t],k=ty.cont,c=d.c;if(!c)return;co
   let ix=0;for(const[id,p,m,dep]of tas){if(m<0.002)continue;const n=clamp(Math.round(4+Math.sqrt(m)*14),3,60);let seed=0;for(const ch of id)seed=(seed*31+ch.charCodeAt(0))%9973;
     const col=dep&&Object.keys(dep).length?melange(hex2rgb(p.col),hex2rgb(MET.Cu.col),0.5):hex2rgb(p.col);
     for(let i=0;i<n;i++){seed=(seed*1103515245+12345)%2147483648;const u=(seed/2147483648),v=((seed>>8)%1000)/1000;
-      const x=cx+(u*2-1)*rb*0.92,s=p.forme==='poudre'?1.1:p.forme==='pastilles'?3.2:p.forme==='morceau'?Math.min(rb*0.6,6+Math.sqrt(m)*4):2.2,y=fond-v*Math.min(4,1+m)-s/2;
+      const x=cx+(u*2-1)*rb*0.92,s=p.forme==='poudre'?1.1:p.forme==='pastilles'?3.2:p.forme==='morceau'?Math.min(rb*0.6,6+Math.sqrt(m)*4):2.2,y=p.flotte&&hA>2?yb-hA+s*0.15:fond-v*Math.min(4,1+m)-s/2;   // ce qui flotte, à la surface de l'eau
       if(p.forme==='morceau'&&i>0)break;
       E(p.forme==='pastilles'?'ellipse':'rect',p.forme==='pastilles'?{cx:x,cy:y,rx:s,ry:s*0.55,fill:rgb2hex(col),stroke:STY.sch?'#111':'rgba(0,0,0,.25)','stroke-width':0.4}:
         {x:x-s/2,y:y-s/2,width:s,height:s*(p.forme==='morceau'?0.7:1),rx:p.forme==='morceau'?2:0.3,fill:rgb2hex(col),stroke:STY.sch?'#111':'rgba(0,0,0,.25)','stroke-width':0.35,transform:`rotate(${(u*90).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})`},g);}
@@ -1532,7 +1548,7 @@ function meVolumeCorps(d){const b=meCorpsAbs(d);return b?Math.PI*b.r*b.r*(b.y1-b
 function meLegAuto(d){const a=d.t==='masse'?'Masse de '+d.p.m+' g':'Cylindre '+({al:'d’aluminium',laiton:'de laiton',fer:'de fer',pvc:'de plastique',bois:'de bois'})[d.p.mat];
   if(d.leg==null||d.leg===''||d.leg===d.s.legAuto)d.leg=a;d.s.legAuto=a;}
 D('masse',{nom:'Masse marquée à double crochet',cat:'meca',pre:'M',w:40,h:60,pendable:1,attache:'dans',rang:2.5,
-  labo:'oui',ou:'quatre séries à double meCrochet (commande Sordalab du 12 octobre 2026) et la boîte Didalab',
+  labo:'oui',ou:'quatre séries à double crochet (commande Sordalab du 12 octobre 2026) et la boîte Didalab',
   params:[{k:'m',lab:'Masse',opts:['10','20','50','100','200','500'],noms:['10 g','20 g','50 g','100 g','200 g','500 g'],def:'100'}],
   masseDe:d=>+d.p.m,hVar:d=>Math.round(10+meDimMasse(+d.p.m).h+10),
   accroche:d=>({x:20,y:(d.s&&d.s.mou)||0}),
@@ -1860,7 +1876,7 @@ function meNoteBarre(d){const k=meEnfantsDe(d),L=[];
   else L.push(Math.abs(th)<0.5?'La barre reste horizontale.':Math.abs(th)>=ME_BARRE.butee-0.1?'La barre penche à '+(th>0?'droite':'gauche')+', jusqu’à la butée.':'La barre penche à '+(th>0?'droite':'gauche')+'.');
   return L.join(' ');}
 function meVraiBarre(d){const ch=d.s.charges||{},keys=Object.keys(ch).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
-  return meFr(`<p>${keys.map(k=>{const i=parseInt(k.slice(1));return`trou ${i} (${nf(i*2,0)} cm) : ${meN(ch[k],3)}, moment ${nf(-ch[k]*i*0.02,4)} N·m`;}).join(' ; ')||'aucune charge'}</p><p>Somme des moments des charges (sens horaire positif) : ${nf(d.s.tau||0,4)} N·m${d.p.dyn!=='non'?' · force du dynamomètre '+meN(d.s.Fdyn||0,3):''}</p>`);}
+  return meFr(`<p>${keys.map(k=>{const i=parseInt(k.slice(1));return`trou ${i} (${nf(i*2,0)} cm) : ${meN(ch[k],3)}, moment ${nf(ch[k]*i*0.02,4)} N·m`;}).join(' ; ')||'aucune charge'}</p><p>Somme des moments des charges (sens horaire positif) : ${nf(d.s.tau||0,4)} N·m${d.p.dyn!=='non'?' · force du dynamomètre '+meN(d.s.Fdyn||0,3):''}</p>`);}
 
 /* un appareil dont la hauteur change (l'inclinaison du plan, la table et ses vecteurs) garde son pied où il est */
 function meGarderPied(d){const h=hDev(d);if(d.s.hPied!=null&&Math.abs(h-d.s.hPied)>0.01){const dy=h-d.s.hPied;d.y-=dy;for(const x of dependants(d)){x.y-=dy;}}d.s.hPied=h;}
@@ -2166,7 +2182,7 @@ const IND={
   php:{pK:[9.4],col:['#FFFFFF','#F584E0'],cl:4e-5,nom:'phénolphtaléine'},
   rph:{pK:[7.9],col:['#F6DA6A','#EE5A86'],cl:6e-5,nom:'rouge de phénol'},
   bbp:{pK:[4.0],col:['#F4E07A','#7E6CE0'],cl:6e-5,nom:'bleu de bromophénol'},
-  chou:{pK:[3.0,6.2,8.6,11.4],col:['#EC6A80','#B474BC','#6A86D8','#62BC84','#F2E24A'],cl:0.25,nom:'jus de chou rouge'}};
+  chou:{pK:[3.0,6.2,8.6,12.7],col:['#EC6A80','#B474BC','#6A86D8','#62BC84','#F2E24A'],cl:0.25,nom:'jus de chou rouge'}};
 const EPS_CACHE={};
 function eps(hex,cl){const k=hex+cl;if(!EPS_CACHE[k])EPS_CACHE[k]=hex2rgb(hex).map(v=>-LOG10(Math.max(1e-4,lin(v)))/cl);return EPS_CACHE[k];}
 /* les métaux : l'ion qu'ils donnent, leur potentiel standard (V), leur couleur, et la vitesse de leurs réactions
@@ -2177,8 +2193,8 @@ const MET={Zn:{ion:'Zn',z:2,E:-0.76,M:65.38,col:'#A8B1B7',nom:'zinc'},Fe:{ion:'F
   C:{inerte:1,E:0.2,col:'#2F3235',nom:'graphite'}};
 const KR={Mg:{H:5e-5,Cu:2e-6,Ag:2e-6,Fe3:1e-6,Fe2:2e-7,Zn:1e-7},Al:{H:6e-6,Cu:1e-6,Ag:6e-7,Fe3:4e-7,Fe2:6e-8,Zn:3e-8,OH:5e-6},
   Zn:{H:1.2e-6,Cu:3e-7,Ag:3e-7,Fe3:2e-7,Fe2:3e-8},Fe:{H:1.5e-7,Cu:1.5e-7,Ag:2e-7,Fe3:1e-7},Cu:{Ag:3e-7,Fe3:6e-7,NO3:1e-6}};
-const DHR={Mg:{H:-467,Cu:-531,Ag:-680,Fe3:-430,Fe2:-378,Zn:-313},Al:{H:-531,Cu:-628,Ag:-850,Fe3:-450,Fe2:-400,Zn:-300,OH:-420},
-  Zn:{H:-154,Cu:-218,Ag:-365,Fe3:-200,Fe2:-65},Fe:{H:-89,Cu:-153,Ag:-300,Fe3:-120},Cu:{Ag:-146,Fe3:-82,NO3:-120}};
+const DHR={Mg:{H:-467,Cu:-531,Ag:-680,Fe3:-548,Fe2:-378,Zn:-313},Al:{H:-531,Cu:-628,Ag:-850,Fe3:-653,Fe2:-400,Zn:-300,OH:-420},
+  Zn:{H:-154,Cu:-218,Ag:-365,Fe3:-235,Fe2:-65},Fe:{H:-89,Cu:-153,Ag:-300,Fe3:-170},Cu:{Ag:-146,Fe3:-16,NO3:-120}};   // avec Fe³⁺ : des ΔH, plus des ΔG (23 novembre 2026)
 const ASPEC={poudre:6000,feuille:2000,ruban:1500};   // cm² par mole de métal divisé
 const GAZ={H2:{nom:'dihydrogène',f:'H2'},CO2:{nom:'dioxyde de carbone',f:'CO2'},O2:{nom:'dioxygène',f:'O2'},Cl2:{nom:'dichlore',f:'Cl2',danger:1},NO2:{nom:'dioxyde d’azote',f:'NO2',danger:1}};
 
@@ -2455,7 +2471,7 @@ function ebullition(c,ev,ctx,C){const Teb=tEbullition(c);if(!(c.V>1e-7&&c.T>Teb)
   const org=[];for(const o of c.org){const p=PROD[o.id];if(!p||!p.volat)continue;const mo=Math.min(o.V*o.rho,nw*18.02*p.volat);if(mo>1e-9){o.V-=mo/o.rho;org.push({id:o.id,V:mo/o.rho,rho:o.rho,col:o.col});}}
   c.org=c.org.filter(o=>o.V>1e-6);
   if(ne>0)c.tot.eth-=ne;c.V-=(ne*VMOL.eth+nw*18.02)/1000;
-  ev.vap=nw*18.02+ne*46.07;ev.vapeur={w:nw,eth:ne,org,y,T:interp(VLE_X,VLE_T,y)};
+  ev.vap=nw*18.02+ne*46.07;ev.vapeur={w:nw,eth:ne,org,y,T:interp(VLE_Y,VLE_T,y)};   // la rosée de la vapeur : la courbe de la vapeur, pas celle du liquide (23 novembre 2026 : la tête lisait 80 °C pour un distillat à 50 %)
   if(c.V<2e-6){c.V=0;c.eq=null;noter(c,'sec','Tout le liquide s’est évaporé : il reste un résidu sec.');}else equilibre(c,true);
   return Teb;}
 /* la molalité des particules dissoutes, pour l'ébullition et la congélation */
@@ -2485,7 +2501,7 @@ function precipites(c){const d=c.eq;if(!d)return[];return Object.keys(d.ppt).fil
    qui change, une effervescence, un dépôt, la température */
 function observer(c){const d=c.eq;
   if(d){for(const k in PPT){const n=d.ppt[k]||0,cle='ppt'+k;
-      if(n>2e-7&&!c.vu[cle]){const nom=nomCouleur(hex2rgb(PPT[k].col));noter(c,cle,'Un précipité '+(nom==='incolore'||nom==='blanchâtre'?'blanc':nom.replace(/e$/,''))+' apparaît.',{nom:PPT[k].nom});oublier(c,'fin'+k);}
+      if(n>2e-7&&!c.vu[cle]){const nom=nomCouleur(hex2rgb(PPT[k].col));noter(c,cle,'Un précipité '+(nom==='incolore'||nom==='blanchâtre'?'blanc':auMasc(nom))+' apparaît.',{nom:PPT[k].nom});oublier(c,'fin'+k);}
       else if(n<5e-8&&c.vu[cle]&&!c.vu['fin'+k]){noter(c,'fin'+k,'Le précipité '+(['ZnOH2','AlOH3','AgCl','CaCO3','BaSO4','MgOH2','CaOx','CaSO4'].includes(k)?'blanc':'')+' disparaît : il s’est redissous.',{nom:PPT[k].nom});oublier(c,cle);}}
     const a=aspect(c,3);if(c.vu.col!==a.nomSol&&c.V>2e-6){if(c.vu.col!=null)noter(c,'col'+a.nomSol+SIMT.toFixed(0),'La solution devient '+a.nomSol+'.');c.vu.col=a.nomSol;}}
   for(const g in c.flux){if(g==='vap')continue;if(c.flux[g]>2e-7&&!c.vu['gaz'+g]){noter(c,'gaz'+g,'Effervescence : un gaz se dégage.',{nom:GAZ[g].nom,danger:GAZ[g].danger});}
@@ -2993,7 +3009,7 @@ function panneauSonde(d){const c=devId(d.dans);return`<div class="lecture"><span
   <button class="btn" id="pNote">Noter dans le relevé</button>`;}
 function panneauRecueil(d){return`<div class="obs-box" id="lv-voit"></div><div class="row"><button class="btn" id="pBuch">Bûchette enflammée</button><button class="btn" id="pBuch2">Bûchette incandescente</button><button class="btn" id="pVidG">Vider le tube</button></div><p class="note" id="pEssai"></p>
   <p class="note">Le tube rempli d’eau, retourné sur la cuve : le gaz qui arrive par le tube à dégagement chasse l’eau. Reliez-le en choisissant ce tube comme sortie du tube à dégagement.</p>`;}
-function panneauEntonnoir(d){const r=d.c;let s='Filtre propre.';if(r&&(Object.keys(r.sol).length||r.eq&&Object.keys(r.eq.ppt).length)){const ap=aspect(r,2);s='Sur le filtre : un résidu '+(ap.nomPpt||'solide')+(opts.prof&&r.eq?' ('+Object.keys(r.eq.ppt).map(k=>PPT[k].nom).concat(Object.keys(r.sol).map(k=>PROD[k].nom)).join(', ')+')':'')+'.';}
+function panneauEntonnoir(d){const r=d.c;let s='Filtre propre.';if(r&&(Object.keys(r.sol).length||r.eq&&Object.keys(r.eq.ppt).length)){const ap=aspect(r,2);s='Sur le filtre : un résidu '+(ap.nomPpt?(ap.nomPpt==='incolore'||ap.nomPpt==='blanchâtre'?'blanc':auMasc(ap.nomPpt)):'solide')+(opts.prof&&r.eq?' ('+Object.keys(r.eq.ppt).map(k=>PPT[k].nom).concat(Object.keys(r.sol).map(k=>PROD[k].nom)).join(', ')+')':'')+'.';}
   return`<p class="note">${esc(s)}</p><p class="note">Pour filtrer : choisissez le récipient à filtrer, « Transvaser », et cet entonnoir comme destination. Le filtrat coule dans le récipient où plonge l’entonnoir.</p><button class="btn" id="pFiltreNeuf">Changer le papier filtre</button>`;}
 /* ---------- brancher les commandes ---------- */
 function brancherPanneau(d){const on=(id,f)=>{const e=$(id);if(e)e.onclick=f;};
@@ -3048,13 +3064,14 @@ function decrire(d){const c=d.c,k=TYPES[d.t].cont;if(!c)return'';const L=[];cons
   const ap=aspect(c,1.2*k.rmax/10);
   /* une phase organique : son nom, au-dessus de l'eau si elle est moins dense, au-dessous sinon (13 novembre 2026 : tout était « huile », toujours dessus) */
   const nomOrg=o=>{const p=PROD[o.id];return p?p.nom.replace(/^./,x=>x.toLowerCase()):'huile';},de=o=>/^[aeéèêiouyh]/i.test(nomOrg(o))?'d’':'de ';
-  if(c.V>1e-7)L.push(`<b>${fml(c.V*1000)}</b> de liquide ${ap.nomSol==='incolore'?'incolore':ap.nomSol}`+c.org.map(o=>`, ${(o.rho||0.9)<1?'sous':'sur'} ${fml(o.V)} ${de(o)}${nomOrg(o)}`).join(''));
+  if(c.V>1e-7)L.push(`<b>${fml(c.V*1000)}</b> de liquide ${auMasc(ap.nomSol)}`+c.org.map(o=>`, ${(o.rho||0.9)<1?'sous':'sur'} ${fml(o.V)} ${de(o)}${nomOrg(o)}`).join(''));
   else if(c.org.length)L.push(c.org.map(o=>`<b>${fml(o.V)}</b> ${de(o)}${nomOrg(o)}`).join(', '));
   else if(c.tot&&Object.keys(c.tot).some(x=>c.tot[x]>1e-7))L.push('Un résidu sec au fond.');
-  const pr=precipites(c);if(pr.length){const pos=c.susp>0.5?'en suspension, la solution est trouble':c.susp>0.12?'qui se dépose':'déposé au fond';L.push('Un précipité '+(ap.nomPpt==='incolore'||ap.nomPpt==='blanchâtre'?'blanc':ap.nomPpt.replace(/e$/,''))+', '+pos+(opts.prof?' ('+pr.map(x=>PPT[x].nom).join(', ')+')':'')+'.');}
-  for(const id in c.sol){const p=PROD[id];if(c.sol[id]*p.M>0.001)L.push('Au fond : '+fg(c.sol[id]*p.M)+' de '+p.nom.replace(/^./,x=>x.toLowerCase())+(p.catal?'':', pas encore dissous')+'.');}
+  const pr=precipites(c);if(pr.length){const pos=c.susp>0.5?'en suspension, la solution est trouble':c.susp>0.12?'qui se dépose':'déposé au fond';L.push('Un précipité '+(ap.nomPpt==='incolore'||ap.nomPpt==='blanchâtre'?'blanc':auMasc(ap.nomPpt))+', '+pos+(opts.prof?' ('+pr.map(x=>PPT[x].nom).join(', ')+')':'')+'.');}
+  /* un solide : au fond, ou en surface s'il flotte (le savon relargué) ; « pas encore dissous » seulement s'il peut encore se dissoudre (23 novembre 2026 : le sulfate de cuivre anhydre sous l'huile et le savon de l'eau salée l'étaient aussi) */
+  for(const id in c.sol){const p=PROD[id];if(c.sol[id]*p.M>0.001){const m=fg(c.sol[id]*p.M),nom=p.nom.replace(/^./,x=>x.toLowerCase());const dn=(/^[aeéèêiouyh]/i.test(nom)?' d’':' de ')+nom;L.push(p.flotte?'En surface : '+m+dn+', qui flotte.':'Au fond : '+m+dn+(p.catal||!(c.V>1e-6)?'':satRatio(c,id)>=0.999?', qui ne se dissout plus : la solution est saturée':', pas encore dissous')+'.');}}
   for(const id in c.met)if(c.met[id].n>1e-7){const dp=c.met[id].dep||{},td=Object.values(dp).reduce((a,b)=>a+b,0);
-    L.push('Au fond : '+fg(c.met[id].n*PROD[id].M)+' de '+PROD[id].nom.replace(/^./,x=>x.toLowerCase())+(td>2e-6?', recouvert d’un dépôt '+((dp.Cu||0)>(dp.Ag||0)?'rouge-brun':dp.Ag?'gris':'sombre'):'')+'.');}
+    const nm=PROD[id].nom.replace(/^./,x=>x.toLowerCase());L.push('Au fond : '+fg(c.met[id].n*PROD[id].M)+(/^[aeéèêiouyh]/i.test(nm)?' d’':' de ')+nm+(td>2e-6?', recouvert d’un dépôt '+((dp.Cu||0)>(dp.Ag||0)?'rouge-brun':dp.Ag?'gris':'sombre'):'')+'.');}
   if(c.ice>0.5)L.push('Glace : '+fg(c.ice)+'.');
   const f=c.flux||{};let s=0;for(const g in f)if(g!=='vap')s+=f[g];if(s>1.5e-7)L.push('Effervescence : des bulles se dégagent'+(opts.prof?' ('+Object.keys(f).filter(g=>g!=='vap'&&f[g]>1e-8).map(g=>GAZ[g].nom).join(', ')+')':'')+'.');
   if((f.vap||0)>1e-4)L.push('La solution bout.');
@@ -3245,7 +3262,7 @@ X({id:'ph-menager',grp:'Solutions et pH',titre:'Acide, basique ou neutre ? Le pH
   produits:['vinaigre','citron','eau','robinet','nahco3','naoh01','tp7','tp4'],
   protocole:ol(['Six béchers de 50 mL : vinaigre, jus de citron, eau distillée, eau du robinet, bicarbonate dans l’eau, soude diluée (comme un déboucheur).',
     'Pour chacun : « Papier pH », puis lire la couleur sur l’échelle.','Le pH-mètre plonge dans le premier bécher : étalonnez-le d’abord sur les tampons pH 7 et pH 4 (glissez la sonde dans chaque tampon, puis « Tampon pH 7 », « Tampon pH 4 »).',
-    'Déplacez la sonde de bécher en bécher (choix « La sonde plonge dans »), et notez chaque pH.','Pour aller plus loin : prélevez 1 mL de vinaigre, complétez à 100 mL dans une fiole jaugée, mesurez : le pH monte d’environ deux unités.']),
+    'Déplacez la sonde de bécher en bécher (choix « La sonde plonge dans »), et notez chaque pH.','Pour aller plus loin : prélevez 1 mL de vinaigre, complétez à 100 mL dans une fiole jaugée, mesurez : le pH monte d’environ une unité : l’acide éthanoïque est faible, diluer cent fois ne fait monter son pH que d’une unité.']),
   attendu:'<p>Vinaigre 2,3 à 2,4 ; citron 2,5 ; eau distillée 5,6 à 6 (le CO₂ de l’air) ; eau du robinet 7,6 ; bicarbonate 8,3 ; soude à 0,1 mol/L 13. Le papier pH ne départage pas 2,4 et 2,5 ; le pH-mètre non étalonné lit environ 0,2 de trop.</p>',
   monte:()=>{const L=[['vinaigre','Vinaigre'],['citron','Jus de citron'],['eau','Eau distillée'],['robinet','Eau du robinet'],[null,'Eau et bicarbonate'],['naoh01','Soude diluée']];
     L.forEach(([id,leg],i)=>{const b=B('b50',230+i*95,{leg});if(id)V(b,id,40);else{V(b,'eau',40);Vg(b,'nahco3',0.8);}});
@@ -3329,7 +3346,7 @@ X({id:'zinc-acide',grp:'Réactions et gaz',titre:'Le zinc et l’acide : le dihy
   produits:['hcl1','zn_p','eau'],
   protocole:ol(['Dans l’erlenmeyer, 30 mL d’acide chlorhydrique à 1 mol/L.','Ajoutez 1 g de zinc en poudre (« Verser un produit ») : effervescence, l’erlenmeyer chauffe.','Le gaz passe par le tube à dégagement dans le tube à gaz retourné sur la cuve à eau.',
     'Quand le tube est plein, « Bûchette enflammée » sur le tube à gaz : une petite détonation.','Mesurez le pH avant et après : l’acide est consommé.']),
-  attendu:'<p>Effervescence vive, le mélange s’échauffe de quelques degrés, le pH remonte. 1 g de zinc donne 0,015 mol de dihydrogène, environ 370 mL. Pas de flamme à proximité pendant le dégagement.</p>',
+  attendu:'<p>Effervescence vive, le mélange s’échauffe d’une dizaine de degrés, le pH remonte. 1 g de zinc donne 0,015 mol de dihydrogène, environ 370 mL. Pas de flamme à proximité pendant le dégagement.</p>',
   secu:'Dihydrogène : on éloigne toute flamme pendant le dégagement ; l’essai se fait sur un petit volume recueilli.',
   monte:()=>{const e=B('e100',330);V(e,'hcl1',30);const cu=B('crist',600,{leg:'Cuve à eau'});V(cu,'eau',400);const r=B('recueil',600,{y:Y0-24-152});const dg=ajoute('degag',0,0);dg.p.a=e.id;dg.p.b=r.id;B('flacon',180,{p:{prod:'zn_p'}});}});
 X({id:'eau-oxygenee',grp:'Réactions et gaz',titre:'L’eau oxygénée et son catalyseur : le dioxygène',niveau:'2de · 1re',
@@ -3390,18 +3407,18 @@ X({id:'titrage-couleur',grp:'Titrages',titre:'Le vinaigre est-il à 8° ? Titrag
 X({id:'titrage-ph',grp:'Titrages',titre:'Titrage pH-métrique du vinaigre',niveau:'1re · Tle',tp:'CT-06 B',
   produits:['vinaigre','eau','naoh01','tp7','tp4'],
   protocole:ol(['Le même montage, sans indicateur, avec le pH-mètre étalonné dans l’erlenmeyer.','Le relevé note une ligne à chaque ajout de la burette (fenêtre « Le relevé »).','Versez 1 mL par 1 mL, puis 0,5 mL entre 11 et 15 mL, puis 1 mL jusqu’à 20 mL.','La courbe pH = f(V) se trace dans le relevé ; « Copier pour un tableur » l’emporte.']),
-  attendu:'<p>pH de départ 2,9 ; demi-équivalence à 6,7 mL, pH 4,76 (le pKa) ; saut de pH de 6 à 11 autour de 13,3 mL ; pH 8,7 à l’équivalence ; 12,3 à 20 mL.</p>',
+  attendu:'<p>pH de départ 3,1 (1 mL de vinaigre dans 30 mL : 0,044 mol/L) ; demi-équivalence à 6,7 mL, pH 4,76 (le pKa) ; saut de pH de 6 à 11 autour de 13,3 mL ; pH 8,6 à l’équivalence ; 12,1 à 20 mL.</p>',
   monte:()=>{const{e}=monteTitrage(true);const ph=sondeDans('phm',e,300);ph.s.calp=[{r:brutPH(7),n:7},{r:brutPH(4),n:4}];ph.s.cal=2;st.rel.mode='burette';st.rel.rows=[];}});
 /* ---------- oxydoréduction et piles ---------- */
 X({id:'metaux-cuivre',grp:'Oxydoréduction et piles',titre:'Quel métal se sacrifie ? Les métaux dans le sulfate de cuivre',niveau:'Tle',tp:'CT-08 A',
   produits:['cuso4_05','znso4_1'],
-  protocole:ol(['Trois tubes de sulfate de cuivre à 0,50 mol/L : un clou en fer, une lame de zinc, une lame de cuivre.','Un quatrième tube, le témoin : sulfate de zinc et lame de cuivre.','Attendez (temps × 10) : un dépôt rouge-brun sur le fer et le zinc, la solution pâlit. Rien sur le cuivre, rien dans le témoin.','Ajoutez quelques gouttes de soude dans le tube du fer : le précipité dit quels ions sont apparus.']),
-  attendu:'<p>Le fer et le zinc se couvrent de cuivre et passent en solution ; le cuivre ne réduit pas les ions zinc. Classement : Zn, Fe, puis Cu.</p>',
+  protocole:ol(['Trois tubes de sulfate de cuivre à 0,50 mol/L : un clou en fer, une lame de zinc, une lame de cuivre.','Un quatrième tube, le témoin : sulfate de zinc et lame de cuivre.','Attendez (temps × 10) : un dépôt rouge-brun sur le fer et le zinc, la solution pâlit. Rien sur le cuivre, rien dans le témoin.','Ajoutez quelques gouttes de soude dans le tube du fer : le précipité est bleu, les ions cuivre restent en large excès et masquent le fer II, vert.']),
+  attendu:'<p>Le fer et le zinc se couvrent de cuivre et passent en solution ; le cuivre ne réduit pas les ions zinc. Le zinc et le fer sont plus réducteurs que le cuivre ; cette expérience ne les départage pas entre eux. Dans un sulfate de cuivre aussi concentré, la soude ne donne que le bleu de Cu(OH)₂ : les ions cuivre, en large excès, masquent le peu de fer II formé.</p>',
   monte:()=>{const pt=B('pt',380);[['Fe','cuso4_05'],['Zn','cuso4_05'],['Cu','cuso4_05'],['Cu','znso4_1']].forEach(([m,id],i)=>{const t=B('tube',0,{sur:pt,slot:i});V(t,id,10);B('lame',0,{dans:t,p:{m}});});}});
 X({id:'daniell',grp:'Oxydoréduction et piles',titre:'La pile Daniell : zinc, cuivre et pont salin',niveau:'Tle',tp:'CT-08 B · CCF-03',
   produits:['znso4_1','cuso4_05','kcl3'],
   protocole:ol(['Bécher de gauche : sulfate de zinc à 1 mol/L et lame de zinc. Bécher de droite : sulfate de cuivre à 0,5 mol/L et lame de cuivre.','Le voltmètre : COM sur le zinc, V sur le cuivre. Il lit 0 tant que le pont salin manque.','Le pont salin (papier filtre imbibé de chlorure de potassium) relie les deux béchers : la tension apparaît.','Inversez les fils : la tension change de signe. Le pôle + est le cuivre.']),
-  attendu:'<p>U ≈ 1,09 V. Sans pont salin, 0 V : le circuit n’est pas fermé dans la pile. Remplacer le zinc par un clou en fer : environ 0,77 V.</p>',
+  attendu:'<p>U ≈ 1,09 V. Sans pont salin, 0 V : le circuit n’est pas fermé dans la pile. Remplacer le zinc par un clou en fer : vers 0,95 V, moins qu’avec le zinc.</p>',
   monte:()=>{const a=B('b100',380,{leg:'Sulfate de zinc'});V(a,'znso4_1',70);const zn=B('lame',0,{dans:a,p:{m:'Zn'}});const b=B('b100',560,{leg:'Sulfate de cuivre'});V(b,'cuso4_05',70);const cu=B('lame',0,{dans:b,p:{m:'Cu'}});
     const v=B('volt',200,{p:{com:zn.id,v:cu.id}});B('pont',470,{y:Y0-70});}});
 X({id:'citron',grp:'Oxydoréduction et piles',titre:'La pile au citron',niveau:'2de · Tle',
@@ -3469,16 +3486,16 @@ function monteDistillation(contenuBallon,collecteur,pw){const cb=B('cb',360,{p:{
 X({id:'distillation',grp:'Séparer et distiller',titre:'Distiller un mélange d’eau et d’éthanol',niveau:'2de · 1re',
   produits:['melange12','eth'],
   protocole:ol(['Dans le ballon, 100 mL d’eau et d’éthanol à 12 % (comme un vin), sur le chauffe-ballon. La colonne, son thermomètre de tête, le réfrigérant (eau ouverte), une éprouvette sous l’allonge.',
-    'Le relevé note la température de tête toutes les 30 s ; passez le temps × 10.','Le mélange bout vers 93 °C ; en tête, la vapeur passe vers 80 °C : le distillat est riche en éthanol.',
-    'Recueillez 10 mL, puis mesurez sa masse volumique (éprouvette sur la balance) : bien moins que 1 g/mL.','Laissez continuer : la température de tête monte vers 100 °C, il ne passe presque plus que de l’eau.']),
-  attendu:'<p>Les premiers millilitres titrent environ 50 % d’éthanol en volume, puis de moins en moins ; la tête monte de 80 à près de 100 °C. Un seul passage ne donne pas d’éthanol pur.</p>',
+    'Le relevé note la température de tête toutes les 30 s ; passez le temps × 10.','Le mélange bout vers 93 °C ; en tête, la vapeur arrive presque aussi chaude, un peu au-dessus de 90 °C : elle est plus riche en éthanol que le mélange.',
+    'Recueillez 10 mL, puis mesurez sa masse volumique (éprouvette sur la balance) : moins que 1 g/mL.','Laissez continuer : la température de tête monte vers 100 °C, il ne passe presque plus que de l’eau.']),
+  attendu:'<p>Les premiers millilitres titrent environ 50 % d’éthanol en volume, puis de moins en moins ; la tête lit d’abord un peu plus de 90 °C, puis monte vers 100 °C. Une distillation simple ne donne pas d’éthanol pur : avec une colonne de Vigreux, la tête descendrait vers 80 °C et le distillat serait plus riche.</p>',
   secu:'Éthanol : vapeurs inflammables ; jamais de flamme, toujours l’eau du réfrigérant ouverte avant de chauffer.',
   monte:()=>{monteDistillation(b=>V(b,'melange12',100),'ep50');st.rel.mode='30';st.rel.rows=[];opts.acc=10;}});
 X({id:'distillation-sale',grp:'Séparer et distiller',titre:'Rendre l’eau salée potable : distiller',niveau:'CAP · 2de',
   produits:['nacl1','agno3'],
   protocole:ol(['Dans le ballon, 100 mL d’eau salée ; un bécher sous l’allonge.','Chauffez (temps × 60) : l’eau bout, la vapeur se condense, le sel reste dans le ballon.',
     'Testez le distillat au nitrate d’argent : pas de précipité, il n’y a plus d’ions chlorure. Testez l’eau du ballon : un précipité blanc abondant.']),
-  attendu:'<p>Le distillat est de l’eau pure ; le sel se concentre dans le ballon, qui bout un peu au-dessus de 100 °C.</p>',
+  attendu:'<p>Le sel ne passe pas dans le distillat ; il se concentre dans le ballon, qui bout un peu au-dessus de 100 °C.</p>',
   monte:()=>{monteDistillation(b=>V(b,'nacl1',100),'b100',80);B('flacon',820,{p:{prod:'agno3'}});opts.acc=60;}});
 X({id:'hydrodistillation',grp:'Séparer et distiller',titre:'L’huile essentielle d’orange : l’hydrodistillation',niveau:'2de · 1re',
   produits:['zestes','eau'],
@@ -3518,7 +3535,7 @@ X({id:'distance-focale',grp:'Optique',titre:'Trouver la distance focale d’une 
   protocole:ol(['La lanterne envoie un faisceau parallèle (un objet « à l’infini ») ; la lentille marquée +8 δ est à 20 cm, l’écran à 50 cm.',
     'Approchez l’écran jusqu’à ce que la tache soit la plus petite et la plus vive : c’est le foyer image F′. La distance de la lentille à l’écran est la distance focale f′.',
     'Seconde méthode : sur la lanterne, choisissez l’objet « lettre F ». Pour quatre positions de la lentille, cherchez l’image nette et notez-la dans le relevé.',
-    'Dans un tableur : 1/OA′ en fonction de 1/OA. Les points sont alignés sur une droite de pente 1, qui coupe l’axe à 1/f′.',
+    'Dans un tableur : 1/OA′ en fonction de 1/OA. Les points sont alignés sur une droite de pente 1, qui coupe l’axe des ordonnées à 1/f′.',
     'Comparez les deux valeurs entre elles, puis à la valeur marquée sur la lentille.']),
   attendu:'<p>f′ voisin de 12,5 cm, à 2,5 % près : c’est la lentille réelle, pas sa valeur marquée. La tache au foyer fait environ un millimètre et se trouve à ± 3 mm près ; les deux méthodes s’accordent à quelques millimètres. La vergence est 1/f′ en mètres : +8 δ pour 12,5 cm.</p>',
   secu:'La lanterne chauffe : on ne touche pas son boîtier.',
@@ -3568,7 +3585,7 @@ X({id:'prisme-blanc',grp:'Optique',titre:'La lumière blanche décomposée par u
     'Le pinceau ressort par la seconde face, dévié vers la base du prisme, et étalé en couleurs : c’est le spectre de la lumière blanche.',
     'Notez l’ordre des couleurs : laquelle est la plus déviée ?','Remplacez la lanterne par le laser rouge : une seule couleur, une seule direction ; la lumière du laser est monochromatique.',
     'Tournez le disque : sous 37 à 39°, les couleurs disparaissent l’une après l’autre de la seconde face, où la lumière est totalement réfléchie ; le violet d’abord.']),
-  attendu:'<p>Du rouge, le moins dévié (environ 48°), au violet, le plus dévié (environ 51°) : l’indice du verre est plus grand pour le violet (1,62 contre 1,64). Le laser n’est pas décomposé. Le spectre ne s’étale que de 3° : il se voit mieux sur un écran posé à un mètre.</p>',
+  attendu:'<p>Du rouge, le moins dévié (environ 48°), au violet, le plus dévié (environ 51°) : l’indice du verre est plus grand pour le violet (1,64 contre 1,62 pour le rouge). Le laser n’est pas décomposé. Le spectre ne s’étale que de 3° : il se voit mieux sur un écran posé à un mètre.</p>',
   secu:'La lanterne chauffe ; si l’on prend le laser, il est de classe 2 : on ne regarde ni le faisceau, ni son reflet.',
   monte:()=>{const d=B('disque',700,{p:{mode:'prisme',src:'blanche',i:55}});sel=d.id;}});
 /* la paillasse libre reste en fin de liste */
@@ -3605,7 +3622,7 @@ X({id:'meca-ressort',grp:'Mécanique',titre:'L’allongement d’un ressort : ce
     'Pour chaque charge : l’allongement Δl = lecture − lecture à vide, et le poids F = m × g.',
     'Tracez F en fonction de Δl : une droite qui passe par l’origine. Sa pente est la raideur k, en N/m.',
     'Changez le ressort (panneau : « Raideur », 50 N/m) : la même masse l’allonge deux fois et demie moins. Un dynamomètre, c’est un ressort et une règle.'])+'<p class="note">La loi du ressort n’est pas exigible en bac pro : elle montre comment marche le dynamomètre qu’on utilise partout.</p>'),
-  attendu:meFr('<p>k = 20 N/m : 50 g allongent de 24,5 mm, 100 g de 49 mm, 150 g de 74 mm, 200 g de 98 mm (au millimètre près, l’œil sur la règle). F ÷ Δl = 0,020 N/mm, soit 20 N/m. Avec le ressort de 50 N/m, 200 g allongent de 39 mm. Au-delà de 15 cm, le ressort se déforme pour toujours : on ne le tire pas avec 300 g.</p>'),
+  attendu:meFr('<p>k = 20 N/m : 50 g allongent de 24,5 mm, 100 g de 49 mm, 150 g de 74 mm, 200 g de 98 mm (au millimètre près, l’œil sur la règle). F ÷ Δl = 0,020 N/mm, soit 20 N/m. Avec le ressort de 50 N/m, 200 g allongent de 39 mm. Au-delà de 15 cm, le ressort se déforme pour toujours : 350 g l’allongeraient de 17 cm.</p>'),
   secu:meFr('Un ressort trop tiré se déforme : jamais plus de 200 g sur celui de 20 N/m. '+ME_MATOS),
   monte:()=>{meDebut();const pot=B('potmeca',380,{p:{hb:620}});const r=meSuspendre('ressort',pot,'c1',{p:{k:'20'},leg:'Ressort de 20 N/m'});
     const rg=B('regle',0,{y:Y0-620+6});rg.x=pot.x+160+16;
@@ -3620,7 +3637,7 @@ X({id:'meca-archimede',grp:'Mécanique',titre:'La poussée d’Archimède : le m
     'Cylindre entièrement immergé : la poussée F = P − P apparent ; comparez avec ce que gagne la balance, en grammes, × g. Montez encore de 10 mm : plus rien ne change, tant que le cylindre ne touche pas le fond.',
     'Descendez l’élévateur, posez à la place du bécher d’eau celui d’eau salée, puis celui d’huile (glissez-les sur la balance, « Tare » à chaque fois) : le même cylindre, la même immersion, une autre poussée.',
     'Le volume du cylindre : lâchez le cylindre d’aluminium dans l’éprouvette de 50 mL d’eau, et lisez le niveau : il monte du volume du cylindre.'])),
-  attendu:meFr('<p>P (laiton) = 2,05 N. Immergé dans l’eau : 1,80 ou 1,81 N lu, une poussée de 0,24 N ; la balance gagne 24,5 g, soit 0,24 N. Eau salée (1,04 g/mL) : 0,25 N et 25,5 g ; huile (0,92 g/mL) : 0,22 N et 22,6 g. Le dynamomètre lit à 0,05 N près : la poussée n’en sort qu’à 0,1 N près ; la balance la donne au centième de gramme. L’éprouvette monte de 50 à 74,5 mL : V = 24,5 cm³, et 24,5 mL d’eau pèsent 0,24 N.</p><p>Le cylindre qui touche le fond fausse tout : le fond le porte, le dynamomètre lit moins et la balance gagne d’autant.</p>'),
+  attendu:meFr('<p>P (laiton) = 2,05 N. Immergé dans l’eau : 1,80 N lu (1,805 N vrai), une poussée de 0,24 N ; la balance gagne 24,5 g, soit 0,24 N. Eau salée (1,04 g/mL) : 0,25 N et 25,5 g ; huile (0,92 g/mL) : 0,22 N et 22,6 g. Le dynamomètre lit à 0,05 N près : la poussée n’en sort qu’à 0,1 N près ; la balance la donne au centième de gramme. L’éprouvette monte de 50 à 74,5 mL : V = 24,5 cm³, et 24,5 mL d’eau pèsent 0,24 N.</p><p>Le cylindre qui touche le fond fausse tout : le fond le porte, le dynamomètre lit moins et la balance gagne d’autant.</p>'),
   secu:meFr('L’huile glisse : on essuie la paillasse. Le bécher posé sur l’élévateur se déplace à deux mains. '+ME_MATOS),
   monte:()=>{meDebut();const pot=B('potmeca',360,{p:{hb:500}});const dy=meSuspendre('dyn5',pot,'c2',{leg:'Dynamomètre de 5 N'});meZero(dy,0);
     const cy=meSuspendre('cyl',dy,'bas',{p:{mat:'laiton'},leg:'Cylindre de laiton'});const A=meBancArchimede(pot.x+300,'laiton',60);A.bec.leg='Bécher : eau';
@@ -3633,7 +3650,7 @@ X({id:'meca-archimede-matieres',grp:'Mécanique',titre:'Même volume, matières 
     'Calculez les deux poussées : elles sont égales, alors que les poids ne le sont pas.',
     'Descendez l’élévateur de gauche ; à la place de l’aluminium, accrochez le cylindre de fer, puis celui de plastique, puis celui de bois : celui-là flotte, le dynamomètre ne le porte plus.',
     'Le bois, lâché dans le bécher : quelle part du cylindre reste hors de l’eau ?'])),
-  attendu:meFr('<p>Aluminium : 0,65 N, puis 0,41 N dans l’eau ; laiton : 2,05 N, puis 1,80 N ; fer : 1,89 N, puis 1,65 N ; plastique : 0,34 N, puis 0,10 N : la poussée vaut 0,24 N pour tous, celle de 24,5 mL d’eau. Le bois (0,14 N) flotte : immergé aux six dixièmes, il ne déplace que 14,7 mL d’eau, son propre poids. La poussée ne dépend que du volume immergé et du liquide, pas de la matière.</p><p>Les jeux du labo sont métalliques : le plastique et le bois sont à fabriquer ou à acheter.</p>'),
+  attendu:meFr('<p>Valeurs vraies : aluminium 0,65 N, puis 0,41 N dans l’eau ; laiton 2,05 N, puis 1,80 N ; fer 1,89 N, puis 1,65 N ; plastique 0,34 N, puis 0,10 N : la poussée vaut 0,24 N pour tous, celle de 24,5 mL d’eau. Le dynamomètre de 5 N se lit à 0,05 N : on lit 0,20 ou 0,25 N de poussée. Le bois (0,14 N) flotte : immergé aux six dixièmes, il ne déplace que 14,7 mL d’eau, son propre poids. La poussée ne dépend que du volume immergé et du liquide, pas de la matière.</p><p>Les jeux du labo sont métalliques : le plastique et le bois sont à fabriquer ou à acheter.</p>'),
   secu:meFr(ME_MATOS),
   monte:()=>{meDebut();const pot=B('potmeca',330,{p:{hb:470}});const d1=meSuspendre('dyn5',pot,'c1',{leg:'Dynamomètre A'});meZero(d1,0);const d2=meSuspendre('dyn5',pot,'c2',{leg:'Dynamomètre B'});meZero(d2,0);
     meSuspendre('cyl',d1,'bas',{p:{mat:'al'},leg:'Aluminium'});meSuspendre('cyl',d2,'bas',{p:{mat:'laiton'},leg:'Laiton'});
@@ -3672,7 +3689,7 @@ X({id:'meca-pression',grp:'Mécanique',titre:'La pression augmente avec la profo
     'Descendez la capsule de 1 cm à la fois (panneau du capteur : « Hauteur de la capsule »), jusqu’au fond. À chaque fois : « Noter dans le relevé ».',
     'Tracez p en fonction de la profondeur h : une droite. Sa pente, en hPa par cm, comparée à ρ × g.',
     'Passez la capsule dans la seconde éprouvette (« La capsule plonge dans ») : de l’huile sur de l’eau salée. La pente change à l’interface.',
-    'Affichez la pression relative (panneau : « Le capteur affiche ») : elle part de 0 à la surface. Δp = ρ × g × h, la relation de Pascal.'])),
+    'Affichez la pression relative (panneau : « Le capteur affiche ») : elle part de 0 à la surface. Δp = ρ × g × h, le principe fondamental de l’hydrostatique.'])),
   attendu:meFr('<p>Dans l’eau : 0,98 hPa de plus par centimètre (ρ g = 9 810 Pa/m) ; à la surface, la pression de l’air, 1 013 hPa ; au fond (13,6 cm), 1 026,3 hPa. Dans l’huile, 0,90 hPa/cm ; dans l’eau salée, dessous, 1,02 hPa/cm. Le capteur lit au dixième d’hectopascal : la profondeur, lue au millimètre près sur le tube, fait l’essentiel de l’incertitude.</p>'),
   secu:meFr('Le capteur de pression du labo reste à vérifier (SIM-03) ; ne jamais le plonger au-delà de sa sonde.'),
   monte:()=>{meDebut();const ep=B('ep100',540,{leg:'Éprouvette : eau'});V(ep,'eau',100);const ep2=B('ep100',700,{leg:'Éprouvette : huile sur eau salée'});V(ep2,'nacl1',60);V(ep2,'huile',40);
@@ -3699,8 +3716,8 @@ MAIN('distillation',{fenetres:['releve'],
     {t:'Laissez continuer jusqu’à ce que la tête approche 100 °C.',a:'Il ne passe bientôt presque plus que de l’eau.',bouton:{lab:'Laisser passer 5 minutes',f:()=>mnAttendre(300)},ok:()=>mnCol().s.Tt>=97},
     {t:'Arrêtez le chauffage.',a:'Touchez le chauffe-ballon jusqu’à l’arrêt.',apres:true,ok:()=>mnCB().p.pw===0},
     {t:'Quelle était la température de tête pendant que passait le premier distillat ?',a:'Le relevé la garde : regardez la courbe pendant les premières minutes de distillation.',
-      saisie:{cle:'Tt',lab:'θ =',u:'°C',dec:0,juge:v=>{if(v>=76&&v<=86)return{ok:true,msg:'Vers 80 °C : la vapeur qui passe en premier est riche en éthanol, qui bout à 78 °C. Le mélange, lui, bout vers 93 °C.'};
-        if(v>=90&&v<=95)return{ok:false,msg:'C’est la température du mélange qui bout, dans le ballon. Lisez la tête de colonne.'};
+      saisie:{cle:'Tt',lab:'θ =',u:'°C',dec:0,juge:v=>{if(v>=88&&v<=95)return{ok:true,msg:'Un peu au-dessus de 90 °C, sous 100 °C : la vapeur emporte de l’éthanol, le premier distillat en titre environ 50 %. Sans plateaux, elle sort en équilibre avec le mélange qui bout, à peine moins chaude que lui ; une colonne de Vigreux la ferait descendre vers 80 °C, avec un distillat plus riche.'};
+        if(v>=76&&v<=82)return{ok:false,msg:'C’est la température d’ébullition de l’éthanol pur, ou celle d’une colonne à plateaux. Lisez la courbe du relevé, celle de notre colonne.'};
         if(v>=97)return{ok:false,msg:'C’est la fin, quand il ne passe presque plus que de l’eau. Regardez le début de la distillation.'};
         return{ok:false,msg:'Lisez la courbe du relevé au moment où les premiers millilitres passent.'};}}}]});
 
@@ -3732,7 +3749,7 @@ MAIN('hydrodistillation',{
 MAIN('reflux-savon',{
   depart:()=>{mnDepartChauffe();},
   etapes:[mnEtapeEau,
-    {t:'Chauffez doucement, à ébullition douce.',a:'Touchez le chauffe-ballon une fois : 40 %. La vapeur monte, se condense dans le réfrigérant et retombe.',ok:()=>mnCB().p.pw>0},
+    {t:'Chauffez doucement, à ébullition douce.',a:'Lunettes et gants : la soude dans l’éthanol bouillant est corrosive. Touchez le chauffe-ballon une fois : 40 %. La vapeur monte, se condense dans le réfrigérant et retombe.',ok:()=>mnCB().p.pw>0},
     {t:'Laissez chauffer une demi-heure.',a:'L’huile disparaît peu à peu : le mélange devient homogène.',bouton:{lab:'Laisser passer 30 minutes',f:()=>mnAttendre(1800)},
       ok:M=>{const b=M.dev('Ballon');return !!b&&b.c.org.filter(o=>o.id==='huile').reduce((s,o)=>s+o.V,0)<0.5;}},
     {t:'Arrêtez le chauffage et laissez refroidir.',a:'Touchez le chauffe-ballon jusqu’à l’arrêt, puis laissez passer le temps.',bouton:{lab:'Laisser passer 10 minutes',f:()=>mnAttendre(600)},apres:true,
@@ -3776,7 +3793,7 @@ MAIN('metaux-cuivre',{depart:()=>{const tb=st.devs.filter(d=>d.t==='tube'),pt=st
     {t:'Remplissez le compte-gouttes de soude.',a:'Il trempe dans le flacon de soude à 1 mol/L : touchez sa poire, le liquide monte.',ok:M=>M.cpg('naoh1')||M.g('n° 1','naoh1')>0},
     {t:'Cinq gouttes de soude dans le tube n° 1, celui du clou.',a:'Glissez le compte-gouttes au-dessus du tube n° 1 et lâchez-le : il y reste tenu, sans toucher le liquide. Chaque toucher de la poire fait tomber une goutte.',
       ok:M=>M.g('n° 1','naoh1')>=5,info:M=>Math.min(M.g('n° 1','naoh1'),99)+' / 5'},
-    {t:'Agitez le tube n° 1, puis regardez le précipité.',a:'Prenez le tube, secouez-le de gauche à droite et reposez-le, puis touchez-le. Le précipité dit quels ions sont apparus dans la solution.',
+    {t:'Agitez le tube n° 1, puis regardez le précipité.',a:'Prenez le tube, secouez-le de gauche à droite et reposez-le, puis touchez-le. Un précipité bleu : les ions cuivre sont encore en large excès, et cachent le peu de fer II (vert) passé en solution.',
       ok:M=>M.g('n° 1','naoh1')>=1&&M.agite('n° 1')&&moxVu(M,'n° 1','soude',()=>M.agite('n° 1'))},
     {t:'Rebouchez le flacon de soude.',a:'Le compte-gouttes hors du flacon, touchez le flacon : le bouchon reprend sa place.',apres:true,ok:M=>!M.ouvert('naoh1')}]});
 
@@ -3811,7 +3828,7 @@ MAIN('gravure',{depart:()=>{const b=st.devs.find(d=>d.t==='b250'),t=st.devs.find
     {t:'Laissez graver une demi-heure.',a:'Le temps file d’un coup. Le cuivre passe en solution : c’est ainsi qu’on grave un circuit imprimé.',bouton:{lab:'Laisser passer 30 minutes',f:()=>mnAttendre(1800)},
       ok:M=>moxDepuisPose(M,moxGrav())>=1700},
     {t:'Sortez la lame du bain.',a:'Prenez-la et lâchez-la sur la paillasse, à côté de la plaque.',ok:M=>M.L.ok[1]&&!moxDans(moxGrav(),M,'Bain')},
-    {t:'Versez un peu du bain dans le tube, environ 1 mL.',a:'Prenez le bécher et tenez-le un court instant au-dessus du tube : il s’incline et verse. Retirez-le dès que le fond du tube est couvert.',
+    {t:'Versez un peu du bain dans le tube, environ 1 mL.',a:'Lunettes et gants : le bain est corrosif et tache. Prenez le bécher et tenez-le un court instant au-dessus du tube : il s’incline et verse. Retirez-le dès que le fond du tube est couvert.',
       ok:M=>M.v('Tube','mix')>=0.4,info:M=>M.v('Tube','mix')>0.01?'≈ '+nf(M.v('Tube','mix'),1)+' mL':''},
     {t:'Débouchez le flacon de soude à 1 mol/L.',a:'Touchez-le : son bouchon se pose devant lui.',ok:M=>M.ouvert('naoh1')||M.v('Tube','naoh1')>0},
     {t:'Versez la soude dans le tube : environ six fois plus que de bain.',a:'Tenez le flacon au-dessus du tube : il verse tant que vous l’y tenez. La soude doit l’emporter, pour que tous les ions du bain précipitent.',
@@ -3864,7 +3881,7 @@ MAIN('citron',{depart:()=>{const v=moxVolt();v.p.com='';v.p.v='';st.devs.find(d=
       saisie:{cle:'U2',lab:'U =',u:'V',dec:2,juge:(v,M)=>{const V=moxVolt(),fe=moxLame('Fe');
         if(V.p.com!==moxLame('Zn').id||V.p.v!==fe.id||!moxDans(fe,M,'Jus de citron'))return{ok:false,msg:'Le circuit d’abord : COM sur le zinc, V sur le clou, les deux dans le jus de citron.'};
         const u1=M.val('U1'),lu=moxU();if(u1!=null&&Math.abs(v-u1)<=0.015&&Math.abs(v-lu)>0.015)return{ok:false,msg:'C’est la première tension : avec le clou, l’écran a changé, lisez-le de nouveau.'};
-        return moxJugeU(v,lu)||{ok:true,msg:'La tension a baissé : elle dépend des deux métaux, pas de la taille des lames.'};}}}]});
+        return moxJugeU(v,lu)||{ok:true,msg:'La tension a baissé : elle dépend des deux métaux. Le fer est moins éloigné du zinc que le cuivre.'};}}}]});
 
 /* ---------- quelle couche est en haut ? ---------- */
 const moxLiq=[['Huile','huile','d’huile'],['Cyclohexane','cyclohexane','de cyclohexane'],['Dichlorométhane','dcm','de dichlorométhane']];
@@ -3873,7 +3890,7 @@ MAIN('couches',{depart:()=>{const pt=st.devs.find(d=>d.t==='pt'),S=TYPES.pt.surf
     moxLiq.forEach(([l],i)=>{const t=st.devs.find(d=>d.leg===l);if(!t)return;viderContenu(t.c);t.c.noms=[];V(t,'cuso4_01',5);const f=S[[0,2,5][i]];if(f)t.x=Math.round(pt.x+f.cx-TYPES.tube.w/2);});
     moxLiq.forEach(([,id],i)=>B('flacon',560+i*80,{p:{prod:id}}));},
   etapes:[
-    {t:'Débouchez les trois flacons.',a:'Touchez chacun : son bouchon se pose devant lui. Sous la hotte, sans flamme : le cyclohexane est inflammable.',
+    {t:'Débouchez les trois flacons.',a:'Touchez chacun : son bouchon se pose devant lui. Sous la hotte, sans flamme, avec des gants : le cyclohexane est inflammable, le dichlorométhane toxique.',
       ok:M=>moxLiq.every(([l,id])=>M.ouvert(id)||M.v(l,id)>0),info:M=>moxNb(moxLiq.map(([l,id])=>M.ouvert(id)||M.v(l,id)>0))+' / 3'},
     ...moxLiq.map(([l,id,de])=>({t:'Environ 3 mL '+de+' dans le tube « '+l+' ».',a:'Prenez le flacon et tenez-le au-dessus du tube : il s’incline et verse tant que vous l’y tenez. 3 mL, c’est un peu plus de la moitié de l’eau déjà dans le tube.',
       ok:M=>M.v(l,id)>=2,info:M=>M.v(l,id)>0.01?'≈ '+nf(M.v(l,id),1)+' mL':''})),
@@ -3947,7 +3964,7 @@ MAIN('eau-oxygenee',{depart:()=>{const pt=rcT('pt');st.devs.filter(d=>d.t==='tub
       ok:M=>M.m('Tube 1','mno2')>0},
     {t:'Approchez la braise de l’ouverture du tube 1, sans attendre.',a:'Prenez la bûchette et lâchez son bout rouge juste au-dessus du tube : l’essai se fait, puis elle revient. Le panneau dit ce qui se passe.',
       ok:M=>rcEssai('Tube 1','incandescente','rallume')},
-    {t:'Une pointe de spatule de levure dans le tube 2.',a:'Remettez d’abord le dioxyde de manganèse qui reste dans son flacon : la spatule dedans, un toucher. Débouchez la levure, remplissez la spatule, un toucher au-dessus du tube 2.',
+    {t:'Une pointe de spatule de levure dans le tube 2.',a:'D’abord une spatule propre : celle qui a servi garde de la poudre noire, et un produit sorti de son flacon n’y retourne jamais. Ici, la spatule dans le flacon de dioxyde de manganèse et un toucher la vident (la page fait comme si on la nettoyait). Débouchez la levure, remplissez la spatule, un toucher au-dessus du tube 2.',
       ok:M=>M.m('Tube 2','levure')>0},
     {t:'La braise à l’ouverture du tube 2.',a:'Le même geste : la levure agit vite, ne tardez pas.',ok:M=>rcEssai('Tube 2','incandescente','rallume')},
     {t:'Rebouchez les trois flacons.',a:'Touchez chaque flacon ouvert. Une spatule qui trempe dans un flacon le tient ouvert : reposez-la d’abord au-dessus d’un tube.',apres:true,ok:M=>!M.ouvert('h2o2')&&!M.ouvert('mno2')&&!M.ouvert('levure'),
@@ -4015,7 +4032,7 @@ MAIN('zinc-acide',{depart:()=>{const e=rcT('e100'),cu=rcT('crist'),r=rcT('recuei
     /* le flacon reste à gauche : la spatule tenue au-dessus de l'erlenmeyer couche son manche à droite, au-dessus du vide */
     B('spatule',f.x+32+60,{y:Y0-200});B('papierph',e.x+34+120,{y:Y0-40});const b=B('buchette',cu.x+64+110);b.p.etat='éteinte';},
   etapes:[
-    {t:'Mesurez le pH de l’acide, au papier pH.',a:'Glissez le papier pH sur l’erlenmeyer : une bandelette y trempe, puis revient avec sa couleur, à côté de l’échelle.',
+    {t:'Mesurez le pH de l’acide, au papier pH.',a:'Glissez le papier pH sur l’erlenmeyer : une goutte prise à l’agitateur est déposée sur le papier, qui revient avec sa couleur, à côté de l’échelle.',
       ok:M=>{const r=M.papier('Erlenmeyer')&&M.m('Erlenmeyer','zn_p')===0;if(r)M.L.rcPH1=rcCase();return r;}},
     {t:'Quel pH lisez-vous ?',a:'Comparez la bandelette aux cases de l’échelle : le nombre sous la case la plus proche.',
       saisie:{cle:'pH1',lab:'pH =',u:'',dec:0,juge:(v,M)=>{const i=M.L.rcPH1;if(i==null||i<0)return{ok:false,msg:'Trempez d’abord une bandelette dans l’acide.'};
@@ -4028,7 +4045,7 @@ MAIN('zinc-acide',{depart:()=>{const e=rcT('e100'),cu=rcT('crist'),r=rcT('recuei
     {t:'Regardez l’erlenmeyer : que se passe-t-il ?',a:'Touchez-le : le panneau dit ce qu’on y voit.',ok:M=>M.vu('Erlenmeyer')&&M.m('Erlenmeyer','zn_p')>0},
     {t:'Laissez le gaz remplir le tube à gaz.',a:'Le gaz chasse l’eau du tube retourné sur la cuve : attendez qu’il en soit plein. Aucune flamme près de l’erlenmeyer pendant le dégagement.',
       ok:M=>rcGaz()>=15},
-    {t:'Une bûchette enflammée à l’ouverture du tube à gaz.',a:'Touchez la bûchette, de l’autre côté de la cuve, pour l’allumer. Lâchez sa flamme contre le bas du tube à gaz, sur la cuve.',
+    {t:'Une bûchette enflammée à l’ouverture du tube à gaz.',a:'Touchez la bûchette, de l’autre côté de la cuve, pour l’allumer, et lâchez sa flamme contre le bas du tube à gaz. En vrai, le tube plein se bouche sous l’eau, se sort ouverture vers le bas et s’éloigne de l’erlenmeyer avant d’approcher la flamme : jamais de flamme près du montage qui dégage.',
       ok:M=>rcEssai('Tube à gaz','enflammée','détonation')},
     {t:'Laissez réagir dix minutes, puis reprenez le pH au papier.',a:'Le temps file d’un coup. Puis une bandelette neuve, trempée dans l’erlenmeyer.',bouton:{lab:'Laisser passer 10 minutes',f:()=>mnAttendre(600)},
       ok:M=>{const e=M.dev('Erlenmeyer'),t=M.L.ph&&M.L.ph[e.id];return M.depuis('Erlenmeyer')>=540&&t!=null&&t>=M.L.t1[e.id]+540;}},
@@ -4261,7 +4278,7 @@ MAIN('ph-menager',{depart:()=>{const ph=mnsiPhm(),pp=st.devs.find(d=>d.t==='papi
     mnsiLeg('Tampon pH 7').x=175-24;mnsiLeg('Tampon pH 4').x=285-24;MNSI_PH.forEach((l,i)=>{mnsiLeg(l).x=390+i*95-24;});
     pp.x=Math.round(390+2.5*95-60);pp.y=Y0-175;st.devs=st.devs.filter(d=>d.t!=='pissette');},
   etapes:[
-    {t:'Le papier pH dans chacun des six produits.',a:'Glissez le papier pH sur un bécher et lâchez-le : une bandelette y trempe, sa couleur se pose à côté de l’échelle. Comparez-la aux couleurs de l’échelle.',
+    {t:'Le papier pH dans chacun des six produits.',a:'Glissez le papier pH sur un bécher et lâchez-le : une goutte prise à l’agitateur est déposée sur le papier (on ne trempe pas le papier dans ce qu’on mesure), sa couleur se pose à côté de l’échelle. Comparez-la aux couleurs de l’échelle.',
       ok:M=>MNSI_PH.every(l=>M.papier(l)),info:M=>MNSI_PH.filter(l=>M.papier(l)).length+' / 6'},
     {t:'Plongez la sonde du pH-mètre dans le tampon pH 7, puis étalonnez.',a:'Prenez le pH-mètre et lâchez-le sur le bécher : sa sonde y plonge, le boîtier reste à sa place. Puis touchez sa touche CAL : il reconnaît le tampon.',
       ok:M=>mnsiCal(7)==='juste'},
@@ -4271,10 +4288,10 @@ MAIN('ph-menager',{depart:()=>{const ph=mnsiPhm(),pp=st.devs.find(d=>d.t==='papi
       ok:M=>{const s=mnsiPhm(),c=s.dans&&devId(s.dans),L=M.L.mnsiPH=M.L.mnsiPH||{};
         if(c&&MNSI_PH.includes(c.leg)&&mnsiCal(7)==='juste'&&mnsiCal(4)==='juste'){const v=valeurVraie(s);if(v!=null&&s.s.val!=null&&Math.abs(s.s.val-v)<0.05)L[c.leg]=1;}
         return MNSI_PH.every(l=>L[l]);},info:M=>MNSI_PH.filter(l=>(M.L.mnsiPH||{})[l]).length+' / 6'},
-    {t:'Quel est le pH du vinaigre, lu au pH-mètre ?',a:'La sonde dans le vinaigre, l’affichage stable : au centième.',
+    {t:'Quel est le pH du vinaigre, lu au pH-mètre ?',a:'La sonde dans le vinaigre, l’affichage stable : recopiez l’écran, avec ses deux décimales.',
       saisie:{cle:'pHv',lab:'pH =',u:'',dec:2,juge:(v,M)=>{const s=mnsiPhm(),b=M.dev('Vinaigre'),lu=corrigePH(s,brutPH(b.c.eq.pH));
-        if(Math.abs(v-lu)<=0.08)return{ok:true,msg:'Juste. Le papier ne donnait que l’unité : le pH-mètre étalonné donne le centième, et départage le vinaigre du jus de citron.'};
-        if(Math.abs(v-Math.round(v))<0.001&&Math.abs(v-lu)<1)return{ok:false,msg:'C’est une lecture à l’unité, celle du papier pH : le pH-mètre donne le centième.'};
+        if(Math.abs(v-lu)<=0.08)return{ok:true,msg:'Juste. Le papier ne donnait que l’unité : le pH-mètre étalonné affiche le centième et mesure au dixième près : il départage le vinaigre du jus de citron.'};
+        if(Math.abs(v-Math.round(v))<0.001&&Math.abs(v-lu)<1)return{ok:false,msg:'C’est une lecture à l’unité, celle du papier pH : recopiez l’écran du pH-mètre, avec ses deux décimales.'};
         return{ok:false,msg:'Ce n’est pas ce qu’affiche le pH-mètre dans le vinaigre : la sonde dans le vinaigre, attendez que l’affichage ne bouge plus.'};}}},
     {t:'Combien de ces six produits sont acides ?',a:'Acide : un pH sous 7 ; basique : au-dessus de 7.',
       saisie:{cle:'nA',lab:'Acides :',u:'sur 6',dec:0,juge:(v,M)=>{const n=MNSI_PH.filter(l=>M.pH(l)<7).length;
@@ -4343,11 +4360,11 @@ MAIN('titrage-ph',{depart:()=>{const ag=st.devs.find(d=>d.t==='agit'),bu=st.devs
       ok:()=>{const R=mnsiRel().filter(r=>r.Vb>15.3);return R.length>=3&&R.some(r=>r.Vb>=19.5);},info:()=>mnsiRel().filter(r=>r.Vb>15.3).length+' lignes'},
     {t:'Lisez V(E) sur la courbe du relevé.',a:'Dans le relevé, sous cette fiche : V(E) est au milieu du saut de pH, là où la courbe monte le plus vite.',
       saisie:{cle:'VE',lab:'V(E) =',u:'mL',dec:1,juge:(v,M)=>{const ve=mnsiVE(M);
-        if(Math.abs(v-ve)<=0.35)return{ok:true,msg:'Juste. À l’équivalence, le pH est au-dessus de 7, vers 8,7 : la phénolphtaléine, qui vire entre 8 et 10, aurait convenu.'};
+        if(Math.abs(v-ve)<=0.35)return{ok:true,msg:'Juste. À l’équivalence, le pH est au-dessus de 7, vers 8,6 : la phénolphtaléine, qui vire entre 8 et 10, aurait convenu.'};
         if(Math.abs(v-ve/2)<=0.6)return{ok:false,msg:'C’est la demi-équivalence, au milieu de la montée douce : V(E) est au milieu du saut.'};
         if(Math.abs(v-ve)<=1.2)return{ok:false,msg:'Pas tout à fait : prenez le milieu du saut, là où la pente est la plus forte.'};
         return{ok:false,msg:'V(E) se lit en abscisse, au milieu du saut de pH, là où la courbe est presque verticale.'};}}},
-    {t:'Calculez la concentration du vinaigre dilué.',a:'C = 0,100 × V(E) ÷ 10, avec V(E) en mL.',
+    {t:'Calculez la concentration du vinaigre dilué.',a:'C = 0,100 × V(E) ÷ 10, avec V(E) en mL. L’erlenmeyer contient 1 mL de vinaigre et 29 mL d’eau : autant d’acide que 10 mL de vinaigre dilué dix fois, d’où le ÷ 10.',
       saisie:{cle:'C',lab:'C =',u:'mol/L',dec:3,juge:(v,M)=>{const ve=M.val('VE');if(ve==null)return{ok:false,msg:'Lisez d’abord V(E).'};const c=0.1*ve/10;
         if(Math.abs(v-c)<=Math.max(0.0015,c*0.015))return{ok:true,msg:'Juste. Le vinaigre, dilué dix fois, est à '+nf(c*10,2)+' mol/L.'};
         if(Math.abs(v-c*1000)<=c*15)return{ok:false,msg:'C’est la valeur en mmol/L : la page attend des mol/L.'};
@@ -4370,7 +4387,7 @@ MAIN('dissolution',{depart:()=>{const cp=st.devs.find(d=>d.t==='coupelle'),f=st.
     {t:'Versez tout le solide dans la fiole, par l’entonnoir.',a:'Prenez la coupelle et tenez-la au-dessus de l’entonnoir : elle se vide d’un coup.',
       ok:M=>{const f=M.dev('Fiole jaugée');return (f.c.sol.cuso4h||0)>0||(f.c.tot.Cu||0)>0;}},
     {t:'Remplissez la fiole d’eau distillée, aux trois quarts.',a:'Glissez la pissette près de la fiole : sa place s’affiche à côté, lâchez-la. Puis un appui long sur la pissette : un jet.',ok:M=>M.vol('Fiole jaugée')>=60},
-    {t:'Retirez l’entonnoir, puis bouchez et retournez la fiole jusqu’à ce que tout soit dissous.',a:'Glissez l’entonnoir hors de la fiole. Prenez la fiole et secouez-la ; recommencez tant qu’on voit des cristaux.',
+    {t:'Retirez l’entonnoir, puis bouchez et retournez la fiole jusqu’à ce que tout soit dissous.',a:'En vrai, la coupelle et l’entonnoir se rincent d’abord à la pissette, au-dessus de la fiole : les cristaux collés y descendent. Glissez l’entonnoir hors de la fiole. Prenez la fiole et secouez-la ; recommencez tant qu’on voit des cristaux.',
       ok:M=>{const f=M.dev('Fiole jaugée');return !M.dans('entonnoir','Fiole jaugée')&&(f.c.sol.cuso4h||0)*PROD.cuso4h.M<0.002&&M.L.ag[f.id]!=null;}},
     {t:'Complétez au trait à la pissette.',a:'Touchez la fiole : la loupe montre le trait. Un jet (appui long sur la pissette), puis des petits jets (un toucher) : le bas du ménisque sur le trait.',ok:M=>mnAuTrait(M,'Fiole jaugée')},
     {t:'Bouchez et retournez encore.',a:'Secouez la fiole : la solution devient homogène.',ok:M=>M.agite('Fiole jaugée')&&mnAuTrait(M,'Fiole jaugée')},
@@ -5211,7 +5228,7 @@ function mnLacherPapier(D){const d=D.d,cx=d.x+wDev(d)/2,cy=d.y+hDev(d)/2;let c=c
   d.x=D.ox;d.y=D.oy;d.sur=D.sur0||null;
   if(!c||!c.c){mnHud(d,'glissez-le sur un récipient',1600);return;}
   const r=papierPH(c);if(!r){mnHud(c,'rien à tremper',1400);return;}
-  d.s.c=r.col;const L=mnLog();(L.ph=L.ph||{})[c.id]=SIMT;noterGeste(c,'Papier pH trempé dans '+mnLeg(c)+'.');mnHud(c,'bandelette trempée',1500);mnHud(d,'comparez à l’échelle',2200);}
+  d.s.c=r.col;const L=mnLog();(L.ph=L.ph||{})[c.id]=SIMT;noterGeste(c,'Une goutte de '+mnLeg(c)+' déposée sur le papier pH.');mnHud(c,'une goutte sur le papier',1500);mnHud(d,'comparez à l’échelle',2200);}
 
 /* ---------- le toucher d'un objet qu'on pose (sonde…) ---------- */
 function mnTapePosable(D){const d=D.d,lx=D.p0.x-d.x,ly=D.p0.y-d.y;
@@ -5462,7 +5479,7 @@ tuto('zinc-acide',[
   {t:'Un gramme de zinc en poudre dans l’acide.',v:'Effervescence, et l’erlenmeyer chauffe. Le gaz chasse l’eau du tube retourné sur la cuve.',
     f:async T=>{await T.verser('e100','zn_p',1,'c');await T.attendre(30);}},
   {t:'On laisse le gaz remplir le tube.',f:async T=>{await T.attendre(240);await T.lire('recueil',d=>{const g=d.s.gaz||{};return nf(Object.values(g).reduce((a,b)=>a+b,0)*24000,0)+' mL de gaz';});}},
-  {t:'Une bûchette enflammée à l’ouverture du tube.',v:'Une petite détonation : le gaz est du dihydrogène.',m:'Loin de toute flamme pendant la réaction : le dihydrogène et l’air forment un mélange explosif.',
+  {t:'Une bûchette enflammée à l’ouverture du tube.',v:'Une petite détonation : le gaz est du dihydrogène.',m:'Le tube plein se bouche sous l’eau, se sort ouverture vers le bas et s’éloigne de l’erlenmeyer avant d’en approcher la flamme : le dihydrogène et l’air forment un mélange explosif.',
     f:async T=>{await T.buchette('recueil','enflammée');}},
   {t:'Et le pH, à nouveau.',v:'Il est monté : l’acide est consommé par le zinc.',f:async T=>{await T.papier('e100');}}]);
 tuto('eau-oxygenee',[
@@ -5491,14 +5508,14 @@ tuto('titrage-ph',[
     f:async T=>{TUA.fenetre('releve');await T.montrer('bur','phm');await T.regler('agit','vit',5);await T.lire('phm',fPH);}},
   {t:'10 mL de soude, mL par mL.',v:'Le pH monte doucement : à la demi-équivalence, vers 6,7 mL, il vaut 4,8, le pKa du couple.',f:async T=>{await T.burette('bur',10,1);await T.attendre(20);await T.lire('phm',fPH);}},
   {t:'Puis par 0,5 mL jusqu’à 15 mL.',v:'Le saut de pH, de 6 à 11, autour de 13,3 mL : l’équivalence.',f:async T=>{await T.burette('bur',5,0.5);await T.attendre(20);await T.lire('phm',fPH);}},
-  {t:'Encore 5 mL, mL par mL.',v:'Le pH tend vers 12,3. La courbe pH = f(V) est dans le relevé ; « Copier pour un tableur » l’emporte.',f:async T=>{await T.burette('bur',5,1);await T.attendre(20);await T.lire('phm',fPH);}}]);
+  {t:'Encore 5 mL, mL par mL.',v:'À 20 mL, le pH vaut environ 12,1 : il ne monte presque plus. La courbe pH = f(V) est dans le relevé ; « Copier pour un tableur » l’emporte.',f:async T=>{await T.burette('bur',5,1);await T.attendre(20);await T.lire('phm',fPH);}}]);
 /* ---------- oxydoréduction et piles ---------- */
 tuto('metaux-cuivre',[
   {t:'Trois tubes de sulfate de cuivre : un clou en fer, une lame de zinc, une lame de cuivre. Le quatrième, le témoin : sulfate de zinc et lame de cuivre.',
     f:async T=>{await T.montrer('tube:1','tube:2','tube:3','tube:4');}},
   {t:'On attend quelques minutes.',v:'Un dépôt rouge-brun de cuivre sur le fer et sur le zinc, et la solution du zinc pâlit. Rien sur le cuivre, rien dans le témoin.',
     f:async T=>{await T.attendre(600);await T.montrer('tube:1','tube:2');}},
-  {t:'Quelques gouttes de soude dans le tube du fer.',v:'Le précipité dit quels ions sont apparus : le fer est passé en solution. Classement : zinc, fer, puis cuivre.',
+  {t:'Quelques gouttes de soude dans le tube du fer.',v:'Un précipité bleu : les ions cuivre sont encore en large excès, et cachent le peu de fer II passé en solution (vert). Le zinc et le fer sont plus réducteurs que le cuivre.',
     f:async T=>{await T.gouttes('tube:1','naoh1',6);await T.attendre(5);}}]);
 tuto('daniell',[
   {t:'Zinc dans le sulfate de zinc, cuivre dans le sulfate de cuivre ; le voltmètre, COM sur le zinc, V sur le cuivre.',v:'0 V : sans pont salin, le circuit n’est pas fermé dans la pile.',
@@ -5511,7 +5528,7 @@ tuto('daniell',[
 tuto('citron',[
   {t:'Une lame de zinc et une lame de cuivre dans le jus de citron, sans se toucher ; le voltmètre, COM sur le zinc.',v:'Environ 1 V : l’acidité du citron fait l’électrolyte.',
     f:async T=>{await T.attendre(2);await T.lire('volt',d=>(d.s.aff||'0')+' V');}},
-  {t:'On remplace la lame de cuivre par un clou en fer.',v:'La tension baisse : elle dépend des deux métaux, pas de la taille des lames.',
+  {t:'On remplace la lame de cuivre par un clou en fer.',v:'La tension baisse : elle dépend des deux métaux. Le fer est moins éloigné du zinc que le cuivre.',
     f:async T=>{const cu=T.q('lame:2'),fe=T.q('lame:3');await T.clic(cu,d=>{d.dans=null;poserSur(d,d.x+190,Y0-hDev(d));});await T.plonger(fe,'b100');
       await T.clic('volt',d=>{d.p.v=fe.id;});await T.attendre(3);await T.lire('volt',d=>(d.s.aff||'0')+' V');}}]);
 tuto('aluminium',[
@@ -5561,7 +5578,7 @@ tuto('couches',[
 tuto('distillation',[
   {t:'Le mélange eau-éthanol à 12 % dans le ballon, sur le chauffe-ballon ; la colonne et son thermomètre de tête, le réfrigérant, l’eau ouverte ; l’éprouvette sous l’allonge.',
     m:'Toujours l’eau du réfrigérant ouverte avant de chauffer.',f:async T=>{TUA.fenetre('releve');await T.montrer('ballon','colonne');}},
-  {t:'On chauffe jusqu’à l’ébullition.',v:'Le mélange bout vers 93 °C ; en tête, la vapeur arrive vers 80 °C : elle est riche en éthanol.',
+  {t:'On chauffe jusqu’à l’ébullition.',v:'Le mélange bout vers 93 °C ; en tête, la vapeur arrive presque aussi chaude, un peu au-dessus de 90 °C : elle est plus riche en éthanol que le mélange.',
     f:async T=>{await T.attendre(330);await T.lire('colonne',d=>'tête : '+nf(d.s.Tt,0)+' °C');}},
   {t:'On recueille les premiers millilitres.',v:'Le premier distillat titre environ 50 % d’éthanol : un seul passage ne donne pas d’éthanol pur.',
     f:async T=>{await T.attendre(200);await T.lire('Distillat',d=>fml(volumeTotal(d))+' recueillis');}},
@@ -5569,7 +5586,7 @@ tuto('distillation',[
 tuto('distillation-sale',[
   {t:'100 mL d’eau salée dans le ballon ; on chauffe.',v:'L’eau bout, la vapeur se condense dans le réfrigérant ; le sel reste dans le ballon.',
     f:async T=>{await T.montrer('ballon');await T.attendre(700);await T.lire('Distillat',d=>fml(volumeTotal(d))+' recueillis');await T.regler('cb','pw',0);}},
-  {t:'Quelques gouttes de nitrate d’argent dans le distillat.',v:'Pas de précipité : il n’y a plus d’ions chlorure. Le distillat est de l’eau pure.',
+  {t:'Quelques gouttes de nitrate d’argent dans le distillat.',v:'Pas de précipité : pas d’ions chlorure dans le distillat, le sel n’est pas passé.',
     f:async T=>{await T.gouttes('Distillat','agno3',3);await T.attendre(5);}}]);
 tuto('hydrodistillation',[
   {t:'Dans le ballon, 40 g de zestes d’orange et 100 mL d’eau ; on chauffe.',v:'La vapeur d’eau entraîne l’huile essentielle des zestes.',f:async T=>{await T.montrer('ballon');await T.attendre(400);}},
@@ -5959,7 +5976,7 @@ tutoPhy('meca-pression',[
       for(const h of[ha,hb,hc,0]){await tqVers(d,'hc',h,0.6);pasDeTemps(0.2);M[h]=d.s.lu;}
       tqBulle(d,'huile : '+nf((M[hb]-M[ha])/((ha-hb)/10),2)+' hPa/cm ; eau salée : '+nf((M[0]-M[hc])/(hc/10),2)+' hPa/cm');}},
   {t:'Le capteur affiche maintenant la pression relative (panneau : « Le capteur affiche »). On le lit au fond, puis hors du liquide.',
-    v:'Au fond, environ 13 hPa ; hors du liquide, à peu près 0 : il ne lit que ce que le liquide ajoute à l’air. Δp = ρ × g × h, couche par couche : la relation de Pascal.',
+    v:'Au fond, environ 13 hPa ; hors du liquide, à peu près 0 : il ne lit que ce que le liquide ajoute à l’air. Δp = ρ × g × h, couche par couche : le principe fondamental de l’hydrostatique.',
     f:async T=>{tqTerre();const d=TUA.q('pres');await tqRegle(d,'mode','rel');pasDeTemps(0.2);const a=tqPres(d),C=mePresCalc(d),hs=C.N.H[C.N.H.length-1];
       await tqVers(d,'hc',Math.ceil((hs+10)/10)*10,1);pasDeTemps(0.2);tqBulle(d,'au fond : '+a+' ; hors du liquide : '+tqPres(d));}}]);
 
