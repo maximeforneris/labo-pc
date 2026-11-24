@@ -2868,7 +2868,7 @@ function ajusteLib(){const lib=$('lib');if(!lib)return;if(matchMedia('(max-width
 let libRaf=0;const ajusteLibBientot=()=>{if(!libRaf)libRaf=requestAnimationFrame(()=>{libRaf=0;ajusteLib();});};
 /* ================= la barre, l'en-tête, les fenêtres de la mission ================= */
 /* les TP notés d'une heure dont la page est à côté de l'atelier : l'assembleur remplit la liste (EN_LIGNE) */
-const TP_NOTES=[{"code": "CAB-01", "titre": "Ça saute, mais rien n’est en panne", "page": "cab-fuites.html"}, {"code": "CAB-02", "titre": "Le circuit de la cuisine", "page": "cab-cuisine.html"}];
+const TP_NOTES=[{"code": "CAB-01", "titre": "Ça saute, mais rien n’est en panne", "page": "cab-fuites.html"}, {"code": "CAB-02", "titre": "Le circuit de la cuisine", "page": "cab-cuisine.html"}, {"code": "CAB-03", "titre": "Ce que dit l’ohmmètre, et ce qu’il ne dit pas", "page": "cab-resistance.html"}, {"code": "CAB-04", "titre": "La guirlande de deux lampes", "page": "cab-guirlande.html"}, {"code": "CAB-05", "titre": "Le compteur de la prise", "page": "cab-compteur.html"}, {"code": "CAB-06", "titre": "Heures creuses ou pas ?", "page": "cab-heures-creuses.html"}, {"code": "CAB-07", "titre": "Quelle bobine sur quel transfo ?", "page": "cab-bobines.html"}, {"code": "CAB-08", "titre": "Lire la plaque, régler la protection", "page": "cab-plaque-moteur.html"}, {"code": "CAB-09", "titre": "Le couloir à trois commandes", "page": "cab-couloir.html"}, {"code": "CAB-10", "titre": "Le carnet de dépannage", "page": "cab-depannage.html"}];
 function construitBarre(){
   document.querySelectorAll('[data-outil]').forEach(b=>b.onclick=()=>choisirOutil(b.dataset.outil));
   const sw=$('swCol');sw.textContent='';

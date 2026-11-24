@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Le couloir à trois commandes</title>
-<meta name="description" content="Un couloir s’allume de ses deux bouts, et l’on veut une commande de plus. On dresse le tableau de vérité du va-et-vient, on compte les positions, on essaie le télérupteur, et on dit au client ce qu’il faut.">
-<meta name="joint-liste" content="non">
-<meta name="etiquette" content="Simulation · Parcours CAB-09">
+<title>Heures creuses ou pas ?</title>
+<meta name="description" content="Un chauffe-eau qui chauffe à toute heure. On le câble sur un contacteur jour/nuit que commande le compteur, on mesure, puis une équation dit en combien de nuits l’option heures creuses est rattrapée.">
+<meta name="etiquette" content="Simulation · Parcours CAB-06">
 <meta name="stockage" content="sim-travail-v1 : l’avancement d’un parcours, réponses comprises, 30 jours au plus">
 <!-- Atelier de câblage : écrit le 11 novembre 2026, sur le modèle de l'atelier schéma électrique.
      Sources dans _commun/tp/simulations/cablage/src/, assemblées par cablage/assembler.py.
@@ -455,8 +454,8 @@ body.calc-ouverte .outils-flottants{display:none}
 </style>
 <script>
 window.SIM_MODE = "td";
-window.SIM_PAGE = "cab-couloir";
-window.CAB_PARCOURS = "co9";
+window.SIM_PAGE = "cab-heures-creuses";
+window.CAB_PARCOURS = "co6";
 /* Entrainement · les nombres a la francaise, dans les deux sens.
    Ecrire : virgule decimale, espace fine insecable entre les milliers, ecriture
    scientifique au-dela de dix millions ou en deca d'un millieme.
@@ -3935,10 +3934,10 @@ pre.fcode{font-family:var(--mono);font-size:.86rem;background:var(--paper);color
 </head>
 <body>
 <div class="page">
-<header class="tete"><a class="retour" href="index.html">← Les pages d’essai</a>
-<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-09</div>
-<h1>Le couloir à trois commandes</h1>
-<p class="chapeau">Un couloir s’allume de ses deux bouts, et l’on veut une commande de plus. On dresse le tableau de vérité du va-et-vient, on compte les positions, on essaie le télérupteur, et on dit au client ce qu’il faut.</p>
+<header class="tete"><a class="retour" href="atelier-cablage.html">← L’atelier de câblage</a>
+<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-06</div>
+<h1>Heures creuses ou pas ?</h1>
+<p class="chapeau">Un chauffe-eau qui chauffe à toute heure. On le câble sur un contacteur jour/nuit que commande le compteur, on mesure, puis une équation dit en combien de nuits l’option heures creuses est rattrapée.</p>
 </header>
 <div id="parcours"></div>
 <div id="libre">

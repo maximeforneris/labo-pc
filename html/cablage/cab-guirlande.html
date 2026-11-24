@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CAB-10 · Le carnet de dépannage</title>
-<meta name="description" content="Deux appels dans la même journée. Pour chacun, on tient le carnet de dépannage : ce qu’on constate, ce qu’on suppose, ce qu’on mesure, ce qu’on conclut. On ne remplace rien au hasard.">
-<meta name="joint-liste" content="non">
-<meta name="etiquette" content="Simulation · Parcours CAB-10">
+<title>La guirlande de deux lampes</title>
+<meta name="description" content="Un apprenti a monté deux lampes l’une derrière l’autre et prévoit que la plus puissante éclairera le plus. On câble son montage, on mesure les tensions, on découvre la loi des mailles, puis on câble le bon montage, en dérivation.">
+<meta name="etiquette" content="Simulation · Parcours CAB-04">
 <meta name="stockage" content="sim-travail-v1 : l’avancement d’un parcours, réponses comprises, 30 jours au plus">
 <!-- Atelier de câblage : écrit le 11 novembre 2026, sur le modèle de l'atelier schéma électrique.
      Sources dans _commun/tp/simulations/cablage/src/, assemblées par cablage/assembler.py.
@@ -454,9 +453,9 @@ body.calc-ouverte .outils-flottants{display:none}
 
 </style>
 <script>
-window.SIM_MODE = "note";
-window.SIM_PAGE = "cab-depannage";
-window.CAB_PARCOURS = "co10";
+window.SIM_MODE = "td";
+window.SIM_PAGE = "cab-guirlande";
+window.CAB_PARCOURS = "co4";
 /* Entrainement · les nombres a la francaise, dans les deux sens.
    Ecrire : virgule decimale, espace fine insecable entre les milliers, ecriture
    scientifique au-dela de dix millions ou en deca d'un millieme.
@@ -3935,10 +3934,10 @@ pre.fcode{font-family:var(--mono);font-size:.86rem;background:var(--paper);color
 </head>
 <body>
 <div class="page">
-<header class="tete"><a class="retour" href="index.html">← Les pages d’essai</a>
-<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-10</div>
-<h1>Le carnet de dépannage</h1>
-<p class="chapeau">Deux appels dans la même journée. Pour chacun, on tient le carnet de dépannage : ce qu’on constate, ce qu’on suppose, ce qu’on mesure, ce qu’on conclut. On ne remplace rien au hasard.</p>
+<header class="tete"><a class="retour" href="atelier-cablage.html">← L’atelier de câblage</a>
+<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-04</div>
+<h1>La guirlande de deux lampes</h1>
+<p class="chapeau">Un apprenti a monté deux lampes l’une derrière l’autre et prévoit que la plus puissante éclairera le plus. On câble son montage, on mesure les tensions, on découvre la loi des mailles, puis on câble le bon montage, en dérivation.</p>
 </header>
 <div id="parcours"></div>
 <div id="libre">

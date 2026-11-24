@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CAB-05 · Le compteur de la prise</title>
-<meta name="description" content="Un appareil branché sur un wattmètre-prise. On relève l’énergie minute par minute, on vérifie qu’elle est proportionnelle à la durée, et on dit au client ce que lui coûte une heure de marche.">
-<meta name="joint-liste" content="non">
-<meta name="etiquette" content="Simulation · Parcours CAB-05">
+<title>Quelle bobine sur quel transfo ?</title>
+<meta name="description" content="Des bobines de 24 à 400 V au magasin, deux tensions de commande sur le banc. On calcule le pourcentage de sa tension que reçoit chaque bobine, on prévoit, on essaie, puis on monte celle qui convient.">
+<meta name="etiquette" content="Simulation · Parcours CAB-07">
 <meta name="stockage" content="sim-travail-v1 : l’avancement d’un parcours, réponses comprises, 30 jours au plus">
 <!-- Atelier de câblage : écrit le 11 novembre 2026, sur le modèle de l'atelier schéma électrique.
      Sources dans _commun/tp/simulations/cablage/src/, assemblées par cablage/assembler.py.
@@ -454,9 +453,9 @@ body.calc-ouverte .outils-flottants{display:none}
 
 </style>
 <script>
-window.SIM_MODE = "note";
-window.SIM_PAGE = "cab-compteur";
-window.CAB_PARCOURS = "co5";
+window.SIM_MODE = "td";
+window.SIM_PAGE = "cab-bobines";
+window.CAB_PARCOURS = "co7";
 /* Entrainement · les nombres a la francaise, dans les deux sens.
    Ecrire : virgule decimale, espace fine insecable entre les milliers, ecriture
    scientifique au-dela de dix millions ou en deca d'un millieme.
@@ -3935,10 +3934,10 @@ pre.fcode{font-family:var(--mono);font-size:.86rem;background:var(--paper);color
 </head>
 <body>
 <div class="page">
-<header class="tete"><a class="retour" href="index.html">← Les pages d’essai</a>
-<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-05</div>
-<h1>Le compteur de la prise</h1>
-<p class="chapeau">Un appareil branché sur un wattmètre-prise. On relève l’énergie minute par minute, on vérifie qu’elle est proportionnelle à la durée, et on dit au client ce que lui coûte une heure de marche.</p>
+<header class="tete"><a class="retour" href="atelier-cablage.html">← L’atelier de câblage</a>
+<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-07</div>
+<h1>Quelle bobine sur quel transfo ?</h1>
+<p class="chapeau">Des bobines de 24 à 400 V au magasin, deux tensions de commande sur le banc. On calcule le pourcentage de sa tension que reçoit chaque bobine, on prévoit, on essaie, puis on monte celle qui convient.</p>
 </header>
 <div id="parcours"></div>
 <div id="libre">

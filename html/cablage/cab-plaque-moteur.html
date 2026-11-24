@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CAB-03 · Ce que dit l’ohmmètre, et ce qu’il ne dit pas</title>
-<meta name="description" content="Un collègue affirme qu’avec la résistance lue à l’ohmmètre, on sait tout d’un appareil. On mesure à froid, puis sous tension, on calcule U ÷ I, et on lui répond : vrai pour une résistance chauffante, faux pour une lampe à filament.">
-<meta name="joint-liste" content="non">
-<meta name="etiquette" content="Simulation · Parcours CAB-03">
+<title>Lire la plaque, régler la protection</title>
+<meta name="description" content="Un moteur vient d’être changé. On lit sa plaque, on règle son relais thermique, on mesure ce qu’il tire en marche normale et quand on le force, et on dit au client pourquoi le relais coupe.">
+<meta name="etiquette" content="Simulation · Parcours CAB-08">
 <meta name="stockage" content="sim-travail-v1 : l’avancement d’un parcours, réponses comprises, 30 jours au plus">
 <!-- Atelier de câblage : écrit le 11 novembre 2026, sur le modèle de l'atelier schéma électrique.
      Sources dans _commun/tp/simulations/cablage/src/, assemblées par cablage/assembler.py.
@@ -454,9 +453,9 @@ body.calc-ouverte .outils-flottants{display:none}
 
 </style>
 <script>
-window.SIM_MODE = "note";
-window.SIM_PAGE = "cab-resistance";
-window.CAB_PARCOURS = "co3";
+window.SIM_MODE = "td";
+window.SIM_PAGE = "cab-plaque-moteur";
+window.CAB_PARCOURS = "co8";
 /* Entrainement · les nombres a la francaise, dans les deux sens.
    Ecrire : virgule decimale, espace fine insecable entre les milliers, ecriture
    scientifique au-dela de dix millions ou en deca d'un millieme.
@@ -3935,10 +3934,10 @@ pre.fcode{font-family:var(--mono);font-size:.86rem;background:var(--paper);color
 </head>
 <body>
 <div class="page">
-<header class="tete"><a class="retour" href="index.html">← Les pages d’essai</a>
-<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-03</div>
-<h1>Ce que dit l’ohmmètre, et ce qu’il ne dit pas</h1>
-<p class="chapeau">Un collègue affirme qu’avec la résistance lue à l’ohmmètre, on sait tout d’un appareil. On mesure à froid, puis sous tension, on calcule U ÷ I, et on lui répond : vrai pour une résistance chauffante, faux pour une lampe à filament.</p>
+<header class="tete"><a class="retour" href="atelier-cablage.html">← L’atelier de câblage</a>
+<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-08</div>
+<h1>Lire la plaque, régler la protection</h1>
+<p class="chapeau">Un moteur vient d’être changé. On lit sa plaque, on règle son relais thermique, on mesure ce qu’il tire en marche normale et quand on le force, et on dit au client pourquoi le relais coupe.</p>
 </header>
 <div id="parcours"></div>
 <div id="libre">
