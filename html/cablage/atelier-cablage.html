@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atelier de câblage</title>
-<meta name="description" content="Câbler de l’appareillage réel, domestique et industriel, sur une platine : bornes repérées, couleurs et sections des conducteurs, mise sous tension, VAT, multimètre, pince ampèremétrique et wattmètre-prise ; une fiche de documentation par appareil, des moteurs triphasé et monophasé, des relais thermiques à régler. 36 appareils, 28 missions vérifiées, du CAP au bac pro MELEC, sans matériel.">
+<meta name="description" content="Câbler de l’appareillage réel, domestique et industriel, sur une platine : bornes repérées, couleurs et sections des conducteurs, mise sous tension, VAT, multimètre, pince ampèremétrique et wattmètre-prise ; une fiche de documentation par appareil, des moteurs triphasé et monophasé, des relais thermiques à régler. 36 appareils, 28 missions vérifiées, du CAP au bac pro MELEC, et 10 activités de co-intervention pour le CAP, sans matériel.">
 <meta name="etiquette" content="Outil · Électrotechnique">
 <meta name="porte-compte" content="36 appareils, 28 missions">
-<meta name="stockage" content="atelier-cablage-v1 : la platine en cours, les missions réussies et les réglages d’affichage">
+<meta name="stockage" content="atelier-cablage-v1 : la platine en cours, les missions réussies, les réponses aux activités de co-intervention et les réglages d’affichage">
 <!-- Atelier de câblage : écrit le 11 novembre 2026, sur le modèle de l'atelier schéma électrique.
      Sources dans _commun/tp/simulations/cablage/src/, assemblées par cablage/assembler.py.
      Fichier autonome, aucune requête. Ne pas retoucher ce fichier : il est assemblé. -->
@@ -281,10 +281,92 @@ ul.verif details.indice summary{cursor:pointer;color:var(--accent);font-weight:7
 .doc-tab th,.doc-tab td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left;vertical-align:top}
 .doc-tab th{color:var(--muted);font-weight:700;width:38%}
 .doc-tab tr:first-child th{width:auto}
+
+/* ================= les activités de co-intervention (24 novembre 2026) =================
+   la fiche prend la place de la consigne : commande, parties, questions vérifiées, à retenir */
+.fiche{padding:2px 14px 14px;font-size:.92rem;line-height:1.45}
+.fiche h3{margin:8px 0 4px;font-size:1.04rem}
+.fprog{display:flex;flex-direction:column;gap:2px;margin:4px 0 8px;font-size:.78rem;color:var(--muted)}
+.fprog b{color:var(--fg)}
+.fcmd{background:var(--accent-soft);border-radius:10px;padding:6px 12px;margin:6px 0}
+.fcmd p{margin:5px 0}
+.fscore{margin:8px 0 0;font-size:.84rem;font-weight:800;color:var(--muted)}
+.fscore.fini{color:#1F6B3A}
+.fp{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}
+.fp h4{margin:6px 0 4px;font-size:.98rem;color:var(--accent)}
+.fp>p{margin:5px 0}
+.fp ul{margin:5px 0;padding-left:18px}
+.fplat{margin:4px 0 2px}
+.fq{margin:12px 0 0;padding-left:10px;border-left:3px solid var(--line)}
+.fq.ok{border-left-color:#2E9B47}
+.fq.ko{border-left-color:#C0503A}
+.fq-lib{font-weight:600}
+.fq-l{color:var(--accent);font-weight:800}
+.fq-rep{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:6px}
+.fq input,.ft select{font:inherit;box-sizing:border-box;min-height:40px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.fq-rep input{width:8em}
+.fu{font-weight:700;color:var(--muted)}
+.fmk{font-weight:900;font-size:1.05rem}
+.fq.ok .fmk{color:#1F6B3A}
+.fq.ko .fmk{color:#A32617}
+.fq-msg{margin:5px 0 0;font-size:.86rem}
+.fq-msg.ok{color:#1F6B3A;font-weight:700}
+.fq-msg.ko{color:var(--danger)}
+.fq-aide{margin-top:5px;font-size:.86rem}
+.fq-aide summary,.fbloc summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.fq-aide[open]{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:4px 9px;color:#16201B}
+.fq-opts{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.fq-opts button{font:inherit;text-align:left;min-height:42px;padding:7px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--fg);cursor:pointer}
+.fq-opts button:hover{border-color:var(--accent)}
+.fq-opts button.ok{border-color:#2E9B47;background:#DDF1E3;color:#1F4D2C;font-weight:700}
+.fq-opts button.ko{border-color:#C0503A;background:#FBE0DC;color:#7A2416}
+.ft-wrap{overflow-x:auto;margin-top:6px}
+table.ft{border-collapse:collapse;font-size:.86rem;min-width:100%}
+.ft th,.ft td{border:1px solid var(--line);padding:4px 6px;text-align:left;vertical-align:middle}
+.ft th{background:var(--paper);color:#16201B;font-size:.8rem}
+.ft td input{width:6.2em}
+.ft td.ok input,.ft td.ok select{border-color:#2E9B47;background:#EEF8F1;color:#16201B}
+.ft td.ko input,.ft td.ko select{border-color:#C0503A;background:#FDF0EE;color:#16201B}
+pre.fcode{font-family:var(--mono);font-size:.86rem;background:var(--paper);color:#16201B;border:1px solid var(--line);border-radius:8px;padding:8px 10px;white-space:pre-wrap;margin:6px 0}
+.fseuils{border-collapse:collapse;font-size:.84rem;margin:6px 0}
+.fseuils td{border:1px solid var(--line);padding:3px 8px}
+.fbloc{margin-top:14px;font-size:.9rem;border:1px solid var(--line);border-radius:10px;padding:6px 11px;background:var(--surface)}
+.fbloc.retenir{background:var(--warn-soft)}
+.fbloc p{margin:5px 0}
+.fpied{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px}
+.fpied .note{max-width:none}
+/* sur une tablette couchée et au-delà, une activité garde la fiche et les instruments dans une colonne à
+   droite qui reste à l'écran : la lecture de l'instrument en haut, la fiche dessous, chacune défile seule */
+@media (min-width:900px){
+  .app.act.no-lib .work{grid-template-columns:minmax(0,1fr) 360px}
+  .app.act:not(.no-lib) .work{grid-template-columns:200px minmax(0,1fr) 340px}
+  .app.act .side{grid-column:auto;display:flex;flex-direction:column;gap:10px;position:sticky;top:8px;height:calc(100vh - 16px);height:calc(100dvh - 16px)}
+  .app.act .panel{flex:0 1 auto;max-height:46%;overflow:auto;padding:12px}
+  .app.act .dock{display:flex;flex-direction:column;flex:1 1 0;min-height:0;overflow:auto;gap:10px}
+  .app.act .dock .win.docked{flex:none}
+}
+/* ================= les pages de parcours notés (24 novembre 2026) =================
+   Sim.parcours mène, l'atelier est sa scène : ce qui fait doublon s'efface, et en évaluation notée
+   « Vérifier mon câblage » aussi, qui dirait juste ou faux */
+.cab-parcours .top .brand,.cab-parcours #missions,.cab-parcours [data-open="consigne"],.cab-parcours #misTitre,
+.cab-parcours #b-lib,.cab-parcours #b-panel,.cab-parcours .side .dock{display:none!important}
+.cab-parcours.cab-note #btnVerif{display:none!important}
+.cab-parcours .page .app{padding:0;max-width:none}
+.cab-parcours .page .retour{display:inline-block;margin-bottom:4px}
+/* en plein écran, la tête du parcours s'efface (phases, compteurs) ; la calculatrice reste, en bouton flottant,
+   et la colonne de la scène monte en haut de l'écran (24 novembre 2026). Hors du plein écran, tout revient */
+.cab-plein .pc-tete{position:fixed;top:auto;left:auto;right:16px;bottom:16px;z-index:40;margin:0;padding:0;border:0;background:none;display:block}
+.cab-plein .pc-tete .pc-chemin,.cab-plein .pc-info>:not(.pc-calc),.cab-plein .pc-info>.pc-plein{display:none!important}
+.cab-plein .pc-info .pc-calc{box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.cab-plein.calc-ouverte .pc-tete{display:none}  /* il couvrirait « Ans » et « = » ; la calculatrice a son bouton « Fermer » */
+.cab-plein .pc{--pc-haut:0px!important}
+.pc-scene #cabActions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.pc-scene #cabStage{gap:6px}
+.pc-scene #cabStage .bar,.pc-scene #cabStage .misbar{gap:6px}
+.pc-scene #panel{margin-top:10px}
 </style>
 </head>
 <body>
-
 <div class="app">
   <header class="top">
     <div class="brand">
@@ -292,7 +374,7 @@ ul.verif details.indice summary{cursor:pointer;color:var(--accent);font-weight:7
       <h1>Atelier de câblage</h1>
       <p>Posez l’appareillage, tirez les conducteurs, mettez sous tension, mesurez. Domestique et industriel, du CAP au bac pro.</p>
     </div>
-    <div class="actions">
+    <div class="actions" id="cabActions">
       <select class="btn" id="missions" aria-label="Choisir une mission"></select>
       <button class="btn" id="recommencer"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Recommencer</button>
       <button class="btn" id="undo" title="Annuler (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Annuler</button>
@@ -302,11 +384,12 @@ ul.verif details.indice summary{cursor:pointer;color:var(--accent);font-weight:7
   <div class="work">
     <aside class="lib" id="lib" aria-label="Bibliothèque d’appareillage"></aside>
 
-    <section class="stage">
+    <section class="stage" id="cabStage">
       <div class="bar">
         <div class="seg" role="group" aria-label="Outil">
           <button data-outil="sel" aria-pressed="true">Sélection</button>
           <button data-outil="fil" aria-pressed="false">Conducteur</button>
+          <button data-outil="peigne" aria-pressed="false">Peigne</button>
           <button data-outil="gomme" aria-pressed="false">Gomme</button>
           <button data-outil="vat" aria-pressed="false">VAT</button>
           <button data-outil="ohm" aria-pressed="false">Ohmmètre</button>
@@ -600,7 +683,7 @@ const TYPES={
   /* ---------- récepteurs domestiques ---------- */
   dcl:{nom:'Point lumineux (DCL) et lampe',cat:'domr',pre:'E',w:90,h:110,classe1:true,
     bornes:[{n:'L',x:25,y:110,d:'b'},{n:'N',x:45,y:110,d:'b',f:'N'},{n:'PE',x:65,y:110,d:'b',f:'PE'}],
-    params:[{k:'P',lab:'Lampe',opts:[60,100],u:'W',def:60}],
+    params:[{k:'P',lab:'Lampe',opts:[40,60,75,100],u:'W',def:60}],
     init:d=>{d.s={hs:false};},
     loads:d=>d.s.hs?[]:[{a:'L',b:'N',z:zR(VPH*VPH/+d.p.P),rdc:VPH*VPH/+d.p.P/10,rec:1}],
     draw(g,d){const r=d.r||{},b=d.s.hs?0:clamp((r.u||0)/VPH,0,1.3);
@@ -610,17 +693,19 @@ const TYPES={
       if(d.s.hs)lab(g,45,53,'HS',{class:'dv b',fill:'#C62828'});else E('path',{d:'M38 52 q3 -10 7 0 q4 10 7 0',fill:'none',stroke:b>0.4?'#B86A00':'#8D959C','stroke-width':1.6},g);
       nomDev(g,d,45,-5);lab(g,86,12,d.p.P+' W',{class:'dv s','text-anchor':'end'});},
     actions:d=>d.s.hs?[['Changer la lampe',d=>{d.s.hs=false;}]]:[],
-    info:d=>d.s.hs?'lampe grillée':d.r&&d.r.on?'allumée':'éteinte'},
+    info:d=>d.s.hs?'lampe grillée':d.r&&d.r.on?'allumée':d.r&&d.r.u>92?'allumée faiblement, '+fv(d.r.u)+' à ses bornes':'éteinte'},
   pc:{nom:'Prise de courant 2P+T 16 A',cat:'domr',pre:'X',w:90,h:110,classe1:true,
     bornes:[{n:'L',x:25,y:110,d:'b'},{n:'N',x:45,y:110,d:'b',f:'N'},{n:'PE',x:65,y:110,d:'b',f:'PE'}],
-    params:[{k:'app',lab:'Appareil branché',opts:['rien','lampe','bouilloire','radiateur','frigo','fuite','defaut'],noms:{rien:'rien',lampe:'lampe de bureau 40 W',bouilloire:'bouilloire 2 000 W',radiateur:'radiateur 1 500 W',frigo:'réfrigérateur 150 W (cos φ 0,7)',fuite:'sèche-serviettes 500 W, isolement fatigué (fuite ≈ 8 mA)',defaut:'lave-linge en défaut d’isolement'},def:'rien'},
+    params:[{k:'app',lab:'Appareil branché',opts:['rien','lampe','lampe25','bouilloire','radiateur','convecteur','sechoir','frigo','fuite','fuite6','defaut'],noms:{rien:'rien',lampe:'lampe de bureau 40 W',lampe25:'lampe de chevet 25 W',bouilloire:'bouilloire 2 000 W',radiateur:'radiateur 1 500 W',convecteur:'convecteur 1 000 W',sechoir:'sèche-cheveux 1 200 W',frigo:'réfrigérateur 150 W (cos φ 0,7)',fuite:'sèche-serviettes 500 W, isolement fatigué (fuite ≈ 8 mA)',fuite6:'radiateur de salle de bains 750 W, isolement fatigué (fuite ≈ 6 mA)',defaut:'lave-linge en défaut d’isolement'},def:'rien'},
             {k:'wm',lab:'Wattmètre-prise',opts:['non','oui'],noms:{non:'non',oui:'branché entre la prise et l’appareil'},def:'non'}],
     init:d=>{d.s={touch:false,wh:0,wt:0,wmd:0};},
-    loads(d){const a=d.p.app,L=[];const P={lampe:40,bouilloire:2000,radiateur:1500,frigo:150,fuite:500,defaut:500}[a],pf={frigo:0.7}[a];
-      if(P)L.push({a:'L',b:'N',z:pf?zpf(VPH*VPH*pf/P,pf):zR(VPH*VPH/P),rdc:a==='frigo'?40:VPH*VPH/P/(a==='lampe'?10:1),rec:1});
+    loads(d){const a=d.p.app,L=[];const P={lampe:40,lampe25:25,bouilloire:2000,radiateur:1500,convecteur:1000,sechoir:1200,frigo:150,fuite:500,fuite6:750,defaut:500}[a],pf={frigo:0.7}[a];
+      if(P)L.push({a:'L',b:'N',z:pf?zpf(VPH*VPH*pf/P,pf):zR(VPH*VPH/P),rdc:a==='frigo'?40:VPH*VPH/P/(a==='lampe'||a==='lampe25'?10:1),rec:1});
       if(a==='defaut')L.push({a:'L',b:'PE',z:zR(1000),rdc:1000,fuite:1});
       /* une résistance chauffante humide : 8 mA vers la masse, sous le seuil d'un 30 mA ; trois ensemble le font déclencher */
       if(a==='fuite')L.push({a:'L',b:'PE',z:zR(28750),rdc:28750,fuite:1});
+      /* le 24 novembre 2026, pour l'évaluation notée du parcours CAB-01 : 6 mA, quatre ensemble font déclencher le 30 mA */
+      if(a==='fuite6')L.push({a:'L',b:'PE',z:zR(38333),rdc:38333,fuite:1});
       if(d.s.touch&&a!=='rien'&&a!=='lampe')L.push({a:'PE',b:'@TERRE',z:zR(2000),rdc:2000,corps:1});
       return L;},
     /* ce que lit le wattmètre-prise : la tension de la prise, le courant de la broche de phase,
@@ -963,6 +1048,9 @@ Object.assign(TYPES,{
    d.s : l'état de l'appareil (positions, déclenchements) ; d.r : les grandeurs du dernier calcul,
    jamais sauvées. La platine se garde dans le navigateur, clé KEY. */
 const KEY='atelier-cablage-v1';
+/* une page de parcours noté (cablage/assembler.py, 24 novembre 2026) : window.CAB_PARCOURS nomme l'activité ;
+   la platine ne s'y garde pas (le parcours garde ses réponses, sim-travail-v1), elle repart de la mission */
+const PARC=window.CAB_PARCOURS||null;
 let st={devs:[],wires:[],nid:1,mis:null};
 let opts={lib:true,panel:true,wins:{},col:'marron',sec:1.5,acc:1};
 let prog={};
@@ -983,7 +1071,7 @@ function restore(s){const o=JSON.parse(s);st={devs:[],wires:[],nid:o.nid||1,mis:
     d.p=Object.assign(p,d.p||{});if(ty.norm)ty.norm(d);if(!d.s){if(ty.init)ty.init(d);else d.s={};}st.devs.push(d);}
   st.wires=(o.wires||[]).filter(w=>bornePos(w.a)&&bornePos(w.b));}
 function pushHist(){hist.push(snapshot());if(hist.length>80)hist.shift();}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({s:snapshot(),o:opts,p:prog}));}catch(e){}}
+function save(){if(PARC)return;try{localStorage.setItem(KEY,JSON.stringify({s:snapshot(),o:opts,p:prog,r:REP}));}catch(e){}}
 function sousTensionReseau(){return st.devs.some(d=>(d.t==='res1'||d.t==='res3')&&d.s.on);}
 /* ================= le moteur de calcul =================
    1. Les conducteurs et les contacts fermés réunissent les bornes en nœuds (union-find).
@@ -1276,21 +1364,21 @@ function nbFils(k){let n=0;for(const w of st.wires)if(w.a===k||w.b===k)n++;retur
 function render(){
   const gD=$('lyDev'),gW=$('lyFil'),gB=$('lyBor'),gU=$('lyUi');
   gD.textContent='';gW.textContent='';gB.textContent='';gU.textContent='';
-  for(const d of st.devs){const ty=TYPES[d.t],g=E('g',{transform:`translate(${d.x} ${d.y})`,'data-dev':d.id,class:'dev'+(sel&&sel.k==='dev'&&sel.id===d.id?' sel':'')},gD);
+  for(const d of st.devs){const ty=TYPES[d.t],g=E('g',{transform:`translate(${d.x} ${d.y})`,'data-dev':d.id,class:'dev'+(sel&&sel.k==='dev'&&sel.id===d.id||attente&&attente.outil==='peigne'&&attente.dev===d.id?' sel':'')},gD);
     E('rect',{x:-6,y:-6,width:ty.w+12,height:ty.h+12,rx:10,class:'dev-halo'},g);
     ty.draw(g,d);const f=g.querySelector('.fan');if(f)f.id='fan-'+d.id;
     if(d.lk)E('path',{d:`M ${ty.w-14} 4 h10 v8 h-10 z M ${ty.w-12} 4 v-3 a3 3 0 0 1 6 0 v3`,class:'cadenas'},g);}
   /* les conducteurs : un même départ se déploie en éventail */
   const rang=new Map(),idx=k=>{const n=rang.get(k)||0;rang.set(k,n+1);return n;};
-  for(const w of st.wires){const ia=idx(w.a),ib=idx(w.b),p=opts.range&&w.route?cheminRange(w.route):cheminFil(w,ia,ib);if(!p)continue;const c=COUL[w.col]||COUL.marron,ep=EPAIS[w.sec]||3.4;
-    const g=E('g',{class:'fil'+(sel&&sel.k==='fil'&&sel.id===w.id?' sel':''),'data-wire':w.id},gW);
+  for(const w of st.wires){const ia=w.peigne?0:idx(w.a),ib=w.peigne?0:idx(w.b),p=w.peigne?cheminPeigne(w):w.jar?cheminJarretiere(w):opts.range&&w.route?cheminRange(w.route):cheminFil(w,ia,ib);if(!p)continue;const c=COUL[w.col]||COUL.marron,ep=w.peigne?5.5:EPAIS[w.sec]||3.4;
+    const g=E('g',{class:'fil'+(w.peigne?' peigne':'')+(sel&&sel.k==='fil'&&sel.id===w.id?' sel':''),'data-wire':w.id},gW);
     E('path',{d:p,class:'fil-halo','stroke-width':ep+8},g);
     E('path',{d:p,fill:'none',stroke:'rgba(0,0,0,.35)','stroke-width':ep+1.6,'stroke-linecap':'round'},g);
     E('path',{d:p,fill:'none',stroke:c.c,'stroke-width':ep,'stroke-linecap':'round'},g);
     if(c.c2)E('path',{d:p,fill:'none',stroke:c.c2,'stroke-width':ep,'stroke-dasharray':'7 7','stroke-linecap':'butt'},g);
     E('path',{d:p,fill:'none',stroke:'transparent','stroke-width':16,class:'fil-hit'},g);}
   /* les bornes */
-  for(const d of st.devs){for(const b of TYPES[d.t].bornes){const k=nk(d,b.n),x=d.x+b.x,y=d.y+b.y,n=nbFils(k);
+  for(const d of st.devs){for(const b of TYPES[d.t].bornes){const k=nk(d,b.n),x=d.x+b.x,y=d.y+b.y,n=nbConducteurs(k);
     const g=E('g',{class:'borne'+(attente&&attente.k===k?' att':'')+(n>(b.un?1:2)?' trop':''),'data-borne':k},gB);
     E('circle',{cx:x,cy:y,r:13,class:'borne-hit'},g);
     E('circle',{cx:x,cy:y,r:7.5,class:'vis'+(n?' prise':'')},g);
@@ -1298,10 +1386,10 @@ function render(){
     const l=b.l!=null?b.l:b.n;if(l){const dy=b.d==='t'?20:b.d==='b'?-12:4,dx=b.d==='l'?14:b.d==='r'?-14:0;
       T(g,x+dx,y+dy,l,{'text-anchor':b.d==='l'?'start':b.d==='r'?'end':'middle',class:'bl'});}}}
   /* l'élastique du conducteur en cours, les pointes de mesure */
-  if(attente){const A=bornePos(attente.k);if(A&&survol)E('line',{x1:A.x,y1:A.y,x2:survol.x,y2:survol.y,class:'elast'+(attente.outil==='fil'?'':' mes')},gU);}
+  if(attente&&attente.k){const A=bornePos(attente.k);if(A&&survol)E('line',{x1:A.x,y1:A.y,x2:survol.x,y2:survol.y,class:'elast'+(attente.outil==='fil'?'':' mes')},gU);}
   if(mesure){[[mesure.a,'#C62828','+'],[mesure.b,'#202020','−']].forEach(([k,c,s])=>{const P=bornePos(k);if(!P)return;
     E('circle',{cx:P.x,cy:P.y,r:13,fill:'none',stroke:c,'stroke-width':4},gU);T(gU,P.x+14,P.y-12,s,{class:'bl b',fill:c});});}
-  if(attente&&attente.outil!=='fil'){const P=bornePos(attente.k);if(P)E('circle',{cx:P.x,cy:P.y,r:13,fill:'none',stroke:'#C62828','stroke-width':4},gU);}
+  if(attente&&attente.k&&attente.outil!=='fil'){const P=bornePos(attente.k);if(P)E('circle',{cx:P.x,cy:P.y,r:13,fill:'none',stroke:'#C62828','stroke-width':4},gU);}
   dessinInstruments(gU);
   statut();
 }
@@ -1342,7 +1430,7 @@ function rangerFils(){
     for(let n=0;n<60;n++){x+=dv[0]*PAS;y+=dv[1]*PAS;const i=ci(x),j=cj(y);if(i<0||j<0||i>=W||j>=Hh)break;
       const dedans=x>P.dev.x-6&&x<P.dev.x+t.w+6&&y>P.dev.y-6&&y<P.dev.y+t.h+6;if(!dedans&&!bloque[id(i,j)])return{P,i,j,x:x0+i*PAS,y:y0+j*PAS,dv};}
     return null;}
-  const fils=st.wires.map(w=>{const A=sortie(w.a),B=sortie(w.b);return{w,A,B,l:A&&B?Math.abs(A.i-B.i)+Math.abs(A.j-B.j):1e9};}).sort((a,b)=>a.l-b.l);
+  const fils=st.wires.filter(w=>!w.peigne&&!w.jar).map(w=>{const A=sortie(w.a),B=sortie(w.b);return{w,A,B,l:A&&B?Math.abs(A.i-B.i)+Math.abs(A.j-B.j):1e9};}).sort((a,b)=>a.l-b.l);
   const DI=[[1,0],[-1,0],[0,1],[0,-1]];
   for(const f of fils){const{w,A,B}=f;w.route=null;if(!A||!B)continue;
     /* A* sur (case, sens) : un coude coûte, une case déjà prise dans le même sens aussi */
@@ -1370,6 +1458,64 @@ function cheminRange(pts){if(!pts||pts.length<2)return'';let d=`M ${pts[0][0]} $
     d+=` L ${bx-(bx-ax)/l1*r} ${by-(by-ay)/l1*r} Q ${bx} ${by} ${bx+(cx-bx)/l2*r} ${by+(cy-by)/l2*r}`;}
   const z=pts[pts.length-1];return d+` L ${z[0]} ${z[1]}`;}
 function majRangement(){if(opts.range)rangerFils();else for(const w of st.wires)w.route=null;}
+/* ================= les peignes d'alimentation =================
+   Demandés le 24 novembre 2026 (« mettre peigne horizontal et vertical pour meilleure lisibilité des rangées de
+   tableaux »). Un peigne relie les bornes d'entrée (1 et N, en haut) des appareils modulaires 1P+N, l'interrupteur
+   différentiel et les disjoncteurs :
+   - le peigne HORIZONTAL court le long d'une rangée : il relie les entrées de tous les appareils de la rangée,
+     au lieu de deux conducteurs par disjoncteur ;
+   - le peigne VERTICAL relie les entrées de deux appareils de rangées différentes (la tête de chaque rangée) : il
+     descend sur le côté du tableau.
+   Électriquement, un peigne est une suite de conducteurs (10 mm², phase marron, neutre bleu clair), marqués
+   « peigne » et rangés dans un groupe (pg) : la gomme ôte le peigne entier, la vérification compte un peigne pour un
+   seul conducteur dans une borne (la dent), et « Ranger les conducteurs » ne les déplace pas. On les dessine en
+   barres droites au-dessus des bornes, la phase au-dessus du neutre, avec leurs dents. */
+const SEC_PEIGNE=10,PG_DECAL={phase:27,neutre:15};
+const modulaire=d=>d&&(d.t==='id'||d.t==='db');
+const estPhaseDe=w=>w.col!=='bleu';
+/* les conducteurs d'une borne : un peigne, quel que soit le nombre de ses barres qui y arrivent, compte pour un */
+function nbConducteurs(k){let n=0,pg=false;for(const w of st.wires){if(w.a!==k&&w.b!==k)continue;if(w.peigne)pg=true;else n++;}return n+(pg?1:0);}
+/* le tracé d'un peigne : une barre droite au-dessus des bornes, ses dents qui y descendent */
+function cheminPeigne(w){const A=bornePos(w.a),B=bornePos(w.b);if(!A||!B)return'';const dec=estPhaseDe(w)?PG_DECAL.phase:PG_DECAL.neutre;
+  if(w.peigne==='h'){const y=Math.min(A.y,B.y)-dec;return`M ${A.x} ${A.y} V ${y} H ${B.x} V ${B.y}`;}
+  const xb=w.xb!=null?w.xb:Math.min(A.x,B.x)-40-(estPhaseDe(w)?12:0);
+  return`M ${A.x} ${A.y} V ${A.y-dec} H ${xb} V ${B.y-dec} H ${B.x} V ${B.y}`;}
+function dejaRelies(a,b){return st.wires.some(w=>w.a===a&&w.b===b||w.a===b&&w.b===a);}
+/* le peigne horizontal d'une rangée : tous les appareils modulaires dont les entrées sont à la hauteur de d1, entre d1
+   et d2 compris, reliés de proche en proche */
+function poserPeigneH(d1,d2,ext){const y=d1.y,x0=Math.min(d1.x,d2.x),x1=Math.max(d1.x,d2.x);
+  const rang=st.devs.filter(d=>modulaire(d)&&Math.abs(d.y-y)<6&&d.x>=x0&&d.x<=x1).sort((a,b)=>a.x-b.x);
+  if(rang.length<2)return 0;const pg='pg'+(st.nid++);let n=0;
+  for(let i=1;i<rang.length;i++)for(const[b,col]of[['e1','marron'],['eN','bleu']]){const a=nk(rang[i-1],b),c=nk(rang[i],b);
+    if(dejaRelies(a,c))continue;fil(a,c,col,SEC_PEIGNE,Object.assign({peigne:'h',pg},ext||{}));n++;}
+  return n?rang.length:0;}
+/* le peigne vertical : les entrées de deux appareils de rangées différentes, par une descente sur le côté */
+function poserPeigneV(d1,d2,ext){const[h,b]=d1.y<d2.y?[d1,d2]:[d2,d1],pg='pg'+(st.nid++),xg=Math.min(h.x,b.x);let n=0;
+  for(const[bo,col]of[['e1','marron'],['eN','bleu']]){const a=nk(h,bo),c=nk(b,bo);if(dejaRelies(a,c))continue;
+    fil(a,c,col,SEC_PEIGNE,Object.assign({peigne:'v',pg,xb:xg-22-(col==='marron'?12:0)},ext||{}));n++;}
+  return n;}
+/* l'outil « Peigne » : toucher un appareil modulaire, puis un autre ; même rangée, un peigne horizontal ; deux rangées,
+   un peigne vertical */
+function cliquePeigne(d){if(!modulaire(d)){toast('Un peigne se pose sur les entrées d’un interrupteur différentiel ou d’un disjoncteur 1P+N.','warn');return;}
+  if(!peutCabler()){attente=null;render();return;}
+  if(!attente||attente.outil!=='peigne'){attente={outil:'peigne',dev:d.id};sel=null;render();renderPanel();return;}
+  const d1=devId(attente.dev);attente=null;if(!d1||d1===d){render();renderPanel();return;}
+  pushHist();let n;
+  if(Math.abs(d1.y-d.y)<6){n=poserPeigneH(d1,d);if(!n){hist.pop();toast('Ces appareils sont déjà reliés par un peigne.','warn');render();renderPanel();return;}
+    toast('Peigne horizontal posé sur '+n+' appareils.','info');}
+  else{n=poserPeigneV(d1,d);if(!n){hist.pop();toast('Ces deux appareils sont déjà reliés.','warn');render();renderPanel();return;}
+    toast('Peigne vertical posé entre '+d1.nm+' et '+d.nm+'.','info');}
+  sel=null;commit();}
+/* ôter un peigne, c'est l'ôter tout entier */
+function ressortPeigne(w){return w.peigne?st.wires.filter(x=>x.pg===w.pg):[w];}
+/* la jarretière : les deux conducteurs qui vont des sorties d'un différentiel (en bas) à l'entrée de la rangée (en
+   haut), tirés droit, entre deux modules, comme dans un vrai tableau ; dessinés à angles droits, jamais rangés */
+function cheminJarretiere(w){const A=bornePos(w.a),B=bornePos(w.b);if(!A||!B)return'';const ph=estPhaseDe(w)?0:8;
+  const xg=B.x>A.x?(A.dev.x+TYPES[A.dev.t].w+B.dev.x)/2+(ph?-5:5):A.x-30-ph,yb=A.y+12+ph,yh=B.y-PG_DECAL.phase-16-ph;
+  return`M ${A.x} ${A.y} V ${yb} H ${xg} V ${yh} H ${B.x} V ${B.y}`;}
+/* un appareil modulaire posé ou glissé près d'une rangée s'y aligne : le peigne reconnaît une rangée à sa hauteur */
+function alignerRangee(d){if(!modulaire(d))return;
+  const v=st.devs.filter(x=>x!==d&&modulaire(x)&&Math.abs(x.y-d.y)<40).sort((a,b)=>Math.abs(a.y-d.y)-Math.abs(b.y-d.y))[0];if(v)d.y=v.y;}
 /* ================= les gestes sur la platine =================
    Sept outils : Sélection (déplacer, manœuvrer, choisir), Conducteur (une borne, puis l'autre),
    Gomme, VAT (deux bornes, sous tension), Ohmmètre (deux bornes, hors tension), Multimètre
@@ -1385,12 +1531,12 @@ function commit(){save();recalc();majRangement();render();renderPanel();}
 function annuler(){if(!hist.length)return;restore(hist.pop());attente=null;mesure=null;sel=null;commit();}
 function manoeuvre(d,a,ph){const ty=TYPES[d.t];if(ty.act&&ty.act(d,a,ph)){recalc();render();renderPanel();save();}}
 function poser(t,p){if(!peutCabler())return;pushHist();const ty=TYPES[t];
-  const d=ajoute(t,snap(clamp(p.x-ty.w/2,-200,PLW+200)),snap(clamp(p.y-ty.h/2,-200,PLH+200)));sel={k:'dev',id:d.id};commit();}
+  const d=ajoute(t,snap(clamp(p.x-ty.w/2,-200,PLW+200)),snap(clamp(p.y-ty.h/2,-200,PLH+200)));alignerRangee(d);sel={k:'dev',id:d.id};commit();}
 function supprimeDev(d){if(d.lk){toast(d.nm+' fait partie de la mission : il reste en place.','warn');return;}if(!peutCabler())return;
   pushHist();const pre=d.id+'.';st.wires=st.wires.filter(w=>!w.a.startsWith(pre)&&!w.b.startsWith(pre));st.devs=st.devs.filter(x=>x!==d);
   if(sel&&sel.id===d.id)sel=null;mesure=null;commit();}
-function supprimeFil(w){if(w.lk){toast('Ce conducteur est déjà câblé par la mission : il reste en place.','warn');return;}if(!peutCabler())return;
-  pushHist();st.wires=st.wires.filter(x=>x!==w);if(sel&&sel.id===w.id)sel=null;commit();}
+function supprimeFil(w){const grp=ressortPeigne(w);if(grp.some(x=>x.lk)){toast(w.peigne?'Ce peigne est déjà posé par la mission : il reste en place.':'Ce conducteur est déjà câblé par la mission : il reste en place.','warn');return;}if(!peutCabler())return;
+  pushHist();st.wires=st.wires.filter(x=>!grp.includes(x));if(sel&&grp.some(x=>x.id===sel.id))sel=null;commit();}
 function cliqueBorneFil(k){if(!peutCabler()){attente=null;render();return;}
   if(!attente||attente.outil!=='fil'){attente={k,outil:'fil'};render();renderPanel();return;}
   if(attente.k===k){attente=null;render();renderPanel();return;}
@@ -1419,6 +1565,7 @@ function initEdition(){
     if(outil==='fil'&&bo){cliqueBorneFil(bo.dataset.borne);return;}
     if((outil==='vat'||outil==='ohm'||outil==='multi')&&bo){cliqueBorneMesure(bo.dataset.borne);return;}
     if(outil==='pince'&&wi){clamperFil(wi.dataset.wire,p);return;}
+    if(outil==='peigne'&&(dv||bo)){cliquePeigne(dv?devId(dv.dataset.dev):bornePos(bo.dataset.borne).dev);return;}
     if(outil==='gomme'){if(wi){supprimeFil(st.wires.find(w=>w.id===wi.dataset.wire));return;}if(dv){supprimeDev(devId(dv.dataset.dev));return;}}
     if(outil==='sel'&&ac&&dv){const d=devId(dv.dataset.dev);sel={k:'dev',id:d.id};actEnCours={d,a:ac.dataset.act};manoeuvre(d,ac.dataset.act,'down');return;}
     if(bo&&outil==='sel'){const P=bornePos(bo.dataset.borne);sel={k:'dev',id:P.dev.id};render();renderPanel();return;}
@@ -1439,7 +1586,7 @@ function initEdition(){
     if(attente){survol=ptSVG(e.clientX,e.clientY);render();}});
   const fin=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;
     if(actEnCours){manoeuvre(actEnCours.d,actEnCours.a,'up');actEnCours=null;}
-    if(drag&&drag.k==='dev'&&drag.moved){hist.push(drag.snap);if(hist.length>80)hist.shift();save();majRangement();render();}
+    if(drag&&drag.k==='dev'&&drag.moved){alignerRangee(drag.d);hist.push(drag.snap);if(hist.length>80)hist.shift();save();majRangement();render();}
     drag=null;};
   pl.addEventListener('pointerup',fin);pl.addEventListener('pointercancel',fin);
   pl.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();const p=ptSVG(e.clientX,e.clientY);zoom(e.deltaY>0?1.12:1/1.12,p.x,p.y);},{passive:false});
@@ -1458,16 +1605,18 @@ const AIDE={
   vat:'Sous tension : touchez deux bornes. Le VAT indique la tension entre elles. C’est aussi lui qui vérifie l’absence de tension avant d’intervenir.',
   ohm:'Hors tension : touchez deux bornes. L’ohmmètre indique la résistance entre elles : 0 Ω pour un conducteur sain, OL pour un circuit ouvert.',
   multi:'Choisissez la grandeur au commutateur (tension, résistance, continuité, capacité), puis touchez deux bornes : la pointe rouge, puis la noire.',
-  pince:'Touchez un conducteur : la pince se referme autour de lui et lit le courant qui le parcourt.'};
+  pince:'Touchez un conducteur : la pince se referme autour de lui et lit le courant qui le parcourt.',
+  peigne:'Touchez un disjoncteur ou un interrupteur différentiel, puis un autre. Sur la même rangée : un peigne horizontal relie leurs entrées (1 et N) et celles des appareils entre eux. Sur deux rangées : un peigne vertical relie les entrées des deux. Hors tension seulement ; la gomme ôte un peigne entier.'};
 function renderPanel(){const box=$('propsBox');if(!box)return;box.textContent='';
   if((outil==='vat'||outil==='ohm')&&(mesure||attente)){panneauMesure(box);journal(box);return;}
   if(outil==='multi'){panneauMulti(box);journal(box);return;}
   if(outil==='pince'){panneauPince(box);journal(box);return;}
   if(sel&&sel.k==='dev'){const d=devId(sel.id);if(d){panneauDev(box,d);journal(box);return;}}
   if(sel&&sel.k==='fil'){const w=st.wires.find(x=>x.id===sel.id);if(w){panneauFil(box,w);journal(box);return;}}
-  const h=H('div','pan-aide');h.innerHTML=`<h2>${{sel:'Sélection',fil:'Conducteur',gomme:'Gomme',vat:'VAT',ohm:'Ohmmètre'}[outil]}</h2><p class="note">${AIDE[outil]}</p>`;
+  const h=H('div','pan-aide');h.innerHTML=`<h2>${{sel:'Sélection',fil:'Conducteur',gomme:'Gomme',vat:'VAT',ohm:'Ohmmètre',peigne:'Peigne'}[outil]}</h2><p class="note">${AIDE[outil]}</p>`;
   if(outil==='fil')h.innerHTML+=`<p class="note">Conducteur choisi : <b>${COUL[opts.col].n}</b>, <b>${fsec(opts.sec)}</b>.</p>`;
   if(attente&&attente.outil==='fil')h.innerHTML+=`<p class="hint">Départ : ${esc(nomBorne(attente.k))}. Touchez la borne d’arrivée.</p>`;
+  if(attente&&attente.outil==='peigne'){const d0=devId(attente.dev);h.innerHTML+=`<p class="hint">Peigne depuis ${esc(d0?d0.nm:'?')}. Touchez l’autre bout de la rangée, ou un appareil d’une autre rangée.</p>`;}
   box.appendChild(h);
   const m=missionCourante();if(m){const c=H('div','pan-mis');c.innerHTML=`<span class="flab">Mission</span><b>${esc(m.titre)}</b><p class="note">${esc(m.court||'')}</p>`;
     const b=H('button','btn sm','Relire la consigne');b.onclick=()=>openWin('consigne');c.appendChild(b);box.appendChild(c);}
@@ -1497,7 +1646,7 @@ function panneauDev(box,d){const ty=TYPES[d.t];
   if(sousTensionReseau()&&SIM.ok){const t=H('table','ch-tab');t.innerHTML='<tr><th>Borne</th><th>par rapport à la terre</th></tr>'+
       ty.bornes.filter(b=>b.l!=='').map(b=>`<tr><td>${esc(b.l!=null?b.l:b.n)}</td><td>${fv(cabs(SIM.V(nk(d,b.n))))}</td></tr>`).join('');
     const c=H('details','pan-bornes');c.innerHTML='<summary>Tensions des bornes</summary>';c.appendChild(t);box.appendChild(c);}}
-function panneauFil(box,w){const h=H('div','pan-tete');h.innerHTML=`<h2>Conducteur</h2><div class="sub">${esc(nomBorne(w.a))} → ${esc(nomBorne(w.b))}</div>`;box.appendChild(h);
+function panneauFil(box,w){if(w.peigne){panneauPeigne(box,w);return;}const h=H('div','pan-tete');h.innerHTML=`<h2>Conducteur</h2><div class="sub">${esc(nomBorne(w.a))} → ${esc(nomBorne(w.b))}</div>`;box.appendChild(h);
   if(w.lk){box.appendChild(H('p','note','Déjà câblé par la mission.'));return;}
   const f=H('div','field');f.innerHTML='<label>Couleur</label>';const sw=H('div','swatches');
   for(const k of ORDRE_COUL){const b=H('button','sw'+(w.col===k?' on':''));b.title=COUL[k].n;b.style.background=COUL[k].c2?`repeating-linear-gradient(45deg,${COUL[k].c} 0 6px,${COUL[k].c2} 6px 12px)`:COUL[k].c;
@@ -1519,6 +1668,13 @@ function panneauMesure(box){const vat=outil==='vat';
     box.appendChild(H('p','note',r===Infinity?'Circuit ouvert : aucune continuité entre ces deux points.':r<0.5?'Continuité : les deux points sont reliés.':'Un récepteur ou une bobine se trouve entre les deux points.'));}}
 function journal(box){const ev=(SIM.ev||[]).slice(-5).reverse();if(!ev.length)return;const c=H('details','journal');c.open=true;
   c.innerHTML='<summary>Ce qui s’est passé</summary><ul>'+ev.map(e=>`<li class="${e.k}">${esc(e.msg)}</li>`).join('')+'</ul>';box.appendChild(c);}
+/* un peigne : ce qu'il relie, sans couleur ni section à choisir (24 novembre 2026) */
+function panneauPeigne(box,w){const grp=ressortPeigne(w),ks=new Set();for(const x of grp){ks.add(x.a.split('.')[0]);ks.add(x.b.split('.')[0]);}
+  const noms=[...ks].map(id=>devId(id)).filter(Boolean).sort((a,b)=>a.y-b.y||a.x-b.x).map(d=>d.nm);
+  const h=H('div','pan-tete');h.innerHTML=`<h2>${w.peigne==='h'?'Peigne horizontal':'Peigne vertical'}</h2><div class="sub">${esc(noms.join(', '))}</div>`;box.appendChild(h);
+  box.appendChild(H('p','note',w.peigne==='h'?'Il relie les entrées 1 (phase, en marron) et N (neutre, en bleu) des appareils de la rangée : une dent dans chaque borne, au lieu de deux conducteurs par disjoncteur.':'Il relie les entrées 1 et N d’appareils de deux rangées : il descend sur le côté du tableau et alimente la tête de chaque rangée.'));
+  if(w.lk){box.appendChild(H('p','note','Déjà posé par la mission.'));return;}
+  const row=H('div','row');const b=H('button','btn sm danger','Ôter le peigne');b.onclick=()=>supprimeFil(w);row.appendChild(b);box.appendChild(row);}
 /* ================= les appareils de mesure : multimètre, pince ampèremétrique, wattmètre-prise =================
    Demandés le 11 novembre 2026 (« il y a bien voltmètre et pince ampèremétrique ? sinon ajoute-les
    fidèlement ; aussi des prises wattmètres »). Ils sont dessinés comme les vrais, sans marque :
@@ -2188,7 +2344,20 @@ function tabDom(dj){const R=ajoute('res1',40,30,{},'Réseau');R.lk=1;const Q1=aj
   const Qs=dj.map((In,i)=>{const q=ajoute('db',140+100*i,200,{In},'Q'+(i+2));q.lk=1;return q;});
   const X=ajoute('bpe',40,440,{},'XPE');X.lk=1;
   fil(nk(R,'L'),nk(Q1,'e1'),'marron',6,LK);fil(nk(R,'N'),nk(Q1,'eN'),'bleu',6,LK);fil(nk(R,'PE'),nk(X,'p1'),'vj',6,LK);
-  for(const q of Qs){fil(nk(Q1,'s2'),nk(q,'e1'),'marron',6,LK);fil(nk(Q1,'sN'),nk(q,'eN'),'bleu',6,LK);}return{R,Q1,Qs,X};}
+  /* depuis le 24 novembre 2026, deux conducteurs de Q1 au premier disjoncteur, puis un peigne horizontal sur la rangée,
+     comme dans un vrai tableau : deux conducteurs par disjoncteur rendaient la rangée illisible */
+  if(Qs.length){const J={lk:1,jar:1};fil(nk(Q1,'s2'),nk(Qs[0],'e1'),'marron',6,J);fil(nk(Q1,'sN'),nk(Qs[0],'eN'),'bleu',6,J);}
+  if(Qs.length>1)poserPeigneH(Qs[0],Qs[Qs.length-1],LK);return{R,Q1,Qs,X};}
+/* un tableau de deux rangées (24 novembre 2026) : Q1 et Q5, différentiels 30 mA en tête de rangée, reliés par un peigne
+   vertical ; dans chaque rangée, trois disjoncteurs sur un peigne horizontal */
+function tabDeuxRangees(){const R=ajoute('res1',40,30,{},'Réseau');R.lk=1;
+  const Q1=ajoute('id',40,200,{},'Q1'),Q5=ajoute('id',40,460,{},'Q5');lock(Q1,Q5);
+  const C1=[16,20,32],C2=[16,20,20],A=C1.map((In,i)=>ajoute('db',140+100*i,200,{In},'Q'+(i+2))),B=C2.map((In,i)=>ajoute('db',140+100*i,460,{In},'Q'+(i+6)));lock(...A,...B);
+  const X=ajoute('bpe',300,50,{},'XPE');X.lk=1;
+  fil(nk(R,'L'),nk(Q1,'e1'),'marron',10,LK);fil(nk(R,'N'),nk(Q1,'eN'),'bleu',10,LK);fil(nk(R,'PE'),nk(X,'p1'),'vj',10,LK);
+  poserPeigneV(Q1,Q5,LK);
+  for(const[Q,rang]of[[Q1,A],[Q5,B]]){const J={lk:1,jar:1};fil(nk(Q,'s2'),nk(rang[0],'e1'),'marron',6,J);fil(nk(Q,'sN'),nk(rang[0],'eN'),'bleu',6,J);poserPeigneH(rang[0],rang[rang.length-1],LK);}
+  return{R,Q1,Q5,A,B,X};}
 /* l'armoire : arrivée, Q1, transformateur et son fusible, déjà câblés */
 function armoire(){const R=ajoute('res3',40,30,{},'Réseau');R.lk=1;const Q1=ajoute('q3',60,190,{In:6},'Q1');Q1.lk=1;
   const T1=ajoute('tr',460,40,{},'T1');T1.lk=1;const F2=ajoute('fu',660,40,{In:2},'F2');F2.lk=1;
@@ -2251,6 +2420,10 @@ const MISSIONS=[
   {id:'libre-dom',grp:'Platine libre',titre:'Platine libre, domestique',libre:true,court:'Un tableau câblé jusqu’à deux disjoncteurs, et la bibliothèque.',
     consigne:'<p>Le tableau est câblé jusqu’aux disjoncteurs Q2 (16 A) et Q3 (20 A). Posez l’appareillage depuis la bibliothèque et câblez ce que vous voulez.</p>',
     prep(){tabDom([16,20]);}},
+  /* le 24 novembre 2026 : un tableau de deux rangées, un peigne vertical aux têtes de rangée, un peigne horizontal par rangée */
+  {id:'libre-dom2',grp:'Platine libre',titre:'Platine libre, tableau à deux rangées',libre:true,court:'Deux rangées, chacune son différentiel, reliées par un peigne vertical ; un peigne horizontal par rangée.',
+    consigne:'<p>Le tableau a deux rangées. L’arrivée alimente l’interrupteur différentiel Q1 ; un <b>peigne vertical</b> relie ses entrées à celles de Q5, en tête de la seconde rangée. Chaque différentiel alimente sa rangée par deux conducteurs et un <b>peigne horizontal</b>.</p><p>Posez l’appareillage depuis la bibliothèque et câblez les départs. L’outil « Peigne » pose d’autres peignes : touchez un appareil, puis un autre.</p>',
+    prep(){tabDeuxRangees();}},
   {id:'libre-ind',grp:'Platine libre',titre:'Platine libre, industrielle',libre:true,court:'Une arrivée triphasée, Q1, le transformateur 24 V et son fusible.',
     consigne:'<p>L’arrivée 3 × 400 V, le disjoncteur Q1, le transformateur T1 et son fusible F2 sont câblés. Posez contacteurs, boutons et moteur depuis la bibliothèque.</p>',
     prep(){armoire();}},
@@ -2548,8 +2721,13 @@ function chargeSolution(id){const m=MISSIONS.find(x=>x.id===id);m.prep();const d
 function missionCourante(){return st.mis?MISSIONS.find(m=>m.id===st.mis):null;}
 function chargeMission(id){const m=MISSIONS.find(x=>x.id===id);if(!m)return;
   st={devs:[],wires:[],nid:1,mis:id};m.prep();for(const d of st.devs){if(estSource(d))d.s.on=false;}
+  /* une activité de co-intervention n'ajoute pas d'appareil : la bibliothèque se cache, la platine prend la place */
+  if(m.act){if(!m.biblio&&opts.lib){opts.lib=false;opts.libAct=true;}
+    /* une platine déjà câblée se lit mieux rangée, comme en goulotte ; l'élève peut défaire le rangement */
+    if(m.range&&!opts.range){opts.range=true;opts.rangeAct=true;}}
+  else{if(opts.libAct){opts.lib=true;opts.libAct=false;}if(opts.rangeAct){opts.range=false;opts.rangeAct=false;}}
   hist=[];sel=null;attente=null;mesure=null;pince=null;SIM.ev=[];TEMPS=0;commit();ajuster();
-  openWin('consigne');majMission();}
+  majRangement();render();majBarre();if(!PARC)openWin('consigne');majMission();}
 /* ================= la vérification d'une mission =================
    Les essais de fonctionnement se jouent sur la platine elle-même, en mode ESSAI (aucun message,
    aucun dessin), puis la platine revient exactement comme l'élève l'a laissée. Viennent ensuite
@@ -2636,8 +2814,9 @@ function regles(m){const L=[],libres=st.wires.filter(w=>!w.lk);
   const petits=[];for(const[w,s]of exige)if(w.sec<s)petits.push(descr(w)+' : '+fsec(w.sec)+' au lieu de '+fsec(s)+' au moins');
   if(exige.size)L.push({ok:!petits.length,txt:'Les sections correspondent aux calibres des protections',aide:petits.slice(0,3).join(' · ')+(petits.length>3?' · et '+(petits.length-3)+' autre(s).':'')});
   /* 4. deux conducteurs au plus par borne à vis, un seul par entrée de connecteur */
-  const trop=[];for(const d of st.devs)for(const b of TYPES[d.t].bornes){const kk=nk(d,b.n),ws=st.wires.filter(w=>w.a===kk||w.b===kk);
-    if(ws.length>(b.un?1:2)&&ws.some(w=>!w.lk))trop.push(nomBorne(kk)+' ('+ws.length+')');}
+  const trop=[];for(const d of st.devs)for(const b of TYPES[d.t].bornes){const kk=nk(d,b.n),ws=st.wires.filter(w=>w.a===kk||w.b===kk),n=nbConducteurs(kk);
+    /* un peigne compte pour un : une dent par borne (24 novembre 2026) */
+    if(n>(b.un?1:2)&&ws.some(w=>!w.lk))trop.push(nomBorne(kk)+' ('+n+')');}
   L.push({ok:!trop.length,txt:'Deux conducteurs au plus par borne, un seul par entrée de connecteur',aide:'Trop de conducteurs sur : '+trop.slice(0,4).join(', ')+'.'});
   if(m&&m.panne)L.push({ok:!st.wires.some(w=>w.cut),txt:'Le conducteur défectueux a été remplacé',aide:'Un conducteur coupé dans son isolant est toujours en place : il n’a pas de continuité à l’ohmmètre.'});
   return L;}
@@ -2648,7 +2827,7 @@ function verifier(){const m=missionCourante();if(!m||!m.test)return;
   catch(e){if(e!==STOP){L.push({ok:false,txt:'La vérification s’est arrêtée : '+e.message});console.error(e);}}
   ESSAI=false;restore(avant);SIM.ev=ev;TEMPS=t0;recalc();majRangement();render();renderPanel();
   const tout=[{t:'Le fonctionnement'}].concat(L,[{t:'Les règles du métier'}],regl),fautes=tout.filter(x=>x.ok===false).length;
-  if(!fautes){prog[m.id]=true;save();majMission();}
+  if(!fautes&&!m.act){prog[m.id]=true;save();majMission();}
   dernierVerdict={m:m.id,tout,fautes,quand:new Date()};openWin('verif');remplirVerif();}
 let dernierVerdict=null;
 function remplirVerif(){const b=WINS.verif.body;b.textContent='';const v=dernierVerdict,m=missionCourante();
@@ -2688,6 +2867,8 @@ function ajusteLib(){const lib=$('lib');if(!lib)return;if(matchMedia('(max-width
   const top=Math.max(10,lib.getBoundingClientRect().top);lib.style.maxHeight=Math.max(240,Math.floor(innerHeight-top-12))+'px';}
 let libRaf=0;const ajusteLibBientot=()=>{if(!libRaf)libRaf=requestAnimationFrame(()=>{libRaf=0;ajusteLib();});};
 /* ================= la barre, l'en-tête, les fenêtres de la mission ================= */
+/* les TP notés d'une heure dont la page est à côté de l'atelier : l'assembleur remplit la liste (EN_LIGNE) */
+const TP_NOTES=[{"code": "CAB-01", "titre": "Ça saute, mais rien n’est en panne", "page": "cab-fuites.html"}, {"code": "CAB-02", "titre": "Le circuit de la cuisine", "page": "cab-cuisine.html"}];
 function construitBarre(){
   document.querySelectorAll('[data-outil]').forEach(b=>b.onclick=()=>choisirOutil(b.dataset.outil));
   const sw=$('swCol');sw.textContent='';
@@ -2708,6 +2889,7 @@ function construitBarre(){
   $('b-panel').onclick=()=>{opts.panel=!opts.panel;applyLayout();save();};
   document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>basculerWin(b.dataset.open));
   const ms=$('missions');ms.onchange=()=>{const id=ms.value;if(!id)return;
+    if(id.startsWith('tp:')){save();location.href=id.slice(3);return;}  /* un TP noté d'une heure : sa page, à côté */
     const travail=st.wires.some(w=>!w.lk)||st.devs.some(d=>!d.lk);
     if(travail&&!confirm('Charger « '+MISSIONS.find(m=>m.id===id).titre+' » ? Le câblage en cours sera remplacé.')){majMission();return;}
     chargeMission(id);};
@@ -2722,10 +2904,17 @@ function majMission(){const ms=$('missions'),m=missionCourante();ms.textContent=
   const o0=H('option');o0.value='';o0.textContent='Missions…';ms.appendChild(o0);let og=null,grp='';
   for(const x of MISSIONS){if(x.grp!==grp){grp=x.grp;og=document.createElement('optgroup');og.label=grp;ms.appendChild(og);}
     const o=H('option');o.value=x.id;o.textContent=(prog[x.id]?'✓ ':'')+x.titre;og.appendChild(o);}
+  if(!PARC&&TP_NOTES.length){const g=document.createElement('optgroup');g.label='TP notés d’une heure (une autre page)';
+    for(const t of TP_NOTES){const o=H('option');o.value='tp:'+t.page;o.textContent=t.code+' · '+t.titre;g.appendChild(o);}ms.appendChild(g);}
   ms.value=m?m.id:'';$('btnVerif').hidden=!(m&&m.test);$('recommencer').hidden=!m;
   $('misTitre').textContent=m?m.titre:'Platine libre';
+  /* une activité de co-intervention : la fenêtre de la consigne porte la fiche */
+  WINS.consigne.el.querySelector('.win-title').textContent=m&&m.act?'L’activité':'La consigne';
+  document.querySelector('.app').classList.toggle('act',!!(m&&m.act));
+  const bc=document.querySelector('[data-open="consigne"]');if(bc)bc.textContent=m&&m.act?'Activité':'Consigne';
   if(winState('consigne').open)remplirConsigne();if(winState('schema').open)remplirSchema();if(winState('verif').open)remplirVerif();if(WINS.doc&&winState('doc').open)remplirDoc();}
 function remplirConsigne(){const b=WINS.consigne.body,m=missionCourante();b.textContent='';
+  if(m&&m.parties){remplirFiche(b,m);return;}
   const c=H('div','consigne');
   if(!m){c.innerHTML='<p>Choisissez une mission dans la liste, ou câblez librement : posez l’appareillage depuis la bibliothèque.</p>';b.appendChild(c);return;}
   /* le guidage (12 novembre 2026, « des TP moins guidés ») : en autonomie, le cahier des charges seul,
@@ -2750,6 +2939,468 @@ function remplirSchema(){const b=WINS.schema.body,m=missionCourante();b.textCont
   if(!m||!m.schema||!SCH[m.schema]){b.appendChild(H('p','note pad','Pas de schéma pour la platine libre.'));return;}
   const w=H('div','sch-wrap');w.appendChild(SCH[m.schema]());b.appendChild(w);
   b.appendChild(H('p','note pad','Le schéma dit ce qu’il faut relier, pas par où passer : le trajet des conducteurs sur la platine est votre travail.'));}
+/* ================= les activités de co-intervention =================
+   Demandées le 24 novembre 2026, pour la co-intervention du CAP Électricien (« produis-les en format web
+   pour aller avec l'activité sur la tablette ; ils ne doivent sortir le moins possible de l'activité
+   câblage »). Une activité est une mission du groupe « Co-intervention · CAP » qui porte une fiche au lieu
+   d'une consigne de câblage : la commande, des parties, des questions que la page vérifie, ce qu'on retient.
+   La fiche prend la place de la consigne (fenêtre « L'activité ») : la platine et ses instruments restent à
+   côté, l'élève ne quitte jamais l'atelier.
+
+   Une activité : {id:'coN', grp:'Co-intervention · CAP', act:true, titre, court, prog:{ms,pro}, consigne
+   (la commande), prep() (la platine de départ), parties:[{titre, texte, platine(), q:[…]}], retenir,
+   simplifie, et au besoin test (pour « Vérifier mon câblage ») et biblio:true (garder la bibliothèque)}.
+   Une question :
+     {id, type:'nombre', lib, unite, val (un nombre, ou une fonction lue au moment de vérifier),
+       tol (relative, 3 % par défaut) ou tolAbs, methode, erreurs:[[x=>vrai, 'l’erreur nommée'], …]}
+     {id, type:'choix', lib, opts:['…', …], bonne:i, err:{i:'pourquoi c’est faux'}, methode}
+     {id, type:'manip', lib, ok:()=>true ou le texte de ce qui ne va pas, lu:()=>'ce que la page lit', methode}
+     {id, type:'tab', lib, cols:['…'], rows:[[cellule, …], …], methode}
+       une cellule : un texte ; {val, tol, tolAbs} un nombre à taper ; {opts:[…], bonne:i} un choix
+   La règle des sites tient : la page dit juste ou « pas encore », nomme l'erreur et donne la méthode,
+   jamais la valeur attendue. Les réponses se gardent avec la platine (clé de l'atelier), par activité. */
+let REP={};
+function repDe(m){return REP[m.id]||(REP[m.id]={});}
+/* un nombre tapé : la virgule ou le point, une unité derrière, des espaces dans les milliers */
+function lireNb(s){const t=String(s==null?'':s).replace(/[\s  ]/g,'').replace(',','.').match(/^[-+]?\d*\.?\d+(e[-+]?\d+)?/i);return t?parseFloat(t[0]):NaN;}
+function valDe(c){return typeof c.val==='function'?c.val():c.val;}
+function procheDe(x,v,c){if(!isFinite(x)||!isFinite(v))return false;const ta=c.tolAbs!=null?c.tolAbs:Math.abs(v)*(c.tol!=null?c.tol:0.03);return Math.abs(x-v)<=ta+1e-9;}
+/* juger un nombre : juste, une erreur nommée, ou le bon nombre dans une autre unité */
+function jugeNb(x,c){const v=valDe(c);if(procheDe(x,v,c))return{ok:true};
+  for(const[f,msg]of c.erreurs||[])if(f(x,v))return{ok:false,msg};
+  if(v&&(procheDe(x/1000,v,c)||procheDe(x*1000,v,c)))return{ok:false,msg:'Le nombre est bon, mais pas dans l’unité demandée'+(c.unite?' ('+c.unite+')':'')+' : 1 000 fois trop grand ou trop petit.'};
+  return{ok:false,msg:null};}
+/* calculer sur une copie de la platine, qui revient ensuite telle que l'élève l'a laissée */
+function surCopie(fn){const avant=snapshot(),ev=SIM.ev.slice(),t0=TEMPS;let r;ESSAI=true;
+  try{r=fn();}finally{ESSAI=false;restore(avant);SIM.ev=ev;TEMPS=t0;recalc();majRangement();render();renderPanel();}return r;}
+/* la vérification d'une mission, sans fenêtre : la liste de ce qui ne va pas (vide : tout est bon) */
+function essaiSilencieux(id){const m=MISSIONS.find(x=>x.id===id),L=[];if(!m||!m.test)return[];let regl=[];
+  surCopie(()=>{regl=regles(m);try{remiseAZero();const T=apiEssai(L);T.on();m.test(T);}
+    catch(e){if(e!==STOP)L.push({ok:false,txt:'La vérification s’est arrêtée : '+e.message});}});
+  return L.concat(regl).filter(x=>x.ok===false);}
+/* une question manipulation qui demande un câblage juste : la liste des fautes, ou vrai */
+function cablageJuste(id){const f=essaiSilencieux(id);if(!f.length)return true;
+  return 'La vérification trouve '+f.length+(f.length>1?' points à reprendre':' point à reprendre')+' : '+f[0].txt+(f[0].aide?' ('+f[0].aide+')':'')+'.';}
+const lampeAllumee=nm=>{const d=devNm(nm);return!!(d&&d.r&&d.r.on);};
+const tripDe=nm=>{const d=devNm(nm);return!!(d&&(d.s.trip||d.s.fondu));};
+function toutVerrouiller(){for(const d of st.devs)d.lk=1;for(const w of st.wires)w.lk=1;}
+/* une partie qui a sa propre platine */
+function posePlatine(m,fn){const travail=st.wires.some(w=>!w.lk);
+  if(travail&&!confirm('Mettre en place la platine de cette partie ? Le câblage en cours sera remplacé. Vos réponses restent.'))return;
+  st={devs:[],wires:[],nid:1,mis:m.id};fn();for(const d of st.devs)if(estSource(d))d.s.on=false;
+  hist=[];sel=null;attente=null;mesure=null;pince=null;SIM.ev=[];TEMPS=0;commit();ajuster();majBarre();renderPanel();}
+/* le compte des questions justes ; l'activité finie se coche dans la liste des missions */
+function scoreDe(m){const R=repDe(m);let n=0,ok=0;for(const p of m.parties)for(const q of p.q){n++;if(R[q.id]&&R[q.id].ok)ok++;}return{n,ok};}
+function majScore(m){const e=$('fScore');if(!e)return;const s=scoreDe(m);e.textContent='Questions justes : '+s.ok+' sur '+s.n;e.classList.toggle('fini',s.ok===s.n);
+  if(s.ok===s.n&&!prog[m.id]){prog[m.id]=true;save();majMission();}}
+function remplirFiche(b,m){b.textContent='';const guide=opts.guide==='guide';
+  const sw=H('div','seg sm guidage');sw.setAttribute('role','group');sw.setAttribute('aria-label','Guidage');
+  for(const[k,l]of[['auto','En autonomie'],['guide','Guidé']]){const bt=H('button',null,l);bt.type='button';bt.setAttribute('aria-pressed',String(k==='guide'?guide:!guide));
+    bt.onclick=()=>{opts.guide=k;save();remplirConsigne();};sw.appendChild(bt);}
+  b.appendChild(sw);
+  const f=H('div','fiche');
+  f.innerHTML=`<h3>${esc(m.titre)}</h3>`+(m.prog?`<p class="fprog"><span><b>Maths-sciences</b> · ${m.prog.ms}</span><span><b>Atelier</b> · ${m.prog.pro}</span></p>`:'')+
+    `<div class="fcmd">${m.consigne}</div><p class="fscore" id="fScore"></p>`;
+  m.parties.forEach((p,ip)=>{const s=H('section','fp');s.innerHTML=`<h4>${esc(p.titre)}</h4>${p.texte||''}`;
+    if(p.platine){const bt=H('button','btn sm fplat','Mettre en place la platine de cette partie');bt.type='button';bt.onclick=()=>posePlatine(m,p.platine);s.insertBefore(bt,s.children[1]||null);}
+    p.q.forEach((q,iq)=>{const n=H('div','fq');n.dataset.q=q.id;s.appendChild(n);dessineQ(n,m,q,String.fromCharCode(97+iq));});
+    f.appendChild(s);});
+  if(m.retenir)f.appendChild(H('details','fbloc retenir',`<summary>À retenir, pour la trace écrite commune</summary>${m.retenir}`));
+  if(m.simplifie)f.appendChild(H('details','fbloc',`<summary>Ce que l’atelier simplifie</summary>${m.simplifie}`));
+  const ef=H('button','btn sm danger','Effacer mes réponses');ef.type='button';
+  ef.onclick=()=>{if(!confirm('Effacer toutes les réponses de cette activité, sur cette tablette ?'))return;REP[m.id]={};delete prog[m.id];save();majMission();remplirConsigne();};
+  const pied=H('div','fpied');pied.appendChild(ef);pied.appendChild(H('span','note','Les réponses restent sur cette tablette, avec la platine.'));f.appendChild(pied);
+  b.appendChild(f);majScore(m);}
+function aideDe(q,r){if(!q.methode)return'';const montre=opts.guide==='guide'||r&&r.n>0&&!r.ok;if(!montre)return'';
+  return `<details class="fq-aide"${opts.guide==='guide'?' open':''}><summary>Coup de pouce</summary>${q.methode}</details>`;}
+function msgDe(r,ok){if(!r)return'';return `<p class="fq-msg ${r.ok?'ok':'ko'}">${r.ok?(ok||'Juste.'):'Pas encore'+(r.msg?' : '+r.msg:'.')}</p>`;}
+function dessineQ(n,m,q,lettre){const R=repDe(m),r=R[q.id];n.className='fq'+(r?r.ok?' ok':' ko':'');
+  const lib=`<div class="fq-lib"><span class="fq-l">${lettre})</span> ${q.lib}</div>`,mk=r?`<span class="fmk">${r.ok?'✓':'✗'}</span>`:'';
+  const refait=()=>{dessineQ(n,m,q,lettre);majScore(m);save();};
+  if(q.type==='nombre'){
+    n.innerHTML=lib+`<div class="fq-rep"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Réponse"><span class="fu">${q.unite||''}</span><button type="button" class="btn sm">Vérifier</button>${mk}</div>`+msgDe(r)+aideDe(q,r);
+    const inp=n.querySelector('input');inp.value=r?r.v:'';
+    const go=()=>{const x=lireNb(inp.value);if(!isFinite(x)){toast('Tapez un nombre : la virgule ou le point conviennent.','info');return;}
+      const j=jugeNb(x,q);R[q.id]={v:inp.value.trim(),ok:j.ok,msg:j.msg,n:(r?r.n:0)+1};refait();};
+    n.querySelector('button').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};}
+  else if(q.type==='choix'){
+    n.innerHTML=lib+`<div class="fq-opts"></div>`+msgDe(r)+aideDe(q,r);const box=n.querySelector('.fq-opts');
+    q.opts.forEach((o,i)=>{const bt=H('button',null,o);bt.type='button';if(r&&r.v===i)bt.className=r.ok?'ok':'ko';
+      bt.onclick=()=>{const ok=i===q.bonne;R[q.id]={v:i,ok,msg:ok?null:(q.err&&q.err[i])||null,n:(r?r.n:0)+1};refait();};box.appendChild(bt);});}
+  else if(q.type==='manip'){
+    n.innerHTML=lib+`<div class="fq-rep"><button type="button" class="btn sm primary">C’est fait : vérifier</button>${mk}</div>`+msgDe(r)+aideDe(q,r);
+    n.querySelector('button').onclick=()=>{let v;try{v=q.ok();}catch(e){v='la page ne peut pas le lire : '+e.message;}
+      const ok=v===true,lu=!ok&&q.lu?' La page lit : '+q.lu()+'.':'';R[q.id]={ok,msg:ok?null:(typeof v==='string'?v:'')+lu||null,n:(r?r.n:0)+1};refait();};}
+  else if(q.type==='tab'){
+    const cells=r&&r.cells||{};let h=`<div class="ft-wrap"><table class="ft"><thead><tr>${q.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>`;
+    q.rows.forEach((row,i)=>{h+='<tr>'+row.map((c,j)=>{const key=i+'_'+j,cr=cells[key];
+      if(typeof c==='string')return `<td>${c}</td>`;
+      const cl=cr?cr.ok?' class="ok"':' class="ko"':'';
+      if(c.opts)return `<td${cl}><select data-k="${key}" aria-label="Choix"><option value="">…</option>${c.opts.map((o,k)=>`<option value="${k}"${cr&&+cr.v===k&&cr.v!==''?' selected':''}>${esc(o)}</option>`).join('')}</select></td>`;
+      return `<td${cl}><input type="text" inputmode="decimal" autocomplete="off" data-k="${key}" aria-label="Valeur"></td>`;}).join('')+'</tr>';});
+    h+='</tbody></table></div>';
+    n.innerHTML=lib+h+`<div class="fq-rep"><button type="button" class="btn sm">Vérifier le tableau</button>${mk}</div>`+msgDe(r)+aideDe(q,r);
+    n.querySelectorAll('input[data-k]').forEach(e=>{const cr=cells[e.dataset.k];e.value=cr?cr.v:'';});
+    n.querySelector('.fq-rep button').onclick=()=>{const nc={};let tout=true,vide=false,unite=false;
+      q.rows.forEach((row,i)=>row.forEach((c,j)=>{if(typeof c==='string')return;const key=i+'_'+j,e=n.querySelector(`[data-k="${key}"]`),v=e.value;
+        if(v===''){vide=true;tout=false;nc[key]={v,ok:false};return;}
+        let ok;if(c.opts)ok=+v===(typeof c.bonne==='function'?c.bonne():c.bonne);else{const j2=jugeNb(lireNb(v),c);ok=j2.ok;if(!ok&&j2.msg&&/unité/.test(j2.msg))unite=true;}
+        nc[key]={v,ok};if(!ok)tout=false;}));
+      const faux=Object.values(nc).filter(x=>!x.ok&&x.v!=='').length;
+      R[q.id]={cells:nc,ok:tout,msg:tout?null:(vide?'il reste des cases vides. ':'')+(faux?faux+(faux>1?' cases ne sont pas justes':' case n’est pas juste')+' : elles gardent ce que vous avez tapé.':'')+(unite?' Regardez l’unité de chaque colonne.':''),n:(r?r.n:0)+1};refait();};}}
+/* les platines des activités : n prises en étoile depuis deux connecteurs, chacune son conducteur ; le
+   conducteur qui arrive du disjoncteur au connecteur porte la somme (la loi des nœuds se mesure à la pince) */
+function prisesEtoile(Q,XPE,n,sec,apps){const WL=ajoute('wago5',430,330,{},'W1'),WN=ajoute('wago5',640,330,{},'W2'),X=[];
+  fil(k(Q,'s2'),k(WL,'w1'),'marron',sec);fil(k(Q,'sN'),k(WN,'w1'),'bleu',sec);
+  for(let i=0;i<n;i++){const x=ajoute('pc',400+210*i,600,{app:apps&&apps[i]||'rien'},'X'+(i+1));X.push(x);
+    fil(k(WL,'w'+(i+2)),k(x,'L'),'marron',sec);fil(k(WN,'w'+(i+2)),k(x,'N'),'bleu',sec);fil(k(XPE,'p'+(i+2)),k(x,'PE'),'vj',sec);}
+  return X;}
+/* Co-intervention 1 · « Ça saute, mais rien n’est en panne » : les fuites qui s’additionnent sous un
+   différentiel 30 mA. Seuils, milliampères et ampères ; chercher un défaut d’isolement. */
+MISSIONS.push({id:'co1',grp:'Co-intervention · CAP',act:true,range:true,titre:'Ça saute, mais rien n’est en panne',court:'Les fuites qui s’additionnent, et le différentiel 30 mA.',
+  prog:{ms:'unités et préfixes (mA, A), additionner, comparer à un seuil',pro:'mesurer un courant de fuite à la pince, chercher un défaut d’isolement'},
+  consigne:'<p><b>Le vestiaire du club de foot.</b> Trois sèche-serviettes sont branchés sur les prises X1, X2 et X3. Le différentiel Q1 saute dès qu’on branche le troisième. L’an dernier, un dépanneur a changé le différentiel&nbsp;: ça recommence.</p><p><b>Votre mission</b>&nbsp;: mesurer, comprendre, et dire au club quoi faire.</p>',
+  prep(){const{Qs,X}=tabDom([20]);prisesEtoile(Qs[0],X,3,2.5);toutVerrouiller();},
+  parties:[
+    {titre:'1. Un seul sèche-serviettes',texte:'<p>Touchez la prise X1 et branchez-y le sèche-serviettes (le panneau de la prise). Mettez sous tension.</p><p>Prenez la pince, calibre <b>mA~</b>, cochez «&nbsp;Pincer plusieurs conducteurs ensemble&nbsp;», puis touchez la phase (marron) et le neutre (bleu) qui partent de Q2.</p>',
+      q:[{id:'a',type:'nombre',lib:'La pince lit&nbsp;:',unite:'mA',val:8,tolAbs:0.4,
+          methode:'Pince sur le calibre mA~, refermée sur les <b>deux</b> conducteurs de Q2 à la fois, la phase et le neutre.',
+          erreurs:[[x=>x>2&&x<2.4||x>2000&&x<2400,'c’est le courant du sèche-serviettes, de l’ordre de 2 A : la pince ne doit pas entourer la phase seule, mais la phase et le neutre ensemble.']]},
+        {id:'b',type:'choix',lib:'Le sèche-serviettes consomme environ 2&nbsp;A. Pourquoi la pince, refermée sur la phase et le neutre, ne lit-elle presque rien&nbsp;?',
+          opts:['La pince est mal réglée.','Le courant qui part par la phase revient par le neutre : dans la pince, ils s’annulent. Il ne reste que ce qui fuit vers la terre.','Le sèche-serviettes ne chauffe pas encore.'],bonne:1,
+          err:{0:'Elle est sur le bon calibre : sur A~, elle lirait presque 0 aussi.',2:'Il chauffe : sur la phase seule, la pince lirait ses 2 A.'},
+          methode:'Ce qui part par un conducteur revient par l’autre : la pince fait la différence des deux.'},
+        {id:'c',type:'nombre',lib:'Cette fuite, en ampères&nbsp;:',unite:'A',val:0.008,tolAbs:0.0004,
+          methode:'1 mA = 0,001 A : on divise par 1 000.',erreurs:[[x=>Math.abs(x-0.08)<0.004||Math.abs(x-0.0008)<0.00004,'un zéro de trop ou de moins : 1 mA = 0,001 A, on divise par 1 000.']]}]},
+    {titre:'2. Deux, puis trois',texte:'<p>Branchez un deuxième sèche-serviettes sur X2, sans toucher à la pince.</p>',
+      q:[{id:'d',type:'nombre',lib:'Avec deux sèche-serviettes, la pince lit&nbsp;:',unite:'mA',val:16,tolAbs:0.5,methode:'La pince reste refermée sur la phase et le neutre qui partent de Q2 : elle voit les fuites de toutes les prises.'},
+        {id:'e',type:'nombre',lib:'Avant de brancher le troisième, calculez la fuite des trois ensemble&nbsp;:',unite:'mA',val:24,tolAbs:0.5,methode:'Chaque sèche-serviettes fuit autant : les fuites s’ajoutent, 8 + 8 + 8.'},
+        {id:'f',type:'manip',lib:'Branchez le troisième sur X3. Le différentiel Q1 déclenche-t-il&nbsp;?',
+          ok:()=>tripDe('Q1')||(devNm('Q1')&&!devNm('Q1').s.on&&devNm('X3').p.app==='fuite')?true:'Q1 n’a pas déclenché : les trois sèche-serviettes sont-ils branchés, l’installation sous tension ?',
+          lu:()=>['X1','X2','X3'].map(n=>n+' : '+({rien:'rien',fuite:'sèche-serviettes'}[devNm(n).p.app]||devNm(n).p.app)).join(', ')+(sousTensionReseau()?', sous tension':', hors tension'),
+          methode:'Panneau de X3 : «&nbsp;Appareil branché&nbsp;», le sèche-serviettes. Q1 déclenché a sa manette en bas.'}]},
+    {titre:'3. Ce qu’on dit au club',
+      q:[{id:'g',type:'choix',lib:'24&nbsp;mA, c’est moins que 30&nbsp;mA, et pourtant Q1 a déclenché. Pourquoi&nbsp;?',
+          opts:['Q1 est défectueux : il faut le changer.','La pince se trompe.','Un différentiel 30 mA peut déclencher dès 15 mA : il coupe entre 15 et 30 mA.'],bonne:2,
+          err:{0:'C’est ce qu’a fait le dépanneur l’an dernier, et ça a recommencé.',1:'La pince a lu 8, puis 16 : elle compte juste.'},methode:'30 mA, c’est le courant pour lequel il coupe à coup sûr. Il peut couper avant, dès la moitié.'},
+        {id:'h',type:'choix',lib:'Avec deux sèche-serviettes seulement (16&nbsp;mA), un vrai différentiel 30&nbsp;mA…',
+          opts:['peut déjà couper : 16 mA, c’est plus que 15 mA.','ne coupe jamais : 16 mA, c’est moins que 30 mA.','coupe toujours.'],bonne:0,
+          err:{1:'Il coupe à coup sûr à 30 mA, mais il peut couper dès 15 mA.',2:'Sous 15 mA, il ne coupe pas ; entre 15 et 30 mA, on ne sait pas d’avance.'}},
+        {id:'i',type:'choix',lib:'Que conseiller au club&nbsp;?',
+          opts:['Remplacer le 30 mA par un différentiel 300 mA, qui saute moins.','Faire contrôler et réparer les sèche-serviettes : chacun perd 8 mA vers la terre.','Changer encore le différentiel.'],bonne:1,
+          err:{0:'Non : sur les prises, le 30 mA protège les personnes. Un 300 mA ne les protège plus.',2:'Un différentiel neuf coupera pareil : les fuites sont toujours là.'},
+          methode:'Le différentiel fait son travail. Ce qui ne va pas, c’est ce qui fuit.'}]}],
+  retenir:'<p>Un différentiel compare le courant qui part par la phase et celui qui revient par le neutre. La différence est le <b>courant de fuite</b>, qui part à la terre.</p><p>Un différentiel 30&nbsp;mA déclenche entre 15&nbsp;mA et 30&nbsp;mA. Les fuites des appareils d’un même différentiel <b>s’additionnent</b>.</p><p>1&nbsp;mA = 0,001&nbsp;A.</p>',
+  simplifie:'<p>Dans l’atelier, le différentiel déclenche toujours à 21&nbsp;mA. Un vrai déclenche quelque part entre 15 et 30&nbsp;mA, et ce n’est pas le même d’un appareil à l’autre.</p><p>Un vrai sèche-serviettes ne fuit pas toujours autant : l’humidité, la chaleur font varier sa fuite.</p>'});
+/* Co-intervention 2 · « Le circuit de la cuisine » : la loi des nœuds à la pince, le calibre du
+   disjoncteur et la section du câble. Les appareils sont tous résistifs : un moteur (le réfrigérateur)
+   décale son courant, et les courants ne s'ajouteraient plus simplement. */
+MISSIONS.push({id:'co2',grp:'Co-intervention · CAP',act:true,range:true,titre:'Le circuit de la cuisine',court:'La loi des nœuds à la pince, et ce que tient un disjoncteur.',
+  prog:{ms:'loi des nœuds, additionner, comparer, lire un tableau',pro:'mesurer à la pince, choisir le calibre et la section d’un circuit'},
+  consigne:'<p><b>La cuisine d’un studio.</b> Trois prises X1, X2 et X3 sur le disjoncteur Q2 de 16&nbsp;A, câblées en 1,5&nbsp;mm². Le locataire veut brancher en même temps sa bouilloire et deux radiateurs d’appoint.</p><p><b>Votre mission</b>&nbsp;: mesurer, puis lui dire si c’est possible.</p>',
+  prep(){const{Qs,X}=tabDom([16]);prisesEtoile(Qs[0],X,3,1.5,['bouilloire','radiateur','lampe']);toutVerrouiller();},
+  parties:[
+    {titre:'1. Chaque conducteur à la pince',texte:'<p>La bouilloire est sur X1, un radiateur sur X2, une lampe de bureau sur X3. Mettez sous tension.</p><p>Pince sur <b>A~</b>, «&nbsp;Pincer plusieurs conducteurs ensemble&nbsp;» décoché&nbsp;: touchez un conducteur de phase (marron) à la fois.</p>',
+      q:[{id:'a',type:'tab',lib:'Relevez le courant dans chaque conducteur de phase.',cols:['Conducteur de phase','Courant (A)'],
+          rows:[['de W1 à X1, la bouilloire',{val:8.70,tol:0.02}],['de W1 à X2, le radiateur',{val:6.52,tol:0.02}],['de W1 à X3, la lampe',{val:0.174,tolAbs:0.01}],['de Q2 à W1, la tête de ligne',{val:15.39,tol:0.02}]],
+          methode:'Touchez le conducteur marron qui arrive à la prise : la pince se referme dessus. Pour la tête de ligne, le marron qui va de Q2 au connecteur W1.'},
+        {id:'b',type:'nombre',lib:'Calculez la somme des courants des trois prises&nbsp;:',unite:'A',val:15.39,tol:0.02,methode:'Additionnez les trois premières lignes du tableau.'},
+        {id:'c',type:'choix',lib:'Le courant qui arrive au connecteur W1, depuis Q2, est…',
+          opts:['égal au plus grand des trois courants.','égal à la somme des trois courants qui en repartent.','égal à leur moyenne.'],bonne:1,
+          err:{0:'Comparez la tête de ligne et la bouilloire : 15,4 A et 8,7 A.',2:'La moyenne des trois ferait environ 5 A : la pince lit trois fois plus.'},
+          methode:'Ce qui arrive à un connecteur en repart, partagé entre les conducteurs : c’est la loi des nœuds.'}]},
+    {titre:'2. Deux radiateurs et la bouilloire',texte:'<p>Sur X3, remplacez la lampe par le radiateur. Passez l’horloge sur «&nbsp;Temps × 10&nbsp;».</p>',
+      q:[{id:'d',type:'nombre',lib:'Avant d’attendre, calculez le courant en tête de ligne&nbsp;: 8,70&nbsp;+&nbsp;6,52&nbsp;+&nbsp;6,52 =',unite:'A',val:21.74,tol:0.015},
+        {id:'e',type:'nombre',lib:'De combien d’ampères dépasse-t-il le calibre de Q2&nbsp;?',unite:'A',val:5.74,tolAbs:0.15,methode:'Calibre de Q2 : 16 A. Le dépassement, c’est la différence.'},
+        {id:'f',type:'manip',lib:'Attendez. Q2 finit-il par déclencher&nbsp;?',
+          ok:()=>tripDe('Q2')?true:'Q2 n’a pas encore déclenché : un disjoncteur laisse passer une surcharge un moment. Vérifiez que les trois appareils sont branchés, sous tension, et attendez, en temps × 10.',
+          lu:()=>['X1','X2','X3'].map(n=>n+' : '+devNm(n).p.app).join(', ')},
+        {id:'g',type:'choix',lib:'Pourquoi Q2 n’a-t-il pas déclenché tout de suite&nbsp;?',
+          opts:['Il est en panne.','Le radiateur démarre doucement.','Il laisse passer une petite surcharge un moment : il protège le câble, qui met du temps à chauffer. Plus la surcharge est grande, plus il coupe vite.'],bonne:2,
+          err:{0:'Il a fini par couper : il fonctionne.',1:'Un radiateur chauffe dès qu’il est branché : la pince le lit tout de suite.'}}]},
+    {titre:'3. Le conseil au locataire',
+      q:[{id:'h',type:'choix',lib:'Que lui dire&nbsp;?',
+          opts:['Remplacer Q2 par un disjoncteur de 25 A.','Ne pas brancher les trois ensemble sur ce circuit, ou faire poser un circuit de 20 A en 2,5 mm² pour les gros appareils.','Brancher les trois sur une multiprise.'],bonne:1,
+          err:{0:'Non : un câble de 1,5 mm² se protège par 16 A au plus. Avec 25 A, il chaufferait sans que rien ne coupe.',2:'Une multiprise ne change rien : tout le courant passe toujours par le même câble et le même disjoncteur.'},
+          methode:'C’est le câble que le disjoncteur protège : 1,5 mm² avec 16 A, 2,5 mm² avec 20 A.'},
+        {id:'i',type:'choix',lib:'Pour aller plus loin. Réarmez Q2, et sur X3 mettez le sèche-serviettes (17,4&nbsp;A en tout). Laissez tourner 3 minutes en temps × 10. Q2…',
+          opts:['déclenche, puisque 17,4 A dépasse 16 A.','tient : un disjoncteur ne coupe pas pour quelques pour cent de trop.'],bonne:1,
+          err:{0:'Regardez Q2 au bout de 3 minutes : il tient. Il ne coupe qu’au-delà d’environ 1,13 fois son calibre, ici 18 A.'},
+          methode:'Un disjoncteur de 16 A supporte sans couper un peu plus que 16 A, jusqu’à environ 18 A.'}]}],
+  retenir:'<p>Le courant qui arrive à un nœud (un connecteur, une borne) est égal à la somme des courants qui en repartent&nbsp;: c’est la <b>loi des nœuds</b>.</p><p>Un disjoncteur protège le câble&nbsp;: 16&nbsp;A au plus pour 1,5&nbsp;mm², 20&nbsp;A pour 2,5&nbsp;mm². Au-dessus de son calibre, il coupe, d’autant plus vite que la surcharge est grande.</p>',
+  simplifie:'<p>On n’emploie ici que des appareils qui chauffent. Un appareil à moteur, comme le réfrigérateur, décale son courant&nbsp;: les courants ne s’ajoutent plus aussi simplement.</p><p>Le disjoncteur de l’atelier tient jusqu’à 1,13 fois son calibre, puis coupe en un temps qui diminue avec la surcharge. Un vrai a une courbe, donnée par son fabricant.</p>'});
+/* Co-intervention 3 · « Qui est vraiment une résistance ? » : la résistance lue à froid à l'ohmmètre,
+   U ÷ I sous tension. La bouilloire et le radiateur sont des dipôles ohmiques ; la lampe à filament ne
+   l'est pas (l'atelier lui donne à froid le dixième de sa résistance à chaud). Continu ou alternatif. */
+function platineUnePrise(app){const{Qs,X}=tabDom([16]);const Q=Qs[0],P=ajoute('pc',520,600,{app:app||'rien'},'X1');
+  fil(k(Q,'s2'),k(P,'L'),'marron',1.5);fil(k(Q,'sN'),k(P,'N'),'bleu',1.5);fil(k(X,'p2'),k(P,'PE'),'vj',1.5);toutVerrouiller();return P;}
+MISSIONS.push({id:'co3',grp:'Co-intervention · CAP',act:true,range:true,titre:'Qui est vraiment une résistance ?',court:'La résistance à froid, U ÷ I sous tension.',
+  prog:{ms:'mesurer U et I, relation U = R × I d’un dipôle ohmique, tension continue ou alternative, diviser',pro:'contrôler un appareil à l’ohmmètre hors tension, puis sous tension'},
+  consigne:'<p><b>Le banc de contrôle.</b> Avant de rendre trois appareils réparés (une bouilloire, un radiateur, une lampe de bureau), l’atelier mesure leur résistance à l’ohmmètre. Un collègue affirme&nbsp;: «&nbsp;Pas besoin de mettre sous tension&nbsp;: avec la résistance, on sait tout.&nbsp;»</p><p><b>Votre mission</b>&nbsp;: vérifier s’il a raison.</p>',
+  prep(){platineUnePrise('bouilloire');},
+  parties:[
+    {titre:'1. À l’ohmmètre, hors tension',texte:'<p>L’installation est consignée (hors tension). Branchez chaque appareil à son tour sur X1 (le panneau de la prise), et mesurez à l’ohmmètre entre les bornes L et N de la prise.</p>',
+      q:[{id:'a',type:'tab',lib:'La résistance de chaque appareil, à froid&nbsp;:',cols:['Appareil','R (Ω)'],
+          rows:[['bouilloire',{val:26.45,tol:0.03}],['radiateur',{val:35.27,tol:0.03}],['lampe de bureau',{val:132.3,tol:0.03}]],
+          methode:'Outil « Ohmmètre » : touchez la borne L de X1, puis la borne N. Hors tension seulement : sous tension, une résistance ne se mesure pas.'}]},
+    {titre:'2. Sous tension',texte:'<p>Mettez sous tension. Le multimètre mesure la tension entre L et N de X1&nbsp;; la pince (A~) mesure le courant dans le conducteur de phase de X1.</p>',
+      q:[{id:'b',type:'choix',lib:'Multimètre sur V⎓ (continu), entre L et N&nbsp;: il lit 0. Pourquoi&nbsp;?',
+          opts:['La prise n’est pas alimentée.','La tension du secteur est alternative : sur V⎓, le multimètre lit sa moyenne, qui est nulle. Il faut le calibre V~.','Le multimètre est en panne.'],bonne:1,
+          err:{0:'Passez sur V~ : il lit bien une tension.',2:'Sur V~, il lit juste.'}},
+        {id:'c',type:'nombre',lib:'Sur V~, la tension entre L et N de X1&nbsp;:',unite:'V',val:230,tol:0.01,methode:'Multimètre, calibre V~ : pointe rouge sur L, pointe noire sur N.'},
+        {id:'d',type:'tab',lib:'Pour chaque appareil branché&nbsp;: le courant, puis U ÷ I (prenez U = 230 V).',cols:['Appareil','I (A)','U ÷ I (Ω)'],
+          rows:[['bouilloire',{val:8.70,tol:0.02},{val:26.44,tol:0.03}],['radiateur',{val:6.52,tol:0.02},{val:35.28,tol:0.03}],['lampe de bureau',{val:0.174,tolAbs:0.01},{val:1322,tol:0.05}]],
+          methode:'U ÷ I : 230 divisé par le courant lu à la pince.'}]},
+    {titre:'3. Le collègue a-t-il raison ?',
+      q:[{id:'e',type:'choix',lib:'Pour quels appareils U ÷ I est-il égal à la résistance mesurée à froid&nbsp;?',
+          opts:['Pour les trois.','Pour aucun.','Pour la bouilloire et le radiateur.'],bonne:2,
+          err:{0:'Comparez les deux tableaux, ligne de la lampe.',1:'Comparez les deux tableaux, ligne de la bouilloire.'}},
+        {id:'f',type:'nombre',lib:'Pour la lampe, U ÷ I est combien de fois plus grand que sa résistance à froid&nbsp;?',unite:'fois',val:10,tolAbs:0.8,methode:'Divisez U ÷ I de la lampe par sa résistance à froid.'},
+        {id:'g',type:'choix',lib:'Alors, le collègue…',
+          opts:['a raison pour tous les appareils.','a raison pour ceux qui se comportent comme une résistance (la bouilloire, le radiateur) : pour eux, U = R × I. Le filament de la lampe change de résistance en chauffant.','a toujours tort.'],bonne:1,
+          err:{0:'Pas pour la lampe : sous tension, sa résistance est dix fois plus grande.',2:'Pour la bouilloire et le radiateur, la résistance à froid suffit.'}}]}],
+  retenir:'<p>Pour un dipôle <b>ohmique</b> (une résistance chauffante), U = R × I&nbsp;: la résistance mesurée à froid à l’ohmmètre est égale à U ÷ I sous tension.</p><p>Une lampe à filament n’est pas un dipôle ohmique&nbsp;: sa résistance augmente beaucoup quand elle chauffe.</p><p>La tension du secteur est <b>alternative</b>&nbsp;: elle se mesure sur V~.</p>',
+  simplifie:'<p>La résistance d’une vraie bouilloire change un peu quand elle chauffe&nbsp;; l’atelier la garde fixe. Le rapport de dix pour la lampe est un ordre de grandeur des filaments.</p><p>L’ohmmètre compte aussi un peu la résistance des conducteurs, quelques centièmes d’ohm.</p>'});
+/* Co-intervention 4 · « La guirlande de deux lampes » : deux lampes en série, la loi des mailles, puis
+   en dérivation. La lampe de 60 W prend la plus grande part de la tension et s'allume seule : l'évidence
+   retournée. Un montage d'étude, jamais une installation. */
+const tensionLampe=nm=>{const d=devNm(nm);return d&&d.r?d.r.u||0:0;};
+MISSIONS.push({id:'co4',grp:'Co-intervention · CAP',act:true,titre:'La guirlande de deux lampes',court:'Deux lampes en série, puis en dérivation : la loi des mailles.',
+  prog:{ms:'loi des mailles, additionner, comparer',pro:'câbler en série puis en dérivation, mesurer une tension au multimètre'},
+  consigne:'<p><b>La guirlande de l’apprenti.</b> Pour éclairer un chantier, un apprenti a monté deux lampes l’une derrière l’autre&nbsp;: une de 60&nbsp;W (E1) et une de 100&nbsp;W (E2). «&nbsp;La 100&nbsp;W éclairera plus, c’est sûr.&nbsp;»</p><p><b>Votre mission</b>&nbsp;: câbler son montage pour voir, puis le bon. C’est un montage d’étude&nbsp;: une installation ne se câble jamais en série.</p>',
+  prep(){const{Qs,X}=tabDom([16]);const E1=ajoute('dcl',560,170,{P:60},'E1'),E2=ajoute('dcl',820,170,{P:100},'E2');ajoute('wago3',560,560,{},'W1');ajoute('wago3',760,560,{},'W2');
+    for(const d of st.devs)d.lk=1;for(const w of st.wires)w.lk=1;},
+  parties:[
+    {titre:'1. En série',texte:'<p>Hors tension, câblez&nbsp;: de la sortie de Q2 (phase) à la borne L de E1&nbsp;; de N de E1 à L de E2&nbsp;; de N de E2 au neutre de Q2. Pour le conducteur entre les deux lampes, une couleur de phase, pas le bleu. Puis mettez sous tension.</p>',
+      q:[{id:'a',type:'manip',lib:'Les deux lampes sont en série, sous tension.',
+          ok:()=>{const u1=tensionLampe('E1'),u2=tensionLampe('E2');if(!sousTensionReseau())return 'l’installation est hors tension.';
+            if(u1>200||u2>200)return 'une lampe reçoit toute la tension : elle est branchée entre la phase et le neutre, pas en série.';
+            if(u1<20||u2<20)return 'une lampe ne reçoit rien : le courant ne traverse pas les deux.';return Math.abs(u1+u2-230)<15?true:'le circuit ne va pas de la phase au neutre à travers les deux lampes.';},
+          lu:()=>'E1 '+fv(tensionLampe('E1'))+', E2 '+fv(tensionLampe('E2')),
+          methode:'Un seul chemin : phase → E1 → E2 → neutre. Le courant traverse les deux lampes l’une après l’autre.'},
+        {id:'b',type:'tab',lib:'Au multimètre (V~)&nbsp;:',cols:['Entre…','U (V)'],
+          rows:[['L et N de E1 (60 W)',{val:143.75,tol:0.02}],['L et N de E2 (100 W)',{val:86.25,tol:0.02}],['la phase et le neutre de Q2',{val:230,tol:0.01}]],
+          methode:'Multimètre sur V~, une pointe sur chaque borne de la lampe.'},
+        {id:'c',type:'nombre',lib:'Calculez U<sub>E1</sub> + U<sub>E2</sub>&nbsp;:',unite:'V',val:230,tol:0.015},
+        {id:'d',type:'choix',lib:'Quelle lampe s’allume&nbsp;?',opts:['La 100 W, E2.','La 60 W, E1.','Les deux, autant.'],bonne:1,
+          err:{0:'Regardez la platine : E2 reste éteinte. Elle ne reçoit que 86 V.',2:'Regardez la platine : une seule brille, et faiblement.'}},
+        {id:'e',type:'choix',lib:'Pourquoi la lampe de 60&nbsp;W prend-elle la plus grande part des 230&nbsp;V&nbsp;?',
+          opts:['Elle est branchée la première.','Sa résistance est la plus grande : en série, le même courant traverse les deux lampes, et la plus grande résistance prend la plus grande tension (U = R × I).','Elle est moins puissante, donc elle résiste moins.'],bonne:1,
+          err:{0:'Échangez-les sur le papier : c’est toujours la 60 W qui prend le plus.',2:'C’est l’inverse : une lampe de 60 W a une plus grande résistance qu’une lampe de 100 W.'}}]},
+    {titre:'2. En dérivation',texte:'<p>Hors tension, recâblez&nbsp;: chaque lampe entre la phase et le neutre. Les connecteurs W1 et W2 servent de boîte de dérivation, un pour la phase, un pour le neutre. Puis mettez sous tension.</p>',
+      q:[{id:'f',type:'manip',lib:'Les deux lampes sont en dérivation, sous tension.',
+          ok:()=>{if(!sousTensionReseau())return 'l’installation est hors tension.';const u1=tensionLampe('E1'),u2=tensionLampe('E2');
+            return u1>215&&u2>215?true:'les deux lampes ne reçoivent pas chacune la tension du réseau.';},
+          lu:()=>'E1 '+fv(tensionLampe('E1'))+', E2 '+fv(tensionLampe('E2')),methode:'Chaque lampe a sa borne L reliée à la phase, sa borne N au neutre.'},
+        {id:'g',type:'nombre',lib:'Au multimètre, la tension aux bornes de E2&nbsp;:',unite:'V',val:230,tol:0.015},
+        {id:'h',type:'choix',lib:'Pourquoi l’éclairage d’un logement se câble-t-il en dérivation&nbsp;?',
+          opts:['Il faut moins de conducteurs.','Chaque lampe reçoit 230 V et fonctionne seule, même si l’autre est éteinte ou grillée.','Le courant est plus faible.'],bonne:1,
+          err:{0:'Ce n’est pas la raison : en série, il en faudrait même moins.',2:'En dérivation, le courant total est plus grand : chaque lampe a le sien.'}}]}],
+  retenir:'<p>En <b>série</b>, le même courant traverse les deux lampes et la tension se partage&nbsp;: U = U<sub>1</sub> + U<sub>2</sub> (<b>loi des mailles</b>).</p><p>En <b>dérivation</b>, chaque lampe a la même tension, 230&nbsp;V.</p>',
+  simplifie:'<p>L’atelier garde aux lampes leur résistance à chaud. En vrai, des filaments moins chauds ont une résistance plus faible, et les deux tensions changent un peu&nbsp;; leur somme reste celle du réseau.</p>'});
+/* Co-intervention 5 · « Le compteur de la prise » : le wattmètre-prise, l'énergie proportionnelle à la
+   durée, le coût. Le relevé se fait en temps réel : l'écran compte les minutes, on note l'énergie au
+   moment où la durée change. Le prix du kWh est celui de la séance J12 (0,25 €). */
+MISSIONS.push({id:'co5',grp:'Co-intervention · CAP',act:true,range:true,titre:'Le compteur de la prise',court:'Le wattmètre-prise, l’énergie et le coût.',
+  prog:{ms:'lire un affichage, tableau de proportionnalité, coefficient, coût',pro:'relever une consommation au wattmètre-prise'},
+  consigne:'<p><b>Le radiateur d’appoint du bureau.</b> La cliente veut savoir ce que lui coûte son radiateur. On branche un wattmètre-prise entre la prise X1 et le radiateur pour relever sa consommation.</p><p><b>Votre mission</b>&nbsp;: relever, puis calculer le coût d’une heure de chauffage.</p>',
+  prep(){platineUnePrise('radiateur');devNm('X1').p.wm='oui';},
+  parties:[
+    {titre:'1. Lire l’écran',texte:'<p>Mettez sous tension, puis touchez la prise X1&nbsp;: l’écran du wattmètre s’affiche dans le panneau. La touche MODE fait défiler les grandeurs.</p>',
+      q:[{id:'a',type:'tab',lib:'Relevez&nbsp;:',cols:['Ce que l’écran affiche','Valeur'],
+          rows:[['la puissance (W)',{val:1500,tol:0.01}],['la tension (V)',{val:230,tol:0.01}],['l’intensité (A)',{val:6.52,tol:0.02}]],
+          methode:'Appuyez sur MODE jusqu’à voir l’unité voulue à droite de l’écran : W, puis V, puis A.'},
+        {id:'b',type:'choix',lib:'Laquelle de ces unités mesure l’énergie consommée&nbsp;?',opts:['le watt (W)','le kilowattheure (kWh)','l’ampère (A)'],bonne:1,
+          err:{0:'Le watt mesure la puissance : ce que l’appareil consomme à chaque instant.',2:'L’ampère mesure l’intensité du courant.'}}]},
+    {titre:'2. Le relevé',texte:'<p>Laissez l’horloge en temps réel. Appuyez sur RAZ (remise à zéro), puis notez l’énergie (kWh) <b>au moment où</b> la durée (h) passe à 0:01, puis 0:02, puis 0:03.</p>',
+      q:[{id:'c',type:'tab',lib:'L’énergie consommée selon la durée&nbsp;:',cols:['Durée (min)','Énergie (kWh)'],
+          rows:[['1',{val:0.025,tolAbs:0.003}],['2',{val:0.050,tolAbs:0.003}],['3',{val:0.075,tolAbs:0.003}]],
+          methode:'MODE jusqu’à kWh. Regardez la durée en même temps : notez dès qu’elle change de minute.'},
+        {id:'d',type:'choix',lib:'Ce tableau est-il un tableau de proportionnalité&nbsp;?',opts:['Oui : quand la durée double, l’énergie double.','Non : l’énergie augmente de plus en plus vite.'],bonne:0,
+          err:{1:'Comparez 1 et 2 minutes : l’énergie double, à peu de chose près.'}},
+        {id:'e',type:'nombre',lib:'Le coefficient de proportionnalité&nbsp;: l’énergie consommée en une minute.',unite:'kWh',val:0.025,tolAbs:0.002,methode:'L’énergie de 3 minutes divisée par 3.'}]},
+    {titre:'3. Le coût',
+      q:[{id:'f',type:'nombre',lib:'L’énergie consommée en une heure (60 minutes)&nbsp;:',unite:'kWh',val:1.5,tol:0.04,methode:'Une heure, c’est 60 fois une minute.'},
+        {id:'g',type:'nombre',lib:'Au prix de 0,25&nbsp;€ le kWh, le coût d’une heure de chauffage&nbsp;:',unite:'€',val:0.375,tolAbs:0.012,methode:'Coût = énergie (kWh) × prix d’un kWh.'},
+        {id:'h',type:'choix',lib:'Le radiateur a une puissance de 1&nbsp;500&nbsp;W, soit 1,5&nbsp;kW. En une heure, il consomme…',opts:['1,5 kWh : autant de kWh que de kW.','1 500 kWh.','0,25 kWh.'],bonne:0,
+          err:{1:'Regardez votre relevé : 0,025 kWh par minute, pas des centaines.',2:'0,25, c’est le prix d’un kWh.'}}]}],
+  retenir:'<p>Le <b>kWh</b> (kilowattheure) mesure l’énergie. L’énergie consommée est <b>proportionnelle</b> à la durée de fonctionnement.</p><p>Un appareil de 1,5&nbsp;kW consomme 1,5&nbsp;kWh en une heure. Coût = énergie (kWh) × prix du kWh.</p>',
+  simplifie:'<p>L’écran compte les minutes sans les secondes&nbsp;: d’où les quelques millièmes de kWh d’écart entre deux relevés. Le prix du kWh est un exemple.</p>'});
+/* Co-intervention 6 · « Heures creuses ou pas ? » : câbler le chauffe-eau sur le contacteur jour/nuit
+   (la mission d10, sa vérification), mesurer, puis comparer deux options par une équation du premier
+   degré. Les prix sont des exemples, ronds, dits comme tels. */
+MISSIONS.push({id:'co6',grp:'Co-intervention · CAP',act:true,titre:'Heures creuses ou pas ?',court:'Le chauffe-eau de nuit, et une équation pour comparer deux offres.',schema:'d10',
+  prog:{ms:'conversions (W, kW), proportionnalité, équation du premier degré, comparer deux offres',pro:'câbler un chauffe-eau sur un contacteur jour/nuit, mesurer à la pince'},
+  consigne:'<p><b>Le chauffe-eau de Mme Lopez.</b> Son chauffe-eau de 200&nbsp;L chauffe à toute heure. L’électricien propose de ne le faire chauffer que la nuit, en heures creuses, par un contacteur jour/nuit KM1 que commande le compteur. Mme Lopez demande&nbsp;: «&nbsp;Combien je gagne&nbsp;?&nbsp;»</p><p><b>Votre mission</b>&nbsp;: câbler, mesurer, puis lui répondre chiffres en main.</p>',
+  prep(){MISSIONS.find(m=>m.id==='d10').prep();},
+  test(T){MISSIONS.find(m=>m.id==='d10').test(T);},
+  parties:[
+    {titre:'1. Câbler',texte:'<p>Câblez comme le schéma (bouton «&nbsp;Schéma&nbsp;»)&nbsp;: la puissance sur Q2 (20&nbsp;A, 2,5&nbsp;mm²) à travers le contact 1-2 de KM1&nbsp;; la commande sur Q3 (2&nbsp;A), du contact C1-C2 du compteur à la bobine de KM1. La terre au chauffe-eau.</p>',
+      q:[{id:'a',type:'manip',lib:'Le câblage est juste.',ok:()=>cablageJuste('co6'),
+          methode:'Le bouton « Vérifier mon câblage » essaie la platine et dit ce qui ne va pas. La documentation de KM1 et du compteur donne leurs bornes.'}]},
+    {titre:'2. Mesurer',texte:'<p>Mettez sous tension. Touchez le compteur pour le passer en heures creuses&nbsp;: KM1 s’enclenche, le chauffe-eau chauffe.</p>',
+      q:[{id:'b',type:'nombre',lib:'La pince (A~) sur la phase du chauffe-eau lit&nbsp;:',unite:'A',val:10.43,tol:0.02,methode:'Touchez le conducteur qui arrive à la borne L du chauffe-eau B1.'},
+        {id:'c',type:'nombre',lib:'Sur le chauffe-eau, on lit 2&nbsp;400&nbsp;W. En kilowatts&nbsp;:',unite:'kW',val:2.4,tolAbs:0.01,methode:'1 kW = 1 000 W : on divise par 1 000.'},
+        {id:'d',type:'choix',lib:'Compteur en heures pleines, le chauffe-eau…',opts:['chauffe quand même.','est arrêté, sauf si on met le sélecteur de KM1 sur 1 (marche forcée).'],bonne:1,
+          err:{0:'Touchez le compteur pour repasser en heures pleines, et regardez B1.'}}]},
+    {titre:'3. Combien elle gagne',texte:'<p>Deux options, prix d’exemple&nbsp;:</p><ul><li><b>Base</b>&nbsp;: 0,25&nbsp;€ le kWh, à toute heure.</li><li><b>Heures creuses</b>&nbsp;: 0,20&nbsp;€ le kWh la nuit, mais l’abonnement coûte 1,50&nbsp;€ de plus par mois.</li></ul><p>Le chauffe-eau chauffe 3&nbsp;h par nuit.</p>',
+      q:[{id:'e',type:'nombre',lib:'L’énergie d’une nuit&nbsp;: 2,4&nbsp;kW pendant 3&nbsp;h.',unite:'kWh',val:7.2,tolAbs:0.05,methode:'Énergie (kWh) = puissance (kW) × durée (h).'},
+        {id:'f',type:'nombre',lib:'L’économie d’une nuit&nbsp;: 7,2 × (0,25 − 0,20).',unite:'€',val:0.36,tolAbs:0.01,methode:'0,25 − 0,20 = 0,05 € gagnés par kWh.'},
+        {id:'g',type:'nombre',lib:'Combien de nuits pour rattraper les 1,50&nbsp;€ d’abonnement&nbsp;? Résolvez 0,36 × n = 1,50.',unite:'nuits',val:4.17,tol:0.03,
+          methode:'n = 1,50 ÷ 0,36.',erreurs:[[x=>Math.abs(x-0.54)<0.02,'vous avez multiplié : pour trouver n, on divise 1,50 par 0,36.'],[x=>Math.abs(x-5)<0.01||Math.abs(x-4)<0.01,'c’est l’arrondi : donnez d’abord la solution de l’équation, avec deux chiffres après la virgule.']]},
+        {id:'h',type:'choix',lib:'Alors, sur un mois de 30 nuits, l’option heures creuses…',opts:['coûte plus cher.','est gagnante : l’abonnement est rattrapé dès la 5e nuit.','ne change rien.'],bonne:1,
+          err:{0:'Au bout de 4,17 nuits, l’économie a payé l’abonnement ; il reste 25 nuits de gain.',2:'Elle fait gagner 0,36 € chaque nuit.'}}]}],
+  retenir:'<p>Le contacteur jour/nuit ferme le circuit du chauffe-eau quand le compteur passe en heures creuses.</p><p>Énergie (kWh) = puissance (kW) × durée (h). Pour comparer deux offres, on écrit une équation&nbsp;: économie par nuit × n = surcoût.</p>',
+  simplifie:'<p>Les prix sont des exemples, pas ceux d’un fournisseur. Un vrai chauffe-eau s’arrête quand l’eau est chaude&nbsp;: sa durée de chauffe dépend de l’eau puisée dans la journée.</p>'});
+/* Co-intervention 7 · « Quelle bobine sur quel transfo ? » : la tension reçue en pourcentage de la
+   tension de la bobine, comparée aux seuils de l'atelier (rien sous 40 %, elle broute de 40 à 80 %, colle
+   de 80 à 115 %, chauffe de 115 à 160 %, grille au-delà). Un banc d'essai : KM1 en 24 V, KM2 en 230 V. */
+const SEUILS_BOB='<table class="fseuils"><tr><td>moins de 40&nbsp;%</td><td>rien ne bouge</td></tr><tr><td>de 40 à 80&nbsp;%</td><td>elle <b>broute</b>&nbsp;: elle vibre sans coller, chauffe, et grille en une douzaine de secondes</td></tr><tr><td>de 80 à 115&nbsp;%</td><td>elle <b>colle</b> normalement</td></tr><tr><td>de 115 à 160&nbsp;%</td><td>elle colle mais <b>chauffe</b></td></tr><tr><td>plus de 160&nbsp;%</td><td>elle <b>grille</b> tout de suite</td></tr></table>';
+const ETATS_BOB=['rien ne bouge','elle broute','elle colle','elle chauffe','elle grille'];
+MISSIONS.push({id:'co7',grp:'Co-intervention · CAP',act:true,range:true,titre:'Quelle bobine sur quel transfo ?',court:'La tension d’une bobine en pourcentage : colle, broute ou grille.',
+  prog:{ms:'pourcentages, comparer à des seuils, lire un tableau',pro:'lire l’étiquette d’une bobine, choisir un contacteur pour sa tension de commande'},
+  consigne:'<p><b>Le magasin de l’atelier.</b> Il reste des contacteurs avec des bobines de 24, 48, 110, 230 et 400&nbsp;V. Avant d’en monter un, on vérifie que sa bobine supporte la tension de commande&nbsp;: une erreur, et elle broute ou elle grille.</p><p><b>Votre mission</b>&nbsp;: prévoir par le calcul, puis essayer sur le banc. KM1 est commandé en 24&nbsp;V (le transformateur T1) par S1&nbsp;; KM2 en 230&nbsp;V par S2.</p>',
+  prep(){const A=armoireMono();const S1=ajoute('int',600,330,{},'S1'),KM1=ajoute('km',560,520,{bob:24},'KM1'),S2=ajoute('int',1000,330,{},'S2'),KM2=ajoute('km',960,520,{bob:230},'KM2');
+    const c='rouge';fil(k(A.F2,'b'),k(S1,'L'),c,1);fil(k(S1,'1'),k(KM1,'A1'),c,1);fil(k(KM1,'A2'),k(A.T1,'S0'),'blanc',1);
+    fil(k(A.Q1,'s2'),k(S2,'L'),c,1.5);fil(k(S2,'1'),k(KM2,'A1'),c,1.5);fil(k(KM2,'A2'),k(A.XN,'p2'),'bleu',1.5);toutVerrouiller();},
+  parties:[
+    {titre:'1. Les seuils',texte:'<p>Ce qui arrive à une bobine selon la tension reçue, en pourcentage de sa tension (celle de son étiquette)&nbsp;:</p>'+SEUILS_BOB+'<p>Pourcentage = tension reçue ÷ tension de la bobine × 100.</p>',
+      q:[{id:'a',type:'tab',lib:'Commande en 24&nbsp;V (KM1)&nbsp;: calculez, puis prévoyez.',cols:['Bobine','Pourcentage (%)','Ce qui arrive'],
+          rows:[['24 V',{val:100,tol:0.01},{opts:ETATS_BOB,bonne:2}],['48 V',{val:50,tol:0.01},{opts:ETATS_BOB,bonne:1}],['110 V',{val:21.8,tolAbs:0.3},{opts:ETATS_BOB,bonne:0}]],
+          methode:'24 ÷ 48 × 100 = 50 % : la bobine ne reçoit que la moitié de sa tension. Cherchez 50 % dans le tableau des seuils.'},
+        {id:'b',type:'tab',lib:'Commande en 230&nbsp;V (KM2)&nbsp;: calculez, puis prévoyez.',cols:['Bobine','Pourcentage (%)','Ce qui arrive'],
+          rows:[['230 V',{val:100,tol:0.01},{opts:ETATS_BOB,bonne:2}],['400 V',{val:57.5,tolAbs:0.3},{opts:ETATS_BOB,bonne:1}],['110 V',{val:209,tolAbs:1},{opts:ETATS_BOB,bonne:4}],['24 V',{val:958,tolAbs:3},{opts:ETATS_BOB,bonne:4}]],
+          methode:'230 ÷ 400 × 100 : la tension reçue divisée par celle de la bobine, puis × 100.'}]},
+    {titre:'2. Sur le banc',texte:'<p>Hors tension, touchez un contacteur et choisissez sa bobine dans son panneau. Sous tension, fermez S1 ou S2. Une bobine grillée se remplace&nbsp;: «&nbsp;Remplacer le contacteur&nbsp;», dans son panneau.</p>',
+      q:[{id:'c',type:'manip',lib:'Essayez sur KM1 la bobine de 48&nbsp;V, commande fermée. Elle broute.',
+          ok:()=>{const d=devNm('KM1');if(+d.p.bob!==48)return 'KM1 n’a pas sa bobine de 48 V.';if(!sousTensionReseau())return 'l’installation est hors tension.';
+            return d.s.broute||d.s.hs?true:'KM1 ne broute pas : S1 est-il fermé ?';},
+          lu:()=>'KM1 : bobine de '+devNm('KM1').p.bob+' V'+(devNm('KM1').s.broute?', elle broute':devNm('KM1').s.hs?', grillée':devNm('KM1').s.c?', collé':', au repos'),
+          methode:'Hors tension, panneau de KM1 : « Bobine ». Puis sous tension, basculez S1. Le voyant orange et le zigzag montrent qu’elle broute.'},
+        {id:'d',type:'manip',lib:'Pour finir&nbsp;: KM2 a une bobine qui convient, et il est collé.',
+          ok:()=>{const d=devNm('KM2');if(d.s.hs)return 'la bobine de KM2 est grillée : remplacez le contacteur.';if(+d.p.bob!==230)return 'la bobine de KM2 n’est pas faite pour 230 V.';
+            return d.s.c?true:'KM2 n’est pas collé : S2 fermé, sous tension ?';},
+          lu:()=>'KM2 : bobine de '+devNm('KM2').p.bob+' V'+(devNm('KM2').s.hs?', grillée':devNm('KM2').s.c?', collé':', au repos')},
+        {id:'e',type:'choix',lib:'Le magasin n’a plus que des bobines de 48&nbsp;V. Pour s’en servir, il faut…',
+          opts:['les brancher sur le 24 V : 50 %, c’est assez.','une commande en 48 V, avec un transformateur 230 / 48 V.','les brancher sur le 230 V.'],bonne:1,
+          err:{0:'À 50 %, elle broute et grille : vous l’avez vu sur KM1.',2:'230 ÷ 48 × 100 = 479 % : elle grille.'}}]}],
+  retenir:'<p>L’étiquette d’une bobine donne sa tension et sa fréquence (par exemple 24&nbsp;V ~ 50&nbsp;Hz). Elle doit recevoir cette tension, à peu près&nbsp;: en dessous de 80&nbsp;%, elle ne colle pas&nbsp;; bien au-dessus, elle chauffe ou grille.</p><p>Pourcentage = tension reçue ÷ tension de la bobine × 100.</p>',
+  simplifie:'<p>Les seuils sont ceux de l’atelier, des ordres de grandeur&nbsp;: chaque fabricant donne les siens dans sa notice. Une vraie bobine qui broute fait un bruit qu’on entend de loin.</p>'});
+/* Co-intervention 8 · « Lire la plaque, régler la protection » : le touret monophasé de la mission m1,
+   câblé. La plaque signalétique (grandeurs, unités, symboles), la plage du relais thermique comme un
+   intervalle, le courant mesuré en charge normale et en surcharge, le condensateur en µF. */
+MISSIONS.push({id:'co8',grp:'Co-intervention · CAP',act:true,range:true,titre:'Lire la plaque, régler la protection',court:'La plaque du moteur, le relais thermique, la surcharge.',schema:'m1',
+  prog:{ms:'grandeurs et unités d’une plaque signalétique, conversions, intervalles, pourcentages',pro:'régler un relais thermique, mettre en service un moteur, mesurer son courant'},
+  consigne:'<p><b>Le touret à meuler.</b> Son moteur a été changé et câblé. Avant de rendre la machine, il faut lire la plaque du moteur, régler le relais thermique F1, et vérifier qu’il tourne sans que F1 déclenche.</p><p><b>Votre mission</b>&nbsp;: lire, régler, mettre en service, puis voir ce que fait F1 quand on force sur la meule.</p>',
+  prep(){chargeSolution('m1');const F=devNm('F1');F.p.cal='1-1,6';F.p.Ir=1;toutVerrouiller();},
+  parties:[
+    {titre:'1. La plaque',texte:'<p>Zoomez sur le moteur M1&nbsp;: sa plaque est écrite au-dessus de sa plaque à bornes, celle du condensateur sur le condensateur. La documentation du moteur la redonne.</p>',
+      q:[{id:'a',type:'tab',lib:'Relevez&nbsp;:',cols:['Grandeur','Valeur','Unité'],
+          rows:[['la tension',{val:230,tol:0.001},'V (volt)'],['la puissance',{val:0.37,tolAbs:0.001},'kW (kilowatt)'],['l’intensité nominale',{val:2.5,tolAbs:0.01},'A (ampère)'],['la capacité du condensateur',{val:16,tolAbs:0.1},'µF (microfarad)']],
+          methode:'« M 1~ · 230 V · 0,37 kW · 2,5 A » : M 1~ veut dire moteur monophasé, puis la tension, la puissance et l’intensité.'},
+        {id:'b',type:'nombre',lib:'La puissance, en watts&nbsp;:',unite:'W',val:370,tolAbs:0.5,methode:'1 kW = 1 000 W : on multiplie par 1 000.',
+          erreurs:[[x=>Math.abs(x-37)<0.5||Math.abs(x-3700)<1,'un zéro de trop ou de moins : 0,37 × 1 000.']]},
+        {id:'c',type:'choix',lib:'Sur le condensateur, «&nbsp;450&nbsp;V&nbsp;», c’est…',opts:['sa capacité.','la tension du réseau.','la tension qu’il supporte au plus.'],bonne:2,
+          err:{0:'Sa capacité, c’est 16 µF.',1:'Le réseau est à 230 V.'}}]},
+    {titre:'2. Régler F1',texte:'<p>Un relais thermique se règle sur l’intensité nominale du moteur&nbsp;: on choisit d’abord sa plage (la référence du relais), puis la molette. Touchez F1&nbsp;: son panneau porte les deux réglages.</p>',
+      q:[{id:'d',type:'choix',lib:'2,5&nbsp;A appartient à quelles plages&nbsp;?',opts:['[1 ; 1,6] A seulement.','[1,6 ; 2,5] A et [2,5 ; 4] A : 2,5 est une borne de chacune.','[4 ; 6] A seulement.'],bonne:1,
+          err:{0:'Cette plage s’arrête à 1,6 A : 2,5 n’y est pas.',2:'Cette plage commence à 4 A.'},methode:'[1,6 ; 2,5] : de 1,6 à 2,5, bornes comprises.'},
+        {id:'e',type:'manip',lib:'F1 est réglé sur l’intensité nominale du moteur.',
+          ok:()=>{const F=devNm('F1'),pl=PLAGES_RT[F.p.cal];if(!(pl[0]<=2.5&&2.5<=pl[1]))return 'la plage '+F.p.cal.replace('-',' à ')+' A ne contient pas 2,5 A.';
+            return Math.abs(+F.p.Ir-2.5)<=0.15?true:'la plage est bonne, mais la molette n’est pas sur 2,5 A.';},
+          lu:()=>{const F=devNm('F1');return 'plage '+F.p.cal.replace('-',' à ')+' A, molette sur '+fmtRT(+F.p.Ir)+' A';}}]},
+    {titre:'3. Mettre en service',texte:'<p>Mettez sous tension, appuyez sur S1&nbsp;: le moteur démarre. La pince (A~) sur le conducteur qui arrive à la borne U1 du moteur.</p>',
+      q:[{id:'f',type:'nombre',lib:'En charge normale (100&nbsp;%), la pince lit&nbsp;:',unite:'A',val:2.46,tol:0.03,methode:'Touchez le conducteur marron qui arrive à U1, sur la plaque à bornes du moteur.'},
+        {id:'g',type:'choix',lib:'Comparé à la plaque…',opts:['le moteur tire à peu près son intensité nominale, un peu moins : tout va bien.','il tire beaucoup plus : il est en surcharge.'],bonne:0,err:{1:'Comparez à l’intensité de la plaque.'}},
+        {id:'h',type:'nombre',lib:'Panneau du moteur&nbsp;: «&nbsp;Charge&nbsp;» sur 130&nbsp;% (on force sur la meule). La pince lit&nbsp;:',unite:'A',val:3.20,tol:0.03},
+        {id:'i',type:'nombre',lib:'De combien de pour cent ce courant dépasse-t-il les 2,5&nbsp;A de la plaque&nbsp;? Calculez avec votre lecture.',unite:'%',val:28,tolAbs:1.2,methode:'(courant lu − 2,5) ÷ 2,5 × 100.',erreurs:[[x=>Math.abs(x-30)<0.01,'30 %, c’est ce qu’on a ajouté à la charge, pas au courant : calculez avec le courant lu à la pince.'],[x=>Math.abs(x-128)<1.5,'128 %, c’est le courant lu comparé à la plaque : il la dépasse de 128 − 100.']]},
+        {id:'j',type:'manip',lib:'Passez l’horloge sur «&nbsp;Temps × 10&nbsp;» et attendez&nbsp;: F1 déclenche.',ok:()=>devNm('F1').s.trip?true:'F1 n’a pas déclenché : le moteur tourne-t-il à 130 % ? Attendez une vingtaine de secondes en temps × 10.',
+          lu:()=>'moteur '+(devNm('M1').r&&devNm('M1').r.tourne?'en marche':'à l’arrêt')+', charge '+devNm('M1').p.ch+' %'},
+        {id:'k',type:'choix',lib:'Pourquoi F1 coupe-t-il alors que le moteur tournait encore&nbsp;?',
+          opts:['Il est mal réglé.','Le moteur trop chargé tire plus que son intensité nominale : il chaufferait jusqu’à griller. F1 le coupe avant.','Le moteur est en panne.'],bonne:1,
+          err:{0:'Réglé sur 2,5 A, il a tenu en charge normale.',2:'En charge normale, il tournait sans problème.'}}]},
+    {titre:'4. Pour aller plus loin : le condensateur',texte:'<p>Réarmez F1 (son panneau), consignez. Dans le panneau du moteur, ôtez les barrettes («&nbsp;aucune&nbsp;»)&nbsp;: le condensateur est isolé. Multimètre sur ⊣⊢, entre C1 et C2.</p>',
+      q:[{id:'l',type:'nombre',lib:'Le multimètre lit&nbsp;:',unite:'µF',val:16,tolAbs:0.2,methode:'Hors tension, barrettes ôtées : sinon les enroulements relient C1 et C2, et la lecture ne veut rien dire.'},
+        {id:'m',type:'nombre',lib:'Un condensateur desséché ne mesure plus que 1,2&nbsp;µF. Quel pourcentage de sa capacité lui reste-t-il&nbsp;?',unite:'%',val:7.5,tolAbs:0.2,methode:'1,2 ÷ 16 × 100.'},
+        {id:'n',type:'manip',lib:'Remettez les barrettes du sens 1 : le moteur est prêt à être rendu.',ok:()=>devNm('M1').p.cpl==='S1'?true:'les barrettes ne sont pas celles du sens 1.',lu:()=>'barrettes : '+devNm('M1').p.cpl}]}],
+  retenir:'<p>La plaque d’un moteur donne sa tension (V), sa puissance (kW ou W), son intensité nominale (A). Le relais thermique se règle sur cette intensité&nbsp;: on choisit la plage qui la contient, puis la molette.</p><p>Un moteur trop chargé tire plus de courant que sa plaque&nbsp;: le relais thermique le coupe avant qu’il chauffe trop.</p>',
+  simplifie:'<p>Le moteur de l’atelier tire 2,46&nbsp;A en charge normale, un peu moins que sa plaque, comme un vrai. Le temps de déclenchement du relais est un ordre de grandeur.</p>'});
+/* Co-intervention 9 · « Le couloir à trois commandes » : le va-et-vient en tableau de vérité, le
+   dénombrement des positions (2 × 2, 2 × 2 × 2), le télérupteur et la parité, un algorithme. Les
+   réponses du tableau du va-et-vient sont lues sur une copie de la platine, telle qu'elle est câblée. */
+const ETAT_LAMPE=['allumée','éteinte'];
+/* l'état de la lampe E1 pour des positions données des interrupteurs, sur une copie de la platine */
+function lampeSi(pos){return surCopie(()=>{for(const d of st.devs)if(estSource(d)){d.s.on=true;d.s.trip=null;}
+  for(const nm in pos){const d=devNm(nm);if(d)d.s.pos=pos[nm];}recalc();return lampeAllumee('E1');});}
+const celVV=(p1,p2)=>({opts:ETAT_LAMPE,bonne:()=>lampeSi({S1:p1,S2:p2})?0:1});
+function platineVV(){chargeSolution('d2');toutVerrouiller();}
+function platineTL(){chargeSolution('d4');toutVerrouiller();}
+MISSIONS.push({id:'co9',grp:'Co-intervention · CAP',act:true,range:true,titre:'Le couloir à trois commandes',court:'Va-et-vient, télérupteur : tableau de vérité, parité, algorithme.',schema:'d2',
+  prog:{ms:'tableau de vérité, dénombrer (2 × 2, 2 × 2 × 2), pair et impair, lire un algorithme',pro:'comprendre un va-et-vient et un télérupteur avant de les câbler'},
+  consigne:'<p><b>Le couloir d’un hôtel.</b> On allume et on éteint la lumière de plusieurs endroits. Deux montages existent&nbsp;: le va-et-vient, pour deux endroits, et le télérupteur, pour trois et plus.</p><p><b>Votre mission</b>&nbsp;: comprendre leur logique, sur des platines déjà câblées.</p>',
+  prep(){platineVV();},
+  parties:[
+    {titre:'1. Le va-et-vient',platine:platineVV,texte:'<p>Sous tension, basculez S1 et S2 (touchez-les). Chacun a deux positions&nbsp;: <b>1</b>, sa borne L reliée à la borne 1&nbsp;; <b>2</b>, reliée à la borne 2. Le panneau de l’interrupteur dit laquelle.</p>',
+      q:[{id:'a',type:'tab',lib:'Le tableau de vérité&nbsp;: pour chaque position, la lampe E1 est…',cols:['S1','S2','La lampe E1'],
+          rows:[['1','1',celVV(0,0)],['1','2',celVV(0,1)],['2','1',celVV(1,0)],['2','2',celVV(1,1)]],
+          methode:'Mettez les interrupteurs dans chaque position, l’un après l’autre, et regardez la lampe.'},
+        {id:'b',type:'nombre',lib:'Combien de positions différentes pour deux interrupteurs&nbsp;?',unite:'',val:4,tolAbs:0,methode:'Deux positions pour S1, et pour chacune deux pour S2 : 2 × 2.'},
+        {id:'c',type:'choix',lib:'Quelle phrase est vraie&nbsp;?',
+          opts:['La lampe s’allume seulement quand les deux interrupteurs sont sur 1.','S2 ne marche que si S1 est sur 1.','Chaque fois qu’on bascule un interrupteur, quel qu’il soit, la lampe change d’état.'],bonne:2,
+          err:{0:'Regardez votre tableau : elle s’allume aussi dans une autre position.',1:'Basculez S2 avec S1 sur 2 : la lampe change aussi.'}}]},
+    {titre:'2. Trois endroits',texte:'<p>Pour trois endroits, on place un permutateur entre les deux va-et-vient (le va-et-vient à trois points). Le permutateur a lui aussi deux positions.</p>',
+      q:[{id:'d',type:'nombre',lib:'Combien de positions différentes pour trois interrupteurs&nbsp;?',unite:'',val:8,tolAbs:0,methode:'2 × 2 × 2.',erreurs:[[x=>x===6,'2 + 2 + 2 compte les positions de chacun : pour les combiner, on multiplie.']]},
+        {id:'e',type:'nombre',lib:'Chaque bascule change l’état de la lampe&nbsp;: dans combien de ces positions est-elle allumée&nbsp;?',unite:'',val:4,tolAbs:0,methode:'Une position sur deux.'}]},
+    {titre:'3. Le télérupteur',platine:platineTL,texte:'<p>Touchez «&nbsp;Mettre en place la platine de cette partie&nbsp;»&nbsp;: trois boutons-poussoirs S1, S2, S3 commandent le télérupteur KL1, qui allume E1 et E2. Mettez sous tension, lampe éteinte, puis appuyez sur n’importe quel poussoir.</p>',
+      q:[{id:'f',type:'tab',lib:'En partant de la lampe éteinte, après…',cols:['Nombre d’appuis','La lampe'],
+          rows:[['1',{opts:ETAT_LAMPE,bonne:0}],['2',{opts:ETAT_LAMPE,bonne:1}],['3',{opts:ETAT_LAMPE,bonne:0}],['4',{opts:ETAT_LAMPE,bonne:1}]]},
+        {id:'g',type:'choix',lib:'Après 7 appuis, en partant de la lampe éteinte, elle est…',opts:['éteinte','allumée'],bonne:1,err:{0:'Regardez votre tableau : 1 et 3 appuis l’allument. 7 est impair, comme 1 et 3.'},methode:'Pair ou impair ? Comparez avec 1, 2, 3 et 4 appuis.'},
+        {id:'h',type:'choix',lib:'Après 20 appuis…',opts:['allumée','éteinte'],bonne:1,err:{0:'Après 2 et après 4 appuis, elle est éteinte : 20 est pair, comme 2 et 4.'}},
+        {id:'i',type:'choix',lib:'Ce programme décrit quel appareil&nbsp;?<pre class="fcode">lampe ← éteinte\nà chaque appui sur un poussoir :\n    si lampe = éteinte alors lampe ← allumée\n    sinon lampe ← éteinte</pre>',
+          opts:['la minuterie','le télérupteur','le va-et-vient'],bonne:1,
+          err:{0:'Une minuterie éteint seule au bout d’un temps : le programme n’a pas de temps.',2:'Le va-et-vient n’a pas de poussoirs, mais des interrupteurs à deux positions.'}}]}],
+  retenir:'<p><b>Va-et-vient</b>&nbsp;: deux endroits, 2 × 2 = 4 positions. Chaque bascule change l’état de la lampe.</p><p><b>Télérupteur</b>&nbsp;: chaque appui change l’état. En partant de la lampe éteinte, elle est allumée après un nombre <b>impair</b> d’appuis.</p>',
+  simplifie:'<p>Les deux platines sont déjà câblées, comme dans les missions «&nbsp;Le va-et-vient&nbsp;» et «&nbsp;Le télérupteur&nbsp;», que l’on câble soi-même.</p>'});
+/* Co-intervention 10 · « Le carnet de dépannage » : constat, hypothèse (« si… alors… »), mesure,
+   conclusion, sur deux pannes des missions p1 (navette coupée) et p3 (neutre et terre inversés à une
+   prise). Le constat est lu sur une copie de la platine, telle qu'elle est câblée. */
+function q1Tient(prise){return surCopie(()=>{for(const d of st.devs){if(estSource(d)){d.s.on=true;d.s.trip=null;}if(d.t==='pc')d.p.app='rien';if(d.t==='id'||d.t==='db'){d.s.on=true;d.s.trip=null;}}
+  devNm(prise).p.app='bouilloire';recalc();return!tripDe('Q1')&&devNm('Q1').s.on;});}
+const celQ1=x=>({opts:['tient','déclenche'],bonne:()=>q1Tient(x)?0:1});
+function platineP1(){MISSIONS.find(m=>m.id==='p1').prep();}
+function platineP3(){MISSIONS.find(m=>m.id==='p3').prep();}
+MISSIONS.push({id:'co10',grp:'Co-intervention · CAP',act:true,range:true,titre:'Le carnet de dépannage',court:'Constat, hypothèse, mesure, conclusion : deux pannes.',schema:'d2',
+  prog:{ms:'raisonner : « si… alors… », une observation qui contredit une hypothèse, conclure',pro:'démarche de dépannage, contrôle de continuité hors tension, remplacement d’un conducteur'},
+  consigne:'<p><b>Deux appels dans la même journée.</b> Pour chacun, on tient le carnet de dépannage&nbsp;: ce qu’on <b>constate</b>, ce qu’on <b>suppose</b>, ce qu’on <b>mesure</b>, ce qu’on <b>conclut</b>. On ne remplace rien au hasard.</p>',
+  prep(){platineP1();},
+  parties:[
+    {titre:'1. Le couloir capricieux',platine:platineP1,texte:'<p>Dans le couloir, la lampe E1 ne s’allume que dans certaines positions des interrupteurs S1 et S2. Sous tension, essayez les quatre positions (position 1 ou 2&nbsp;: le panneau de l’interrupteur le dit).</p>',
+      q:[{id:'a',type:'tab',lib:'Le constat&nbsp;:',cols:['S1','S2','La lampe E1'],rows:[['1','1',celVV(0,0)],['1','2',celVV(0,1)],['2','1',celVV(1,0)],['2','2',celVV(1,1)]]},
+        {id:'b',type:'choix',lib:'«&nbsp;Si l’ampoule était grillée, alors la lampe ne s’allumerait jamais.&nbsp;» Or elle s’allume parfois. Donc…',
+          opts:['l’ampoule est grillée.','on ne peut rien dire de l’ampoule.','l’ampoule n’est pas grillée.'],bonne:2,
+          err:{0:'Une ampoule grillée ne s’allumerait dans aucune position.',1:'Une seule observation qui contredit l’hypothèse suffit à l’écarter.'}},
+        {id:'c',type:'choix',lib:'Quelle hypothèse garder&nbsp;?',
+          opts:['Le neutre de la lampe est coupé.','Une navette, l’un des deux conducteurs qui relient S1 et S2, est coupée.','Le disjoncteur Q2 est mal réglé.'],bonne:1,
+          err:{0:'Si le neutre était coupé, la lampe ne s’allumerait jamais.',2:'Si Q2 coupait, plus rien ne s’allumerait.'},
+          methode:'La lampe marche par un chemin et pas par l’autre : ce qui est commun aux deux chemins fonctionne.'},
+        {id:'d',type:'choix',lib:'Consignez, puis contrôlez chaque navette d’un bout à l’autre, à l’ohmmètre ou au bip du multimètre. Laquelle est coupée&nbsp;?',
+          opts:['L’orange, entre les bornes 1.','La violette, entre les bornes 2.'],bonne:1,err:{0:'L’orange a sa continuité : l’ohmmètre lit presque 0 Ω.'},
+          methode:'Hors tension : une pointe à chaque bout du conducteur. Continuité, presque 0 Ω ; coupé, OL.'},
+        {id:'e',type:'manip',lib:'Remplacez le conducteur coupé (la gomme, puis un conducteur neuf), puis vérifiez&nbsp;: la lampe s’allume et s’éteint des deux endroits.',ok:()=>cablageJuste('p1'),
+          methode:'Le conducteur neuf relie les mêmes bornes que l’ancien, avec la même couleur.'}]},
+    {titre:'2. Le différentiel qui saute',platine:platineP3,texte:'<p>Touchez «&nbsp;Mettre en place la platine de cette partie&nbsp;». Dans une chambre, le différentiel Q1 saute quand on branche la bouilloire, mais pas sur toutes les prises. Sous tension, branchez la bouilloire sur X1, puis X2, puis X3 (une seule à la fois&nbsp;; Q1 se réarme dans son panneau).</p>',
+      q:[{id:'f',type:'tab',lib:'Le constat&nbsp;: la bouilloire branchée sur…',cols:['Prise','Q1'],rows:[['X1',celQ1('X1')],['X2',celQ1('X2')],['X3',celQ1('X3')]]},
+        {id:'g',type:'choix',lib:'«&nbsp;Si la bouilloire était en défaut, alors Q1 sauterait sur les trois prises.&nbsp;» Donc…',
+          opts:['la bouilloire est en défaut.','le défaut n’est pas dans la bouilloire : il est du côté de la prise X3.','Q1 est trop sensible.'],bonne:1,
+          err:{0:'Sur X1 et X2, elle fonctionne sans faire sauter Q1.',2:'Sur X1 et X2, Q1 tient.'}},
+        {id:'h',type:'choix',lib:'Consignez, puis regardez les conducteurs qui arrivent sur X3 (touchez-les&nbsp;: le panneau dit où ils vont). Que trouvez-vous&nbsp;?',
+          opts:['La phase est coupée.','Il manque la terre.','Le neutre (bleu) arrive sur la borne PE, et la terre (vert-jaune) sur la borne N : ils sont inversés.'],bonne:2,
+          err:{0:'La bouilloire chauffe sur X3 avant que Q1 saute : la phase arrive.',1:'Un conducteur vert-jaune arrive bien à X3.'},
+          methode:'Le différentiel voit un courant qui part à la terre : le courant de la bouilloire revient-il par le neutre ?'},
+        {id:'i',type:'manip',lib:'Corrigez X3, puis vérifiez&nbsp;: la bouilloire marche sur les trois prises sans faire sauter Q1.',ok:()=>cablageJuste('p3'),
+          methode:'Ôtez les deux conducteurs de X3 (la gomme) et rebranchez-les : bleu sur N, vert-jaune sur PE.'}]}],
+  retenir:'<p>Le carnet de dépannage&nbsp;: <b>constat</b> (ce qu’on voit), <b>hypothèse</b> («&nbsp;si… alors…&nbsp;»), <b>mesure</b> (l’ohmmètre, toujours hors tension), <b>conclusion</b>.</p><p>Une hypothèse est fausse dès qu’une seule observation la contredit.</p>',
+  simplifie:'<p>Dans l’atelier, un conducteur coupé l’est dans son isolant&nbsp;: rien ne se voit, seule la mesure le trouve. Les pannes sont celles des missions «&nbsp;Le va-et-vient capricieux&nbsp;» et «&nbsp;Le différentiel qui saute&nbsp;».</p>'});
 /* ================= le démarrage =================
    La platine de la visite précédente revient, hors tension ; sinon la première mission.
    L'horloge fait avancer le temps simulé (×1 ou ×10) et anime les moteurs. */
@@ -2758,15 +3409,18 @@ makeWin('schema','Le schéma',{onOpen:remplirSchema,defW:620});
 makeWin('verif','La vérification',{onOpen:remplirVerif,defW:480});
 makeWin('doc','La documentation',{onOpen:remplirDoc,defW:520});
 let charge=false;
-try{const o=JSON.parse(localStorage.getItem(KEY)||'null');
-  if(o&&o.s){restore(o.s);Object.assign(opts,o.o||{});opts.wins=opts.wins&&typeof opts.wins==='object'?opts.wins:{};prog=o.p||{};charge=true;
+if(!PARC)try{const o=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(o&&o.s){restore(o.s);Object.assign(opts,o.o||{});opts.wins=opts.wins&&typeof opts.wins==='object'?opts.wins:{};prog=o.p||{};REP=o.r&&typeof o.r==='object'?o.r:{};charge=true;
     for(const d of st.devs)if(estSource(d))d.s.on=false;}}catch(e){}
 construitLib();construitBarre();initEdition();applyLayout();
 addEventListener('resize',ajusteLibBientot);addEventListener('scroll',ajusteLibBientot,{passive:true});
 /* l'en-tête change de hauteur avec la mission (titre sur deux lignes) : la bibliothèque suit */
 if(window.ResizeObserver)new ResizeObserver(ajusteLibBientot).observe(document.querySelector('.app'));
 const lien=(location.hash.match(/mission=([a-z0-9-]+)/)||[])[1];if(/[#&]range/.test(location.hash))opts.range=true;
-if(lien&&MISSIONS.some(m=>m.id===lien))chargeMission(lien);
+/* une activité de co-intervention rouverte par son lien reprend la platine où elle en était (24 novembre 2026) */
+const reprise=charge&&lien&&st.mis===lien&&MISSIONS.some(m=>m.id===lien&&m.act);
+if(PARC){/* la page d'un parcours : 199-lancer.js charge son activité et lance le parcours */}
+else if(lien&&MISSIONS.some(m=>m.id===lien)&&!reprise)chargeMission(lien);
 else if(charge){recalc();majRangement();render();renderPanel();ajuster();majMission();for(const id in WINS)if(winState(id).open)layoutWin(id),WINS[id].onOpen&&WINS[id].onOpen();}
 else chargeMission('d1');
 choisirOutil('sel');ajusteLib();
@@ -2783,8 +3437,52 @@ if(location.hash==='#planche-schemas'){const p=H('div','planche');p.style.cssTex
 /* porte d'essai, pour les scénarios */
 window.__cab={get st(){return st},recalc,tick,verifier,chargeMission,chargeSolution,MISSIONS,TYPES,devNm,fil,nk,mesureVAT,mesureOhm,
   get SIM(){return SIM},get dernier(){return dernierVerdict},regles,render,commit,construit,conflits,DOC,remplirDoc,ouvrirDoc,mesureCap,remplirConsigne,remplirVerif,openWin,remplirSchema,SCH,
-  choisirOutil,courantsFils,courantPince,lectureMulti,lecturePince,lectureWatt,renderPanel,opts,
+  choisirOutil,courantsFils,courantPince,lectureMulti,lecturePince,lectureWatt,renderPanel,opts,clamperFil,pointSurFil,surCopie,ajuster,
   set mesure(v){mesure=v},set pince(v){pince=v},get pince(){return pince},set sel(v){sel=v}};
+/* ================= les parcours notés de la co-intervention =================
+   Demandés le 24 novembre 2026 (« faire les activités en mode parcours pour notation, format 1 h »), après les
+   fiches des activités (135-fiche.js). Chaque activité devient une page de parcours, assemblée à part par
+   cablage/assembler.py : la page de l'atelier, enveloppée comme une page de simulation, avec la brique commune
+   des parcours (simulations/src/commun.js, lue à sa place, jamais recopiée). C'est Sim.parcours qui mène :
+   l'accueil et la commande, les cinq phases APP, ANA, REA, VAL, COM, « Vérifier » en TD et « Enregistrer » en
+   évaluation notée, les trois indices, le travail gardé, la vigilance, les sceaux, la copie chiffrée et le
+   fichier que NOTER-LES-BILANS note seul. L'atelier est la scène : chaque phase emprunte ses boutons
+   (#cabActions), sa platine (#cabStage) et son panneau (#panel), qui reviennent à leur place ensuite.
+
+   Un parcours : PARCOURS_CAB.push({id:'coN', code:'CAB-NN', nom:'cab-…', titre:'…', chapeau:'…',
+     sujet(){ return Sim.note ? {…} : {…}; }   les valeurs de l'évaluation notée ne sont pas celles du TD,
+     prep(S){ … }                               la platine, selon le sujet,
+     options(S){ return {commande:{client, texte, livrable}, phases:[…], simplifie:[…]}; } })
+   La première ligne du push porte id, code, nom, titre et chapeau entre apostrophes droites : l'assembleur
+   les y lit pour écrire les pages. Les questions sont celles de Sim.parcours (nombre, choix, multi, classer,
+   action) ; une action lit la platine par les fonctions de l'atelier (même portée). L'en-tête « UN PARCOURS »
+   de simulations/src/commun.js fait autorité sur le reste. */
+const PARCOURS_CAB=[];
+/* ce que lit la pince, les conducteurs qu'elle entoure : pour juger une mesure préparée */
+const pinceSur=()=>pince?pince.fils.filter(id=>st.wires.some(w=>w.id===id)):[];
+const filsDe=(nm,b)=>st.wires.filter(w=>w.a===nk(devNm(nm),b)||w.b===nk(devNm(nm),b)).map(w=>w.id);
+const appareilsDe=(...noms)=>noms.map(n=>devNm(n)?devNm(n).p.app:'?');
+function lancerParcours(){const P=PARCOURS_CAB.find(p=>p.id===PARC);if(!P){toast('Parcours inconnu : '+PARC,'warn');return null;}
+  const S=P.sujet();
+  MISSIONS.push({id:P.id+'-parcours',grp:'Parcours',titre:P.titre,court:'',act:true,range:!!P.range,schema:P.schema,prep(){P.prep(S);},test:P.test});
+  document.body.classList.add('cab-parcours');if(Sim.note)document.body.classList.add('cab-note');
+  /* en plein écran (l'évaluation notée y passe), la tête du parcours s'efface et l'atelier prend toute la hauteur :
+     seul le bouton de la calculatrice reste, flottant en bas à droite (style.css, « cab-plein ») */
+  const majPlein=()=>{document.body.classList.toggle('cab-plein',!!(document.fullscreenElement||document.webkitFullscreenElement));
+    dispatchEvent(new Event('resize'));};  /* la brique relit la hauteur de la tête au redimensionnement, qui peut venir avant */
+  ['fullscreenchange','webkitfullscreenchange'].forEach(t=>document.addEventListener(t,majPlein));majPlein();
+  chargeMission(P.id+'-parcours');opts.lib=false;applyLayout();
+  const spec=P.options(S);
+  /* chaque phase reçoit l'atelier ; la platine se recadre quand elle change de place */
+  const phases=spec.phases.map(ph=>Object.assign({paillasse:true,large:true},ph,{surOuvrir(ctx){requestAnimationFrame(()=>{ajuster();render();renderPanel();});if(ph.surOuvrir)ph.surOuvrir(ctx);}}));
+  const p=Sim.parcours('#parcours',Object.assign({code:P.code,titre:P.titre,niveaux:['CAP'],libre:'#libre',libreTexte:'l’atelier, librement, sans note ni fichier',
+    paillasse:['#cabActions','#cabStage','#panel']},spec,{phases}));
+  /* la porte d'essai des scénarios : le parcours, le sujet, et l'atelier */
+  p.S=S;p.P=P;p.cab=window.__cab;window.cabParcours=p;
+  return p;}
+/* le dernier module : sur la page d'un parcours noté (window.CAB_PARCOURS), lancer le parcours, une fois tous
+   les parcours inscrits (17x-cab-*.js) ; sur la page de l'atelier, rien. */
+if(PARC)lancerParcours();
 })();
 </script>
 

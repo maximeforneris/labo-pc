@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CAB-02 · Le circuit de la cuisine</title>
-<meta name="description" content="Le client veut brancher ses appareils en même temps sur le même circuit. On mesure à la pince ce qui passe dans chaque conducteur, on découvre la loi des nœuds, et on lui dit ce que son disjoncteur et son câble peuvent porter.">
-<meta name="joint-liste" content="non">
-<meta name="etiquette" content="Simulation · Parcours CAB-02">
+<title>Ça saute, mais rien n’est en panne</title>
+<meta name="description" content="Le différentiel du vestiaire saute sans qu’aucun appareil soit en panne. On mesure les fuites à la pince, on comprend pourquoi elles font déclencher le 30 mA, et on dit au club quoi faire.">
+<meta name="etiquette" content="Simulation · Parcours CAB-01">
 <meta name="stockage" content="sim-travail-v1 : l’avancement d’un parcours, réponses comprises, 30 jours au plus">
 <!-- Atelier de câblage : écrit le 11 novembre 2026, sur le modèle de l'atelier schéma électrique.
      Sources dans _commun/tp/simulations/cablage/src/, assemblées par cablage/assembler.py.
@@ -454,9 +453,9 @@ body.calc-ouverte .outils-flottants{display:none}
 
 </style>
 <script>
-window.SIM_MODE = "note";
-window.SIM_PAGE = "cab-cuisine";
-window.CAB_PARCOURS = "co2";
+window.SIM_MODE = "td";
+window.SIM_PAGE = "cab-fuites";
+window.CAB_PARCOURS = "co1";
 /* Entrainement · les nombres a la francaise, dans les deux sens.
    Ecrire : virgule decimale, espace fine insecable entre les milliers, ecriture
    scientifique au-dela de dix millions ou en deca d'un millieme.
@@ -3920,6 +3919,13 @@ pre.fcode{font-family:var(--mono);font-size:.86rem;background:var(--paper);color
 .cab-parcours.cab-note #btnVerif{display:none!important}
 .cab-parcours .page .app{padding:0;max-width:none}
 .cab-parcours .page .retour{display:inline-block;margin-bottom:4px}
+/* en plein écran, la tête du parcours s'efface (phases, compteurs) ; la calculatrice reste, en bouton flottant,
+   et la colonne de la scène monte en haut de l'écran (24 novembre 2026). Hors du plein écran, tout revient */
+.cab-plein .pc-tete{position:fixed;top:auto;left:auto;right:16px;bottom:16px;z-index:40;margin:0;padding:0;border:0;background:none;display:block}
+.cab-plein .pc-tete .pc-chemin,.cab-plein .pc-info>:not(.pc-calc),.cab-plein .pc-info>.pc-plein{display:none!important}
+.cab-plein .pc-info .pc-calc{box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.cab-plein.calc-ouverte .pc-tete{display:none}  /* il couvrirait « Ans » et « = » ; la calculatrice a son bouton « Fermer » */
+.cab-plein .pc{--pc-haut:0px!important}
 .pc-scene #cabActions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
 .pc-scene #cabStage{gap:6px}
 .pc-scene #cabStage .bar,.pc-scene #cabStage .misbar{gap:6px}
@@ -3928,10 +3934,10 @@ pre.fcode{font-family:var(--mono);font-size:.86rem;background:var(--paper);color
 </head>
 <body>
 <div class="page">
-<header class="tete"><a class="retour" href="index.html">← Les pages d’essai</a>
-<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-02</div>
-<h1>Le circuit de la cuisine</h1>
-<p class="chapeau">Le client veut brancher ses appareils en même temps sur le même circuit. On mesure à la pince ce qui passe dans chaque conducteur, on découvre la loi des nœuds, et on lui dit ce que son disjoncteur et son câble peuvent porter.</p>
+<header class="tete"><a class="retour" href="atelier-cablage.html">← L’atelier de câblage</a>
+<div class="surtitre">Co-intervention · CAP électricien · l’atelier de câblage · CAB-01</div>
+<h1>Ça saute, mais rien n’est en panne</h1>
+<p class="chapeau">Le différentiel du vestiaire saute sans qu’aucun appareil soit en panne. On mesure les fuites à la pince, on comprend pourquoi elles font déclencher le 30 mA, et on dit au club quoi faire.</p>
 </header>
 <div id="parcours"></div>
 <div id="libre">
@@ -6438,6 +6444,8 @@ function ajusteLib(){const lib=$('lib');if(!lib)return;if(matchMedia('(max-width
   const top=Math.max(10,lib.getBoundingClientRect().top);lib.style.maxHeight=Math.max(240,Math.floor(innerHeight-top-12))+'px';}
 let libRaf=0;const ajusteLibBientot=()=>{if(!libRaf)libRaf=requestAnimationFrame(()=>{libRaf=0;ajusteLib();});};
 /* ================= la barre, l'en-tête, les fenêtres de la mission ================= */
+/* les TP notés d'une heure dont la page est à côté de l'atelier : l'assembleur remplit la liste (EN_LIGNE) */
+const TP_NOTES=[]/*TP_NOTES*/;
 function construitBarre(){
   document.querySelectorAll('[data-outil]').forEach(b=>b.onclick=()=>choisirOutil(b.dataset.outil));
   const sw=$('swCol');sw.textContent='';
@@ -6458,6 +6466,7 @@ function construitBarre(){
   $('b-panel').onclick=()=>{opts.panel=!opts.panel;applyLayout();save();};
   document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>basculerWin(b.dataset.open));
   const ms=$('missions');ms.onchange=()=>{const id=ms.value;if(!id)return;
+    if(id.startsWith('tp:')){save();location.href=id.slice(3);return;}  /* un TP noté d'une heure : sa page, à côté */
     const travail=st.wires.some(w=>!w.lk)||st.devs.some(d=>!d.lk);
     if(travail&&!confirm('Charger « '+MISSIONS.find(m=>m.id===id).titre+' » ? Le câblage en cours sera remplacé.')){majMission();return;}
     chargeMission(id);};
@@ -6472,6 +6481,8 @@ function majMission(){const ms=$('missions'),m=missionCourante();ms.textContent=
   const o0=H('option');o0.value='';o0.textContent='Missions…';ms.appendChild(o0);let og=null,grp='';
   for(const x of MISSIONS){if(x.grp!==grp){grp=x.grp;og=document.createElement('optgroup');og.label=grp;ms.appendChild(og);}
     const o=H('option');o.value=x.id;o.textContent=(prog[x.id]?'✓ ':'')+x.titre;og.appendChild(o);}
+  if(!PARC&&TP_NOTES.length){const g=document.createElement('optgroup');g.label='TP notés d’une heure (une autre page)';
+    for(const t of TP_NOTES){const o=H('option');o.value='tp:'+t.page;o.textContent=t.code+' · '+t.titre;g.appendChild(o);}ms.appendChild(g);}
   ms.value=m?m.id:'';$('btnVerif').hidden=!(m&&m.test);$('recommencer').hidden=!m;
   $('misTitre').textContent=m?m.titre:'Platine libre';
   /* une activité de co-intervention : la fenêtre de la consigne porte la fiche */
@@ -7032,6 +7043,11 @@ function lancerParcours(){const P=PARCOURS_CAB.find(p=>p.id===PARC);if(!P){toast
   const S=P.sujet();
   MISSIONS.push({id:P.id+'-parcours',grp:'Parcours',titre:P.titre,court:'',act:true,range:!!P.range,schema:P.schema,prep(){P.prep(S);},test:P.test});
   document.body.classList.add('cab-parcours');if(Sim.note)document.body.classList.add('cab-note');
+  /* en plein écran (l'évaluation notée y passe), la tête du parcours s'efface et l'atelier prend toute la hauteur :
+     seul le bouton de la calculatrice reste, flottant en bas à droite (style.css, « cab-plein ») */
+  const majPlein=()=>{document.body.classList.toggle('cab-plein',!!(document.fullscreenElement||document.webkitFullscreenElement));
+    dispatchEvent(new Event('resize'));};  /* la brique relit la hauteur de la tête au redimensionnement, qui peut venir avant */
+  ['fullscreenchange','webkitfullscreenchange'].forEach(t=>document.addEventListener(t,majPlein));majPlein();
   chargeMission(P.id+'-parcours');opts.lib=false;applyLayout();
   const spec=P.options(S);
   /* chaque phase reçoit l'atelier ; la platine se recadre quand elle change de place */
